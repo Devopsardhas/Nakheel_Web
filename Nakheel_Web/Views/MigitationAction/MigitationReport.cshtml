@@ -1,0 +1,184 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.AccountsMaster.ServiceProviderSignUp>;
+@{
+    ViewData["Title"] = "Rain Mitigation Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+</style>
+
+
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Rain Mitigation List</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-2">
+                        <label class="col-md-4 col-form-label">Alert Id</label>
+                        <select class="form-select rounded-pill InputField" id="MR_Drp_Ref">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="col-md-4 col-form-label">Zone</label>
+                        <select class="form-select rounded-pill InputField" id="MR_Drp_Zone">
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="col-md-4 col-form-label" for="example-password-input">From Date <span class="requ">*</span></label>
+                        <input type="date" class="form-control required" id="MR_From_Date" name="MR_From_Date" placeholder="">
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="col-md-4 col-form-label" for="example-password-input">To Date <span class="requ">*</span></label>
+                        <input type="date" class="form-control required" id="MR_To_Date" name="MR_To_Date" placeholder="">
+                    </div>
+                    <div class="col-lg-2 pull-right">
+                        <br />
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Report_Submit">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                        </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Clear_Filter">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="Report_Table" class="table-sm  tblround" style="width:100%">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">&nbsp;Alert Id</th>
+                            <th style="text-align:left;">&nbsp;Areas Of Rain</th>
+                            <th style="text-align:left;">&nbsp;Time Of Rain Started</th>
+                            <th style="text-align:left;">&nbsp;Time Of Rain Finished</th>
+                            <th style="text-align:left;">&nbsp;Response Time</th>
+                            <th style="text-align:left;">&nbsp;Duration of Rain(in mins)</th>
+                            <th style="text-align:left;">&nbsp;No Of Pumps</th>
+                            <th style="text-align:left;">&nbsp;Duration Of Pumps )perated</th>
+                            <th style="text-align:left;">&nbsp;No Of Tankers Deployed</th>
+                            <th style="text-align:left;">&nbsp;No Of Trips</th>
+                            <th style="text-align:left;">&nbsp;Time To Clear Area</th>
+                            <th style="text-align:left;">&nbsp;No Of Resources deployed(SP)</th>
+                            <th style="text-align:left;">&nbsp;No Of Resources deployed(NCM)</th>
+                            <th style="text-align:left;">&nbsp;Cost For Mitigation</th>
+                            <th style="text-align:left;">&nbsp;Rain Gauge Reading</th>
+                            <th style="text-align:left;">&nbsp;File Uploaded</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="Report_tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        REFID: "#MR_Drp_Ref",
+        ZONEID: "#MR_Drp_Zone",
+        FROM_DATE: "#MR_From_Date",
+        TO_DATE: "#MR_To_Date",
+        LIST_VIEW: "#List_View",
+        MAINTABLE: "#Report_Table",
+        MAINTABLE_TBODY: "#Report_tbody",
+        FILTER_SUBMIT: "#Report_Submit",
+        CLEAR: "#Clear_Filter"
+    });
+    $(function () {
+        RAIN_LOAD_ZONE();
+        LOAD_REF_NO();
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $(UI_Fields.CLEAR).click(function () {
+            RAIN_LOAD_ZONE("0");
+            LOAD_REF_NO("0");
+            $(UI_Fields.FROM_DATE).val('');
+            $(UI_Fields.TO_DATE).val('');
+            $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+            $.post("@Url.Action("Get_Mitigation_Report_List", "MigitationAction")", { Zone_Id: '0', Community_Id: '0', Building_Id: '0' }, function (data) {
+                $("#Report_tbody").html('');
+                $("#Report_tbody").html(data);
+            });
+        });
+
+        $(UI_Fields.FILTER_SUBMIT).on('click', function () {
+            var RefId = $(UI_Fields.REFID).val();
+            var ZoneId = $(UI_Fields.ZONEID).val();
+            var fromdate = $(UI_Fields.FROM_DATE).val();
+            var todate = $(UI_Fields.TO_DATE).val();
+
+            if (RefId == null) {
+                RefId = '0';
+            }
+            if (ZoneId == null) {
+                ZoneId = '0';
+            }
+            if (fromdate == null) {
+                fromdate = '0';
+            }
+            if (todate == null) {
+                todate = '0';
+            }
+            $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+            $.post("@Url.Action("Get_Mitigation_Report_List", "MigitationAction")", { RefNo: RefId, Zone_Id: ZoneId, FromDate: fromdate, ToDate: todate }, function (data) {
+                $("#Report_tbody").html('');
+                $("#Report_tbody").html(data);
+            });
+        });
+    });
+    function RAIN_LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center'> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+
+        });
+    }
+
+    function LOAD_REF_NO() {
+        $.post("@Url.Action("LoadAllRefNo", "MigitationAction")", function (data) {
+            $(UI_Fields.REFID).empty();
+            $(UI_Fields.REFID).append("<option selected value='0' style='text-align:center'> --Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.REFID).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+
+        });
+    }
+</script>                            

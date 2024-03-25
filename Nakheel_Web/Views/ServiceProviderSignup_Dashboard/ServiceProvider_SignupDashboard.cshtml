@@ -1,0 +1,1207 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Service Provider Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/validation/Service_Prov_Signup_Dashboard/serversidedata_SP_Dashboard.js"></script>
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > > {
+        padding: 0.35rem 0.35rem !important;
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    tr:nth-child(even) {
+        background-color: #0D87AC;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #48C7EE;
+    }
+
+    .tblround_DAsh {
+        border-radius: 10px;
+        margin-left: 12px;
+    }
+
+    .SP_Mgmt {
+        /*padding-top: -10px;*/
+        padding-bottom: 20px;
+        border-radius: 10px;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.30rem 0.75rem !important;
+    }
+
+    .txt_lable {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 32%;
+    }
+
+    .permit_Type_Label {
+        margin-left: 41%;
+        font-family: Nakheel-Textregular;
+    }
+
+    .SP_ZoneWise {
+        margin-left: 29%;
+        font-family: Nakheel-Textregular;
+    }
+
+    .Zone_Label {
+        margin-left: 27%;
+        font-family: Nakheel-Textregular;
+    }
+
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        overflow-anchor: none;
+    }
+
+    .tbl_card {
+        width: 100%;
+        display: flow;
+        min-height: 277px;
+        overflow-y: scroll !important;
+        height: 120px;
+    }
+
+    label {
+        font-weight: 500;
+        margin-bottom: 0px !important;
+    }
+
+    .FilterHead {
+        color: #fff;
+        margin-top: 9px;
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 0px;
+        height: 37px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        margin-top: -24px !important;
+    }
+
+    .btn-group, .btn-group-vertical {
+        margin-top: -60px !important;
+        padding: 32px !important;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #e1e1e1;
+        border-radius: 9px;
+    }
+
+    .card-body {
+        padding: 0.05rem 0.35rem !important;
+    }
+
+    .card-header {
+        padding: 6px !important;
+        margin-bottom: 0;
+        background-color: #fff;
+        border-bottom: 1px solid #eff0f2;
+        background: #fff;
+        color: #00263A;
+    }
+
+    .txt_label {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 30%;
+    }
+
+    .Space_Adj {
+        padding: 0.45rem 1.25rem !important;
+    }
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="HD1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                        <h5 class="FilterHead">FILTER OPTIONS</h5>
+                    </button>
+                </h1>
+                <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                    <div class="accordion-body">
+                        <div class="row align-items-center">
+                            <div class="col-lg-3">
+                                <label>Year</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Year" onchange="SP_YearDrp(this.value);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Zone</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Zone" onchange="Load_Community(this.value)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Community" onchange="Load_Building(this.value)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Building</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Building" onchange="SerPro_Filter();">
+                                </select>
+                            </div>
+                            <div class="col-lg-3" style="display:none">
+                                <label>Master Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Master_Community" onchange="">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Filter By Date</label><br />
+                                <div class="form-group">
+                                    <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="SP_FilterDate();" />
+                                    <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                                </div>
+                            </div>
+                            <div id="Frm_ToDiv" class="col-lg-3" style="display:none;">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label class="form-check-label" for="inlineRadio2">From</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="SP_DateFilter();" />
+                                        <label class="form-check-label" for="inlineRadio2">To</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="SP_DateFilter();" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="card" style="height: 92%;width: 101%;">
+                    <div class="card-header">
+                        <label class="txt_label">Service Provider</label>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <ul class="list-group list-group-flush SP_Mgmt tbl_card" style="width:96% !important;">
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00263A;color:#fff"><h6 style="color:#fff">Total Service Provider</h6><a href="#" onclick="event.preventDefault();SPCardToggle('1','#Total_Ser_Provider',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Total_Ser_Provider"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00617F;color:#fff"><h6 style="color:#fff">Approved</h6><a href="#" onclick="event.preventDefault();SPCardToggle('2','#Approved',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Approved"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Opened</h6><a href="#" onclick="event.preventDefault();SPCardToggle('7','#Opened',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Opened"></span></a></li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Pending Verification</h6><a href="#" onclick="event.preventDefault();SPCardToggle('3','#Approval_Pending',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Approval_Pending"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Active</h6><a href="#" onclick="event.preventDefault();SPCardToggle('4','#Contractor_Active',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Contractor_Active"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Expired</h6><a href="#" onclick="event.preventDefault();SPCardToggle('5','#Contractor_Expired',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Contractor_Expired"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#3CD1FF;color:#fff"><h6 style="color:#fff">General Permit Active</h6><a href="#" onclick="event.preventDefault();SPCardToggle('6','#Permit_Active',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Permit_Active"></span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">General Permit Expired</h6><a href="#" onclick="event.preventDefault();SPCardToggle('7','#Permit_Expired',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Permit_Expired"></span></a></li>
+                                @*<li class="list-group-item d-flex justify-content-between align-items-center Space_Adj"><h6>Total Open Permit</h6><a href="#"><span class="badge rounded-pill align-items-end bg-info" id="Open_Permit">0</span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj"><h6>Total Closed Permit</h6><a href="#"><span class="badge rounded-pill align-items-end bg-info" id="Closed_Permit">0</span></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj"><h6>Total Overdue Permit</h6><a href="#"><span class="badge rounded-pill align-items-end bg-info" id="Overdue_Permit">0</span></a></li>*@
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="card" style="height: 92%;width: 101%;">
+                    <div class="card-header">
+                        <label class="txt_lable">Scope Of Work</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <table class="table dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                            <thead>
+                                @*style="background: #60605f;">*@
+                                <tr>
+                                    <th style="width:100%;background-color:#00263A;">Scope Of Work</th>
+                                    <th style="width:100%;background-color:#00263A;">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ScopeOfWork_body">
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!--end card-->
+            </div><!-- end col -->
+            <div class="col-sm-4">
+                <div class="card" style="height: 92%;width: 100%;">
+                    <div class="card-header">
+                        <label style="font-family: 'Nakheel-Textregular';margin-left: 22%;">Total Safety Permit Counts</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <table class="table dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                            <thead>
+                                @*style="background: #60605f;">*@
+                                <tr>
+                                    <th style="width:100%;background-color:#00263A;">Permit Type</th>
+                                    <th style="width:100%;background-color:#00263A;">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="TotalPermit_Body">
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!--end card-->
+            </div><!-- end col -->
+
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="card" style="height: 105%;width: 105%;margin-top: -21px;">
+                    <div class="card-header">
+                        <label class="txt_label">Monthly Statistics</label>
+                    </div>
+                    <div class="card-body">
+                        <br />
+                        <div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <select class="form-select rounded-pill InputField" name="Month" id="Month" onchange="SerPro_Filter();">
+                                        <option value="0" style="text-align:center;">--Select Month--</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <br />
+                        </div>
+                        <ul class="list-group list-group-flush SP_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00263A;color:#fff"><h6 style="color:#fff">Approval Pending</h6><a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-items-end" id="Mon_Approval_Pending"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00617F;color:#fff"><h6 style="color:#fff">Approved</h6><a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-items-end" id="Mon_Approved"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Rejected</h6><a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-items-end" id="Mon_Rejected"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Submitted</h6><a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-items-end" id="Mon_Submitted"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Not Submitted</h6><a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-items-end" id="Mon_NotSubmitted"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card" style="height: 105%;width: 104%;margin-top: -21px;">
+                    <div class="card-header">
+                        <label style="margin-left:22px;font-family: Nakheel-Textregular;">Service Provider Data Zone Wise</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph_4" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-sm-6">
+                <div class="card" style="height: 105%;width: 100%;margin-top: -21px;">
+                    <div class="card-header">
+                        <label class="permit_Type_Label">Safety Permit Types</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph_1" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        @*<div class="row">
+        <div class="col-sm-12">
+        <div class="card" style="height: 92%;width: 100%;">
+        <div class="card-header">
+        <label class="permit_Type_Label">Safety Permit Types</label>
+        </div><!-- end card header -->
+        <div class="card-body">
+        <div id="Graph_1" class="apex-charts" dir="ltr"></div>
+        </div>
+        </div><!--end card-->
+        </div>
+
+        </div>*@
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card" style="height: 98%;width: 102%;">
+                    <div class="card-header">
+                        <label class="Zone_Label">Zone-Wise Safety Permit Data</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph_2" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-sm-6">
+                <div class="card" style="height: 98%;width: 100%;">
+                    <div class="card-header">
+                        <label class="txt_lable">Community-Wise Safety Permit Data</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph_3" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card" style="height: 92%;width: 100%;">
+                    <div class="card-header">
+                        <label style="margin-left: 43%;font-family: Nakheel-Textregular;">Long And Short Term</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph_5" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+    </div>
+    <div id="ServiceProviderPop" class="modal fade" tabindex="-1" aria-labelledby="#ServiceProviderLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ServiceProviderLabel" style="text-align:center;"><b id="OverDueHead">Reported Service Provider</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;">
+                        <table id="ImapactDivTable" class="table table-striped tblround">
+                            <thead>
+                                <tr class="TR_Color">
+
+                                    <th style="text-align:left;">&nbsp;Company Name</th>
+                                    <th style="text-align:left;">&nbsp;Manager Incharge</th>
+                                    <th style="text-align:left;">&nbsp;Zone Name</th>
+                                    <th style="text-align:left;">&nbsp;Community</th>
+                                    <th style="text-align:left;">&nbsp;Contract End date</th>
+                                    <th style="text-align:left;">&nbsp;Scope Of Work</th>
+                                    <th style="text-align:left;">&nbsp;DMS Number</th>
+                                    <th style="text-align:left;">&nbsp;Approval Status</th>
+                                    <th style="text-align:left;">&nbsp;Contract Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ServiceProvidertDiv_TBODY">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <script src="~/assets/js/apexcharts.js"></script>
+    <script>
+        const UI_FIELDS1 = Object.freeze({
+            DRP_YEAR: "#Drp_Year",
+            M_ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            SERVICE_PROVIDER_Div_TBODY: "#ServiceProvidertDiv_TBODY",
+            IMPACT_DIV_TABLE: "#ImapactDivTable",
+            CARD_MODEL: "#ServiceProviderPop",
+            SCOPE_OF_WORK_BODY: "#ScopeOfWork_body",
+            TOTAL_PERMIT_BODY: "#TotalPermit_Body",
+        });
+        $(document).ready(function () {
+            SP_LOAD_ZONE();
+            var CurrentYear = new Date().getFullYear();
+            SP_FilterOpt_Load();
+            SP_LoadYear(CurrentYear);
+
+        });
+
+        function SerPro_Filter() {
+            var sh = false;
+            let yr = $("#Drp_Year").val();
+            let Zone_ID = $("#Drp_Zone").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_ID = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let CreatedBy = @LoginClass.Employee_Identity_Id;
+            let ch = $(UI_FIELDS1.FILTER_DATE).is(':checked');
+            let If_HSE_Team = 'No';
+            let HSE_Team_Id = '0';
+            let Month = $("#Month :selected").val();
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Month: Month,
+                Year: yr,
+                Zone_ID: Zone_ID,
+                Community_Id: Community_Id,
+                Building_ID: Building_ID,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: '',
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = SP_GetDB_Data(model, '/ServiceProviderSignup_Dashboard/GetServiceProviderDashboard');
+            SP_Dash_Data(Dash_data, sh);
+        }
+        function SP_LoadYear(currentYear) {
+            $(UI_FIELDS1.DRP_YEAR).empty();
+            $(UI_FIELDS1.DRP_YEAR).append("<option selected value='All' style='text-align:center'>All</option>");
+            for (let i = currentYear; i >= 2022; i--) {
+                $(UI_FIELDS1.DRP_YEAR).append("<option class='center' value=" + i + ">" + i + "</option>");
+            }
+            //$("#Drp_Zone").val("");
+        }
+        function SP_LOAD_ZONE() {
+            $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+                $(UI_FIELDS1.M_ZONE).empty();
+                $(UI_FIELDS1.M_ZONE).append("<option selected value='All' style='text-align:center'>All</option>");
+                $(data).each(function (i, e) {
+                    $(UI_FIELDS1.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                });
+            });
+        }
+        function Load_Community(Zone_Id) {
+            if (Zone_Id == "All") {
+                $(UI_FIELDS1.COMMUNITY_ID).empty();
+                $(UI_FIELDS1.BUILDING_ID).empty();
+            }
+            else {
+                $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+                    $(UI_FIELDS1.COMMUNITY_ID).empty();
+                    $(UI_FIELDS1.BUILDING_ID).empty();
+                    $(UI_FIELDS1.COMMUNITY_ID).append("<option value='All' style='text-align:center;' selected>All </option>");
+                    $(data).each(function (i, e) {
+                        $(UI_FIELDS1.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + " >" + e.Community_Master_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Community").val("");
+            $("#Drp_Building").val("");
+            SerPro_Filter();
+        }
+        function Load_Building(Community_Id) {
+            var Zone_Id = $(UI_FIELDS1.M_ZONE).val();
+            if (Community_Id == "All") {
+                $(UI_FIELDS1.BUILDING_ID).empty();
+            }
+            else {
+                $.post("@Url.Action("LoadAllBuildingbyZone","CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                    $(UI_FIELDS1.BUILDING_ID).empty();
+                    $(UI_FIELDS1.BUILDING_ID).append("<option selected value='All' style='text-align:center;'>All</option>");
+                    $(data).each(function (i, e) {
+                        $(UI_FIELDS1.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Building").val("");
+            SerPro_Filter();
+        }
+        function SP_FilterDate() {
+            var check = $(UI_FIELDS1.FILTER_DATE).is(":checked");
+            if (check) {
+                $(".InputField").attr("disabled", true);
+                $(UI_FIELDS1.FROM_DATE).attr("disabled", false);
+                $(UI_FIELDS1.TO_DATE).attr("disabled", false);
+                $(UI_FIELDS1.FILTER_DATE).attr("disabled", false);
+                $(UI_FIELDS1.FRM_TO_DIV).show(100);
+            } else {
+                $(".InputField").attr("disabled", false);
+                $(UI_FIELDS1.FROM_DATE).attr("disabled", true);
+                $(UI_FIELDS1.TO_DATE).attr("disabled", true);
+                $(UI_FIELDS1.FILTER_DATE).attr("disabled", false);
+                $(UI_FIELDS1.FRM_TO_DIV).hide(100);
+                $(UI_FIELDS1.FROM_DATE).val('');
+                $(UI_FIELDS1.TO_DATE).val('');
+            }
+        }
+        function SP_YearDrp(year) {
+            SerPro_Filter();
+        }
+        function SP_FilterOpt_Load() {
+            var sh = true;
+            let yr = $("#Drp_Year").val();
+            //if (yr == null || yr == "" || yr == undefined) {
+            //    var currentYear = new Date().getFullYear();
+            //    yr = currentYear;
+            //}
+            let Zone = "All";
+            let Community_Id = "";
+            let Building_Id = "";
+            let From_Date = "";
+            let To_date = "";
+            let If_HSE_Team = "No";
+            let HSE_Team_Id = "";
+            var d = new Date(),
+                mm = d.getMonth() + 1
+            $('#Month option:eq(' + mm + ')').prop('selected', true);
+            var Month = $("#Month :selected").val();
+            let model = {
+                Month: Month,
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: '',
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = SP_GetDB_Data(model, '/ServiceProviderSignup_Dashboard/GetServiceProviderDashboard');
+            SP_Dash_Data(Dash_data, sh);
+        }
+        function SP_DateFilter() {
+            let model;
+            let FD = $("#From_Date").val();
+            let TD = $("#To_Date").val();
+            if (TD == null || TD == '') {
+                return false;
+            }
+            if (FD == null || FD == '') {
+                toastr["error"]("Please Select From Date!");
+                return false;
+            }
+            if (Date.parse(TD) > Date.parse(FD)) {
+                let Zone = $("#Drp_Zone").val();
+                let Community_Id = $("#Drp_Community").val();
+                let Building_Id = $("#Drp_Building").val();
+                var CreatedBy = @LoginClass.Employee_Identity_Id;
+                SerPro_Filter();
+            }
+            else {
+                toastr["error"]("Invalid Date Range!");
+                return false;
+            }
+        }
+        function SP_GetDB_Data(model, url) {
+            let H_data;
+            $.ajax({
+                url: url,
+                type: "POST",
+                cache: false,
+                async: false,
+                data: { entity: model },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        H_data = data;
+                    }
+                    else {
+                        H_data = null;
+                    }
+                },
+                error: function (error) {
+                }
+            });
+            return H_data;
+        }
+        function SP_Dash_Data(data, sh) {
+            $(data.Total_Count_List).each(function (i, e) {
+                $("#Total_Ser_Provider").text(0);
+                $("#Approved").text(0);
+                $("#Approval_Pending").text(0);
+                $("#Contractor_Active").text(0);
+                $("#Contractor_Expired").text(0);
+                $("#Permit_Active").text(0);
+                $("#Permit_Expired").text(0);
+                $("#Opened").text(0);
+
+                $("#Total_Ser_Provider").text(e.Total_ServiceProvider_count);
+                $("#Approved").text(e.Approved);
+                $("#Approval_Pending").text(e.Approval_Pending_Count);
+                $("#Contractor_Active").text(e.Contractor_Active_Count);
+                $("#Contractor_Expired").text(e.Contractor_Expired_Count);
+                $("#Permit_Active").text(e.Permit_Active_Count);
+                $("#Permit_Expired").text(e.Permit_Expired_Count);
+                $("#Opened").text(e.Opened);
+
+            });
+            $(data.Monthly_Statistic_List).each(function (i, e) {
+                $("#Mon_Approval_Pending").text(0);
+                $("#Mon_Approved").text(0);
+                $("#Mon_Rejected").text(0);
+                $("#Mon_Submitted").text(0);
+                $("#Mon_NotSubmitted").text(0);
+
+                $("#Mon_Approval_Pending").text(e.Approval_Pending);
+                $("#Mon_Approved").text(e.Approved);
+                $("#Mon_Rejected").text(e.Rejected);
+                $("#Mon_Submitted").text(e.Submitted);
+                $("#Mon_NotSubmitted").text(e.Not_Submitted);
+            });
+            Service_Provider_PermitTypes(data, sh);
+            Service_Provider_ZoneCount(data, sh);
+            ServiceProviderCommunity(data, sh);
+            ServiceProv_ScopeOfWork(data, sh);
+            ZoneWiseServiceProvideData(data, sh);
+            LongShortTermServiceProvData(data, sh);
+            ServiceProv_TotalPermitCount(data, sh);
+        }
+        //Permit Type
+        function Service_Provider_PermitTypes(data, sh) {
+            var Monthdata = [];
+            var Opendata = [];
+            var Closedata = [];
+            var Overduedata = [];
+            if (data != null) {
+                $(data.PermitType_Count_List).each(function (i, a) {
+                    Monthdata.push(a.Name);
+                    Opendata.push(a.Open);
+                    Closedata.push(a.Close);
+                    Overduedata.push(a.Overdue);
+
+                });
+                DrawobservationTypes(Monthdata, Opendata, Closedata, Overduedata, sh, 'Permit Type data');
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function DrawobservationTypes(arr, arr1, arr2, arr3, sh, name) {
+            if (sh == true) {
+                var options = {
+                    series: [{
+                        name: "Open",
+                        data: arr1
+                    },
+                    {
+                        name: "Close",
+                        data: arr2
+                    },
+                    {
+                        name: "Overdue",
+                        data: arr3
+                    }
+                    ],
+                    chart: {
+                        type: "bar",
+                        height: 290,
+
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 4,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    xaxis: {
+                        categories: arr
+                    },
+                    yaxis: {
+
+                    },
+                    grid: {
+                        borderColor: "#f1f1f1"
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (t) {
+                                return t
+                            }
+                        }
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                    ],
+                };
+                (Value = new ApexCharts(document.querySelector("#Graph_1"), options)).render();
+            }
+            else {
+                Value.updateOptions({
+                    xaxis: {
+                        //categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                        categories: arr
+                    },
+                    series: [{
+                        name: "Open",
+                        data: arr1
+                    },
+                    {
+                        name: "Close",
+                        data: arr2
+                    },
+                    {
+                        name: "Overdue",
+                        data: arr3
+                    }
+                    ],
+                });
+            }
+
+        }
+        //Zone Count
+        function Service_Provider_ZoneCount(data, sh) {
+            var chartdata = [];
+            var zoneLable = [];
+            if (data != null) {
+                $(data.ZoneCount_List).each(function (i, b) {
+                    zoneLable.push(b.Name);
+                    chartdata.push(b.Count);
+                });
+                DrawServiceProvZone(zoneLable, chartdata, sh, 'Zone');
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function DrawServiceProvZone(arr, arr1, sh, name) {
+            if (sh == true) {
+                var options = {
+                    series: [{
+                        name: "",
+                        data: arr1
+                    }],
+                    chart: {
+                        type: "bar",
+                        height: 230,
+
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    xaxis: {
+                        categories: arr
+                    },
+                    yaxis: {
+
+                    },
+                    grid: {
+                        borderColor: "#f1f1f1"
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (t) {
+                                return t
+                            }
+                        }
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                    ]
+                };
+
+                (Value1 = new ApexCharts(document.querySelector("#Graph_2"), options)).render();
+            }
+            else {
+                Value1.updateOptions({
+                    xaxis: {
+                        //categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                        categories: arr
+                    },
+                    series: [{
+                        name: "",
+                        data: arr1
+                    }],
+                });
+            }
+        }
+        //Community Monthwise
+        function ServiceProviderCommunity(data, sh) {
+            var Chartdata = [];
+            var communtiy_Lable = [];
+            if (data != null) {
+                $(data.CommunityCount_List).each(function (i, c) {
+                    var violation = {};
+                    var monthdata = [];
+                    violation["name"] = c.Name;
+                    monthdata.push(c.January);
+                    monthdata.push(c.February);
+                    monthdata.push(c.March);
+                    monthdata.push(c.April);
+                    monthdata.push(c.May);
+                    monthdata.push(c.June);
+                    monthdata.push(c.July);
+                    monthdata.push(c.August);
+                    monthdata.push(c.September);
+                    monthdata.push(c.October);
+                    monthdata.push(c.November);
+                    monthdata.push(c.December);
+                    violation["data"] = monthdata;
+                    Chartdata.push(violation);
+                });
+                drawCommunityMonth(Chartdata, sh, "Community")
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function drawCommunityMonth(arr, sh, name) {
+            if (sh == true) {
+                var options = {
+                    series: arr,
+                    chart: {
+                        type: "bar",
+                        height: 230,
+                        stacked: !0,
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    xaxis: {
+                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    legend: {
+                        position: "bottom"
+
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                    ]
+                };
+                (Chart = new ApexCharts(document.querySelector("#Graph_3"), options)).render();
+            }
+            else {
+                Chart.updateOptions({
+                    xaxis: {
+                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    },
+                    series: arr
+                });
+            }
+
+        }
+        //Total permit count
+        function ServiceProv_TotalPermitCount(data, sh) {
+            var html = "";
+            $(UI_FIELDS1.TOTAL_PERMIT_BODY).html('');
+            if (data != null) {
+                $(data.TotalPermit_Count).each(function (i, e) {
+                    html += '<tr><td align="left" valign = "middle"><h6 style="color:#fff">' + e.Name + '</h6></td>'
+                    html += '<td align="left" valign = "middle"><h6 style="color:#fff">' + e.Count + '</h6></td>< /tr>'
+                });
+                $(UI_FIELDS1.TOTAL_PERMIT_BODY).append(html);
+            }
+            else {
+                //toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        //Scope of Work
+        function ServiceProv_ScopeOfWork(data, sh) {
+            var html = "";
+            $(UI_FIELDS1.SCOPE_OF_WORK_BODY).html('');
+            if (data != null) {
+                $(data.ScopeOfWork_Count_List).each(function (i, e) {
+                    html += '<tr><td align="left" valign = "middle"><h6 style="color:#fff">' + e.Name + '</h6></td>'
+                    html += '<td align="left" valign = "middle"><h6 style="color:#fff">' + e.Count + '</h6></td>< /tr>'
+                });
+                $(UI_FIELDS1.SCOPE_OF_WORK_BODY).append(html);
+            }
+            else {
+                //toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        //Service provider Data based on Zone Wise
+        function ZoneWiseServiceProvideData(data, sh) {
+            var ZoneData = [];
+            var ZoneName = [];
+            if (data != null) {
+                $(data.ServiceProv_ZoneWise_List).each(function (i, l) {
+                    ZoneName.push(l.Name);
+                    ZoneData.push(l.Count);
+                });
+                DrawServiceProv_ZoneWise(ZoneName, ZoneData, sh, "SP Zone Wise")
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function DrawServiceProv_ZoneWise(arr, arr1, sh, Name) {
+            if (sh == true) {
+                var options = {
+                    series: [{
+                        name: "",
+                        data: arr1
+                    }],
+                    chart: {
+                        type: "bar",
+                        height: 310,
+
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    xaxis: {
+                        categories: arr
+                    },
+                    yaxis: {
+
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (t) {
+                                return t
+                            }
+                        }
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                    ]
+                };
+                (Value2 = new ApexCharts(document.querySelector("#Graph_4"), options)).render();
+            }
+            else {
+                Value2.updateOptions({
+                    xaxis: {
+                        //categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                        categories: arr
+                    },
+                    series: [{
+                        name: "",
+                        data: arr1
+                    }],
+                });
+            }
+        }
+        //Long Term and Short Term
+        function LongShortTermServiceProvData(data, sh) {
+            var zoneName = [];
+            var LongTermData = [];
+            var ShortTermName = [];
+            if (data != null) {
+                $(data.LongShort_Term_List).each(function (i, m) {
+                    LongTermData.push(m.Long_Term);
+                    ShortTermName.push(m.Short_Term);
+                    zoneName.push(m.ID);
+                });
+                DrawServiceProv_LongShort(LongTermData, ShortTermName, zoneName, sh, "SP Zone Wise")
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function DrawServiceProv_LongShort(arr, arr1, arr2, sh, Name) {
+            if (sh == true) {
+                var options = {
+                    series: [{
+                        name: "Long Term",
+                        data: arr
+                    },
+                    {
+                        name: "Short Term",
+                        data: arr1
+                    }],
+                    chart: {
+                        type: "bar",
+                        height: 230,
+
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                        }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: !1,
+                            columnWidth: "40%",
+                            endingShape: "rounded"
+                        }
+                    },
+
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    xaxis: {
+                        categories: arr2
+                    },
+                    yaxis: {
+
+                    },
+                    grid: {
+                        borderColor: "#f1f1f1"
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (t) {
+                                return t
+                            }
+                        }
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                    ],
+                };
+
+                (Value3 = new ApexCharts(document.querySelector("#Graph_5"), options)).render();
+            }
+            else {
+                Value3.updateOptions({
+                    xaxis: {
+                        categories: arr2
+                    },
+                    series: [{
+                        name: "Long Term",
+                        data: arr
+                    },
+                    {
+                        name: "Long Term",
+                        data: arr1
+                    }],
+                });
+            }
+        }
+    </script>
+</body>
+
+
+

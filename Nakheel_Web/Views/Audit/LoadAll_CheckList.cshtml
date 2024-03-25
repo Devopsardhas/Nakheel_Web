@@ -1,0 +1,429 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+@model IReadOnlyCollection<Nakheel_Web.Models.AuditMaster.Audit_Schedule_Model>;
+@*@model Nakheel_Web.Models.AuditMaster.Audit_Schedule_Model;*@
+@if (Model != null)
+{
+    <div class="" id="AuditViewNotification">
+        <div class="row">
+            <div class="col-12">
+                <div class="">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-xxl-12 mb-5 mb-xxl-0">
+                            <input type="hidden" id="Unique_Id" value="@item.Unique_Id">
+                            <input type="hidden" class="Audit_Sch_Id" value="@item.Audit_Sch_Id">
+                            <input type="hidden" value="@item.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                            <input type="hidden" value="@item.Community_Id" id="Community_Id" class="Community_Ids">
+                            <input type="hidden" value="@item.Audit_Lati" id="Loc_Latitude">
+                            <input type="hidden" value="@item.Audit_Long" id="Loc_Longitude">
+                            <table class="table tab ">
+                                <tbody id="tblIncidentDetailsViewPage">
+                                    <tr>
+                                        <td><b class="font-bold">Internal Audit Reference no</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">NCM-HSSE-@item.Unique_Id</td>
+                                        <td><b class="font-bold">Reported By</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@LoginClass.First_Name</td>
+                                        <td><b class="font-bold">Designation</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@LoginClass.Designation_Name</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b class="font-bold">Date Time</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@item.DateTime</td>
+                                        <td><b class="font-bold">Business Unit</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@item.Business_Unit_Name</td>
+                                        <td><b class="font-bold">Zone</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@item.Zone_Name</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b class="font-bold">Community</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@item.Community_Master_Name</td>
+                                        <td><b class="font-bold">Lead Auditor</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@item.Lead_Auditor_Name</td>
+                                        @if (item.Business_Unit_Type != "0")
+                                        {
+                                            var obane = "";
+                                            <td><b class="font-bold">Business Unit Type</b></td>
+                                            <td>:</td>
+                                            @if (item.Business_Unit_Type == "Party")
+                                            {
+                                                obane = "JOP 3rd Party";
+                                            }
+                                            else if (item.Business_Unit_Type == "JOP_Common")
+                                            {
+                                                obane = "JOP- Common Area";
+                                            }
+                                            else if (item.Business_Unit_Type == "Master_Community")
+                                            {
+                                                obane = "Master Community";
+                                            }
+                                            else
+                                            {
+                                                obane = "N/A";
+                                            }
+                                            <td class="tdtxt" style="word-break: break-all">@obane</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <label for="example-number-input" class="col-md-6 col-form-label">Service Provider Audit Location</label>
+                                <div id="map-canvas_view"></div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label for="example-number-input" class="col-md-6 col-form-label">Audit Team</label>
+                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var Obj in item.Audit_Team_List!)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@Obj.Audit_Emp_Name</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <label for="example-number-input" class="col-md-6 col-form-label">Service Provider Team</label>
+                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var ServiceProv in item.Service_Prov_List!)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@ServiceProv.Service_Prov_Emp_Name</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <br>
+                    }
+                    <form id="Audit_Findings_Clause" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                        <div class="col-xxl-12 mb-5 mb-xxl-0">
+                            <div>
+                                <input type="hidden" class="form-control" id="Audit_Category_Id" value="1">
+                                @*<input type="hidden" name="Audit_Sch_Id" class="form-control Audit_Sch_Id" id="Audit_Sch_Id" value="0">*@
+                            </div>
+                            <label style="color: #b5abab;font-size: 13px;margin-top: 1%;">Audit Details</label>
+                            <table id="clause_Audit" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Sno</th>
+                                        <th>Clause</th>
+                                        <th>Auditor Verification Details Record Verified</th>
+                                        <th>Site Inspection Details</th>
+                                        <th>Findings</th>
+                                        <th>Evidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="Audit_Verify_details">
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit_Chk" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+<script src="~/assets/js/validation/Audit_Validation/AuditMasterValidation.js"></script>
+<script src="~/assets/js/validation/Audit_Validation/Audit_ServerDataTable.js"></script>
+<script>
+    $(document).ready(function () {
+        LoadClause();
+    });
+    function LoadClause() {
+        var subSno = 1;
+        var index = 0;
+        var markup = "";
+        var Questionnaire = 0;
+        var Audit_Category_Id = $("#Audit_Category_Id").val();
+
+        $.post("@Url.Action("Load_Sub_Topics_Quest","CommonMaster")", { Audit_Category_Id: Audit_Category_Id }, function (data) {
+            $(UI_FIELDS.AUDIT_VERIFY_DETAILS).empty();
+            $(data).each(function (i, e) {
+                if (e.Audit_Topics_Name == "") {
+                }
+                else {
+                    markup += '<tr><td>' + subSno + '</td><td  colspan=5><input class="form-control Audit_Topics_Id" type=hidden id="Audit_Topics_Id" value="' + e.Audit_Topics_Id + '"><label>' + e.Audit_Topics_Name + '</label></td></tr>';
+                    subSno++;
+                }
+                $(data[index].Audit_Sub_Topics).each(function (a, s) {
+                    $(data[index].Audit_Sub_Topics[a].Load_All_Quest).each(function (x, y) {
+                        var UploadPhotos = "Upload_Photos" + Questionnaire;
+                        var files = "files_" + Questionnaire;
+                        var AutoSavePdficons = "Pdf_Icons" + Questionnaire;
+                        markup += '<tr><td></td><td style="text-align: justify;width: 34%;"><br/><input type="hidden" class="form-control" id="Audit_Topics_Id' + Questionnaire + '" value="' + e.Audit_Topics_Id + '"><input type=""hidden id="Audit_Questionnaires_Id" value="' + y.Audit_Questionnaires_Id + '"><input type=checkbox name="Questionnaire_Details_' + Questionnaire + '" id="Questionnaire_Details_' + Questionnaire + '" class="Questionnaire_Details required" value="' + y.Audit_Questionnaires_Id + '" onchange="Audit_Quest_Validate(this.value,Questionnaire_Details_' + Questionnaire + ',aud_Verify' + Questionnaire + ',Insp_Detail_' + Questionnaire + ',Clause_Findings_' + Questionnaire + ',File_Upl_' + Questionnaire + ')">' + y.Audit_Questionnaires_Name + '<br/><span class="Questionnaire_Details-error" style="color:red;"></span></td><td><textarea name="aud_Verify' + Questionnaire + '" id = "aud_Verify' + Questionnaire + '" class="form-control aud_Verify" required disabled></textarea><span id=aud_Verify' + Questionnaire + '-error></span></td><td><textarea name="Insp_Detail_' + Questionnaire + '" id ="Insp_Detail_' + Questionnaire + '" class="form-control Insp_Detail" disabled></textarea></td>';
+                        markup += '<td>'
+                        $(data[index].Audit_Sub_Topics[a].Load_All_Quest[x].Aud_Ins_Details).each(function (p, q) {
+                            markup += '<input type="hidden" name="Findings_Type" value="' + q.Findings_Type + '"><input type=radio disabled class="Clause_Findings_' + Questionnaire + '" name="Clause_Findings_' + Questionnaire + '" id="Clause_Findings_' + Questionnaire + '" value="' + q.Findings_Id + '">' + q.Findings_Name + '<br>';
+                        });
+                        markup += '</td>'
+                        markup += '<td><input type=file accept=".png, .jpg, .jpeg" disabled name="File_Upl_' + Questionnaire + '" id="File_Upl_' + Questionnaire + '" class="form-control File_Upl" onchange="uploadFiles(this,' + "'" + files + "'" + ' ,' + "'" + UploadPhotos + "'" + ',' + "'" + AutoSavePdficons + "'" + ')" multiple><input type="hidden" class="' + UploadPhotos + '"></td></tr>'
+                        Questionnaire++;
+
+                    });
+                });
+                index++;
+            });
+            $(UI_FIELDS.AUDIT_VERIFY_DETAILS).append(markup);
+        });
+    }
+
+    function Audit_Quest_Validate(value, questionnaire_Id, verifyDetails, Inspec_Details, Findings_Type, file_Upl) {
+        const isChecked = $("#" + questionnaire_Id.id).is(":checked");
+        if (isChecked == true) {
+            $("#" + verifyDetails.id).removeAttr('disabled');
+            $("#" + Inspec_Details.id).removeAttr('disabled');
+            $("input[name=" + Findings_Type[0].name + "]").removeAttr('disabled');
+            $("input[name=" + file_Upl.name + "]").removeAttr('disabled');
+        }
+        else {
+            $("#" + verifyDetails.id).attr('disabled', true);
+            $("#" + verifyDetails.id).val('');
+            $("#" + Inspec_Details.id).attr('disabled', true);
+            $("#" + Inspec_Details.id).val('');
+            $("input[name=" + Findings_Type[0].name + "]").attr('disabled', 'disabled');
+            $("input[name=" + Findings_Type[0].name + "]").prop('checked', false);
+            $("input[name=" + file_Upl.name + "]").attr('disabled', 'disabled');
+        }
+    }
+    function uploadFiles(val, inputId, UploadPhotoId, PDFAutoSave) {
+        debugger;
+        var input = document.getElementById(inputId);
+        var files = val.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ServiceProv_Aud_UploadPhotoFiles", "Audit")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    //alert(data);
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("." + PDFAutoSave).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            //toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>
+<script>
+    $(".submit_Chk").on("click", function () {
+        debugger
+        
+        var varChecklist = [];
+
+        var Subsno = 0;
+        var varAudit_Sch_Id = $(".Audit_Sch_Id").val();
+        var isChecked = $("input[type='checkbox']").is(":checked")
+        if (!isChecked) {
+            $(".Questionnaire_Details-error").text("This field is required");
+            return false;}
+        $('#clause_Audit tbody > tr').each(function () {
+            debugger;
+            var varImagefile = [];
+            var varQuestDetails = "Questionnaire_Details_" + Subsno;
+            var CreatedBy = '@LoginClass.Employee_Identity_Id';
+
+            if ($('input[name="' + varQuestDetails + '"]').is(':checked') == true) {
+                var varAuditTopics_Id = $('#Audit_Topics_Id' + Subsno).val();
+                var varQuestionnaire_ID = $('input[name="' + varQuestDetails + '"]:checked').val();
+                var varVerifyDetails = $('#aud_Verify' + Subsno).val();
+                var varInspection_Details = $('#Insp_Detail_' + Subsno).val();
+                var varAuditFindings = $('input[name="Clause_Findings_' + Subsno + '"]:checked').val();
+                
+                var varPhoto_File_Path = $('.Upload_Photos' + Subsno).val();
+                if ((varPhoto_File_Path != "") && (varPhoto_File_Path != undefined) && (varPhoto_File_Path != null)) {
+                    var valNew = varPhoto_File_Path.split(',');
+                    for (i = 0; i < valNew.length; i++) {
+                        var t = valNew[i].replace(/[\(\)\[\]{}'"]/g, "");
+
+                        var Photodata = {};
+                        Photodata.File_Upl_Id = "0";
+                        Photodata.Audit_Schd_Id = varAudit_Sch_Id;
+                        Photodata.File_Path = t;
+                        Photodata.CreatedBy = '@LoginClass.Employee_Identity_Id';
+                        varImagefile.push(Photodata);
+                    }
+                }
+                if (varVerifyDetails == "" || varVerifyDetails == undefined) {
+                    $("#aud_Verify" + Subsno + "-error").text("This field is required");
+                    return false;
+                }
+                           
+                var data = {}
+                data.Audit_Sch_Id = varAudit_Sch_Id;
+                data.Audit_Topics_Id = varAuditTopics_Id;
+                data.Audit_Quest_Id = varQuestionnaire_ID;
+                data.Audit_Verifi_Details = varVerifyDetails;
+                data.Site_Inspection_Details = varInspection_Details;
+                data.Audit_Findings_ID = varAuditFindings;
+                data.Checklist_File_Upl = varImagefile;
+                data.CreatedBy = CreatedBy;
+                varChecklist.push(data);
+            }
+
+
+            Subsno++;
+        });
+
+        var Obj = {
+
+            add_Audit_Chk_List: varChecklist
+        };
+        $.ajax({
+            url: "/Audit/Add_Audit_Checklist",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+</script>
+<script>
+    // if HTML DOM Element that contains the map is found...
+    if (document.getElementById('map-canvas_view')) {
+        var content;
+        var latitude = $("#Loc_Latitude").val();
+        var longitude = $("#Loc_Longitude").val();
+        var map;
+        var marker;
+        navigator.geolocation.getCurrentPosition(loadMap);
+
+        function loadMap(location) {
+            if (location.coords) {
+                latitude = $("#Loc_Latitude").val();//location.coords.latitude;
+                longitude = $("#Loc_Longitude").val();//location.coords.longitude;
+            }
+
+            // Coordinates to center the map
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+            // Other options for the map, pretty much selfexplanatory
+            var mapOptions = {
+                zoom: 12,
+                center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                mapTypeId: google.maps.MapTypeId.PLAN,
+            };
+
+            var image = '../assets/images/mappin.png';
+            // Attach a map to the DOM Element, with the defined settings
+            map = new google.maps.Map(document.getElementById("map-canvas_view"), mapOptions);
+
+            content = document.getElementById('information');
+            google.maps.event.addListener(map, 'click', function (e) {
+                placeMarker(e.latLng);
+            });
+            marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                icon: image
+            });
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+
+</script>

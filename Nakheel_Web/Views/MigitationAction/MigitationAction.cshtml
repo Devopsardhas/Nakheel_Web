@@ -1,0 +1,107 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Emergency Action";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="List_View">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Emergency Action List</h4></div>
+                        <div class="col-lg-2" style="padding:15px;">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tbl_Migitation" class="table table-striped tblround table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Alert ID</th>
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Hot-Spot</th>
+                                    <th>Emergency Type</th>
+                                    <th>Created By</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_Migitation">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Mitigation_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Emergency Action</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="View_back_mitigation" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="View_Mitigation_List">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="~/assets/js/emergency/serversidedatatablemitigationaction.js"></script>
+
+<script>
+    var login = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        LIST_VIEW: "#List_View",
+        TBL_MITIGATION: "#tbl_Migitation",
+        TBODY_MITIGATION: "#tbody_Migitation",
+        MITIGATION_VIEW: "#Mitigation_View",
+        VIEW_MITIGATION_LIST: "#View_Mitigation_List",
+        BTN_VIEW_BACK: "#View_back_mitigation",
+    });
+
+    $(function(){
+        debugger;
+        login = '@LoginClass.Employee_Identity_Id';
+        Mitigation_Action_ServerTable(login);
+        $(UI_Fields.BTN_VIEW_BACK).on('click', BTN_VIEW_BACK);
+    });
+
+    function BTN_VIEW_BACK() {
+        $(UI_Fields.MITIGATION_VIEW).hide(100);
+        $(UI_Fields.LIST_VIEW).show(100);
+        window.location.reload();
+    }
+</script>

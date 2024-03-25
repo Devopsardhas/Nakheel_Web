@@ -1,0 +1,2948 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Incident Report Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/frmwiz.css" rel="stylesheet" />
+
+<style>
+    .m-txt-req {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_1 {
+        margin-top: 3px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_11 {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+        margin-left: 61%;
+    }
+
+
+    .clstr {
+        background: #f8f9fa !important;
+        color: #545965 !important;
+    }
+
+    .labl {
+        color: #00263a;
+        font-size: 17px;
+    }
+</style>
+
+<style>
+    .floatBlock {
+        margin: 0 1.81em 0 0;
+    }
+
+    .InjuredOptions_1 {
+        border: none;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .radioBtnClass {
+        accent-color: #00263a !important;
+    }
+
+    .fieldsetbox {
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 11px;
+        border: 1px solid #00263a;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<style>
+
+    .floatBlock {
+        margin: 0 1.81em 0 0;
+    }
+
+    .InjuredOptions {
+        border: none;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .radioBtnClass {
+        accent-color: #00263a !important;
+    }
+
+    #search_input_1 {
+        font-size: 18px;
+        width: 330px;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: 311px !important;
+    }
+
+    #search_input {
+        font-size: 18px;
+        width: 46% !important;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: -6px !important;
+    }
+</style>
+<style>
+    .human-body {
+        width: 207px;
+        position: relative;
+        height: 360px;
+        display: block;
+    }
+
+        .human-body svg:hover {
+            cursor: pointer;
+        }
+
+        .human-body svg path:hover {
+            fill: #a80000;
+        }
+
+        .human-body svg {
+            position: absolute;
+            fill: #000;
+        }
+
+
+    #area #data {
+        color: black;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Incident Notification List</h4></div>
+
+                    @if (LoginClass.Role_Id != "19")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_add_Report_incident" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Incident</button>
+                        </div>
+                    }
+
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Inc Category</th>
+                            <th>Inc Type</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Last Action</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetIncidentReportList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Incident_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Investigation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                    <input type="hidden" id="Investigation_Id" value="0" />
+                </div>
+            </div>
+            <div class="card-body" style="padding: 0.25rem 1.25rem !important;">
+                <form id="msform" method="get" action="#" novalidate="novalidate" class="cmxform">
+                    <input class="form-control" type="hidden" value="0" id="Inc_Id">
+                    <input class="form-control" type="hidden" value="" id="Lat">
+                    <input class="form-control" type="hidden" value="" id="Long">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Reported by<span class="requ">*</span> </label>
+                                <div class="">
+                                    <input class="form-control" type="text" value="@LoginClass.Company_Name" id="Company_Name" name="Company_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="">
+                                <label for="" class="col-md-6 col-form-label">Reporting Staff Name<span class="requ">*</span></label>
+                                <div class="">
+                                    <input class="form-control" type="text" value="@LoginClass.First_Name" id="Contact_Name" name="Contact_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Mobile Number<span class="requ">*</span></label>
+                                <div class="">
+                                    <input class="form-control numbersonly" type="text" value="@LoginClass.Mobile_Number" placeholder="" id="Mobile_Number" name="Mobile_Number" maxlength="10">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <lable style="color: #FFF;font-size: 13px;margin-top: 1%;">Incident Details</lable>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="">Incident Category<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control SelIncident_Category required" id="Inc_Category_Id" name="Sel_Incident_Cat" onchange="FN_INC_CAT(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="Inc_Time" class="">Time Of Incident<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <input class="form-control required" type="time" value="" placeholder="" id="Inc_Time" name="Inc_Time">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="">Community<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" id="Community_Id" name="Community" onchange="Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none" id="Fn_Fire_Location">
+                                <label for="example-text-input" class="">Fire Location<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" id="Inc_Fire_Location" name="Inc_Fire_Location">
+                                        <option value="0">--Select--</option>
+                                        <option value="Shops">Shops</option>
+                                        <option value="Restaurant">Restaurant</option>
+                                        <option value="Apartments">Apartments</option>
+                                        <option value="External">External area</option>
+                                        <option value="Building">Building common area</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none" id="Inc_Service_Provider_Drp">
+                                <label for="example-text-input" class="">Service Provider<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control N_Service_Provider required" id="N_Service_Provider" name="N_Service_Provider">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none" id="Inc_Incident_Party_txt">
+                                <label for="Des_Description_Incident_Party" class="">Description of Incident Party<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <input class="form-control required" type="text" value="" placeholder="" id="Description_of_Incident_Party" name="Description_of_Incident_Party">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="">Incident Type<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control SelIncident_Type required" id="Inc_Type_Id"
+                                            name="Inc_Type_Id" onchange="FnIncident_Type(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-password-input" class="">Business Unit<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" name="Business_Unit" id="Business_Unit">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Div_Building">
+                                <label for="example-tel-input" class="">Building<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" placeholder="--Select Building--" name="Building" id="Building_Id" onchange="Fn_Building()">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="DivInvolved_In_Accident" style="display:none">
+                                <label for="example-tel-input" class="">Parties Involved In The Accident<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" placeholder="--Select Involved In The Accident--" name="Involved_Accident" id="Involved_Accident">
+                                        <option value="0">--Select--</option>
+                                        <option value="NCM">NCM</option>
+                                        <option value="Service_Provider">NCM Service Provider</option>
+                                        <option value="Other">Other 3rd Party</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="">Date Of Incident<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <input type="date" class="form-control Inc_Date_min" id="Inc_Date" name="Inc_Date">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-url-input" class="">Zone<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control" id="Zone" name="Zone" onchange="Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="mb-3 row" style="" id="Fn_Business_Unit_Type">
+                                <label for="example-text-input" class="">Incident Party<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" id="Incident_Party" name="Incident_Party" onchange="Fn_Incident_Party(this.value)">
+                                        <option value="" disabled selected="selected">--Select--</option>
+                                        <option value="Service Provider">Service Provider</option>
+                                        <option value="JOP building">JOP building</option>
+                                        <option value="3rd Party">3rd Party</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="row">
+                                <label for="" class="col-md-4 col-form-label">Is There Any Injury/Illness?<span class="requ">*</span></label>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="InjYes" class="" onclick="FnInjuryIllness('1')">
+                                        <label for="Yes"> <input id="Yes" class="injuryillness required" name="Injuredillness" type="radio" value="Yes" />&nbsp;Yes </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="InjNo" class="floatBlock" onclick="FnInjuryIllness('2')">
+                                        <label for="No"> <input id="No" class="injuryillness" name="Injuredillness" type="radio" value="No" />&nbsp;No </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6" style="display:none" id="FnNahkeelProperty">
+                            <div class="row">
+                                <label for="" class="col-md-5 col-form-label">If Any Nakheel Property Damaged?<span class="requ">*</span></label>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="InjYes" class="" onclick="FnProperty('1')">
+                                        <label for="PropertyYes"> <input id="PropertyYes" class="PropertyDamaged required" name="PropertyDamaged" type="radio" value="Yes" />&nbsp;Yes </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="InjNo" class="floatBlock" onclick="FnProperty('2')">
+                                        <label for="PropertyNo"> <input id="PropertyNo" class="PropertyDamaged" name="PropertyDamaged" type="radio" value="No" />&nbsp;No </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12" style="display:none" id="FnInsurance">
+                            <div class="row">
+                                <label for="" class="col-md-3 col-form-label">Is There Any Insurance Claim Needed?<span class="requ">*</span> </label>
+                                <div class="col-md-1 col-form-label">
+                                    <div id="InjYes" class="" onclick="Fninsuranceclaim('1')">
+                                        <label for="insuranceYes"> <input id="insuranceYes" class="Insuranceclaim required" name="Insuranceclaim" type="radio" value="Yes" />&nbsp;Yes </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="InjNo" class="floatBlock" onclick="Fninsuranceclaim('2')">
+                                        <label for="insuranceNo"> <input id="insuranceNo" class="Insuranceclaim" name="Insuranceclaim" type="radio" value="No" />&nbsp;No </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="PersonalDetails" style="display:none">
+                            <div class="row">
+                                <div class="col-lg-10"> <h5 class="card-title">Injured Person’s Personal Details </h5></div>
+                                <div class="col-lg-2">
+                                    <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="Inc_AddPersonAction()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                </div>
+                            </div>
+                            <br />
+                            <table id="tblIncidentInjuredPerson" class="table table-striped dt-responsive tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center">Injured Person</th>
+                                        <th style="text-align:center">Name</th>
+                                        <th style="text-align:center">Contact No</th>
+                                        <th style="text-align:center">Person Injured Parts</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GetInjuredPersonList">
+                                    <tr>
+                                        <td>
+                                            <div id="paymentContainer" name="paymentContainer" class="InjuredOptions">
+                                                <div id="InjVisitor" class="floatBlock">
+                                                    <label for="Visitor"> <input id="Visitor" class="radioBtnClass" name="InjuredType" type="radio" value="Visitor" />&nbsp;Visitor </label>
+                                                </div>
+                                                <div id="InjResident" class="floatBlock">
+                                                    <label for="Resident"> <input id="Resident" class="radioBtnClass" name="InjuredType" type="radio" value="Resident" />&nbsp;Resident </label>
+                                                </div>
+                                                <div id="InjStaff" class="floatBlock">
+                                                    <label for="Staff"> <input id="Staff" class="radioBtnClass" name="InjuredType" type="radio" value="Staff" />&nbsp;Staff</label>
+                                                </div>
+                                                <div id="InjContractor" class="floatBlock">
+                                                    <label for="Contractor"> <input id="Contractor" class="radioBtnClass" name="InjuredType" type="radio" value="Contractor" />&nbsp;Contractor</label>
+                                                </div>
+                                                <div id="InjOther" class="floatBlock">
+                                                    <label for="Other"> <input id="Other" class="radioBtnClass" name="InjuredType" type="radio" value="Other" />&nbsp;Other</label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td id="otherEmpname"><input type="text" class="form-control InjuredPersonName" id="Eemp_name" /></td>
+                                        <td id="Empname">
+                                            <select class="form-control InjuredPersonName" name="Employee_Id" id="Employee_Id" onchange="Fn_EmpContacNo(this.value)">
+                                            </select>
+                                        </td>
+                                        <td id="otherEmpcontactno"><input type="text" class="form-control InjuredPersonContactNo numbersonly" maxlength="10" /></td>
+                                        <td>
+                                            <div id="app">
+                                                <div id="viewbodyparts">
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <span class="boadyheader" hidden>{{data_clicked_id}}</span>
+                                                    <div id="area" class="boadyheader-sub">
+                                                        <span style="font-weight: bold;">Area: </span> <span id="EmergBPdata"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="display: none;">Person Id</th>
+                                        <th>Injured Person</th>
+                                        <th>Name</th>
+                                        <th>Contact No</th>
+                                        <th>Injury Parts</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Description Of The Incident</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Description" style="height: 130px;"></textarea>
+                                </div>
+                                <div class="row">
+                                    <label for="example-number-input" class="col-form-label">Immediate Actions Taken <span class="requ">*</span></label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control required" id="Immediate_Actions" name="Immediate_Actions" style="height: 136px"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="example-number-input" class="col-md-2 col-form-label">Exact Location</label>
+                                    <div id="GoogleMapApi"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 row">
+                            <label for="" class="col-md-4 col-form-label">Follow Up Required?<span class="requ">*</span></label>
+                            <div class="col-md-2 col-form-label">
+                                <div id="InjYes" class="">
+                                    <label for="FollowYes"> <input id="FollowYes" class="Followrequired required" name="Followrequired" type="radio" value="Yes" />&nbsp;Yes </label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-form-label">
+                                <div id="InjNo" class="floatBlock">
+                                    <label for="FollowNo"> <input id="FollowNo" class="Followrequired" name="Followrequired" type="radio" value="No" />&nbsp;No </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="FnRequired_Actions" style="display:none">
+                            <label for="example-number-input" class="col-form-label">Follow Up Action Required <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <textarea class="form-control required" id="Required_Actions" name="Required_Actions" style="height: 92px;resize:none"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="">
+                                <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                                <div class="row mb-3" id="MediaDiv">
+                                    <div class="form-group col-md-6">
+                                        <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                        <div class="file-loading">
+                                            <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                        </div>&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                                        <div class="">
+                                            <input id="inputVideo" name="files" type="file" accept="video/*" multiple>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-lg-8" id="Willing_Provide">
+                            <label for="" class="col-md-6 col-form-label">Would You Like To Provide More Information?</label>
+                            <div class="col-md-2 col-form-label">
+                                <div id="_InjYesReq" class="" onclick="FnInjuryIllness_Yes('1')">
+                                    <label for="InjYesReq"> <input id="InjYesReq" class="injuryillness_yes" name="Injuredillness_yes" type="radio" value="Yes" />&nbsp;Yes </label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-form-label">
+                                <div id="_InjNoReq" class="floatBlock" onclick="FnInjuryIllness_Yes('2')">
+                                    <label for="InjNoReq"> <input id="InjNoReq" class="injuryillness_yes" name="Injuredillness_yes" type="radio" value="No" />&nbsp;No </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divVechicleAccident" style="display:none">
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Vehicle Accident</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="Vechicle_Accident_List" style="display: contents;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="divInjurytype" style="display:none">
+                            <div class="row" id="DivInjuryTypeS" style="display:none">
+                                <div class="mb-3">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Injury Type</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="InjuryTypesList" style="display: contents;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="DivNatureOfInjury" style="display:none">
+                                <div class="mb-3 row">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Nature Of Injury /Illness </label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="NatureInjuryTypesList" style="display: contents;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="display:none">
+                                <br />
+                                <div class="col-lg-12">
+                                    <label for="" class="col-md-12 col-form-label">Description of the main circumstances leading to the Incident: (Event Chronology and Outcome)</label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" id="Description_circumstances" style="height: 107px;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-6" style="">
+                                    <div class="row"><div class="col-lg-10"> <h5 class="card-title">Applicable Reports <span class="requ">*</span></h5></div></div>
+                                    <br />
+                                    <table id="tblinveAttachments" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center">Document Type</th>
+                                                <th style="text-align:center">Yes/No</th>
+                                                <th style="text-align:center">Justification / Comments </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="clstr">
+                                                <td>Police Report </td>
+                                                <td>
+                                                    <input type="hidden" value="Police Report" class="clsTitle" />
+                                                    <input type="radio" name="policeReport" class="clsyes_no_1" onclick="FnPoilceReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="policeReport" class="clsyes_no_1" onclick="FnPoilceReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="policeReport" class="clsyes_no_1" onclick="FnPoilceReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+
+                                                <td style="display:none;" class="Rem_1" id="PoliceReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Police_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_1" placeholder="" id="example_PoliceReport1" name="txtPoliceReport1"></td>
+                                                <td class="com_1" id="PoliceReport2" style="width: 45%;">
+                                                    <input type="file" class="form-control file_Upl_1" placeholder="" id="example_PoliceReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Police_Documents_File','UploadPhots_1')" name="txtPoliceReport1" accept=".jpg,.png,.jpeg,.pdf">
+                                                    <div id="UploadPhots_1"></div>
+                                                </td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>Medical Report </td>
+                                                <td>
+                                                    <input type="hidden" value="Medical Report" class="clsTitle" />
+                                                    <input type="radio" name="MedicalReport" class="clsyes_no_2" onclick="FnMedicalReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="MedicalReport" class="clsyes_no_2" onclick="FnMedicalReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="MedicalReport" class="clsyes_no_2" onclick="FnMedicalReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_2" id="MedicalReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Medical_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_2" placeholder="" id="example_MedicalReport1" name="txtMedicalReport1"></td>
+                                                <td class="com_2" id="MedicalReport2" style="width: 45%;">
+                                                    <input type="file" class="form-control file_Upl_2" placeholder="" id="example_MedicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Medical_Documents_File','UploadPhots_2')" name="txtMedicalReport1" accept=".jpg,.png,.jpeg,.pdf">
+                                                    <div id="UploadPhots_2"></div>
+                                                </td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>Technical Report </td>
+                                                <td>
+                                                    <input type="hidden" value="Technical Report" class="clsTitle" />
+                                                    <input type="radio" name="TechnicalReport" class="clsyes_no_3" onclick="FnTechnicalReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="TechnicalReport" class="clsyes_no_3" onclick="FnTechnicalReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="TechnicalReport" class="clsyes_no_3" onclick="FnTechnicalReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_3" id="TechnicalReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Technical_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_3" placeholder="" id="example_TechnicalReport1" name="txtTechnicalReport1"></td>
+                                                <td class="com_3" id="TechnicalReport2" style="width: 45%;"><input type="file" class="form-control file_Upl_3" placeholder="" id="example_TechnicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Technical_Documents_File','UploadPhots_3')" name="TechnicalReport3" accept=".jpg,.png,.jpeg,.pdf"><div id="UploadPhots_3"></div></td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>DCD Report </td>
+                                                <td>
+                                                    <input type="hidden" value="DCD Report" class="clsTitle" />
+                                                    <input type="radio" name="DCDReport" class="clsyes_no_4" onclick="FnDCDReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="DCDReport" class="clsyes_no_4" onclick="FnDCDReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="DCDReport" class="clsyes_no_4" onclick="FnDCDReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_4" id="DCDReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_DCD_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_4" placeholder="" id="example_DCDReport1" name="txtDCDReport1"></td>
+                                                <td class="com_4" id="DCDReport2" style="width: 45%;"><input type="file" class="form-control file_Upl_4" placeholder="" id="example_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_DCD_Documents_File','UploadPhots_4')" name="txtDCDReport1" accept=".jpg,.png,.jpeg,.pdf"><div id="UploadPhots_4"></div></td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>Witness Statement </td>
+                                                <td>
+                                                    <input type="hidden" value="Witness Statement" class="clsTitle" />
+                                                    <input type="radio" name="WitnessReport" class="clsyes_no_5" onclick="FnWitnessReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="WitnessReport" class="clsyes_no_5" onclick="FnWitnessReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="WitnessReport" class="clsyes_no_5" onclick="FnWitnessReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_5" id="WitnessReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Witness_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_5" placeholder="" id="example_Witness1" name="txtWitness1"></td>
+                                                <td class="com_5" id="WitnessReport2" style="width: 45%;"><input type="file" class="form-control file_Upl_5" placeholder="" id="example_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Witness_Documents_File','UploadPhots_5')" name="txtWitness1" accept=".jpg,.png,.jpeg,.pdf"><div id="UploadPhots_5"></div></td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>IP Statement </td>
+                                                <td>
+                                                    <input type="hidden" value="IP Statement" class="clsTitle" />
+                                                    <input type="radio" name="IPReport" class="clsyes_no_6" onclick="FnIPReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="IPReport" class="clsyes_no_6" onclick="FnIPReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="IPReport" class="clsyes_no_6" onclick="FnIPReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_6" id="IPReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_IP_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_6" placeholder="" id="example_IP1" name="txtIP1"></td>
+                                                <td class="com_6" id="IPReport2" style="width: 45%;"><input type="file" class="form-control file_Upl_6" placeholder="" id="example_IP2" onchange="Applicalbe_Documents_File(this,'hdncls_IP_Documents_File','UploadPhots_6')" name="txtIP1" accept=".jpg,.png,.jpeg,.pdf"><div id="UploadPhots_6"></div></td>
+                                            </tr>
+                                            <tr class="clstr">
+                                                <td>Others, Please Specify</td>
+                                                <td>
+                                                    <input type="hidden" value="Others" class="clsTitle" />
+                                                    <input type="radio" name="OthersReport" class="clsyes_no_7" onclick="FnOthersReport(this.value)" style="vertical-align:inherit" value="Yes" /> Yes&nbsp;
+                                                    <input type="radio" name="OthersReport" class="clsyes_no_7" onclick="FnOthersReport(this.value)" style="vertical-align:inherit" value="No" /> No&nbsp;
+                                                    <input type="radio" name="OthersReport" class="clsyes_no_7" onclick="FnOthersReport(this.value)" style="vertical-align:inherit" value="NA" /> NA&nbsp;
+                                                </td>
+                                                <td style="display:none;" class="Rem_7" id="OthersReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Others_Documents_File APPENDIX_A_Viewhide" /><input type="text" class="form-control clsRemarks comments_7" placeholder="" id="example_Others1" name="txtOthers1"></td>
+                                                <td class="com_7" id="OthersReport2" style="width: 45%;"><input type="file" class="form-control file_Upl_7" placeholder="" id="example_Others2" onchange="Applicalbe_Documents_File(this,'hdncls_Others_Documents_File','UploadPhots_7')" name="txtOthers1" accept=".jpg,.png,.jpeg,.pdf"><div id="UploadPhots_7"></div></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-lg-6" style="">
+                                    <div class="row"><div class="col-lg-10"> <h5 class="card-title">Other Parties Involved In The Incident</h5></div></div>
+                                    <br />
+                                    <table id="tblOtherparties" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:center">Role/Position</th>
+                                                <th style="text-align:center">Name</th>
+                                                <th style="text-align:center">Contact Number </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GetIncidentList">
+                                            <tr>
+                                                <td>Supervisor</td>
+                                                <td>
+                                                    <input type="hidden" value="Supervisor" class="clsRole" /><input type="text" class="form-control clsname OtherParties_1" id="OtherParties_1" />
+                                                </td>
+                                                <td><input type="text" class="form-control clsContactno numbersonly otherPartiesContact_1" maxlength="10" id="otherPartiesContact_1" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Manager</td>
+                                                <td>
+                                                    <input type="hidden" value="Manager" class="clsRole" /> <input type="text" class="form-control clsname OtherParties_2" id="OtherParties_2" />
+                                                </td>
+                                                <td><input type="text" class="form-control clsContactno numbersonly otherPartiesContact_2" maxlength="10" id="otherPartiesContact_2" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Witness/(s)</td>
+                                                <td><input type="hidden" value="Witness" class="clsRole" /> <input type="text" class="form-control clsname OtherParties_3" id="OtherParties_3" /></td>
+                                                <td><input type="text" class="form-control clsContactno numbersonly otherPartiesContact_3" maxlength="10" id="otherPartiesContact_3" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Any Other</td>
+                                                <td><input type="hidden" value="Other" class="clsRole" /> <input type="text" class="form-control clsname OtherParties_4" id="OtherParties_4" /></td>
+                                                <td><input type="text" class="form-control clsContactno numbersonly otherPartiesContact_4" maxlength="10" id="otherPartiesContact_4" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div><label style="font-size: 19px !important;">INCIDENT INVESTIGATION SUMMARY</label></div>
+                                            <p>Fill All Form Field To Go To Next Step</p>
+                                            <div class="row">
+                                                <div class="col-md-12 mx-0">
+
+                                                    <!-- progressbar -->
+                                                    <ul id="progressbar">
+                                                        <li class="active msformprg" id="account"><strong>Incident Causes Details</strong></li>
+                                                        <li class="msformprg" id="personal"><strong>Injury Details</strong></li>
+                                                        <li class="msformprg" id="confirm"><strong>Additional Information</strong></li>
+                                                    </ul> <!-- fieldsets -->
+                                                    <fieldset id="individual_Application">
+                                                        <section>
+                                                            <div class="mb-3 fieldsetbox">
+                                                                <label for="example-number-input" class="col-md-4 col-form-label labl">Immediate Cause* (Unsafe Act):</label>
+                                                                <div class="row" style="margin-left: 0%;">
+                                                                    <div id="UnsafeActList" style="display: contents;">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="mb-3 fieldsetbox">
+                                                                    <label for="example-number-input" class="col-md-4 col-form-label labl">Immediate Cause* (Unsafe Conditions):</label>
+                                                                    <div class="row" style="margin-left: 0%;">
+                                                                        <div id="UnsafeConditionList" style="display: contents;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="mb-3 fieldsetbox">
+                                                                    <label for="example-number-input" class="col-md-4 col-form-label labl">Root Causes* (Personal Factor):</label>
+                                                                    <div class="row" style="margin-left: 0%;">
+                                                                        <div id="PersonalFactorList" style="display: contents;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div>
+                                                                <div class="mb-3 fieldsetbox">
+                                                                    <label for="example-number-input" class="col-md-4 col-form-label labl">Root Causes* (System Factor):</label>
+                                                                    <div class="row" style="margin-left: 0%;">
+                                                                        <div id="SystemFactorList" style="display: contents;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                        <button type="submit" class="next action-button" value="1" style="float:right">Next Step</button>
+                                                    </fieldset>
+                                                    <fieldset>
+                                                        <section>
+                                                            <div id="NO_Injury_Type" style="display:none">
+                                                                <div>
+                                                                    <div class="mb-3">
+                                                                        <label for="example-number-input" class="col-md-12 col-form-label labl" style="text-align: center;font-size: 21px;">Is There Any Injury/Illness: No</label>
+                                                                        <div class="row" style="margin-left: 0%;">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="divbodyLocation" style="display:none">
+                                                                <div>
+                                                                    <div class="mb-3 fieldsetbox">
+                                                                        <label for="example-number-input" class="col-md-4 col-form-label labl">Mechanism Of Injury/ Illness:</label>
+                                                                        <div class="row" style="margin-left: 0%;">
+                                                                            <div id="MechanismInjuryList" style="display: contents;">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="mb-3 fieldsetbox">
+                                                                        <label for="example-number-input" class="col-md-4 col-form-label labl">Agency / Source Of Injury / Illness:</label>
+                                                                        <div class="row" style="margin-left: 0%;">
+                                                                            <div id="AgencyInjuryList" style="display: contents;">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div style="display:none">
+                                                                    <div class="col-2">
+                                                                        <div class="mb-4">
+                                                                            <label for="formrow-firstname-input" class="form-label labl">Bodily Location:</label>
+                                                                            <img src="~/assets/images/human.svg" alt="Body Maps" width="500" height="200" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="background: #f9fafa;padding: 10px;border-radius: 10px;display:none" id="Is_Environmental_Impact">
+                                                                <div class="row">
+                                                                    <div class="mb-3">
+                                                                        <label for="formrow-firstname-input" class="form-label labl">Environmental Impact details (If Environment Incident)</label>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="mb-3 row">
+                                                                            <label for="example-tel-input" class="col-md-4 col-form-label">Environmental Incident</label>
+                                                                            <div class="col-md-8">
+                                                                                <select class="form-control" name="EnvironmentalIncident" placeholder="This is a search placeholder" id="EnvironmentalIncidentId">
+                                                                                    <option selected>--Select Environmental Incident--</option>
+                                                                                    <option value="Chemical">Chemical</option>
+                                                                                    <option value="Gas">Gas</option>
+                                                                                    <option value="Oil">Oil</option>
+                                                                                    <option value="Hazard">Hazard</option>
+                                                                                    <option value="Wastewater_Disposal">Wastewater Disposal</option>
+                                                                                    <option value="Others">Others</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="mb-3 row">
+                                                                            <label for="example-tel-input" class="col-md-4 col-form-label">Cause Of Release</label>
+                                                                            <div class="col-md-8">
+                                                                                <select class="form-control" name="Cause_Of_Release" placeholder="This is a search placeholder" id="Cause_Of_Release">
+                                                                                    <option selected value="0">--Select Cause Of Release--</option>
+                                                                                    <option value="LOPC">LOPC(Lose of Primary Containment)</option>
+                                                                                    <option value="Human_Error">Human Error</option>
+                                                                                    <option value="Inadequate_Containment">Inadequate Containment</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <label for="" class="col-md-5 col-form-label">Impact Details</label>
+                                                                        <div class="col-md-12">
+                                                                            <textarea class="form-control" id="Impact_Details" name="Impact_Details">
+                                                                </textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <div style="background: #f9fafa;padding: 10px;border-radius: 10px;display:none" id="Is_Security_Impact">
+                                                                <div class="row">
+                                                                    <div class="mb-3">
+                                                                        <label for="formrow-firstname-input" class="form-label labl">Security Impact Details (If Security Incident)</label>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="mb-3 row">
+                                                                            <label for="example-tel-input" class="col-md-4 col-form-label">Classification</label>
+                                                                            <div class="col-md-8">
+                                                                                <select class="form-control" id="ClassificationList" name="Classification" placeholder="This is a search placeholder" onchange="Fn_Classification(this.value)">
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-6">
+                                                                        <div class="mb-3 row">
+                                                                            <label for="example-tel-input" class="col-md-4 col-form-label">Type of Security Incident</label>
+                                                                            <div class="col-md-8">
+                                                                                <select class="form-control" id="TypeSecurityIncidentList" name="Type_Security_Incident" placeholder="This is a search placeholder">
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <label for="" class="col-md-5 col-form-label">Impact Details</label>
+                                                                        <div class="col-md-12">
+                                                                            <textarea class="form-control" id="Sec_ImpactDetails"></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                            </div>
+                                                        </section>
+                                                        <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                                                        <button type="submit" name="next" class="next action-button" value="2" style="float:right">Next Step</button>
+                                                    </fieldset>
+                                                    <fieldset>
+                                                        <section>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <label for="example-email-input" class="col-md-5 col-form-label labl">Additional Information: (Optional)</label>
+                                                                    <div class="col-md-12">
+                                                                        <textarea class="form-control" id="Additional_Information"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br />
+                                                            <div class="">
+                                                                <div class="row">
+                                                                    <div class="col-lg-10"> <h5 class="card-title">Actions Taken Immediately After The Incident:</h5></div>
+                                                                    <div class="col-lg-2">
+                                                                        <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_ActionsTaken()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                                <table id="tblActions_Taken_Immediately" class="table table-striped dt-responsive nowrap" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Description Of The Actions</th>
+                                                                            <th>Action Taken By</th>
+                                                                            <th>Date Completed</th>
+                                                                            @*<th>Action</th>*@
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="GetActionTakenList">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input type="text" class="form-control clsDescriptionAction" name="ImmediatelyActionDescription" />
+                                                                                <label id="txtImmediatelyActionDescription" style="color:red"> </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="text" class="form-control clsActiontakenby" name="ImmediatelyActionTaken" />
+                                                                                <label id="txtImmediatelyActionTaken" style="color:red"> </label>
+                                                                            </td>
+                                                                            <td>
+                                                                                <input type="date" class="form-control clsActionDate" name="ImmediatelyActionDate" />
+                                                                                <label id="txtImmediatelyActionDate" style="color:red">
+                                                                                </label>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <br />
+                                                            <div class="">
+                                                                <div class="row">
+                                                                    <div class="col-lg-10"> <h5 class="card-title">Incident Root Cause(s):</h5></div>
+                                                                    <div class="col-lg-2">
+                                                                        <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_IncidentRootCause()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                                <table id="tblIncidentRootCause" class="table table-striped dt-responsive nowrap" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Description</th>
+                                                                            @*<th>Action</th>*@
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="GetIncidentRootCauseList">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input type="text" class="form-control clsIncidentRootCause" name="IncidentRootCauseDes" />
+                                                                                <label id="txtIncidentRootCause" style="color:red"></label>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <br />
+                                                            <div class="">
+                                                                <div class="row">
+                                                                    <div class="col-lg-10"> <h5 class="card-title">Corrective Actions To Prevent Recurrence:</h5></div>
+                                                                    <div class="col-lg-2">
+                                                                        <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_Corrective_Actions()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                                                    </div>
+                                                                </div>
+                                                                <br />
+                                                                <table id="tblCorrectiveAction" class="table table-striped dt-responsive nowrap" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Required Action</th>
+                                                                            <th>Action Taken</th>
+                                                                            <th>Priority (High/Low/Medium)</th>
+                                                                            <th>Target Date / Completion Date</th>
+                                                                            <th>Upload Evidence</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="GetCorrectiveActionList">
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <label for="example-email-input" class="col-md-12 col-form-label labl">Risk Assessment & Environmental Impact Assessment Revised, And Staff Refresher Training Completed (As Applicable)</label>
+                                                                    <div class="col-md-12">
+                                                                        <textarea class="form-control" id="Risk_Assessment_Impact"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <label for="example-email-input" class="col-md-12 col-form-label labl">Upload Evidence Of Risk Assessment & Training</label>
+                                                                    <div class="col-md-12">
+                                                                        <input type="hidden" id="hdnService_Appendix_A" class="hdncls_Evidence_Documents_File APPENDIX_A_Viewhide" />
+                                                                        <input type="file" class="form-control" id="Invs_File_Path" name="Invs_File_Path" onchange="Applicalbe_Documents_File(this,'hdncls_Evidence_Documents_File')" accept=".jpg,.jpeg,.png,.doc,.docx,.pdf" />
+                                                                        <div id="Inves_Evidence_Upl"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                        <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                                                        <input type="button" name="make_payment" class="action-button" value="Confirm" id="btn_Confirm" style="float:right;cursor:pointer" />
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="display:none" id="divIncidentSubmit">
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="Fn_Submit_Incident()">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Inc_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Incident </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewIncidentList">
+                </div>
+
+                <div id="ViewInvestigationListAppr">
+                </div>
+
+                <div id="ViewInvestigatinApproveProcess">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/assets/js/validation/incident_validation/incidentreportvalidation.js"></script>
+<script src="~/assets/js/validation/investigation_validation/frmwizard.js"></script>
+<script src="~/assets/js/validation/incident_validation/serversidedatatable.js"></script>
+
+<script>
+    function Fn_Submit_Incident() {
+        debugger;
+        let valid = $("#msform").valid();
+        if (!valid) {
+            $("#Inc_Category_Id-error").addClass('m-txt-req');
+            $("#Inc_Type_Id-error").addClass('m-txt-req');
+            $("#Inc_Date-error").addClass('m-txt-req');
+            $("#Building_Id-error").addClass('m-txt-req');
+            $("#Injuredillness-error").addClass('m-txt-req_1');
+            $("#Immediate_Actions-error").addClass('m-txt-req_1');
+            $("#Inc_Time-error").addClass('m-txt-req_1');
+            $("#Community_Id-error").addClass('m-txt-req');
+            $("#Required_Actions-error").addClass('m-txt-req');
+            $("#Followrequired-error").addClass('m-txt-req_1');
+            $("#search_input-error").addClass('m-txt-req');
+            $("#search_input_1-error").addClass('m-txt-req_11');
+            $("#Incident_Party-error").addClass('m-txt-req_1');
+            $("#N_Service_Provider-error").addClass('m-txt-req_1');
+            $("#Description_of_Incident_Party-error").addClass('m-txt-req_1');
+            return false;
+        } else {
+            var InjurPerson_List = [];
+            var Injury_Type_List = [];
+            var Nature_of_Injury = [];
+            var Vechicle_Accident_List = [];
+            var Is_Injury_Illness = "";
+            var Injured_Person = "";
+
+            if ($("input[type='radio'].injuryillness").is(':checked')) {
+                Is_Injury_Illness = $("input[type='radio'].injuryillness:checked").val();
+            }
+            if ($("input[type='radio'].injuryillness_yes").is(':checked')) {
+                Injured_Person = $("input[type='radio'].injuryillness_yes:checked").val();
+            }
+            $('.clsInjury_Type:checked').each(function () {
+                var varInc_Injury_Type_Id = "0";
+                var varInc_Id = "0";
+                var varInjury_Type_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Typeothers").val();
+
+                var data = {};
+                data.Inc_Injury_Type_Id = varInc_Injury_Type_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Injury_Type_Id = varInjury_Type_Id;
+                data.Remarks = varRemarks;
+                Injury_Type_List.push(data);
+            });
+
+            $('.clsInjury_Illness:checked').each(function () {
+                var varInc_Nature_Injury_Id = "0";
+                var varInc_Id = "0";
+                var varNature_Injury_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Illnesseothers").val();
+
+                var data = {};
+                data.Inc_Nature_Injury_Id = varInc_Nature_Injury_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Nature_Injury_Id = varNature_Injury_Id;
+                data.Remarks = varRemarks;
+                Nature_of_Injury.push(data);
+            });
+
+            $('#tblIncidentInjuredPartsList tbody > tr').each(function () {
+                debugger
+                var varIs_Injury_Persons_Id = $(this).closest('tr').find('.Is_Injury_Persons_Id').text();
+                var varInjuredPersonName = $(this).closest('tr').find('.Par_InjuredPersonName').text();
+                var varInjuredPersonContactNo = $(this).closest('tr').find('.Par_InjuredPersonContactNo').text();
+                var varInjuredBodyParts = $(this).closest('tr').find('.InjuredPersonbodyList').text();
+                var varIs_Injury_PersonList = $(this).closest('tr').find('.Is_Injury_PersonList').text();
+                var data = {};
+                data.Persons_Name = varInjuredPersonName;
+                data.Persons_ContactNo = varInjuredPersonContactNo;
+                data.BodyParts_List = varInjuredBodyParts;
+                data.Persons_Id = varIs_Injury_Persons_Id;
+                data.Injured_Type = varIs_Injury_PersonList;
+                InjurPerson_List.push(data);
+            });
+
+            $('.clsVehicleAccident_Type:checked').each(function () {
+                var varInc_VehicleAccident_Id = "0";
+                var varInc_Id = "0";
+                var varVehicle_Accident_Id = $(this).val();
+                var varRemarks = $("#txtVehicleAccidentothers").val();
+
+                var data = {};
+                data.Inc_VehicleAccident_Id = varInc_VehicleAccident_Id;
+                data.Inc_Id = varInc_Id;
+                data.Vehicle_Accident_Id = varVehicle_Accident_Id;
+                data.Remarks = varRemarks;
+                Vechicle_Accident_List.push(data);
+            });
+
+            var lat = "0.00";
+            var long = "0.00";
+
+
+            if ($("#Lat").val() != "" || $("#Long").val() != "") {
+                lat = $("#Lat").val();
+                long = $("#Long").val();
+            }
+
+            var Obj = {
+                Inc_Id: $("#Inc_Id").val(),
+                Inc_Category_Id: $("#Inc_Category_Id").val(),
+                Inc_Type_Id: $("#Inc_Type_Id").val(),
+                Inc_Date: $("#Inc_Date").val(),
+                Inc_Time: $("#Inc_Time").val(),
+                Zone: $("#Zone").val(),
+                Building: $("#Building_Id").val(),
+                Business_Unit: $("#Business_Unit").val(),
+                Company_Name: $("#Company_Name").val(),
+                Contact_Name: $("#Contact_Name").val(),
+                Mobile_Number: $("#Mobile_Number").val(),
+                Inc_Description: $("#Description").val(),
+                Community_Id: $("#Community_Id").val(),
+                Master_Community_Id: $("#Master_Community_Id").val(),
+                Loc_Latitude: lat,
+                Loc_Longitude: long,
+                Is_Injury_Illness: Is_Injury_Illness,
+                Injured_Person: Injured_Person,
+                Is_PropertyDamaged: $("input[type='radio'].PropertyDamaged:checked").val(),
+                Is_InsuranceClaim: $("input[type='radio'].Insuranceclaim:checked").val(),
+                Inc_Business_Unit_Type: $("#Inc_Business_Unit_Type").val(),
+                Inc_Fire_Location: $("#Inc_Fire_Location").val(),
+                Immediate_Action: $("#Immediate_Actions").val(),
+                Is_Follow_required: $('input[name=Followrequired]:checked').val(),
+                Actions_Taken_Description: $("#Required_Actions").val(),
+                Add_Description_3: $('input[name="Injuredillness_yes"]:checked').val(), //Would you like to provide more Information
+                Exact_Loaction: $("#search_input_1").val(), //Exact Location
+                Is_Vehicle_Accident_Per: $("#Involved_Accident").val(), //Involved In The Accident
+                Incident_Party: $("#Incident_Party").val(),
+                Description_of_Incident_Party: $("#Description_of_Incident_Party").val(),
+                Service_Provider_Id: $("#N_Service_Provider").val(),
+                Inc_Remarks_1: $("#Inc_Remarks_1").val(),
+                Inc_Remarks_2: $("#Inc_Remarks_2").val(),
+                Inc_Remarks_3: $("#Inc_Remarks_3").val(),
+                L_M_Inc_Persons_Injured: InjurPerson_List,
+                L_Inc_Inve_Injury_Type: Injury_Type_List,
+                L_Inc_Inve_Nature_Injury: Nature_of_Injury,
+                L_M_Inc_Vehicle_Accident: Vechicle_Accident_List
+            };
+            $.ajax({
+                url: "/Incident/AddIncidentReporting",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Added Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    }
+</script>
+
+<script>
+    $(document).on('click', '#btn_Confirm', function () {
+        debugger
+        if ($(".clsDescriptionAction").val() == "" || $(".clsActiontakenby").val() == "" || $(".clsActionDate").val() == ""
+            || $(".clsIncidentRootCause").val() == "" || $(".clsDesCorrectiveAction").val() == "" ||
+            $(".clsRiskMatrix").val() == "0" || $(".clsCorrectiveActionDate").val() == "") {
+            $('#txtImmediatelyActionDescription').text("Enter Immediately Action Description");
+            $('#txtImmediatelyActionTaken').text("Enter Immediately Action Taken by");
+            $('#txtImmediatelyActionDate').text("Enter Immediately Action Date");
+            $('#txtIncidentRootCause').text("Enter Incident Root Cause");
+            $('#txtDescriptionCorrectiveAction').text("Enter Description Corrective Action");
+            $('#txtCorrectiveActionPriority').text("Select Corrective Action Priority");
+            $('#txtCorrectiveActionDate').text("Enter Corrective Action Date");
+            return false;
+        }
+        if ($(".clsActiontakenby").val() == "") {
+            $('#txtImmediatelyActionTaken').text("Enter Immediately Action Taken by");
+            return false;
+        }
+        if ($(".clsActionDate").val() == "") {
+            $('#txtImmediatelyActionDate').text("Enter Immediately Action Date");
+            return false;
+        }
+        else {
+            //---------INCIDENT REPORT--------------------------//-------------//-------------//-------------//
+            var InjurPerson_List = [];
+            var Injury_Type_List = [];
+            var Nature_of_Injury = [];
+            var Vechicle_Accident_List = [];
+            var Is_Injury_Illness = "";
+            var Injured_Person = "";
+
+            if ($("input[type='radio'].injuryillness").is(':checked')) {
+                Is_Injury_Illness = $("input[type='radio'].injuryillness:checked").val();
+            }
+            if ($("input[type='radio'].injuryillness_yes").is(':checked')) {
+                Injured_Person = $("input[type='radio'].injuryillness_yes:checked").val();
+            }
+            $('.clsInjury_Type:checked').each(function () {
+                var varInc_Injury_Type_Id = "0";
+                var varInc_Id = "0";
+                var varInjury_Type_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Typeothers").val();
+
+                var data = {};
+                data.Inc_Injury_Type_Id = varInc_Injury_Type_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Injury_Type_Id = varInjury_Type_Id;
+                data.Remarks = varRemarks;
+                Injury_Type_List.push(data);
+            });
+
+            $('.clsInjury_Illness:checked').each(function () {
+                var varInc_Nature_Injury_Id = "0";
+                var varInc_Id = "0";
+                var varNature_Injury_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Illnesseothers").val();
+
+                var data = {};
+                data.Inc_Nature_Injury_Id = varInc_Nature_Injury_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Nature_Injury_Id = varNature_Injury_Id;
+                data.Remarks = varRemarks;
+                Nature_of_Injury.push(data);
+            });
+
+            $('#tblIncidentInjuredPartsList tbody > tr').each(function () {
+                debugger
+                var varIs_Injury_Persons_Id = $(this).closest('tr').find('.Is_Injury_Persons_Id').text();
+                var varInjuredPersonName = $(this).closest('tr').find('.Par_InjuredPersonName').text();
+                var varInjuredPersonContactNo = $(this).closest('tr').find('.Par_InjuredPersonContactNo').text();
+                var varInjuredBodyParts = $(this).closest('tr').find('.InjuredPersonbodyList').text();
+                var varIs_Injury_PersonList = $(this).closest('tr').find('.Is_Injury_PersonList').text();
+                var data = {};
+                data.Persons_Name = varInjuredPersonName;
+                data.Persons_ContactNo = varInjuredPersonContactNo;
+                data.BodyParts_List = varInjuredBodyParts;
+                data.Persons_Id = varIs_Injury_Persons_Id;
+                data.Injured_Type = varIs_Injury_PersonList;
+                InjurPerson_List.push(data);
+            });
+
+            $('.clsVehicleAccident_Type:checked').each(function () {
+                var varInc_VehicleAccident_Id = "0";
+                var varInc_Id = "0";
+                var varVehicle_Accident_Id = $(this).val();
+                var varRemarks = $("#txtVehicleAccidentothers").val();
+
+                var data = {};
+                data.Inc_VehicleAccident_Id = varInc_VehicleAccident_Id;
+                data.Inc_Id = varInc_Id;
+                data.Vehicle_Accident_Id = varVehicle_Accident_Id;
+                data.Remarks = varRemarks;
+                Vechicle_Accident_List.push(data);
+            });
+
+            var lat = "0.00";
+            var long = "0.00";
+
+
+            if ($("#Lat").val() != "" || $("#Long").val() != "") {
+                lat = $("#Lat").val();
+                long = $("#Long").val();
+            }
+            //---------INCIDENT REPORT END--------------------------//-------------//-------------//-------------//
+
+            var OtherParties = [];
+            var Unsafe_Act = [];
+            var Unsafe_Conditions = [];
+            var Personal_Factor = [];
+            var System_Factor = [];
+            var Mechanism_of_Injury = [];
+            var Agency_Source_of_Injury = [];
+            var Environmental_Impact_Value = [];
+            var Security_Impact_Value = [];
+            var Actions_Taken_Immediately = [];
+            var Incident_Root_Cause = [];
+            var Corrective_Actions = [];
+            var Declarations_Approvals = [];
+            var Inves_Attachements = [];
+            var InjurPerson_List = [];
+
+            var Injury_Type_List = [];
+            var Nature_of_Injury = [];
+
+            var Environmental_Impact_Element = {};
+            var Security_Impact_Element = {};
+            var Declarations_Approvals_Element = {};
+
+            var cat_id = $("#txt_Inc_Category_Id").val();
+
+            $('.clsInjury_Type:checked').each(function () {
+                var varInc_Injury_Type_Id = "0";
+                var varInc_Id = "0";
+                var varInjury_Type_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Typeothers").val();
+
+                var data = {};
+                data.Inc_Injury_Type_Id = varInc_Injury_Type_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Injury_Type_Id = varInjury_Type_Id;
+                data.Remarks = varRemarks;
+                Injury_Type_List.push(data);
+            });
+
+            $('.clsInjury_Illness:checked').each(function () {
+                var varInc_Nature_Injury_Id = "0";
+                var varInc_Id = "0";
+                var varNature_Injury_Id = $(this).val();
+                var varRemarks = $("#txtInjury_Illnesseothers").val();
+
+                var data = {};
+                data.Inc_Nature_Injury_Id = varInc_Nature_Injury_Id;
+                data.InjuredPersonName = varInc_Id;
+                data.Nature_Injury_Id = varNature_Injury_Id;
+                data.Remarks = varRemarks;
+                Nature_of_Injury.push(data);
+            });
+
+            if (cat_id == "Environment") {
+                Environmental_Impact_Element.Inves_Environmental_Id = '0';
+                Environmental_Impact_Element.Investigation_Id = '0';
+                Environmental_Impact_Element.Inc_Id = $("#Inv_Inc_Id").val();
+                Environmental_Impact_Element.Environmental_Incident = $("#EnvironmentalIncidentId").val();
+                Environmental_Impact_Element.Cause_Of_Release = $("#Cause_Of_Release").val();
+                Environmental_Impact_Element.Impact_Details = $("#Impact_Details").val();
+                Environmental_Impact_Value.push(Environmental_Impact_Element);
+            }
+
+            if (cat_id == "Security") {
+                Security_Impact_Element.Inves_Security_Id = '0';
+                Security_Impact_Element.Investigation_Id = '0';
+                Security_Impact_Element.Inc_Id = $("#Inv_Inc_Id").val();
+                Security_Impact_Element.Classification_Id = $("#ClassificationList").val();
+                Security_Impact_Element.Type_of_Security_Incident_Id = $("#TypeSecurityIncidentList").val();
+                Security_Impact_Element.Impact_Details = $("#Sec_ImpactDetails").val();
+                Security_Impact_Value.push(Security_Impact_Element);
+            }
+
+            $('#tblOtherparties tbody > tr').each(function () {
+                debugger
+                var varRole = $(this).closest('tr').find('.clsRole').val();
+                var varName = $(this).closest('tr').find('.clsname').val();
+                var varContactno = $(this).closest('tr').find('.clsContactno').val();
+
+                var data = {};
+                data.Inves_Other_Parties_Id = "0";
+                data.Investigation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Role_Position = varRole;
+                data.Other_Name = varName;
+                data.Other_Contact_no = varContactno;
+                OtherParties.push(data);
+            });
+
+            $('#tblIncidentInjuredPartsList tbody > tr').each(function () {
+                debugger
+                var varIs_Injury_Persons_Id = $(this).closest('tr').find('.Is_Injury_Persons_Id').text();
+                var varInjuredPersonName = $(this).closest('tr').find('.Par_InjuredPersonName').text();
+                var varInjuredPersonContactNo = $(this).closest('tr').find('.Par_InjuredPersonContactNo').text();
+                var varInjuredBodyParts = $(this).closest('tr').find('.InjuredPersonbodyList').text();
+                var varIs_Injury_PersonList = $(this).closest('tr').find('.Is_Injury_PersonList').text();
+                var varTotal_man_days = $(this).closest('tr').find('.Total_man_days').val();
+                var varCompany_Name = $(this).closest('tr').find('.Company_Name').val();
+                var data = {};
+                data.Persons_Name = varInjuredPersonName;
+                data.Persons_ContactNo = varInjuredPersonContactNo;
+                data.BodyParts_List = varInjuredBodyParts;
+                data.Persons_Id = varIs_Injury_Persons_Id;
+                data.Injured_Type = varIs_Injury_PersonList;
+                data.Total_man_days = varTotal_man_days;
+                data.Company_Name = varCompany_Name;
+                InjurPerson_List.push(data);
+            });
+
+            $('.clsUnsafeAct:checked').each(function () {
+                var varInves_Unsafe_Act_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtunsafeactothers").val();
+                var varM_Unsafe_Act_Id = $(this).val();
+
+                var data = {};
+                data.Inves_Unsafe_Act_Id = varInves_Unsafe_Act_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_Unsafe_Act_Id = varM_Unsafe_Act_Id;
+                data.Remarks = varRemarks;
+                Unsafe_Act.push(data);
+            });
+
+            $('.clsUnsafeCond:checked').each(function () {
+                var varInves_Unsafe_Cond_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtunsafeactoCondthers").val();
+                var varM_Unsafe_Cond_Id = $(this).val();
+
+                var data = {};
+                data.Inves_Unsafe_Act_Id = varInves_Unsafe_Cond_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_Unsafe_Cond_Id = varM_Unsafe_Cond_Id;
+                data.Remarks = varRemarks;
+                Unsafe_Conditions.push(data);
+            });
+
+            $('.clsPersonalFactor:checked').each(function () {
+                var varInves_RootCause_PF_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtPFothers").val();
+                var varM_RootCause_PF_Id = $(this).val();
+
+                var data = {};
+                data.Inves_RootCause_PF_Id = varInves_RootCause_PF_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_RootCause_PF_Id = varM_RootCause_PF_Id;
+                data.Remarks = varRemarks;
+                Personal_Factor.push(data);
+            });
+
+            $('.clsSystemFactor:checked').each(function () {
+                var varInves_RootCause_SF_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtSFothers").val();
+                var varM_RootCause_SF_Id = $(this).val();
+
+                var data = {};
+                data.Inves_RootCause_SF_Id = varInves_RootCause_SF_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_RootCause_SF_Id = varM_RootCause_SF_Id;
+                data.Remarks = varRemarks;
+                System_Factor.push(data);
+            });
+
+            $('.clsMechanismInjury:checked').each(function () {
+                var varInves_Mechanism_Injury_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtMechanismothers").val();
+                var varM_Mechanism_InjuryIllness_Id = $(this).val();
+
+                var data = {};
+                data.Inves_Mechanism_Injury_Id = varInves_Mechanism_Injury_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_Mechanism_InjuryIllness_Id = varM_Mechanism_InjuryIllness_Id;
+                data.Remarks = varRemarks;
+                Mechanism_of_Injury.push(data);
+            });
+
+            $('.clsAgencyInjury:checked').each(function () {
+                var varInves_AgencySource_Injury_Id = "0";
+                var varInvestigation_Id = "0";
+                var varInc_Id = $("#Inv_Inc_Id").val();
+                var varRemarks = $("#txtAgencyothers").val();
+                var varM_AgencySource_InjuryIllness_Id = $(this).val();
+
+                var data = {};
+                data.Inves_AgencySource_Injury_Id = varInves_AgencySource_Injury_Id;
+                data.Investigation_Id = varInvestigation_Id;
+                data.Inc_Id = varInc_Id;
+                data.M_AgencySource_InjuryIllness_Id = varM_AgencySource_InjuryIllness_Id;
+                data.Remarks = varRemarks;
+                Agency_Source_of_Injury.push(data);
+            });
+
+            $('#tblActions_Taken_Immediately tbody > tr').each(function () {
+                var varDescriptionAction = $(this).closest('tr').find('.clsDescriptionAction').val();
+                var varActiontakenby = $(this).closest('tr').find('.clsActiontakenby').val();
+                var varActionDate = $(this).closest('tr').find('.clsActionDate').val();
+
+                var data = {};
+                data.Inves_Action_Taken_Id = "0";
+                data.Investigation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Description_of_Actions = varDescriptionAction;
+                data.Action_Taken_By = varActiontakenby;
+                data.Date_Completed = varActionDate;
+                Actions_Taken_Immediately.push(data);
+            });
+
+            $('#tblIncidentRootCause tbody > tr').each(function () {
+                var varDescriptionAction = $(this).closest('tr').find('.clsIncidentRootCause').val();
+                var data = {};
+                data.Inves_Action_Taken_Id = "0";
+                data.Investigation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Root_Cause_Description = varDescriptionAction;
+                Incident_Root_Cause.push(data);
+            });
+
+            $('#tblCorrectiveAction tbody > tr').each(function () {
+                debugger
+                var varDesCorrectiveAction = $(this).closest('tr').find('.clsDesCorrectiveAction').val();
+                var varPersonResponsible = "0";
+                var varRiskMatrix = $(this).closest('tr').find('.clsRiskMatrix').val();
+                var varCorrectiveActionDate = $(this).closest('tr').find('.clsCorrectiveActionDate').val();
+
+                var varCorrectiveAddAction = $(this).closest('tr').find('.clsAction_Taken').val();
+                var varCorrectiveEvUpload = $(this).closest('tr').find('.Corrective_Actions_APPENDIX_A_Viewhide').val();
+
+                var data = {};
+                data.Inves_Action_Taken_Id = "0";
+                data.Investigation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Description_Actions = varDesCorrectiveAction;
+                data.Person_Responsible = varPersonResponsible;
+                data.Priority = varRiskMatrix;
+                data.Target_Date = varCorrectiveActionDate;
+                data.Action_Taken = varCorrectiveAddAction;
+                data.Upload_Evidence = varCorrectiveEvUpload;
+                Corrective_Actions.push(data);
+            });
+
+            var i = 1;
+            $('#tblinveAttachments tbody > tr').each(function () {
+                var Is_att = "";
+                if ($("input[type='radio'].clsyes_no_" + i).is(':checked')) {
+                    Is_att = $("input[type='radio'].clsyes_no_" + i + ":checked").val();
+                }
+                var varTitle = $(this).closest('tr').find('.clsTitle').val();
+                var varIs_Attachements = Is_att;
+                var varAttachements_Description = $(this).closest('tr').find('.clsRemarks').val();
+                var varFile_Path = $(this).closest('tr').find('.APPENDIX_A_Viewhide').val();
+
+                var data = {};
+                data.Inves_Attachements_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Title = varTitle;
+                data.Is_Attachements = varIs_Attachements;
+                data.Attachements_Description = varAttachements_Description;
+                data.File_Path = varFile_Path;
+                Inves_Attachements.push(data);
+                i++;
+            });
+
+            var Obj = {
+                Investigation_Id: $("#Investigation_Id").val(),
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                Is_Ref: $("input[type='radio'].clsReference:checked").val(),
+                //Total_Man_Days: $("#Total_Man_Days").val(),
+                Involved_Department_Contractor: $("#Involved_Department_Contractor").val(),
+                Description_circumstances: $("#Description_circumstances").val(),
+                //Applicable_Reports: $("input[type='radio'].radioBtnClass:checked").val(),
+                //Justification_Comments: $("#Justification_Comments").val(),
+                Additional_Information: $("#Additional_Information").val(),
+                Risk_Assessment_Environmental_Impact: $("#Risk_Assessment_Impact").val(),
+                Invs_File_Path: $(".hdncls_Evidence_Documents_File").val(),
+                L_Inves_Other_Parties_Involved: OtherParties,
+                L_Inves_Immediate_Cause_Unsafe_Act: Unsafe_Act,
+                L_Inves_Immediate_Cause_Unsafe_Cond: Unsafe_Conditions,
+                L_Inves_Root_Cause_PF: Personal_Factor,
+                L_Inves_Root_Cause_SF: System_Factor,
+                L_Inves_Mechanism_InjuryIllness: Mechanism_of_Injury,
+                L_Inves_AgencySource_InjuryIllness: Agency_Source_of_Injury,
+                L_Inves_Environmental_Impact_Details: Environmental_Impact_Value,
+                L_Inves_Security_Impact_Details: Security_Impact_Value,
+                L_Inves_Actions_Taken_Immediately: Actions_Taken_Immediately,
+                L_Inves_Incident_Root_Cause: Incident_Root_Cause,
+                L_Inves_Corrective_Actions: Corrective_Actions,
+                //L_Inves_Declarations_Approvals: Declarations_Approvals,
+                L_Inves_Attachements: Inves_Attachements,
+                L_M_Inc_Persons_Injured: InjurPerson_List,
+
+                //---------INCIDENT REPORT--------------------------//-------------//-------------//-------------//
+                Inc_Id: $("#Inc_Id").val(),
+                Inc_Category_Id: $("#Inc_Category_Id").val(),
+                Inc_Type_Id: $("#Inc_Type_Id").val(),
+                Inc_Date: $("#Inc_Date").val(),
+                Inc_Time: $("#Inc_Time").val(),
+                Zone: $("#Zone").val(),
+                Building: $("#Building_Id").val(),
+                Business_Unit: $("#Business_Unit").val(),
+                Company_Name: $("#Company_Name").val(),
+                Contact_Name: $("#Contact_Name").val(),
+                Mobile_Number: $("#Mobile_Number").val(),
+                Inc_Description: $("#Description").val(),
+                Community_Id: $("#Community_Id").val(),
+                Master_Community_Id: $("#Master_Community_Id").val(),
+                Loc_Latitude: lat,
+                Loc_Longitude: long,
+                Is_Injury_Illness: Is_Injury_Illness,
+                Injured_Person: Injured_Person,
+                Is_PropertyDamaged: $("input[type='radio'].PropertyDamaged:checked").val(),
+                Is_InsuranceClaim: $("input[type='radio'].Insuranceclaim:checked").val(),
+                Inc_Business_Unit_Type: $("#Inc_Business_Unit_Type").val(),
+                Inc_Fire_Location: $("#Inc_Fire_Location").val(),
+                Immediate_Action: $("#Immediate_Actions").val(),
+                Is_Follow_required: $('input[name=Followrequired]:checked').val(),
+                Actions_Taken_Description: $("#Required_Actions").val(),
+                Add_Description_3: $('input[name="Injuredillness_yes"]:checked').val(), //Would you like to provide more Information
+                Exact_Loaction: $("#search_input_1").val(), //Exact Location
+                Is_Vehicle_Accident_Per: $("#Involved_Accident").val(), //Involved In The Accident
+                Incident_Party: $("#Incident_Party").val(),
+                Description_of_Incident_Party: $("#Description_of_Incident_Party").val(),
+                Service_Provider_Id: $("#N_Service_Provider").val(),
+                Inc_Remarks_1: $("#Inc_Remarks_1").val(),
+                Inc_Remarks_2: $("#Inc_Remarks_2").val(),
+                Inc_Remarks_3: $("#Inc_Remarks_3").val(),
+                L_M_Inc_Persons_Injured: InjurPerson_List,
+                L_Inc_Inve_Injury_Type: Injury_Type_List,
+                L_Inc_Inve_Nature_Injury: Nature_of_Injury,
+                L_M_Inc_Vehicle_Accident: Vechicle_Accident_List,
+            };
+            $.ajax({
+                url: "/Incident/Add_IncidentReport_Investigation",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    });
+</script>
+
+<script>
+    "use strict";
+    const UI_Fields2 = Object.freeze({
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentInvList",
+        M_UNSAFE_ACT: "#UnsafeActList",
+        M_UNSAFE_CONDITION: "#UnsafeConditionList",
+        M_PERSONAL_FACTOR: "#PersonalFactorList",
+        M_SYSTEM_FACTOR: "#SystemFactorList",
+        M_MECHANISM_INJURY: "#MechanismInjuryList",
+        M_AGENCY_INJURY: "#AgencyInjuryList",
+        BODY_LOCATION: "#divbodyLocation",
+        CLASSIFICATION_LIST: "#ClassificationList",
+        TYPE_SECURITY_INCIDENT: "#TypeSecurityIncidentList",
+        ADDMORE_ACTIONTAKEN_LIST: "#GetActionTakenList",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        ACTIONTAKEN_TABLE: "#tblActions_Taken_Immediately",
+        ADDMORE_ROOT_CAUSE: "#GetIncidentRootCauseList",
+        INCIDENT_ROOTCAUSE_TABLE: "#tblIncidentRootCause",
+        TBLROOTCAUSE_DELETE_BUTTON: ".TblRootCauseDeleteButton",
+        ADDMORE_CORRECTIVE_ACTION: "#GetCorrectiveActionList",
+        INCIDENT_CORRECTIVEACTION_TABLE: "#tblCorrectiveAction",
+        TBLCORRACTION_DELETE_BUTTON: ".TblCorrActionDeleteButton",
+        VIEW_INCIDENTINVS_LIST: "#View_IncidentInvs_List",
+        BTN_VIEWINVES_BACK: "#btn_ViewIncback",
+        VIEW_INVESTIGATION_LIST: "#ViewInvestigationList",
+        VIEW_INC_LIST: "#ViewIncList",
+        BTN_ADD_INC: "#btn_add_Report_incident",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        VIEW_BODY_PARTS: "#viewbodyparts",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        INCIDENT_CATEGORY: ".SelIncident_Category",
+        VIEW_EMPLOYEE: "#Employee_Id",
+        BUILDING_ID: "#Building_Id",
+        MASTER_COMMUNITY_ID: "#Master_Community_Id",
+        COMMUNITY_ID: "#Community_Id",
+        M_ZONE: "#Zone",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        VECHICLE_ACCIDENT_LIST: "#Vechicle_Accident_List",
+        INCIDENT_TYPE: ".SelIncident_Type",
+        INJURY_TYPES_LIST: "#InjuryTypesList",
+        NATURE_INJURY_TYPES_LIST: "#NatureInjuryTypesList",
+        VIEW_INCIDENT_LIST: "#ViewIncidentList",
+        INC_DETAILS_VIEW: "#Inc_View",
+        VIEW_INVESTIGATION_LIST_APPR: "#ViewInvestigationListAppr",
+        VIEW_INV_APPROVE_PROCESS: "#ViewInvestigatinApproveProcess"
+    });
+
+    $(document).ready(function () {
+
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#Inc_Date').val(today);
+        
+        $('.Inc_Date_min').attr('max', today);
+        $('.clsActionDate').attr('max', today);
+
+        
+
+        ServerSideTable_Inc();
+        Load_Body_Parts();
+        Load_GoogleMaps();
+        LOAD_UNSAFE_ACT();
+        LOAD_UNSAFE_CONDITION();
+        LOAD_PERSONAL_FACTOR();
+        LOAD_SYSTEM_FACTOR();
+        LOAD_MECHANISM_INJURY();
+        LOAD_AGENCY_INJURY();
+        LOAD_CLASSIFICATION();
+        Load_Emp_List("All");
+
+        ApplySelect2("#Inc_Category_Id");
+        ApplySelect2("#Inc_Type_Id");
+        ApplySelect2("#Business_Unit");
+        ApplySelect2("#Zone");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Master_Community_Id");
+        ApplySelect2("#Employee_Id");
+        ApplySelect2("#N_Service_Provider");
+
+
+        $(UI_Fields2.BTN_BACK).click(function () {
+            $(UI_Fields2.LIST_VIEW).show(100);
+            $(UI_Fields2.ADD_INCIDENT_LIST).hide(100);
+            $(UI_Fields2.INC_DETAILS_VIEW).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields2.BTN_VIEWINVES_BACK).click(function () {
+            $(UI_Fields2.LIST_VIEW).show(100);
+            $(UI_Fields2.ADD_INCIDENT_LIST).hide(100);
+            $(UI_Fields2.INC_DETAILS_VIEW).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields2.BTN_ADD_INC).click(function () {
+            LOAD_INC_CAT();
+            LOAD_BUSINESS_UNIT('@LoginClass.Business_Unit_Id');
+            LOAD_ZONE('@LoginClass.Zone_Id');
+            $(UI_Fields2.LIST_VIEW).hide(100);
+            $(UI_Fields2.ADD_INCIDENT_LIST).show(100);
+            if (@LoginClass.Role_Id == "15" || @LoginClass.Role_Id == "16" || @LoginClass.Role_Id == "17") {
+                $("#Company_Name").val('@LoginClass.Company_Name');
+                //$(UI_Fields.M_BUSINESS_UNIT).val('1');
+            }
+            else {
+                $("#Company_Name").val("NCM");
+            }
+        });
+
+        $(UI_Fields2.ACTIONTAKEN_TABLE).on("click", UI_Fields2.TBL_DELETE_BUTTON, function () {
+            $(this).closest("tr").remove();
+        });
+
+        $(UI_Fields2.INCIDENT_ROOTCAUSE_TABLE).on("click", UI_Fields2.TBLROOTCAUSE_DELETE_BUTTON, function () {
+            $(this).closest("tr").remove();
+        });
+
+        $(UI_Fields2.INCIDENT_CORRECTIVEACTION_TABLE).on("click", UI_Fields2.TBLCORRACTION_DELETE_BUTTON, function () {
+            $(this).closest("tr").remove();
+        });
+
+        $('input[name=ImmediatelyActionDescription]').change(function () {
+            debugger
+            $("#txtImmediatelyActionDescription").text('');
+        });
+        $('input[name=ImmediatelyActionTaken]').change(function () {
+            debugger
+            $("#txtImmediatelyActionTaken").text('');
+        });
+        $('input[name=ImmediatelyActionDate]').change(function () {
+            debugger
+            $("#txtImmediatelyActionDate").text('');
+        });
+        $('input[name=IncidentRootCauseDes]').change(function () {
+            debugger
+            $("#txtIncidentRootCause").text('');
+        });
+
+        $('input[name=DescriptionCorrectiveAction]').change(function () {
+            debugger
+            $("#txtDescriptionCorrectiveAction").text('');
+        });
+        $('select[name=CorrectiveActionPriority]').change(function () {
+            debugger
+            $("#txtCorrectiveActionPriority").text('');
+        });
+        $('input[name=CorrectiveActionDate]').change(function () {
+            debugger
+            $("#txtCorrectiveActionDate").text('');
+        });
+
+        $("#tblIncidentInjuredPartsList").on("click", '.TblKeypointsDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $('input[name=InjuredType]').change(function () {
+            debugger;
+            var value = $('input[name=InjuredType]:checked').val();
+            if (value == "Visitor" || value == "Resident" || value == "Other" || value == "Contractor") {
+                $("#PersonalDetails").show();
+                $("#otherEmpname").show();
+                $("#Empname").hide();
+                $(".InjuredPersonContactNo").val('');
+                $("#Eemp_name").val('');
+            }
+            else {
+                LOADEMP_FILTERS();
+                $("#PersonalDetails").show();
+                $("#otherEmpname").hide();
+                $("#Empname").show();
+                $(".InjuredPersonContactNo").val('');
+                $("#Eemp_name").val('');
+            }
+        });
+
+        $('input[name=PropertyDamaged]').change(function () {
+            var value = $('input[name=PropertyDamaged]:checked').val();
+            if (value == "Yes") {
+                $("#FnInsurance").show();
+            }
+            else {
+                $("#FnInsurance").hide();
+            }
+        });
+
+        $('input[name=Followrequired]').change(function () {
+            var value = $('input[name=Followrequired]:checked').val();
+            if (value == "Yes") {
+                $("#FnRequired_Actions").show();
+            }
+            else {
+                $("#FnRequired_Actions").hide();
+            }
+        });
+
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/Inc_UploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+
+        var $el2 = $("#inputVideo");
+        $el2.fileinput({
+            allowedFileExtensions: ['mp4', 'avi', 'flv'],
+            uploadUrl: '/Incident/UploadVideoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el2.fileinput("upload");
+        });
+    });
+</script>
+
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Load_Body_Parts() {
+        var INV_Hzurl = "";
+        INV_Hzurl = '/Incident/_ViewBodyParts';
+        $(UI_Fields2.VIEW_BODY_PARTS).load(INV_Hzurl);
+    }
+
+    function Load_GoogleMaps() {
+        var map_Hzurl = "";
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields2.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    ApplySelect2CC("#Involved_Department_Contractor");
+
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Load_Emp_List(Role_Name) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name },
+            success: function (data) {
+                $("#Involved_Department_Contractor").empty();
+                $("#Involved_Department_Contractor").append("<option selected value='0' disabled>--Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $("#Involved_Department_Contractor").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+
+
+    function Fn_ApplicableRpts(val) {
+        debugger
+
+        if (val == "NoReports") {
+            $("#Police").prop('checked', false);
+            $("#Medical").prop('checked', false)
+            $("#Investigation").prop('checked', false)
+            $("#Witnessstatement").prop('checked', false)
+            $("#eOther").prop('checked', false)
+
+            $("#divJustification").show();
+            $("#divJApplicableUpload").hide();
+        }
+        else {
+            $("#NoReports").prop('checked', false)
+            $("#divJustification").hide();
+            $("#divJApplicableUpload").show();
+        }
+    }
+
+    function LOAD_UNSAFE_ACT() {
+        $.post("@Url.Action("LoadUnsafeActList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_UNSAFE_ACT).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsUnsafeAct" type="checkbox" name="M_UnsafeActList" value="' + value.Unsafe_Act_Id + '" id="UNS_' + value.Unsafe_Act_Id + '">';
+                    html += '<label class="form-check-label" id="UnsafeActname_' + value.Unsafe_Act_Id + '" for="UNS_' + value.Unsafe_Act_Id + '">' + value.Unsafe_Act_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsUnsafeAct clsUnsafeActoth" type="checkbox" onclick="FN_USA_OTHER(this.value)" name="M_UnsafeActList" value="0" id="UNS_0">';
+                html += '<label class="form-check-label" for="UNS_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="USA_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtunsafeactothers" name="UnsafeActRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_UNSAFE_ACT).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_UNSAFE_ACT).append(html);
+            }
+        });
+    }
+
+    function FN_USA_OTHER(val) {
+
+        if ($("input[type='checkbox'].clsUnsafeActoth").is(':checked')) {
+            $("#USA_Oth").show()
+        } else {
+            $("#txtunsafeactothers").val('');
+            $("#USA_Oth").hide()
+        }
+    }
+
+    function LOAD_UNSAFE_CONDITION() {
+        $.post("@Url.Action("LoadUnsafeConditionList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_UNSAFE_CONDITION).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsUnsafeCond" type="checkbox" name="M_UnsafeConditionList" value="' + value.Unsafe_Condition_Id + '" id="UNSC_' + value.Unsafe_Condition_Id + '">';
+                    html += '<label class="form-check-label" id="UNSCID_' + value.Unsafe_Condition_Id + '" for="UNSC_' + value.Unsafe_Condition_Id + '">' + value.Unsafe_Condition_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsUnsafeCond clsUnsafecondoth" type="checkbox" onclick="FN_USC_OTHER(this.value)" name="M_UnsafeConditionList" value="0" id="UNC_0">';
+                html += '<label class="form-check-label" for="UNC_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="USC_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtunsafeactoCondthers" name="UnsafeCondRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_UNSAFE_CONDITION).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_UNSAFE_CONDITION).append(html);
+            }
+        });
+    }
+
+    function FN_USC_OTHER(val) {
+        if ($("input[type='checkbox'].clsUnsafecondoth").is(':checked')) {
+            $("#USC_Oth").show()
+        } else {
+            $("#txtunsafeactoCondthers").val('');
+            $("#USC_Oth").hide()
+        }
+    }
+    function LOAD_PERSONAL_FACTOR() {
+        $.post("@Url.Action("LoadPersonalfactorList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_PERSONAL_FACTOR).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsPersonalFactor" type="checkbox" name="PersonalFactorList" value="' + value.Personal_Factor_Id + '" id="PF_' + value.Personal_Factor_Id + '">';
+                    html += '<label class="form-check-label" id="PF_ID_' + value.Personal_Factor_Id + '" for="PF_' + value.Personal_Factor_Id + '">' + value.Personal_Factor_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsPersonalFactor clsPFoth" type="checkbox" onclick="FN_PF_OTHER(this.value)" name="PersonalFactorList" value="0" id="PF_0">';
+                html += '<label class="form-check-label" for="PF_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="PF_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtPFothers" name="PFRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_PERSONAL_FACTOR).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_PERSONAL_FACTOR).append(html);
+            }
+        });
+    }
+
+    function FN_PF_OTHER(val) {
+        if ($("input[type='checkbox'].clsPFoth").is(':checked')) {
+            $("#PF_Oth").show()
+        } else {
+            $("#txtPFothers").val('');
+            $("#PF_Oth").hide()
+        }
+    }
+
+    function LOAD_SYSTEM_FACTOR() {
+        $.post("@Url.Action("LoadSystemfactorList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_SYSTEM_FACTOR).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsSystemFactor" type="checkbox" name="SystemFactorList" value="' + value.System_Factor_Id + '" id="SF_' + value.System_Factor_Id + '">';
+                    html += '<label class="form-check-label" id="SF_ID_' + value.System_Factor_Id + '" for="SF_' + value.System_Factor_Id + '">' + value.System_Factor_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsSystemFactor clsSFoth" type="checkbox" onclick="FN_SF_OTHER(this.value)" name="SystemFactorList" value="0" id="SF_0">';
+                html += '<label class="form-check-label" for="SF_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="SF_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtSFothers" name="SFRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_SYSTEM_FACTOR).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_SYSTEM_FACTOR).append(html);
+            }
+        });
+    }
+
+    function FN_SF_OTHER(val) {
+        if ($("input[type='checkbox'].clsSFoth").is(':checked')) {
+            $("#SF_Oth").show()
+        } else {
+            $("#txtSFothers").val('');
+            $("#SF_Oth").hide()
+        }
+    }
+
+    function LOAD_MECHANISM_INJURY() {
+        $.post("@Url.Action("LoadMechanismOfInjuryList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_MECHANISM_INJURY).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsMechanismInjury" type="checkbox" name="MechanismInjuryList" value="' + value.Inc_Mechanism_Injury_Id + '" id="MIL_' + value.Inc_Mechanism_Injury_Id + '">';
+                    html += '<label class="form-check-label" for="MIL_' + value.Inc_Mechanism_Injury_Id + '">' + value.Inc_Mechanism_Injury_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsMechanismInjury clsMechanismoth" type="checkbox" onclick="FN_MECHANISM_OTHER(this.value)" name="MechanismInjuryList" value="0" id="MIL_0">';
+                html += '<label class="form-check-label" for="MIL_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="MIL_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtMechanismothers" name="MechanismRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_MECHANISM_INJURY).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_MECHANISM_INJURY).append(html);
+            }
+        });
+    }
+
+    function FN_MECHANISM_OTHER(val) {
+        if ($("input[type='checkbox'].clsMechanismoth").is(':checked')) {
+            $("#MIL_Oth").show()
+        } else {
+            $("#txtMechanismothers").val('');
+            $("#MIL_Oth").hide()
+        }
+    }
+
+    function LOAD_AGENCY_INJURY() {
+        $.post("@Url.Action("LoadAgencyOfInjuryList","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.M_AGENCY_INJURY).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsAgencyInjury" type="checkbox" name="AgencySourceInjuryList" value="' + value.Inc_Agency_Injury_Id + '" id="AGI_' + value.Inc_Agency_Injury_Id + '">';
+                    html += '<label class="form-check-label" for="AGI_' + value.Inc_Agency_Injury_Id + '">' + value.Inc_Agency_Injury_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsAgencyInjury clsAgencyoth" type="checkbox" onclick="FN_AGENCY_OTHER(this.value)" name="AgencySourceInjuryList" value="0" id="AGI_0">';
+                html += '<label class="form-check-label" for="AGI_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="AGI_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtAgencyothers" name="AgencyRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.M_AGENCY_INJURY).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.M_AGENCY_INJURY).append(html);
+            }
+        });
+    }
+
+    function FN_AGENCY_OTHER(val) {
+        if ($("input[type='checkbox'].clsAgencyoth").is(':checked')) {
+            $("#AGI_Oth").show()
+        } else {
+            $("#txtAgencyothers").val('');
+            $("#AGI_Oth").hide()
+        }
+    }
+
+    function LOAD_CLASSIFICATION() {
+        $.post("@Url.Action("LoadClassificationList", "CommonMaster")", function (data) {
+            $(UI_Fields2.CLASSIFICATION_LIST).empty();
+            $(UI_Fields2.CLASSIFICATION_LIST).append("<option selected value='0'  disabled> --Select Classification--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.CLASSIFICATION_LIST).append("<option value=" + e.Classification_Id + ">" + e.Classification_Name + "</option>");
+            });
+        });
+    }
+
+    function Fn_Classification(Classification_Id) {
+        $.post("@Url.Action("LoadTypeofSecurityIncident", "CommonMaster")", { Classification_Id: Classification_Id }, function (data) {
+            $(UI_Fields2.TYPE_SECURITY_INCIDENT).empty();
+            $(UI_Fields2.TYPE_SECURITY_INCIDENT).append("<option selected value='0' disabled> --Select Incident Type--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.TYPE_SECURITY_INCIDENT).append("<option value=" + e.Inc_Type_Security_Id + ">" + e.Inc_Type_Security_Name + "</option>");
+            });
+        });
+    }
+
+    function FN_Add_ActionsTaken() {
+        var html = "";
+        html += '<tr><td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control clsDescriptionAction" name="Building_Name" /></td>';
+        html += '<td><input type="text" class="form-control clsActiontakenby" name=Building_Description/></td>';
+        html += '<td><input type="date" class="form-control clsActionDate" name=Building_Description/></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields2.ADDMORE_ACTIONTAKEN_LIST).append(html);
+    }
+
+    function FN_Add_IncidentRootCause() {
+        var html = "";
+        html += '<tr><td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control clsIncidentRootCause" name="Building_Name" /></td>';
+        html += '<td><button type="button" class="btn btn-danger TblRootCauseDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields2.ADDMORE_ROOT_CAUSE).append(html);
+    }
+    var key = 100;
+    function FN_Add_Corrective_Actions() {
+        var hdn_filename = "hdncls_UploadEvidence_Documents_File_" + key;
+        var html = "";
+        //html += '<tr><td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control clsDesCorrectiveAction" name="Building_Name" /></td>';
+        //html += '<td><select class="form-control clsRiskMatrix" name="choices-single-default" placeholder="This is a search placeholder"> <option selected>--Select--</option><option value="High">High</option><option value="Low">Low</option><option value="Medium">Medium</option></select></td>';
+        //html += '<td><input type="date" class="form-control clsCorrectiveActionDate" name=Building_Description/></td>';
+        //html += '<td><button type="button" class="btn btn-danger TblCorrActionDeleteButton">Remove</button></td></tr>';
+        html += '<tr><td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control clsDesCorrectiveAction" name="Building_Name" value=""/></td>';
+        html += '<td><textarea class="form-control clsAction_Taken" id="" spellcheck="false"></textarea></td>';
+        html += '<td><select class="form-control clsRiskMatrix" name="choices-single-default" placeholder="This is a search placeholder"> <option selected>--Select--</option><option value="High">High</option><option value="Low">Low</option><option value="Medium">Medium</option></select></td>';
+        html += '<td><input type="date" class="form-control clsCorrectiveActionDate" name=Building_Description/></td>';
+        html += '<td><input type="hidden" id="hdnService_Appendix_A" class="' + hdn_filename + ' Corrective_Actions_APPENDIX_A_Viewhide" /><input type="file" class="form-control" id="Invs_File_Path" name="Invs_File_Path" onchange="Applicalbe_Documents_File(this,' + "'" + hdn_filename + "'" + ')" accept=".jpg,.jpeg,.png,.doc,.docx,.pdf" /></td>';
+        html += '<td><button type="button" class="btn btn-danger TblCorrActionDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields2.ADDMORE_CORRECTIVE_ACTION).append(html);
+        key++;
+    }
+</script>
+
+<script>
+
+    function Fn_Incident_Party(Incident_Party_val) {
+        if (Incident_Party_val == "Service Provider") {
+            $("#Inc_Service_Provider_Drp").show();
+            $("#Inc_Incident_Party_txt").hide();
+            var Community_Id = $("#Community_Id").val();
+            Load_Service_Provider(Community_Id);
+        } else {
+            $("#Inc_Service_Provider_Drp").hide();
+            $("#Inc_Incident_Party_txt").show();
+        }
+    }
+
+    function Load_Service_Provider(CommunityId) {
+        $.post("@Url.Action("LoadAll_Service_Provider", "Inspection")", { Community_Id: CommunityId }, function (data) {
+            $("#N_Service_Provider").empty();
+            $("#N_Service_Provider").append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#N_Service_Provider").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function FnPoilceReport(val) {
+        $("#example_PoliceReport1").val('');
+        $("#example_PoliceReport2").val('');
+        if (val == "Yes") {
+            $("#PoliceReport1").css("display", "none");
+            $("#PoliceReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#PoliceReport1").removeAttr('style');
+            $("#PoliceReport2").css("display", "none");
+        }
+        else {
+            $("#PoliceReport1").removeAttr('style');
+            $("#PoliceReport2").css("display", "none");
+        }
+    }
+
+    function FnMedicalReport(val) {
+        $("#example_MedicalReport1").val('');
+        $("#example_MedicalReport2").val('');
+        if (val == "Yes") {
+            $("#MedicalReport1").css("display", "none");
+            $("#MedicalReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#MedicalReport1").removeAttr('style');
+            $("#MedicalReport2").css("display", "none");
+        }
+        else {
+            $("#MedicalReport1").removeAttr('style');
+            $("#MedicalReport2").css("display", "none");
+        }
+    }
+
+    function FnTechnicalReport(val) {
+        $("#example_TechnicalReport1").val('');
+        $("#example_TechnicalReport2").val('');
+        if (val == "Yes") {
+            $("#TechnicalReport1").css("display", "none");
+            $("#TechnicalReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#TechnicalReport1").removeAttr('style');
+            $("#TechnicalReport2").css("display", "none");
+        }
+        else {
+            $("#TechnicalReport1").removeAttr('style');
+            $("#TechnicalReport2").css("display", "none");
+        }
+    }
+
+    function FnDCDReport(val) {
+        $("#example_DCDReport1").val('');
+        $("#example_DCDReport2").val('');
+        if (val == "Yes") {
+            $("#DCDReport1").css("display", "none");
+            $("#DCDReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#DCDReport1").removeAttr('style');
+            $("#DCDReport2").css("display", "none");
+        }
+        else {
+            $("#DCDReport1").removeAttr('style');
+            $("#DCDReport2").css("display", "none");
+        }
+    }
+
+    function FnWitnessReport(val) {
+        $("#example_Witness1").val('');
+        $("#example_Witness2").val('');
+        if (val == "Yes") {
+            $("#WitnessReport1").css("display", "none");
+            $("#WitnessReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#WitnessReport1").removeAttr('style');
+            $("#WitnessReport2").css("display", "none");
+        }
+        else {
+            $("#WitnessReport1").removeAttr('style');
+            $("#WitnessReport2").css("display", "none");
+        }
+    }
+
+    function FnIPReport(val) {
+        $("#example_IP1").val('');
+        $("#example_IP2").val('');
+        if (val == "Yes") {
+            $("#IPReport1").css("display", "none");
+            $("#IPReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#IPReport1").removeAttr('style');
+            $("#IPReport2").css("display", "none");
+        }
+        else {
+            $("#IPReport1").removeAttr('style');
+            $("#IPReport2").css("display", "none");
+        }
+    }
+
+    function FnOthersReport(val) {
+        $("#example_Others1").val('');
+        $("#example_Others2").val('');
+        if (val == "Yes") {
+            $("#OthersReport1").css("display", "none");
+            $("#OthersReport2").removeAttr('style');
+        }
+        else if (val == "No") {
+            $("#OthersReport1").removeAttr('style');
+            $("#OthersReport2").css("display", "none");
+        }
+        else {
+            $("#OthersReport1").removeAttr('style');
+            $("#OthersReport2").css("display", "none");
+        }
+    }
+</script>
+
+<script>
+    function Applicalbe_Documents_File(val, clsname, PhotoId) {
+        debugger;
+        readImage(val, clsname);
+        $("#" + PhotoId).hide();
+    }
+    function readImage(input, clsname) {
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoDataApplicableReports", "Incident")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    $("#Loaderbck").hide();
+                    $("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+<script>
+    function LOAD_INC_CAT() {
+        $.post("@Url.Action("LoadAllInc_Cat", "CommonMaster")", function (data) {
+            $(UI_Fields2.INCIDENT_CATEGORY).empty();
+            $(UI_Fields2.INCIDENT_CATEGORY).append("<option selected value='0' style='text-align:center' disabled> --Select Incident Category--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.INCIDENT_CATEGORY).append("<option value=" + e.Inc_Category_Id + ">" + e.Inc_Category_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_BUSINESS_UNIT(selectedValue) {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields2.M_BUSINESS_UNIT).empty();
+            $(UI_Fields2.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields2.M_BUSINESS_UNIT).val(selectedValue);
+        });
+    }
+
+    function LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields2.M_ZONE).empty();
+            $(UI_Fields2.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields2.M_ZONE).val(selectedValue);
+            Fn_Zone(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function Fn_Zone(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields2.COMMUNITY_ID).empty();
+        $(UI_Fields2.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields2.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields2.COMMUNITY_ID).val(Community_Id);
+            Fn_Community(Community_Id, Building_Id);
+        });
+
+        $.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+            $(UI_Fields2.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields2.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+            });
+        });
+
+    }
+
+    function Fn_Community(Community_Id, Building_Id) {
+        debugger;
+        LOADEMP_FILTERS();
+        Load_Service_Provider(Community_Id);
+        $("#Community_Id-error").css('display', 'none');
+        var Zone_Id = $("#Zone").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields2.BUILDING_ID).empty();
+            $(UI_Fields2.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields2.BUILDING_ID).val(Building_Id);
+        });
+
+        //$.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+        //    $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+        //    $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+        //    $(data).each(function (i, e) {
+        //        $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+        //    });
+        //});
+    }
+
+    function LOADEMP_FILTERS() {
+        var Emp_Community_Id = $(UI_Fields2.COMMUNITY_ID).val();
+        var Zone_Id = $("#Zone").val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Emp_Community_Id: Emp_Community_Id, Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields2.VIEW_EMPLOYEE).empty();
+            $(UI_Fields2.VIEW_EMPLOYEE).append("<option selected value='0' disabled>--Select Employee--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.VIEW_EMPLOYEE).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function FN_INC_CAT(Inc_Cat_Id) {
+        debugger;
+        $("#Inc_Category_Id-error").css('display', 'none');
+        var incat_id = $("#Inc_Category_Id option:selected").text();
+        if (incat_id == "Vehicle Accident") {
+            //$("#divVechicleAccident").show();
+            $("#FnNahkeelProperty").show();
+            $("#Fn_Fire_Location").hide();
+            $("#DivInjuryTypeS").show();
+            $("#DivNatureOfInjury").hide();
+            $("#Div_Building").hide();
+            $("#DivInvolved_In_Accident").show();
+            LOAD_INC_VEH_ACC();
+        }
+        else if (incat_id == "Fire") {
+            $("#FnNahkeelProperty").show(100);
+            $("#Fn_Fire_Location").show(100);
+            $("#DivInjuryTypeS").hide();
+            $("#Div_Building").show();
+            $("#DivInvolved_In_Accident").hide();
+        }
+        else {
+            $("#divVechicleAccident").hide();
+            $("#FnNahkeelProperty").hide();
+            $("#Fn_Fire_Location").hide();
+            $("#FnInsurance").hide();
+            $("#Div_Building").show();
+            $("#DivInvolved_In_Accident").hide();
+        }
+
+        $.post("@Url.Action("LoadAllIncCatbyType", "CommonMaster")", { Inc_Cat_Id: Inc_Cat_Id }, function (data) {
+            $(UI_Fields2.INCIDENT_TYPE).empty();
+            $(UI_Fields2.INCIDENT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Incident Type--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields2.INCIDENT_TYPE).append("<option value=" + e.Inc_Type_Id + ">" + e.Inc_Type_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_INC_VEH_ACC() {
+        $.post("@Url.Action("LoadAllVehicleAccident","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.VECHICLE_ACCIDENT_LIST).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsVehicleAccident_Type" type="checkbox" name="Vechicle_Accident_List" value="' + value.Vehicle_Accident_Type_Id + '" id="VEC_' + value.Vehicle_Accident_Type_Id + '">';
+                    html += '<label class="form-check-label" for="VEC_' + value.Vehicle_Accident_Type_Id + '">' + value.Vehicle_Accident_Type_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsVehicleAccident_Type clsVehicleAccidentoth" type="checkbox" onclick="FN_VEHICLEACCIDENT_OTHER(this.value)" name="Vechicle_Accident_List" value="0" id="VEC_0">';
+                html += '<label class="form-check-label" for="VEC_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="VEC_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtVehicleAccidentothers" name="VehicleAccidentRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.VECHICLE_ACCIDENT_LIST).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.VECHICLE_ACCIDENT_LIST).append(html);
+            }
+        });
+    }
+
+    function FN_VEHICLEACCIDENT_OTHER(val) {
+        if ($("input[type='checkbox'].clsVehicleAccidentoth").is(':checked')) {
+            $("#VEC_Oth").show()
+        } else {
+            $("#txtVehicleAccidentothers").val('');
+            $("#VEC_Oth").hide()
+        }
+    }
+
+    function FnIncident_Type(val) {
+        $("#Inc_Type_Id-error").css('display', 'none');
+        var Inc_Type_Id = $("#Inc_Type_Id option:selected").text();
+        if (Inc_Type_Id == "Property Damage") {
+            $("#FnNahkeelProperty").show();
+            $("#FnInsurance").show();
+        }
+        else {
+            var incat_id = $("#Inc_Category_Id option:selected").text();
+            if (incat_id == "Vehicle Accident") {
+                $("#divVechicleAccident").show();
+                $("#FnNahkeelProperty").show();
+                $("#FnInsurance").show(100);
+                $("#Fn_Fire_Location").hide();
+                LOAD_INC_VEH_ACC();
+            }
+            else if (incat_id == "Fire") {
+                $("#FnNahkeelProperty").show(100);
+                $("#Fn_Fire_Location").show(100);
+                $("#FnInsurance").show(100);
+            }
+            else {
+                $("#divVechicleAccident").hide();
+                $("#FnNahkeelProperty").hide();
+                $("#Fn_Fire_Location").hide();
+                $("#FnInsurance").hide();
+            }
+        }
+    }
+
+    function FnInjuryIllness(val) {
+        if (val == "1") {
+            var incat_id = $("#Inc_Category_Id option:selected").text();
+            if (incat_id == "Vehicle Accident") {
+                $("#DivInjuryTypeS").show();
+                $("#DivNatureOfInjury").hide();
+            }
+            else {
+                $("#Empname").hide();
+                $("#PersonalDetails").show();
+                $("#DivInjuryTypeS").show();
+                $("#DivNatureOfInjury").show();
+                $("#divVechicleAccident").hide();
+            }
+
+        } else {
+            $("#PersonalDetails").hide();
+            $("#DivInjuryTypeS").hide();
+            $("#DivNatureOfInjury").hide();
+            $("#tbodytblIncidentInjuredPartsList").html('');
+            $("#Visitor").attr('checked', 'checked');
+            //$("#Willing_Provide").hide();
+        }
+    }
+
+    function FnInjuryIllness_Yes(val) {
+        debugger;
+        if (val == "1") {
+            var incat_id = $("#Inc_Category_Id option:selected").text();
+            if (incat_id == "Vehicle Accident") {
+                $("#divVechicleAccident").show();
+                LOAD_INJURY_TYPE();
+                $("#divInjurytype").show();
+            }
+            else {
+                LOAD_INJURY_TYPE();
+                LOAD_NATURE_INJURY_TYPE();
+                $("#divInjurytype").show();
+                $("#divIncidentSubmit").hide();
+                $("#divVechicleAccident").hide();
+            }
+
+        } else {
+            $("#divInjurytype").hide();
+            $("#divIncidentSubmit").show();
+            $("#divVechicleAccident").hide();
+        }
+    }
+
+    function LOAD_INJURY_TYPE() {
+        $.post("@Url.Action("LoadAllInjuryTypes","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields2.INJURY_TYPES_LIST).html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsInjury_Type" type="checkbox" name="Injury_Type_list" value="' + value.Injury_Type_Id + '" id="INJ_' + value.Injury_Type_Id + '">';
+                    html += '<label class="form-check-label" for="INJ_' + value.Injury_Type_Id + '">' + value.Injury_Type_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsInjury_Type clInjury_Typeoth" type="checkbox" onclick="FN_INJURY_TYPE_OTHER(this.value)" name="Injury_Type_list" value="0" id="INJ_0">';
+                html += '<label class="form-check-label" for="INJ_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="INJ_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtInjury_Typeothers" name="Injury_TypeRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.INJURY_TYPES_LIST).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.INJURY_TYPES_LIST).append(html);
+            }
+        });
+    }
+
+    function FN_INJURY_TYPE_OTHER(val) {
+        if ($("input[type='checkbox'].clInjury_Typeoth").is(':checked')) {
+            $("#INJ_Oth").show()
+        } else {
+            $("#txtInjury_Typeothers").val('');
+            $("#INJ_Oth").hide()
+        }
+    }
+
+    function LOAD_NATURE_INJURY_TYPE() {
+        $.post("@Url.Action("LoadAllNatrueInjuryTypes","CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields2.NATURE_INJURY_TYPES_LIST).html('');
+                var html = "";
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsInjury_Illness" name="Injury_Illness_list" type="checkbox" value="' + value.Injury_Illness_Id + '" id="NAT_' + value.Injury_Illness_Id + '">';
+                    html += '<label class="form-check-label" for="NAT_' + value.Injury_Illness_Id + '">' + value.Injury_Illness_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsInjury_Illness clInjury_Illnesseoth" type="checkbox" onclick="FN_INJURY_ILLNESS_OTHER(this.value)" name="Injury_Illness_list" value="0" id="NAT_0">';
+                html += '<label class="form-check-label" for="NAT_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="NAT_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtInjury_Illnesseothers" name="Injury_IllnesseRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields2.NATURE_INJURY_TYPES_LIST).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields2.NATURE_INJURY_TYPES_LIST).append(html);
+            }
+        });
+    }
+
+    function FN_INJURY_ILLNESS_OTHER(val) {
+        if ($("input[type='checkbox'].clInjury_Illnesseoth").is(':checked')) {
+            $("#NAT_Oth").show()
+        } else {
+            $("#txtInjury_Illnesseothers").val('');
+            $("#NAT_Oth").hide()
+        }
+    }
+</script>
+
+<script>
+    function Inc_AddPersonAction() {
+        debugger
+        var PersonName = "";
+        var Persons_Id = "0";
+        if ($(".InjuredPersonName").val() == "") {
+            PersonName = $("#Employee_Id option:selected").text();
+            Persons_Id = $("#Employee_Id option:selected").val();
+        } else {
+            PersonName = $(".InjuredPersonName").val();
+            Persons_Id = "0";
+        }
+        var htmlActionmarkup = "";
+        var PersonContactNo = $(".InjuredPersonContactNo").val();
+        var bodyparts = $("#EmergBPdata").text();
+        var Is_Injury_Person = $("input[type='radio'].radioBtnClass:checked").val();
+
+        htmlActionmarkup = '<tbody id="tbodytblIncidentInjuredPartsList"><tr><td class="Is_Injury_Persons_Id" style="display: none;">' + Persons_Id + '</td><td class="Is_Injury_PersonList">' + Is_Injury_Person + '</td><td class="Par_InjuredPersonName">' + PersonName + '</td><td class="Par_InjuredPersonContactNo">' + PersonContactNo + '</td><td class="InjuredPersonbodyList">' + bodyparts + '</td><td><button type="button" class="btn btn-danger TblKeypointsDeleteButton">Remove</button></td></tr></tbody>';
+        $("#tblIncidentInjuredPartsList").append(htmlActionmarkup);
+        $(".InjuredPersonName").val('');
+        $(".InjuredPersonContactNo").val('');
+        LOADEMP_FILTERS();
+        total_list = "";
+        if (total_list == "") {
+            var array = $('#EmergBPdata').text().split(",");
+            for (i = 0; i < array.length; i++) {
+                $("#" + array[i]).removeAttr('style');
+            }
+            $("#EmergBPdata").text('');
+        }
+    }
+
+    function Fn_Building() {
+        //LOADEMP_FILTERS()
+        $("#Building_Id-error").css('display', 'none');
+    }
+
+    function Fn_EmpContacNo(Employee_Identity_Id) {
+        $.post("@Url.Action("LoadEmpContact", "CommonMaster")", { Employee_Identity_Id: Employee_Identity_Id }, function (data) {
+            $(".InjuredPersonContactNo").empty();
+            $(".InjuredPersonContactNo").val(data.Mobile_Number);
+        });
+    }
+
+</script>

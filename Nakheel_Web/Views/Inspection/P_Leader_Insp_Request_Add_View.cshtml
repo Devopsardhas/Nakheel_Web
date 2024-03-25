@@ -1,0 +1,338 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Leader_Request
+
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+</style>
+
+@if (Model.Insp_Request_Reject_List!.Count > 0 && Model.Insp_Request_Reject_List != null)
+{
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                    Reject List
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                        <thead>
+                            <tr>
+                                <th>Reject ID</th>
+                                <th>Reject Reason</th>
+                                <th>Rejected By</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="GettblIncidentHistory">
+                            @foreach (var item in Model.Insp_Request_Reject_List)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Reject_Reason</td>
+                                    <td align="left" valign="middle">@item.CreatedBy</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (Model.Walk_In_Insp_Name == "Request_Insp")
+{
+    <div class="row">
+        <input type="hidden" class="form-control" asp-for="Insp_Request_Id">
+        <input type="hidden" class="form-control" asp-for="Walk_In_Insp_Name">
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select disabled class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Business_Unit_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select disabled class="form-control Drop_Search" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Community_Id" class="text-danger"></span>
+
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Frequency<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select disabled class="form-control Drop_Search Schedule_Type" name="Schedule_Type" id="Schedule_Type" asp-for="Schedule_Type">
+                        <option value="" style="text-align:center;">--Select--</option>
+                        <option value="Monthly">Monthly</option>
+                    <option value="Bimonthly">Bimonthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Semiannually">Semi Annually</option>
+                    <option value="Yearly">Yearly</option>
+                    </select>
+                    <span asp-validation-for="Schedule_Type" class="text-danger"></span>
+                </div>
+            </div>
+           
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone Director<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="hidden" id="Zone_Director_Id" asp-for="Zone_Director_Id" name="Zone_Director_Id" required class="form-control Zone_Director_Id" placeholder="Enter Zone Director" />
+                    <textarea disabled id="Zone_Director_Name" asp-for="Zone_Director_Name" name="Zone_Director_Name" required class="form-control Zone_Director_Name" placeholder="Enter Zone_Director_Name" rows="1"></textarea>
+                </div>
+            </div>
+            <div class="mb-3 row Req_Category_Div">
+                <label for="example-text-input" class="col-md-4 col-form-label">Category<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Category_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Insp_Category_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Category_Id" class="text-danger"></span>
+                </div>
+            </div>
+           
+
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Description</label>
+                <div class="col-md-8">
+                    <textarea id="Req_Description" asp-for="Req_Description" name="Req_Description" class="form-control Req_Description" placeholder="Enter Description" rows="1"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select disabled class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Zone_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+                <div class="col-md-8">
+                    <select disabled class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                        <option value="0" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Building_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Inspection Date<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input disabled asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" type="date" name="Inspection_Date" required>
+                    <span asp-validation-for="Inspection_Date" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">HSSE Director<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="hidden" id="HSSE_Director_Id" asp-for="HSSE_Director_Id" name="HSSE_Director_Id" class="form-control HSSE_Director_Id" placeholder="Enter HSSE Director" />
+                    <textarea disabled id="HSSE_Director_Name" asp-for="HSSE_Director_Name" name="HSSE_Director_Name" class="form-control HSSE_Director_Name" placeholder="Enter HSSE Director" rows="1"></textarea>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Other Attendees</label>
+                <div class="col-md-8">
+                    <textarea id="Other_Attendees" asp-for="Other_Attendees" name="Other_Attendees" class="form-control Other_Attendees" placeholder="Enter Other Attendees" rows="1"></textarea>
+                    <span asp-validation-for="Other_Attendees" class="text-danger"></span>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <input type="hidden" class="form-control" asp-for="Insp_Request_Id" asp-items="@(new SelectList(Model.Insp_Request_Id))">
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Business_Unit_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Community_Id" class="text-danger"></span>
+
+                </div>
+            </div>
+
+            <div class="mb-3 row Req_Category_Div">
+                <label for="example-text-input" class="col-md-4 col-form-label">Category<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Category_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Insp_Category_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Category_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone Director<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="hidden" id="Zone_Director_Id" asp-for="Zone_Director_Id" name="Zone_Director_Id" required class="form-control Zone_Director_Id" placeholder="Enter Zone Director" />
+                    <textarea disabled id="Zone_Director_Name" asp-for="Zone_Director_Name" name="Zone_Director_Name" required class="form-control Zone_Director_Name" placeholder="Enter Zone_Director_Name" rows="1"></textarea>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Other Attendees</label>
+                <div class="col-md-8">
+                    <textarea id="Other_Attendees" asp-for="Other_Attendees" name="Other_Attendees" class="form-control Other_Attendees" placeholder="Enter Other Attendees" rows="1"></textarea>
+                    <span asp-validation-for="Other_Attendees" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Description</label>
+                <div class="col-md-8">
+                    <textarea id="Req_Description" asp-for="Req_Description" name="Req_Description" class="form-control Req_Description" placeholder="Enter Description" rows="1"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Zone_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                        <option value="0" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Building_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Inspection Date<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" type="date" name="Inspection_Date" required>
+                    <span asp-validation-for="Inspection_Date" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">HSSE Director<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="hidden" id="HSSE_Director_Id" asp-for="HSSE_Director_Id" name="HSSE_Director_Id" class="form-control HSSE_Director_Id" placeholder="Enter HSSE Director" />
+                    <textarea disabled id="HSSE_Director_Name" asp-for="HSSE_Director_Name" name="HSSE_Director_Name" class="form-control HSSE_Director_Name" placeholder="Enter HSSE Director" rows="1"></textarea>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Frequency<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search Schedule_Type" name="Schedule_Type" id="Schedule_Type" asp-for="Schedule_Type">
+                        <option value="" style="text-align:center;">--Select--</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Bimonthly">Bimonthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Semiannually">Semi Annually</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                    <span asp-validation-for="Schedule_Type" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function () {
+        ApplySelect2(".Drop_Search");
+        $("#Doc_Table").on("click", ".btn_Action_Delete_Button", function () {
+            $(this).closest("tr").remove();
+        });
+
+        var Walk_Type = $('#Walk_In_Insp_Name').val();
+        if (Walk_Type == "Walk_In_Insp") {
+
+            $("#Inspection_Date").prop("disabled", true);
+
+        } else {
+            let minDate = '@DateTime.Now.AddDays(10).ToString("yyyy-MM-dd")';
+            $('#Inspection_Date').attr('min', minDate);
+        }
+
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Rej_CA_Photo_Del(Req_Document_Review_Id, id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Req_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Req_Document_Review_Id: Req_Document_Review_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = ".image-container_" + id;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+</script>
+
+
+

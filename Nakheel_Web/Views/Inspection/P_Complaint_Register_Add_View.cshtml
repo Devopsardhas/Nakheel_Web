@@ -1,0 +1,1490 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Complaint_Register
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .form-control {
+        width: 100% !importent;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+</style>
+
+@if (Model.Status == "NA")
+{
+    <div class="row">
+        <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Reported By<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="hidden" class="Reported_By_Id" value="@LoginClass.Employee_Identity_Id" id="Reported_By_Id" />
+                    <textarea disabled id="Reported_By_Name" value="@LoginClass.First_Name" class="form-control Reported_By_Name" placeholder="Enter Name" rows="1">@LoginClass.First_Name</textarea>
+
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Business_Unit_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Community_Id" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Customer Name<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea id="Customer_Name" asp-for="Customer_Name" class="form-control Customer_Name" placeholder="Enter Name" rows="1"></textarea>
+                    <span asp-validation-for="Customer_Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Customer Email<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input type="email" id="Customer_Email" asp-for="Customer_Email" class="form-control Customer_Email" placeholder="Enter Email" />
+                    <span asp-validation-for="Customer_Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Date of Complaint<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input class=" form-control Date_Complaint" asp-for="Date_Complaint" type="date" name="Date_Complaint">
+                    <span asp-validation-for="Date_Complaint" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Title of Complaint<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea id="Name_Complaint" asp-for="Name_Complaint" class="form-control Name_Complaint" placeholder="Enter Name of Complaint" rows="1"></textarea>
+                    <span asp-validation-for="Name_Complaint" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Contact Number<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea disabled id="Reported_By_Number" class="form-control Reported_By_Number" placeholder="Enter Number" rows="1">@LoginClass.Mobile_Number</textarea>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Zone_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Building_Id" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Customer Address<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea id="Customer_Address" asp-for="Customer_Address" class="form-control Customer_Address" placeholder="Enter Address" rows="1"></textarea>
+                    <span asp-validation-for="Customer_Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Customer Number<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea id="Customer_Number" maxlength="10" asp-for="Customer_Number" class="form-control numbersonly Customer_Number" placeholder="Enter Number" rows="1"></textarea>
+                    <span asp-validation-for="Customer_Number" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Received Via<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select asp-for="Received_Via" class="form-control Drop_Search Received_Via" id="Received_Via">
+                        <option value="" style="text-align:center;">--Select--</option>
+                        <option value="Email" style="text-align:center;">Email</option>
+                        <option value="Call" style="text-align:center;">Call</option>
+                        <option value="InPerson" style="text-align:center;">In-Person</option>
+                        <option value="Application" style="text-align:center;">Application</option>
+                    </select>
+                    <span asp-validation-for="Received_Via" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Description of Complaint<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <textarea id="Description_Complaint" asp-for="Description_Complaint" class="form-control Description_Complaint" placeholder="Enter Description of Complaint" rows="1"></textarea>
+                    <span asp-validation-for="Description_Complaint" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+else if (Model.Status == "Service Request Pending")
+{
+    <form id="F_Add_Insp_Service_Request">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Reported By  </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Name</td>
+
+                    <td><b class="font-bold">Contact Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Number</td>
+
+                    <td><b class="font-bold">Business Unit</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Business_Unit_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Zone </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Zone_Name</td>
+
+                    <td><b class="font-bold">Community </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Community_Name</td>
+
+                    <td><b class="font-bold">Building</b></td>
+                    <td>:</td>
+                    <td id="View_INC_CAT_NAME" class="tdtxt">@Model!.Building_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Name </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Name</td>
+
+                    <td><b class="font-bold">Customer Address</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Address</td>
+
+                    <td><b class="font-bold">Customer Email</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Email</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Number</td>
+
+                    <td><b class="font-bold">Date of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Date_Complaint</td>
+
+                    <td><b class="font-bold">Received Via</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Received_Via</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Title of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Name_Complaint</td>
+
+                    <td><b class="font-bold">Description of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Description_Complaint</td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        @if (@LoginClass.Employee_Identity_Id == Model.CreatedBy)
+        {
+            <div class="row">
+                <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                    <div class="card-header" style="background-color:#032639;height: 27px;">
+                        <h5 class="card-title" style="color:white">Corrective Action Details</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Service Provider <span class="requ">*</span>
+                        </label>
+                        <select required class="form-control Drop_Search" asp-for="Service_Provider_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Supervisor_Req_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Target Date <span class="requ">*</span>
+                        </label>
+                        <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+                        <input required class="form-control Target_Date" asp-for="Target_Date" type="date" name="Target_Date">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Description of Action <span class="requ">*</span>
+                        </label>
+                        <textarea required id="Action_Details" asp-for="Action_Details" class="form-control Action_Details" name="Action_Details" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.Insp_AN_Approval_History_List != null && Model.Insp_AN_Approval_History_List.Count != 0)
+        {
+            <div class="row">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <th>Role</th>
+                                            <th>Date and Time</th>
+                                            <th>Approve Date</th>
+                                            <th>Status</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Insp_AN_Approval_History_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Emp_Name</td>
+                                                <td align="left" valign="middle">@item.Role_Name</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Status</td>
+                                                <td align="left" valign="middle">@item.Remarks</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @if (@LoginClass.Employee_Identity_Id == Model.CreatedBy)
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <br>
+                    <button onclick="Fn_Service_Request_Submit()" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        }
+    </form>
+}
+else if (Model.Status == "Assessment Pending")
+{
+    <form id="F_Add_Insp_Assessment">
+        <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Reported By  </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Name</td>
+
+                    <td><b class="font-bold">Contact Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Number</td>
+
+                    <td><b class="font-bold">Business Unit</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Business_Unit_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Zone </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Zone_Name</td>
+
+                    <td><b class="font-bold">Community </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Community_Name</td>
+
+                    <td><b class="font-bold">Building</b></td>
+                    <td>:</td>
+                    <td id="View_INC_CAT_NAME" class="tdtxt">@Model!.Building_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Name </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Name</td>
+
+                    <td><b class="font-bold">Customer Address</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Address</td>
+
+                    <td><b class="font-bold">Customer Email</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Email</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Number</td>
+
+                    <td><b class="font-bold">Date of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Date_Complaint</td>
+
+                    <td><b class="font-bold">Received Via</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Received_Via</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Title of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Name_Complaint</td>
+
+                    <td><b class="font-bold">Description of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Description_Complaint</td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                <div class="card-header" style="background-color:#032639;height: 27px;">
+                    <h5 class="card-title" style="color:white">Corrective Action Details</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="mb-3">
+                    <label for="basicpill-lastname-input" class="form-label">
+                        Service Provider <span class="requ">*</span>
+                    </label>
+                    <select disabled class="form-control Drop_Search" asp-for="Service_Provider_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Supervisor_Req_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mb-3">
+                    <label for="basicpill-lastname-input" class="form-label">
+                        Target Date <span class="requ">*</span>
+                    </label>
+                    <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+                    <input disabled class="form-control Target_Date" asp-for="Target_Date" type="date" name="Target_Date">
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mb-3">
+                    <label for="basicpill-lastname-input" class="form-label">
+                        Description of Action <span class="requ">*</span>
+                    </label>
+                    <textarea disabled id="Action_Details" asp-for="Action_Details" class="form-control Action_Details" name="Action_Details" rows="1"></textarea>
+                </div>
+            </div>
+        </div>
+        @if (@LoginClass.Employee_Identity_Id == @Model.Service_Provider_Id)
+        {
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Description of Action Taken <span class="requ">*</span>
+                        </label>
+                        <textarea required id="Closure_Action_Details" class="form-control Closure_Action_Details" name="Closure_Action_Details" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Evidence <span class="requ">*</span>
+                        </label>
+                        <input id="Closure_file" class="form-control Closure_file" onchange="uploadFiles('Closure_file','Closure_UploadPhotos')" type="file" accept=".png, .jpg, .jpeg" multiple>
+                        <input type="hidden" value="" class="Closure_UploadPhotos" name="Closure_UploadPhotos" id="Closure_UploadPhotos">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                    <div class="card-header" style="background-color:#032639;height: 27px;">
+                        <h5 class="card-title" style="color:white">Observation Details</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-6 row">
+                    <label for="example-text-input" class="col-md-2 col-form-label">If there any Observation ?<span class="requ">*</span></label>
+                    <div class="col-md-8" style="margin-top: 10px;">
+                        <label for="Observation_Yes"> <input required id="Observation_Yes" class="If_Observation" name="If_Observation" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                        <label for="Observation_No"> <input required id="Observation_No" class="If_Observation" name="If_Observation" type="radio" value="No">&nbsp;No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row Observation_Hide_Show_Div" style="display:none;">
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Observation Details <span class="requ">*</span>
+                        </label>
+                        <textarea required id="Observation_Action_Details" class="form-control Observation_Action_Details" name="Observation_Action_Details" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Recommended Action Details <span class="requ">*</span>
+                        </label>
+                        <textarea required id="Ob_Recommended_Action_Details" class="form-control Ob_Recommended_Action_Details" name="Ob_Recommended_Action_Details" rows="1"></textarea>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="basicpill-lastname-input" class="form-label">
+                            Evidence <span class="requ">*</span>
+                        </label>
+                        <input id="file_Ob" class="form-control file_Ob" onchange="uploadFiles('file_Ob','UploadPhotos_Ob')" type="file" accept=".png, .jpg, .jpeg">
+                        <input type="hidden" value="" class="UploadPhotos_Ob" name="UploadPhotos_Ob" id="UploadPhotos_Ob">
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Insp_AN_Approval_History_List != null && Model.Insp_AN_Approval_History_List.Count != 0)
+        {
+            <div class="row">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <th>Role</th>
+                                            <th>Date and Time</th>
+                                            <th>Approve Date</th>
+                                            <th>Status</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Insp_AN_Approval_History_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Emp_Name</td>
+                                                <td align="left" valign="middle">@item.Role_Name</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Status</td>
+                                                <td align="left" valign="middle">@item.Remarks</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @if (@LoginClass.Employee_Identity_Id == @Model.Service_Provider_Id)
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <br>
+                    <button onclick="Fn_Assessment_Submit()" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        }
+    </form>
+}
+else if (Model.Status == "Complaint Review Pending")
+{
+    <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+    <table class="table table-sm">
+        <tbody id="">
+            <tr>
+                <td><b class="font-bold">Reported By  </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Reported_By_Name</td>
+
+                <td><b class="font-bold">Contact Number</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Reported_By_Number</td>
+
+                <td><b class="font-bold">Business Unit</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Business_Unit_Name</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Zone </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Zone_Name</td>
+
+                <td><b class="font-bold">Community </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Community_Name</td>
+
+                <td><b class="font-bold">Building</b></td>
+                <td>:</td>
+                <td id="View_INC_CAT_NAME" class="tdtxt">@Model!.Building_Name</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Customer Name </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Name</td>
+
+                <td><b class="font-bold">Customer Address</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Address</td>
+
+                <td><b class="font-bold">Customer Email</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Email</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Customer Number</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Number</td>
+
+                <td><b class="font-bold">Date of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Date_Complaint</td>
+
+                <td><b class="font-bold">Received Via</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Received_Via</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Title of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Name_Complaint</td>
+
+                <td><b class="font-bold">Description of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Description_Complaint</td>
+
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 27px;">
+                <h5 class="card-title" style="color:white">Corrective Action Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Service Provider</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                    <td><b class="font-bold">Target Date</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Target_Date</td>
+
+                     <td><b class="font-bold">Evidence</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        @if (@Model.Closure_File_Path == null || @Model.Closure_File_Path == "")
+                        {
+                            <label>NA</label>
+                        }
+                        else
+                        {
+                            var extn = @Model.Closure_File_Path!.Split(".").Last();
+                            <a href="@Model.Closure_File_Path" target="_blank">
+                                @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                {
+                                    <img target="_blank" src="@Model.Closure_File_Path" width="30" height="30">
+                                }
+                                else
+                                {
+                                    <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                }
+                            </a>
+                        }
+
+                    </td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Description of Action</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Action_Details</td>
+
+                    <td><b class="font-bold">Description of Action Taken</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Closure_Action_Details</td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 27px;">
+                <h5 class="card-title" style="color:white">Observation Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">If there any Observation ?</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.If_Observation</td>
+                    @if (@Model.If_Observation == "Yes")
+                    {
+                        <td><b class="font-bold">Observation Details</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Observation_Action_Details</td>
+                    }
+                </tr>
+                <tr>
+                    @if (@Model.If_Observation == "Yes")
+                    {
+                        <td><b class="font-bold">Recommended Action Details</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Ob_Recommended_Action_Details</td>
+
+                        <td><b class="font-bold">Evidence</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model.Ob_File_Path == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                var extn = @Model.Ob_File_Path!.Split(".").Last();
+                                <a href="@Model.Ob_File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                    {
+                                        <img target="_blank" src="@Model.Ob_File_Path" width="30" height="30">
+                                    }
+                                    else
+                                    {
+                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                    }
+                                </a>
+                            }
+
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row" style="@(Model.If_Observation == "Yes"?"":"display:none;")">
+        @if (@LoginClass.Role_Id == "5")
+        {
+            <div class="mb-12 row">
+                <label for="example-text-input" class="col-md-3 col-form-label">Want to Generate Advisory Notice ?<span class="requ">*</span></label>
+                <div class="col-md-8" style="margin-top: 10px;">
+                    <label for="Advisory_Notice_Yes"> <input onclick="Fn_Advisory_Notice_Report(@Model.Complaint_Id)" required data-bs-toggle="modal" data-bs-target=".Fn-Advisory-Notice-Report" id="Advisory_Notice_Yes" class="If_Advisory_Notice" name="If_Advisory_Notice" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                    <label for="Advisory_Notice_No"> <input onclick="Fn_Advisory_Notice_No_hide()" required id="Advisory_Notice_No" class="If_Advisory_Notice" name="If_Advisory_Notice" type="radio" value="No">&nbsp;No</label>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model.Insp_AN_Approval_History_List != null && Model.Insp_AN_Approval_History_List.Count != 0)
+    {
+        <div class="row">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                            History of Approval
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Name</th>
+                                        <th>Role</th>
+                                        <th>Date and Time</th>
+                                        <th>Approve Date</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GettblIncidentHistory">
+                                    @foreach (var item in Model.Insp_AN_Approval_History_List)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                            <td align="left" valign="middle">@item.Status</td>
+                                            <td align="left" valign="middle">@item.Remarks</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <div class="row Advisory_Notice_No_Div" style="@(Model.If_Observation == "No"?"":"display:none;")">
+        <div class="col-lg-6">
+            <br>
+            <button onclick="Fn_Advisory_Notice_No(@Model.Complaint_Id)" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                Submit
+            </button>
+        </div>
+    </div>
+}
+else if (Model.Status == "Action Closure Pending")
+{
+    <form id="A_Closure_Action_Pending">
+        <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Reported By  </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Name</td>
+
+                    <td><b class="font-bold">Contact Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Reported_By_Number</td>
+
+                    <td><b class="font-bold">Business Unit</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Business_Unit_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Zone </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Zone_Name</td>
+
+                    <td><b class="font-bold">Community </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Community_Name</td>
+
+                    <td><b class="font-bold">Building</b></td>
+                    <td>:</td>
+                    <td id="View_INC_CAT_NAME" class="tdtxt">@Model!.Building_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Name </b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Name</td>
+
+                    <td><b class="font-bold">Customer Address</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Address</td>
+
+                    <td><b class="font-bold">Customer Email</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Email</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Customer Number</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Customer_Number</td>
+
+                    <td><b class="font-bold">Date of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Date_Complaint</td>
+
+                    <td><b class="font-bold">Received Via</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Received_Via</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Title of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Name_Complaint</td>
+
+                    <td><b class="font-bold">Description of Complaint</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Description_Complaint</td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                <div class="card-header" style="background-color:#032639;height: 27px;">
+                    <h5 class="card-title" style="color:white">Corrective Action Details</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-sm">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">Service Provider</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                        <td><b class="font-bold">Target Date</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Target_Date</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Description of Action</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Action_Details</td>
+
+                        <td><b class="font-bold">Description of Action Taken</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Closure_Action_Details</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Evidence</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model.Closure_File_Path == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                var extn = @Model.Closure_File_Path!.Split(".").Last();
+                                <a href="@Model.Closure_File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                    {
+                                        <img target="_blank" src="@Model.Closure_File_Path" width="60" height="50">
+                                    }
+                                    else
+                                    {
+                                        <img src='~/assets/images/pdf.png' style="height: 30px;width: 30px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                    }
+                                </a>
+                            }
+
+                        </td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                <div class="card-header" style="background-color:#032639;height: 27px;">
+                    <h5 class="card-title" style="color:white">Observation Details</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-sm">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">If there any Observation ?</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.If_Observation</td>
+                        @if (@Model.If_Observation == "Yes")
+                        {
+                            <td><b class="font-bold">Observation Details</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Observation_Action_Details</td>
+                        }
+                    </tr>
+                    <tr>
+                        @if (@Model.If_Observation == "Yes")
+                        {
+                            <td><b class="font-bold">Recommended Action Details</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Ob_Recommended_Action_Details</td>
+
+                            <td><b class="font-bold">Evidence</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                @if (@Model.Ob_File_Path == "")
+                                {
+                                    <label>NA</label>
+                                }
+                                else
+                                {
+                                    var extn = @Model.Ob_File_Path!.Split(".").Last();
+                                    <a href="@Model.Ob_File_Path" target="_blank">
+                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                        {
+                                            <img target="_blank" src="@Model.Ob_File_Path" width="60" height="50">
+                                        }
+                                        else
+                                        {
+                                            <img src='~/assets/images/pdf.png' style="height: 30px;width: 30px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                        }
+                                    </a>
+                                }
+
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                <div class="card-header" style="background-color:#032639;height: 27px;">
+                    <h5 class="card-title" style="color:white">Advisory Notice Details</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3 row">
+                    <label for="example-text-input" class="col-md-8 col-form-label">
+                        Want to Generate Advisory Notice ?
+                        <span class="requ">*</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label for="Advisory_Notice_Yes"> <input disabled asp-for="@Model.If_Advisory_Notice" id="Advisory_Notice_Yes" class="If_Advisory_Notice" name="If_Advisory_Notice" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                        <label for="Advisory_Notice_No"> <input disabled asp-for="@Model.If_Advisory_Notice" id="Advisory_Notice_No" class="If_Advisory_Notice" name="If_Advisory_Notice" type="radio" value="No">&nbsp;No</label>
+                    </label>
+                </div>
+                @if (@LoginClass.Role_Id == "5")
+                {
+                    <div class="mb-3 row">
+                        <label for="example-text-input" class="col-md-4 col-form-label">Remarks<span class="requ">*</span></label>
+                        <div class="col-md-8">
+                            <textarea required id="A_Closure_Remarks" class="form-control A_Closure_Remarks" name="A_Closure_Remarks" rows="1"></textarea>
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (@LoginClass.Role_Id == "5")
+            {
+                <div class="col-6">
+
+                    <div class="mb-3 row">
+                        <label for="example-text-input" class="col-md-4 col-form-label">Closure Description<span class="requ">*</span></label>
+                        <div class="col-md-8">
+                            <textarea id="A_Closure_Action_Details" required class="form-control A_Closure_Action_Details" name="A_Closure_Action_Details" rows="1"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="example-text-input" class="col-md-4 col-form-label">Evidence<span class="requ">*</span></label>
+                        <div class="col-md-8">
+                            <input id="file_A" class="form-control file_A" onchange="uploadFiles('file_A','A_UploadPhotos')" type="file" accept=".png, .jpg, .jpeg">
+                            <input type="hidden" value="" class="A_UploadPhotos" name="A_UploadPhotos" id="A_UploadPhotos">
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (Model.Insp_AN_Approval_History_List != null && Model.Insp_AN_Approval_History_List.Count != 0)
+        {
+            <div class="row">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <th>Role</th>
+                                            <th>Date and Time</th>
+                                            <th>Approve Date</th>
+                                            <th>Status</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Insp_AN_Approval_History_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Emp_Name</td>
+                                                <td align="left" valign="middle">@item.Role_Name</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                <td align="left" valign="middle">@item.Status</td>
+                                                <td align="left" valign="middle">@item.Remarks</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @if (@LoginClass.Role_Id == "5")
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <br>
+                    <button onclick="Fn_Advisory_Notice_Final_Add(@Model.Complaint_Id)" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                        Submit
+                    </button>
+                </div>
+            </div>
+        }
+    </form>
+}
+else if (Model.Status == "Complaint Closed")
+{
+    <input type="hidden" id="Complaint_Id" class="form-control" asp-for="Complaint_Id">
+    <table class="table table-sm">
+        <tbody id="">
+            <tr>
+                <td><b class="font-bold">Reported By  </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Reported_By_Name</td>
+
+                <td><b class="font-bold">Contact Number</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Reported_By_Number</td>
+
+                <td><b class="font-bold">Business Unit</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Business_Unit_Name</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Zone </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Zone_Name</td>
+
+                <td><b class="font-bold">Community </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Community_Name</td>
+
+                <td><b class="font-bold">Building</b></td>
+                <td>:</td>
+                <td id="View_INC_CAT_NAME" class="tdtxt">@Model!.Building_Name</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Customer Name </b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Name</td>
+
+                <td><b class="font-bold">Customer Address</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Address</td>
+
+                <td><b class="font-bold">Customer Email</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Email</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Customer Number</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Customer_Number</td>
+
+                <td><b class="font-bold">Date of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Date_Complaint</td>
+
+                <td><b class="font-bold">Received Via</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Received_Via</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Title of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Name_Complaint</td>
+
+                <td><b class="font-bold">Description of Complaint</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model!.Description_Complaint</td>
+
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 27px;">
+                <h5 class="card-title" style="color:white">Corrective Action Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Service Provider</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                    <td><b class="font-bold">Target Date</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Target_Date</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Description of Action</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Action_Details</td>
+
+                    <td><b class="font-bold">Description of Action Taken</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Closure_Action_Details</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Evidence</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        @if (@Model.Closure_File_Path == "")
+                        {
+                            <label>NA</label>
+                        }
+                        else
+                        {
+                            var extn = @Model.Closure_File_Path!.Split(".").Last();
+                            <a href="@Model.Closure_File_Path" target="_blank">
+                                @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                {
+                                    <img target="_blank" src="@Model.Closure_File_Path" width="60" height="50">
+                                }
+                                else
+                                {
+                                    <img src='~/assets/images/pdf.png' style="height: 30px;width: 30px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                }
+                            </a>
+                        }
+
+                    </td>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 27px;">
+                <h5 class="card-title" style="color:white">Observation Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">If there any Observation ?</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.If_Observation</td>
+                    @if (@Model.If_Observation == "Yes")
+                    {
+                        <td><b class="font-bold">Observation Details</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Observation_Action_Details</td>
+                    }
+                </tr>
+                <tr>
+                    @if (@Model.If_Observation == "Yes")
+                    {
+                        <td><b class="font-bold">Recommended Action Details</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Ob_Recommended_Action_Details</td>
+
+                        <td><b class="font-bold">Evidence</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model.Ob_File_Path == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                var extn = @Model.Ob_File_Path!.Split(".").Last();
+                                <a href="@Model.Ob_File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                    {
+                                        <img target="_blank" src="@Model.Ob_File_Path" width="60" height="50">
+                                    }
+                                    else
+                                    {
+                                        <img src='~/assets/images/pdf.png' style="height: 30px;width: 30px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                    }
+                                </a>
+                            }
+
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row" style="@(Model.If_Observation == "Yes"?"":"display:none;")">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 27px;">
+                <h5 class="card-title" style="color:white">Advisory Notice Details</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="@(Model.If_Observation == "Yes"?"":"display:none;")">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Want to Generate Advisory Notice ?</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.If_Advisory_Notice</td>
+                    @if (@Model.If_Advisory_Notice == "Yes")
+                    {
+                        <td><b class="font-bold">Closure Action Details</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.AN_Closure_Action_Details</td>
+                    }
+                </tr>
+                <tr>
+                    @if (@Model.If_Advisory_Notice == "Yes")
+                    {
+                        <td><b class="font-bold">Closure Remarks</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.AN_Closure_Remarks</td>
+
+                        <td><b class="font-bold">Evidence</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model.AN_File_Path == "" || @Model.AN_File_Path == null)
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                var extn = @Model.AN_File_Path!.Split(".").Last();
+                                <a href="@Model.AN_File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                    {
+                                        <img target="_blank" src="@Model.AN_File_Path" width="60" height="50">
+                                    }
+                                    else
+                                    {
+                                        <img src='~/assets/images/pdf.png' style="height: 30px;width: 30px;margin-left: 12px;margin-top: -10px;cursor: pointer;" />
+                                    }
+                                </a>
+                            }
+
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Insp_AN_Approval_History_List != null && Model.Insp_AN_Approval_History_List.Count != 0)
+    {
+        <div class="row">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                            History of Approval
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Name</th>
+                                        <th>Role</th>
+                                        <th>Date and Time</th>
+                                        <th>Approve Date</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GettblIncidentHistory">
+                                    @foreach (var item in Model.Insp_AN_Approval_History_List)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                            <td align="left" valign="middle">@item.Status</td>
+                                            <td align="left" valign="middle">@item.Remarks</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+<script>
+    $(document).ready(function () {
+        ApplySelect2(".Drop_Search");
+        $("#Doc_Table").on("click", ".btn_Action_Delete_Button", function () {
+            $(this).closest("tr").remove();
+        });
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        $('#Date_Complaint').attr('min', minDate);
+        $('#Target_Date').attr('min', minDate);
+
+        $("input[name='If_Observation']").click(function () {
+            var tests = $(this).val();
+            if (tests == "Yes") {
+                $(".Observation_Hide_Show_Div").show();
+            } else {
+                $(".Observation_Hide_Show_Div").hide();
+            }
+        });
+        $(".numbersonly").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 9 && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 30 || e.which > 39)) {
+                //$(this).tooltip('show');
+                return false;
+            }
+            else {
+                //$(this).tooltip('hide');
+                return true;
+            }
+        });
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Rej_CA_Photo_Del(Req_Document_Review_Id, id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Req_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Req_Document_Review_Id: Req_Document_Review_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = ".image-container_" + id;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+</script>
+
+
+

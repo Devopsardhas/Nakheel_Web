@@ -1,0 +1,271 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.InspectionMaster.M_Insp_Questionnaires>
+@{
+    ViewData["Title"] = "Inspection Questionnaires";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Inspection Questionnaires List</h4></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Inspection Type ID</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Inspection Type</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Inspection Topics</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Inspection Questionnaires</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Insp_Type_Name</td>
+                                    <td align="left" valign="middle">@item.Insp_Topic_Name</td>
+                                    <td align="left" valign="middle">@item.Insp_Questionnaires_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Insp_Type_Id,@item.Insp_Topic_Id,'@item.Insp_Type_Name','@item.Insp_Topic_Name')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Insp_Questionnaires_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Inspection Questionnaires</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Add_Insp_Questionnaires" action="#" method="post" class="" novalidate="novalidate">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control Insp_Type_Id" name="Insp_Type_Id" id="Insp_Type_Id" value="0">
+                                <input class="form-control Insp_Topic_Id" name="Insp_Topic_Id" id="Insp_Topic_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="example-search-input" class="form-model" style="color:black;">Inspection Type</label>
+                                <input class="form-control" type="text" name="Insp_Type_Name" id="Insp_Type_Name" required minlen="1" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="example-search-input" class="form-model" style="color:black;">Inspection Topics</label>
+                                <input class="form-control" type="text" name="Insp_Topic_Name" id="Insp_Topic_Name" required minlen="1" autocomplete="off">
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="btn_add" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddMasterCommList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br /> <br />
+                        <table id="tbl_Insp_Questionnaires_List" class="table table-striped dt-responsive nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Inspection Questionnaires Name</th>
+                                    <th id="ActionHead">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Get_Insp_Questionnaires_List">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="Submit_Div" id="Submit_Div">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success btn_Submit" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/assets/js/validation/inspection_validation/inspectionmastervalidation.js"></script>
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Insp_Type_Id: "#Insp_Type_Id",
+        Insp_Type_Name: "#Insp_Type_Name",
+        Insp_Topic_Id: "#Insp_Topic_Id",
+        Insp_Topic_Name: "#Insp_Topic_Name",
+        Add_div: "#Add_div",
+        List_View_Div: "#List_View_Div",
+        Add_Insp_Questionnaires_Div: "#Add_Insp_Questionnaires_Div",
+        MainTable: "#MainTable",
+        Get_Insp_Questionnaires_List: "#Get_Insp_Questionnaires_List",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        Submit_Div: ".Submit_Div",
+        BTN_BACK: "#btn_back",
+    });
+    var Count = 1;
+
+    $(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        $(UI_Fields.MainTable).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MainTable).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.Get_Insp_Questionnaires_List).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+            let varSubComID = $(this).closest('tr').find('.Insp_Questionnaires_Id').val();
+            if (varSubComID == '0' || varSubComID == null) {
+                $(this).closest("tr").remove();
+            }
+            else {
+                Delete(varSubComID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+        $(UI_Fields.Get_Insp_Questionnaires_List).on("click", UI_Fields.TBL_EDIT_BUTTON, function () {
+            $(UI_Fields.Submit_Div).show(100);
+            let varSubName = $(this).closest('tr').find('.Insp_Questionnaires_Name').prop('readonly', false);
+            $(this).closest('tr').addClass('Modified');
+        });
+    });
+
+    function Edit(Insp_Type_Id, Insp_Topic_Id, Insp_Type_Name, Insp_Topic_Name) {
+        $(UI_Fields.Add_Insp_Questionnaires_Div).show(100);
+        $(UI_Fields.List_View_Div).hide(100);
+        $(UI_Fields.Insp_Type_Id).val(Insp_Type_Id);
+        $(UI_Fields.Insp_Type_Name).val(Insp_Type_Name);
+
+        $(UI_Fields.Insp_Topic_Id).val(Insp_Topic_Id);
+        $(UI_Fields.Insp_Topic_Name).val(Insp_Topic_Name);
+
+        $(UI_Fields.Insp_Type_Name).attr('readonly', true);
+        $(UI_Fields.Insp_Topic_Name).attr('readonly', true);
+
+        $(UI_Fields.Get_Insp_Questionnaires_List).html('');
+        //$(".add-new-order").modal('show');
+        $.post("@Url.Action("Insp_Questionnaires_GetByID", "Inspection")", { Insp_Type_Id: Insp_Type_Id, Insp_Topic_Id: Insp_Topic_Id }, function (data) {
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    let AT = "Insp_Questionnaires_Name" + i;
+                    var html = "";
+                    html += '<tr><td><input type="hidden" class="form-control Insp_Questionnaires_Id" name="Insp_Questionnaires_Id" value="' + e.Insp_Questionnaires_Id + '"/><input type="text" class="form-control required Insp_Questionnaires_Name" name="Insp_Questionnaires_Name" value="' + e.Insp_Questionnaires_Name + '" readonly/></td > ';
+                    html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                    $(UI_Fields.Get_Insp_Questionnaires_List).append(html);
+                    $(UI_Fields.Submit_Div).hide();
+                });
+            } else {
+                var html = "";
+                html += '<tr class="Modified"><td><input type="hidden" class="Insp_Questionnaires_Id" value="0"/><input type="text" class="form-control required Insp_Questionnaires_Name" name="Insp_Questionnaires_Name" onchange="duplicate_Community(this.value);"/></td>';
+                html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.Get_Insp_Questionnaires_List).append(html);
+                $(UI_Fields.Submit_Div).show(100);
+            }
+        });
+    }
+    function AddMasterCommList() {
+        $(UI_Fields.Submit_Div).show(100);
+        var AT = "Insp_Questionnaires_Name" + Count;
+        var html = "";
+        html += '<tr class="Modified"><td><input type="hidden" class="Insp_Questionnaires_Id" value="0"/><input type="text" class="form-control required Insp_Questionnaires_Name" name="' + AT + '" onchange="duplicate_Community(this.value);"/></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields.Get_Insp_Questionnaires_List).append(html);
+        Count++;
+        $("input[name='" + AT + "']").focus();
+    }
+    function Delete(id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Questionnaires_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "true") {
+                                $(ele).closest("tr").remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+</script>
+
+

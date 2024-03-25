@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Drill Action Closure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+
+        .lblwidth {
+            width: 15% !important;
+        }
+
+        .form-label, .form-control {
+            margin-bottom: 0.5rem;
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        label {
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular' !important;
+            font-size: 15px;
+        }
+
+        table {
+            font-family: 'Nakheel-Textregular';
+        }
+
+        span {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        .tdtxt {
+            color: #00617F;
+        }
+
+        .accordion-button {
+            background-color: #00263a !important;
+            color: white;
+            font-size: 14px !important;
+            height: 10px !important;
+        }
+
+            .accordion-button:not() {
+                background-color: #00263a !important;
+                color: white;
+            }
+
+        .accordion-body {
+            padding: 0rem 0.25rem !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: white !important;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+</head>
+<body>
+    <div id="Loader" style="display:none;">
+        <img style="width: 10%;text-align: center;margin-left: 39%;margin-top: 10%;" src="/assets/images/Loader_new.gif">
+    </div>
+    <div class="row" id="List_View">
+        <div class="col-xl-12">
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="row mb-1">
+                        <div class="col-lg-10 mt-4 mb-3"> <h4 class="card-title">Drill Action Closure List</h4></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="MainTable" class="table table-sm table-striped" style="width:100%;">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Unique_ID</th>
+                                    <th style="text-align:left;">Drill Type</th>
+                                    <th style="text-align:left;">Created By</th>
+                                    <th style="text-align:left;">Building Name</th>
+                                    <th style="text-align:left;">Commander</th>
+                                    <th style="text-align:left;">Service Provider</th>
+                                    <th style="text-align:left;">Created Date</th>
+                                    <th style="text-align:left;">Status</th>
+                                    <th style="text-align:left;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="MainTable_Tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="DrillAction_Div" style="display:none;">
+    </div>
+
+    <script src="~/assets/js/emr_common/common.js"></script>
+    <script src="~/assets/js/emr_common/emr_drill_action.js"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            DRILL_TYPE: "#Drill_type",
+            DRILL_ACTION_DIV: "#DrillAction_Div",
+            LIST_VIEW: "#List_View",
+            LOADER: "#Loader",
+            MAINTABLE: "#MainTable",
+            MAINTABLE_TBODY: "#MainTable_Tbody",
+            POP_UP: "#staticBackdrop",
+            TBL_TASK_ASSIGN: "#tblTaskAssign",
+            TBODY_TASK_ASSIGN: "#tbodyTaskAssign",
+            DRILL_CLOSURE_FRM: "#DrillClosureFrm",
+            ACT_SUB: ".Act_Sub",
+            ACT_REASSIGN: ".Act_Reassign",
+            MAIN_DRILL_ID: "#Main_Drill_ID",
+            DRILL_ASSIGN_FRM: "#DrillAssignFrm",
+            CRR_ID_ACTION: "#CRR_ID_Action",
+            ASSIGN_SUB: "#Assign_SUB",
+            DC_DRP: "#DC_Drp",
+
+        });
+        $(function () {
+            LOAD_GRID();
+            $(UI_Fields.MAINTABLE).on('click', '.DrillEdit', function () {
+                $(UI_Fields.LOADER).show();
+                let Drill_ID = $(this).closest('tr').find('.Drill_ID').val();
+                let model = {
+                    Drill_Schedule_ID: Drill_ID
+                };
+                $(UI_Fields.LIST_VIEW).hide(100);
+                AjaxAsynHTML('/DrillAction/Schedule_Action', { _Param: model }, UI_Fields.DRILL_ACTION_DIV);
+            });
+
+        });
+
+
+        function LOAD_GRID() {
+            let msg = '@TempData["msg"]';
+            $(UI_Fields.DRILL_ACTION_DIV).hide(100);
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+            LoadTable();
+            if (msg != "") {
+                toastr["info"](msg);
+            }
+        }
+
+    </script>
+</body>

@@ -1,0 +1,438 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Safety_Violation
+<style>
+    .error {
+        color: red;
+    }
+
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .M-Vio {
+        margin-top: 25px !important;
+        position: absolute;
+        display: flex;
+    }
+</style>
+
+@*<input type="hidden" id="Insp_Request_Id" value="@Model!.Insp_Request_Id" class="Insp_Request_Id" />
+<input type="hidden" id="Safety_Violation_Id" value="@Model!.Safety_Violation_Id" class="Safety_Violation_Id" />
+<input type="hidden" id="Zone_Id" value="@Model!.Zone_Id" class="Zone_Id" />
+<input type="hidden" id="Community_Id" value="@Model!.Community_Id" class="Community_Id" />*@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome.css" rel="stylesheet" />
+<link href="~/assets/css/frmwiz.css" rel="stylesheet" />
+<div class="row">
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 32px;">
+                <h5 class="card-title" style="color:white">A. Violation Information</h5>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+    <table class="table table-sm">
+        <tbody id="">
+            <tr>
+                <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <textarea disabled id="CreatedBy_Name" name="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@LoginClass.First_Name</textarea>
+                </td>
+
+                <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <select required class="form-control Drop_Search" name="Business_Unit_Id" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                </td>
+
+                <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <select required class="form-control Drop_Search" name="Zone_Id" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <select required class="form-control Drop_Search" name="Community_Id" asp-for="Community_Id" onchange="Fn_Community(this.value)">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                </td>
+
+                <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <input required type="date" asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" name="Inspection_Date">
+                </td>
+
+                <td><b class="font-bold">Responsible Department</b></td>
+                <td>:</td>
+                <td class="tdtxt">
+                    <label style="margin-top: 10px;display: contents;" for="Yes"> <input required asp-for="Responsible_Dept" id="NCM_Staff" class="Responsible_Dept" name="Responsible_Dept" type="radio" value="NCM_Staff" required>&nbsp;NCM Staff&nbsp;&nbsp;</label>
+                    <label for="No"> <input required asp-for="Responsible_Dept" id="Service_provider" class="Responsible_Dept" name="Responsible_Dept" type="radio" value="Service_provider" required>&nbsp;Service provider</label>
+                </td>
+            </tr>
+            <tr class="col-lg-4 Emp_Service_provider_Div" style="display:none;">
+                <td><b class="font-bold">Service provider</b></td>
+                <td>:</td>
+                <td class="tdtxt">
+                        <select style="width: 225px;" class="form-control Drop_Search Emp_Service_provider" asp-for="Emp_Service_provider" required name="Emp_Service_provider" id="Emp_Service_provider">
+                        <option value="" disabled selected="selected">-- Select Service provider --</option>
+                    </select>
+                </td>
+
+                <td></td>
+                <td></td>
+                <td></td>
+
+                <td></td>
+                <td></td>
+                <td></td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+<div class="row">
+    <br />
+    <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+        <h5 class="card-title">&nbsp;&nbsp;Type Of Violation<span class="requ">*</span></h5>
+    </div>
+</div>
+<div class="row">
+    @if (Model.Insp_Spot_Category_Master_List != null)
+    {
+        @foreach (var item in Model.Insp_Spot_Category_Master_List)
+        {
+            <div class="col-lg-2">
+                <div class="col-md-12">
+                    <div class="form-check mb-12">
+                        <input required class="form-check-input Type_Violation_Mas_Id" type="checkbox" name="Type_Violation_Mas_Id" value="@item.Value" id="Type_Violation_Mas_Id'@item.Value'">
+                        <label class="form-check-label Type_Violation_Mas_Name" id="Type_Violation_Mas_Name'@item.Value'" for="Type_Violation_Mas_Name'@item.Value'">@item.Text</label>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        <div class="col-lg-2">
+            <div class="col-md-12">
+                <div class="form-check mb-12">
+                    <input onclick="Fn_Type_Violation_Others(this.value)" class="form-check-input Type_Violation_Other_Id Type_Violation_Mas_Id" type="checkbox" name="Type_Violation_Mas_Id" value="-1" id="Type_Violation_Other_Id">
+                    <label class="form-check-label" for="Type_Violation_Mas_Name">Others</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <textarea style="display:none;" id="Type_Violation_Others_Text" class="form-control form-control-sm Type_Violation_Others_Text Type_Violation_Others_Div" name="Type_Violation_Others_Text" rows="1"></textarea>
+        </div>
+
+        <label id="Type_Violation_Mas_Id" class="error text-danger" for="Type_Violation_Mas_Id"></label>
+    }
+</div>
+<br />
+<div class="row">
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 32px;">
+                <h5 class="card-title" style="color:white">B. Brief Description Of Violation & Requirement(s)</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="mb-6">
+                <label for="basicpill-lastname-input" class="form-label">
+                    &nbsp;&nbsp;Description of Violation  <span class="requ">*</span>
+                </label>
+                &nbsp;&nbsp;<textarea required id="Description_Violation" class="form-control TextArea_Autoresizing Description_Violation" name="Description_Violation" rows="4"></textarea>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="mb-6">
+                <label for="basicpill-lastname-input" class="form-label">
+                    &nbsp;&nbsp;Requirement(s) <span class="requ">*</span>
+                </label>
+                <textarea id="Requirement" required class="form-control TextArea_Autoresizing Requirement" name="Requirement" rows="4"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 32px;">
+                <h5 class="card-title" style="color:white">C. Photograph</h5>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group col-md-12">
+                <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Format : jpg, png, jpeg, bmp</span>
+                <div class="file-loading">
+                    <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                </div>&nbsp;&nbsp;&nbsp;
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="AddSubmit_Div" id="AddSubmit_Div">
+    <div style="text-align:center;">
+        <button type="submit" class="btn btn-success Safe_btn_Submit btn_Submit" id="btn-save-event"> Submit</button>
+    </div>
+    <br />
+</div>
+
+<script>
+    $(document).ready(function () {
+        let minDate = '@DateTime.Now.ToString("yyyy-MM-dd")';
+        $('#Inspection_Date').attr('min', minDate);
+        $(".Sub_ActionTable").on("click", ".btn_Action_Delete_Button", function () {
+            $(this).closest("tr").remove();
+        });
+        $('.TextArea_Autoresizing').on('input', function () {
+            this.style.height = 'auto';
+
+            this.style.height =
+                (this.scrollHeight) + 'px';
+        });
+
+        $('input[name="Type_Violation_Mas_Id"]').on('change', function () {
+            $('input[name="' + this.name + '"]').not(this).prop('checked', false);
+            if ($("input[type='checkbox'].Type_Violation_Other_Id").is(':checked')) {
+                $(".Type_Violation_Others_Div").show()
+            } else {
+                $("#Type_Violation_Others_Text").val('');
+                $(".Type_Violation_Others_Div").hide();
+                $("#Type_Violation_Others_Text-error").hide();
+            }
+        });
+
+        $('input[type=radio][name=Responsible_Dept]').change(function () {
+            if (this.value == 'NCM_Staff') {
+                $(".Emp_Service_provider_Div").hide();
+                $(".Emp_Service_provider").val("");
+            }
+            else {
+                $(".Emp_Service_provider_Div").show();
+                $(".Emp_Service_provider").val("");
+            }
+        });
+
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Inspection/UploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        ApplySelect2(".Drop_Search");
+    });
+    function Fn_Type_Violation_Others(val) {
+        if ($("input[type='checkbox'].Type_Violation_Other_Id").is(':checked')) {
+            $(".Type_Violation_Others_Div").show()
+        } else {
+            $("#Type_Violation_Others_Text").val('');
+            $(".Type_Violation_Others_Div").hide()
+        }
+    }
+
+    var Html = 1;
+    function Fn_Add_More_Action() {
+        var MainID = Html;
+        Datamarkup = '<tr><td style="min-width:150px;"><input class="form-control SV_Corrective_Action_Id" value="0" type="hidden" id="Corrective_Action_Id' + MainID + '"><select onchange="FnAssignActionTo_More(' + "'" + MainID + "'" + ')" class="form-control Assignee_Type" required name="Assignee_Type_' + MainID + '" id="Assignee_Type_' + MainID + '"><option value="" disabled selected="selected">-- Select Action to --</option><option value="Zone_Team">Zone Team</option><option value="Service_Provider">Service Provider</option></select><label id="Assignee_Type_' + MainID + '-error" class="error" style="font-size: small;" for="Assignee_Type_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><select class="form-control Drop_Search Responsibility_To" required name="Responsibility_To_' + MainID + '" id="Responsibility_To_' + MainID + '"></select><label id="Responsibility_To_' + MainID + '-error" class="error" style="font-size: small;" for="Responsibility_To_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><input id="Target_Date_' + MainID + '" class="form-control Target_Date" type="date" name="Target_Date_' + MainID + '" required><label id="Target_Date_' + MainID + '-error" class="error" style="font-size: small;" for="Target_Date_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><textarea id="Action_Description_' + MainID + '" class="form-control Action_Description" name="Action_Description_' + MainID + '" rows="1" required></textarea><label id="Action_Description_' + MainID + '-error" class="error" style="font-size: small;" for="Action_Description_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:100px;text-align: center;"><a><i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i></a></td>',
+            Datamarkup += '</tr>'
+
+        $('#Sub_ActionTable').append(Datamarkup);
+        var Target_Date_Valid = "#Target_Date_" + MainID;
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        $(Target_Date_Valid).attr('min', minDate);
+        ApplySelect2(".Drop_Search");
+        Html++;
+    }
+
+    var Html_s = 1;
+    function Fn_Add_More_Service_provider_Action() {
+        var MainID_s = Html_s;
+        var First_Name = '@LoginClass.First_Name';
+        var Datamarkups = "";
+        Datamarkups = '<tr><td style="min-width:150px;"><input class="form-control SV_Corrective_Action_Id" value="0" type="hidden" id="Corrective_Action_Id' + MainID_s + '"><input class="form-control Assignee_Type" value="Service_Provider" type="hidden" id="Assignee_Type' + MainID_s + '"><input class="form-control Responsibility_To" value="' + @LoginClass.Employee_Identity_Id+'" type="hidden" id="Responsibility_To' + MainID_s + '"><textarea id="" disabled class="form-control" name="" rows="1" required>Service Provider</textarea></td>',
+            Datamarkups += '<td style="min-width:200px;"><textarea id="" disabled class="form-control" name="" rows="1" required>' + First_Name + '</textarea></td>',
+            Datamarkups += '<td style="min-width:200px;"><input id="Target_Date_' + MainID_s + '" class="form-control Target_Date" type="date" name="Target_Date_' + MainID_s + '" required></td>',
+            Datamarkups += '<td style="min-width:200px;"><textarea id="Action_Description_' + MainID_s + '" class="form-control Action_Description" name="Action_Description_' + MainID_s + '" rows="1" required></textarea></td>',
+            Datamarkups += '<td style="min-width:100px;text-align: center;"><a><i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i></a></td>',
+            Datamarkups += '</tr>'
+        $('.Sub_ActionTable').append(Datamarkups);
+        Html_s++;
+    }
+    function FnAssignActionTo() {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To";
+        Role_Name = $('#Assignee_Type').val();
+        var Zone_Id = $('#Zone_Id').val();
+        var Community_Id = $('#Community_Id').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+
+    function FnAssignActionTo_More(Main_Id) {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To_" + Main_Id;
+        Role_Name = $('#Assignee_Type_' + Main_Id + '').val();
+        var Zone_Id = $('#Zone_Id').val();
+        var Community_Id = $('#Community_Id').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+    function EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function EMP_DRP_DWN_Service(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function Fn_Action_Assign_Submit() {
+        let valid = $("#F_Add_Corrective_Action").valid();
+        if (!valid) {
+            return false;
+        }
+        $('.Fn_Action_Assign_Submit').prop('disabled', true);
+
+        var ActionArr = [];
+        var varSafety_Violation_Id = $("#Safety_Violation_Id").val();
+
+        $('#Sub_ActionTable tbody > tr').each(function (c) {
+
+            var varSV_Corrective_Action_Id = $(this).closest('tr').find('.SV_Corrective_Action_Id').val();
+            var varAssignee_Type = $(this).closest('tr').find('.Assignee_Type').val();
+            var varResponsibility_To = $(this).closest('tr').find('.Responsibility_To').val();
+            var varTarget_Date = $(this).closest('tr').find('.Target_Date').val();
+            var varAction_Description = $(this).closest('tr').find('.Action_Description').val();
+
+            var data = {};
+            data.SV_Corrective_Action_Id = varSV_Corrective_Action_Id;
+            data.Assignee_Type = varAssignee_Type;
+            data.Responsibility_To = varResponsibility_To;
+            data.Target_Date = varTarget_Date;
+            data.Action_Description = varAction_Description;
+            data.Safety_Violation_Id = varSafety_Violation_Id;
+            ActionArr.push(data);
+        });
+
+        $.post("@Url.Action("Insp_Safe_Vio_Corrective_Action_Add", "Inspection")", { model: ActionArr }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.Fn_Action_Assign_Submit').prop('disabled', false);
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.Fn_Action_Assign_Submit').prop('disabled', false);
+            }
+            $('.Fn_Action_Assign_Submit').prop('disabled', false);
+        });
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+</script>
+
+
+
+

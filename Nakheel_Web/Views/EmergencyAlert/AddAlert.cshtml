@@ -1,0 +1,316 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+
+        #search_input {
+            width: 25% !important;
+        }
+
+        #search_input_1 {
+            width: 25% !important;
+        }
+    </style>
+</head>
+<form id="F_EMR_Alert" action="" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+    <div class="row mb-3">
+        <input type="hidden" id="EMRAlertID" value="0" />
+        <input type="hidden" id="Created_By" value="@LoginClass.Employee_Identity_Id" />
+        <div class="col-3">
+            <div class="">
+                <label for="" class="col-md-5 col-form-label">Zone<span class="requ">*</span> </label>
+                <div class="form-group">
+                    <select class="form-select" name="Zone_Id" id="Zone_Id" onchange="Fn_Zone(this.value)" required>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="">
+                <label for="" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="form-group">
+                    <select class="form-select" name="Community_Id" id="Community_Id" onchange="Fn_Community(this.value);" required>
+                        <option style="text-align:center;">--Select--</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mb-3">
+            <div class="form-group">
+                <label for="" class="col-md-5 col-form-label">Building<span class="requ">*</span></label>
+                <div class="">
+                    <select class="form-select" name="Building_Id" id="Building_Id" required onchange="Func_Building()">
+                        <option style="text-align:center;">--Select--</option>
+
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mb-3">
+            <div class="form-group">
+                <label for="" class="col-md-5 col-form-label">Emergency Type<span class="requ">*</span></label>
+                <div class="">
+                    <select class="form-select" name="Mitigation_Id" id="Mitigation_Id" onchange="Func_Mitigation(this.value)" required>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2" style="display:none;">
+        <div class="form-group">
+            <div class="col-lg-12">
+                <label for="" class="col-md-5 col-form-label">Reason for choosing Hotspot<span class="requ">*</span></label>
+                <textarea class="form-control" name="Reason_Txt" id="Reason_Txt" style="height: 75px;resize: vertical;"></textarea>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row" style="display:none;" id="Div_Migitation">
+        <div class="table-responsive">
+            <table id="tbl_Migitation" class="table table-sm table-striped tblround" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Exact Location</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody_Migitation">
+                    @*<tr class="Placeholder">
+                    <td colspan="3" style="text-align: center;">No Spot Added</td>
+                    </tr>*@
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="row">
+            <div class="col-lg-2">
+                <button id="SpotAdd" type="button" class="btn btn-success">Add Spot</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="GoogleMapApi" class="GoogleMapApi mb-2"></div>
+
+        </div>
+        <div class="col-lg-6">
+            <div class="table-responsive">
+                <table id="tbl_loc" class="table table-sm table-striped tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Exact Location</th>
+                            <th>Description</th>
+                            <th colspan="2">Service Provider</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_loc">
+                        <tr class="Placeholder">
+                            <td colspan="4" style="text-align: center;">No Spot Added</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-5"></div>
+        <div class="col-md-7">
+            <button type="submit" class="btn btn-success waves-effect waves-light submit" id="Emr_Alert_Submit">
+                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+            </button>
+        </div>
+    </div>
+
+</form>
+<script src="~/assets/js/emergency/emergencyalertvalidation.js"></script>
+
+@*<script src="~/assets/js/emergency/emergencyalertvalidationtest.js"></script>
+*@
+<script>
+    $(function () {
+        LOAD_ZONE();
+        Emr_Load_GoogleMaps();
+        Load_Emr_Category();
+        $(UI_Fields.SPOT_ADD).on('click', AddNewSpot);
+        $(UI_Fields.TBL_TEAM_MEM).on('click', UI_Fields.TBL_LOC, function () {
+            $(this).closest('tr').remove();
+        });
+        $(UI_Fields.TBODY_LOC).on("click", ".TblDeleteButton", function () {
+            $(this).closest("tr").remove();
+        });
+    });
+    function Emr_Load_GoogleMaps() {
+        map_Hzurl = '/EmergencyAlert/_EmrLoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    var Count = 1;
+    function AddNewSpot() {
+
+        var Val_Zone = $("#Zone_Id").val();
+        var Val_Community = $("#Community_Id").val();
+        var Val_Building = $("#Building_Id").val();
+        var Val_Emr_Type = $("#Mitigation_Id").val();
+
+        if (Val_Zone === null || Val_Zone === "") {
+            ToastrMessage("error", "Please select a Zone!");
+        }       
+        if (Val_Community === null || Val_Community === "") {
+            ToastrMessage("error", "Please select a Community!");
+        }
+        if (Val_Building === null || Val_Building === "") {
+            ToastrMessage("error", "Please select a Building!");
+        }
+        if (Val_Emr_Type === null || Val_Emr_Type === "") {
+            ToastrMessage("error", "Please select a Emergency Type!");
+        }
+
+
+        let lat = $(UI_Fields.LAT_DYNAMIC).val();
+        let long = $(UI_Fields.LONG_DYNAMIC).val();
+        let Address = $(UI_Fields.SEARCH_INPUT).val();
+        let Exact_Address = $(UI_Fields.SEARCH_INPUT_1).val();
+        let Reason_Txt = $(UI_Fields.REASON_TXT).val();
+
+        var varLatitude = "Lat" + Count;
+        var varLongitude = "Long" + Count;
+        var varaddress = "Address" + Count;
+        var varExact = "ExactAddress" + Count;
+        var varReason = "Reason_Txt" + Count;
+        var varServ_Pro = "Ser_Pro_Id" + Count;
+
+        if (Address === null || Address === "") {
+            ToastrMessage("error", "Please select a Spot!");
+        }
+        else {
+            $(UI_Fields.ZONE).attr("disabled", true);
+            $(UI_Fields.COMMUNITY_ID).attr("disabled", true);
+            $(UI_Fields.BUILDING_ID).attr("disabled", true);
+            $("#Mitigation_Id").attr("disabled", true);
+
+            let len = $('#tbl_loc tr.Placeholder').length;
+            if (len == 1) {
+                $(UI_Fields.TBODY_LOC).empty();
+            }
+            if (Exact_Address === null || Exact_Address === "") {
+                Exact_Address = "NA";
+            }
+            let html = "";
+            html += '<tr class="SpotTr"><td><input type="hidden" class="lat" id="' + varLatitude + '" value="' + lat + '"/><input type="hidden" class="long" id="' + varLongitude + '" value="' + long + '"/><div class="form-group"><textarea readonly class="form-control Address" rows="3" id="' + varaddress + '" style="resize:vertical;">' + Address + '</textarea></div></td>';
+            html += '<td><div class="form-group"><textarea readonly class="form-control ExactAddress"  rows="3" id="' + varExact + '" style="resize:vertical;">' + Exact_Address + '</textarea></div></td>';
+            html += '<td><div class="form-group"><textarea class="form-control Reason_Txt" rows="3" name="' + varReason + '" id="' + varReason + '" style="resize:vertical;" required></textarea></div></td>';
+            html += '<td><div class="form-group"><select class="form-select Ser_Pro_Id" name="' + varServ_Pro + '" id="' + varServ_Pro + '" required></select></div></td>';
+            html += '<td><i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;"></i></td></tr>';
+            $(UI_Fields.TBODY_LOC).append(html);
+            Load_Assignee("#" + varServ_Pro);
+            ApplySelect2("." + varServ_Pro);
+           
+            Count++;
+        }
+
+        $(UI_Fields.SEARCH_INPUT).val("");
+        $(UI_Fields.SEARCH_INPUT_1).val("");
+        $(UI_Fields.REASON_TXT).val("");
+    }
+
+    function Load_Assignee(controlid) {
+        var varBuilding_Id = $(UI_Fields.BUILDING_ID).val();
+        $.post("@Url.Action("Trigger_Alert_Assign", "TriggerAlert")", { Sub_Building_Id: varBuilding_Id }, function (data) {
+            if (data == "404") {
+                toastr.error("There is no service provider for this building!", "Error");
+            } else {
+                $(controlid).empty();
+                $(controlid).append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+                $(data).each(function (i, e) {
+                    $(controlid).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                });
+            }
+        });
+    }
+
+    function Func_Mitigation(Mitigation_Id) {
+        var var_Build_Id = $("#Building_Id").val();
+        $("#Div_Migitation").show();
+        $("#tbody_Migitation").empty();
+        $.post("@Url.Action("Alert_Mitigation_CHG", "EmergencyAlert")", { Mitigation_Id: Mitigation_Id, Building_ID: var_Build_Id }, function (data) {
+            if (data.length != 0) {
+                $(data).each(function (i, e) {
+                    $("#tbl_Migitation").append([
+                        '<tr>',
+                        '<td>' + '<lable>' + e.Address + ' </lable>' + '</td>',
+                        '<td>' + '<lable>' + e.Exact_Loc + ' </lable>' + '</td>',
+                        '<td>' + '<lable>' + e.Reason + ' </lable>' + '</td>',
+                        '<td>' + '<i class="mdi mdi-delete font-size-18" TblDeleteSpot style="color:red;" onclick="func_Loc_Delete(' + e.Hot_Spot_Id + ')"></i>' + '</td>',
+                        '</tr>'
+                    ].join(''));
+                });
+            }
+            else {
+                $("#Div_Migitation").hide();
+            }
+
+        });
+    }
+
+    function func_Loc_Delete(id) {
+        $.post("@Url.Action("Spot_Location_Delete", "EmergencyAlert")", { EMR_Alert_ID: id }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Deleted Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                Func_Mitigation($("#Mitigation_Id").val());
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+
+    function Func_Building() {
+        //$("#Mitigation_Id").val('');
+        Load_Emr_Category('0');
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Load_Emr_Category() {
+        $.post("@Url.Action("LoadAllEmr_Category", "TriggerAlert")", function (data) {
+            $("#Mitigation_Id").empty();
+            $("#Mitigation_Id").append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Mitigation_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+</script>

@@ -1,0 +1,348 @@
+﻿@model Nakheel_Web.Models.EMR_Drill.Get_All_DrillSCH
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+    string DrillType = "";
+
+}
+<head>
+
+    <style>
+        .textHeight {
+            height: 90px;
+        }
+    </style>
+</head>
+@if (Model != null)
+{
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reassign</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="#" method="post" id="DrillAssignFrm">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body">
+                                    <input type="hidden" id="Assign_DS_ID" />
+                                    <div class="table-responsive col-lg-12">
+                                        <table class="table table-sm">
+                                            <tbody id="">
+                                                <tr>
+                                                    <td class="lblwidth"><b class="font-bold">Reassign To</b><span class="requ">*</span></td>
+                                                    <td class="col-lg-1">:</td>
+                                                    <td class="col-lg-4">
+                                                        <input type="hidden" id="CRR_ID_Action" />
+                                                        <select required class="form-select" id="DC_Drp" name="DC_Drp" asp-items="@(new SelectList(Model.HseTeam,"Value","Text"))">
+                                                            <option value="">--select--</option>
+                                                        </select>
+                                                        <label style="font-size: small;" class="error text-danger" for="DC_Drp"></label>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="">
+                                <div style="text-align:center;">
+                                    <button type="button" class="btn btn-success" id="Assign_SUB"> Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Drill Action Closure</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" onclick="BackBtn()" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <table class="table table-sm tab">
+                            <form action="#" method="post" id="DrillClosureFrm">
+                                @Html.AntiForgeryToken()
+
+                            <tbody id="tblIncidentDetailsViewPage">
+                                    @if (Model.Schedule != null)
+                                    {
+                                        DrillType = Model.Schedule.Drill_Type_ID!;
+                                    <tr>
+                                        <td><input type="hidden" value="@Model.Schedule.Drill_Schedule_ID" id="Main_Drill_ID" /><b class="font-bold">Drill ID </b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Unique_ID</td>
+
+                                        <td><b class="font-bold">Drill Type</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Drill_Type</td>
+
+                                        <td><b class="font-bold">Date and Time</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Created_Date</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="font-bold">Zone</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Zone</td>
+
+                                        <td><b class="font-bold">Community</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Community</td>
+
+
+                                        <td><b class="font-bold">Building</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Building_Name</td>
+
+                                    </tr>
+                                    <tr>
+
+                                        <td><b class="font-bold">HSE Manager</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Created_By</td>
+
+                                        <td><b class="font-bold">Service Provider</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Service_Provider</td>
+
+                                        <td><b class="font-bold">Commnader/ Observer</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Schedule.Commander</td>
+
+
+                                    </tr>
+                                    }
+                            </tbody>
+                            </form>
+                        </table>
+                    </div>
+                    @{
+                                        @if (Model.TotalActions != null && Model.TotalActions.Count > 0)
+                        {
+                                            @if (DrillType == "4")
+                            {
+                                //~/Views/Shared/_Layout.cshtml
+                                                @await Html.PartialAsync("~/Views/DrillSchedule/FireDrill.cshtml",Model._Fire)
+                                                @await Html.PartialAsync("~/Views/DrillSchedule/FireDrillObsr.cshtml",Model.Drill_Obsr)
+                            }
+                            else
+                            {
+                                                @await Html.PartialAsync("~/Views/DrillSchedule/DrillForms.cshtml",Model.Drill_Common)
+                            }
+
+                                            <table id="tblTaskAssign" class="table table-sm table-striped table-responsive" style="width:98%;overflow:auto">
+                                                <thead>
+                                                    <tr class="TR_Color">
+                                                        <th style="text-align:left;">Suggested By</th>
+                                                        <th style="text-align:left;">Improvement Action</th>
+                                                        <th style="text-align:left;">Target Date</th>
+                                                        <th style="text-align:left;">Action Taken</th>
+                                                        <th style="text-align:left;">Evidence</th>
+                                                        <th style="text-align:left;">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbodyTaskAssign">
+                                                    @if (Model.TotalActions != null && Model.TotalActions.Count > 0)
+                                    {
+
+                                                        @foreach (var item in Model.TotalActions)
+                                        {
+                                                            <tr>
+                                                                <td><label class="tdtxt">@item.Created_By</label></td>
+                                                                <td><label class="tdtxt">@item.Action_Des</label></td>
+                                                                <td><label class="tdtxt">@item.Target_Date</label></td>
+                                                                @if (@item.Status == "1")
+                                                {
+                                                                    <td><input type="hidden" class="CRR_ID" value="@item.Drill_CRR_ID" /><textarea class="form-control required AlphaNum Closure_Rmk" style="resize:vertical;height:17px"></textarea></td>
+                                                                    <td>
+                                                                        <div class="form-group">
+                                                                            <label class="file-placeholder">
+                                                                                <img src="~/assets/images/image-.png" class="Imgtag" height="50px" width="50px" />
+                                                                                <input type="hidden" class="Photo_Path" />
+                                                                                <input type="file" class="form-control Evidance" accept=".jpg,.png,.jpeg" style="display: none;" />
+                                                                            </label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="d-grid gap-2 d-md-block">
+                                                                            <button type="button" class="btn btn-success Act_Sub">Submit</button>
+                                                                            @if (item.Assign_Type == "1")
+                                                            {
+                                                                                <button type="button" class="btn btn-danger Act_Reassign">Reassign</button>
+                                                            }
+                                                                        </div>
+                                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                                    <td><label class="tdtxt">@item.Corrective_Action</label></td>
+                                                                    @if (item.Photo_Path != null)
+                                                    {
+                                                                        <td><a href="@item.Photo_Path" target="_blank"><img src="@item.Photo_Path" style="height:50px;width:50px" /></a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                                        <td><label class="tdtxt">No files</label></td>
+                                                    }
+
+                                                                    <td><label style="color:green">Completed</label></td>
+
+                                                }
+                                                            </tr>
+                                        }
+
+                                    }
+                                                </tbody>
+                                            </table>
+
+
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/Validation/jquery.validate.min.js"></script>
+    <script src="~/assets/js/Validation/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/Emr_Common/masters-form-validation.js"></script>
+
+    <script>
+        $(function () {
+            $(UI_Fields.ASSIGN_SUB).on('click', REASSIGN_ASSIGN_SUB);
+            $(UI_Fields.TBL_TASK_ASSIGN).on('click', UI_Fields.ACT_SUB, function () {
+                let btn = $(this).closest('tr').find('.Act_Sub');
+                btn.attr("disabled", true);
+                let regx = /^(?=.*\S)[a-zA-Z0-9-&/().,\s\r\n]*$/;
+                let txtval = $(this).closest('tr').find('.Closure_Rmk');
+                let Button = $(this).closest('tr').find('.gap-2');
+                let File = $(this).closest('tr').find('.file-placeholder');
+                let CRR_ID = $(this).closest('tr').find('.CRR_ID').val();
+                let Photo_Path = $(this).closest('tr').find('.Photo_Path').val();
+                let Drill_ID = $(UI_Fields.MAIN_DRILL_ID).val();
+                let val = txtval.val();
+                if (val != null && val != "") {
+
+                    if (regx.test(val) == false) {
+                        ToastrMessage("error", "Special Characters not allowed");
+                        btn.attr("disabled", false);
+                        txtval.focus();
+                        btn.attr("disabled", false);
+                        return false;
+                    }
+                }
+                else {
+                    ToastrMessage("error", "Enter the Closure Action!");
+                    txtval.focus();
+                    btn.attr("disabled", false);
+                    return false;
+                }
+                let token = GetformToken(UI_Fields.DRILL_CLOSURE_FRM);
+                let model = {
+                    Drill_Schedule_ID: Drill_ID,
+                    Drill_CRR_ID: CRR_ID,
+                    Corrective_Action: val,
+                    Photo_Path: Photo_Path
+                };
+                AjaxAsynT('/DrillAction/Drill_Add_CorrAct', { Imp: model }, token, function (resp) {
+                    if (resp.STATUS_CODE == "200") {
+                        //ToastrMessage("Success", "Added Successfully");
+                        let F1 = $('<label class="tdtxt">').text(txtval.val());
+                        let F2 = $('<label style="color:green">').text("Completed");
+                        let F3;
+                        if (Photo_Path) {
+                            F3 = $('<a href="' + Photo_Path + '" target="_blank"><img src="' + Photo_Path + '" style="height:50px;width:50px"/></a>');
+                        }
+                        else {
+                            F3 = $('<label class="tdtxt">').text("NA");
+                        }
+                        txtval.replaceWith(F1);
+                        Button.replaceWith(F2);
+                        File.replaceWith(F3);
+                        ToastrMessage("info", "Added Successfully");
+                    }
+                    else {
+                        ToastrMessage("error", "Error While processing your request.");
+                    }
+                });
+
+            });
+            $(UI_Fields.TBL_TASK_ASSIGN).on('click', UI_Fields.ACT_REASSIGN, function () {
+                let CRR_ID = $(this).closest('tr').find('.CRR_ID').val();
+                $(UI_Fields.CRR_ID_ACTION).val(CRR_ID);
+                $(UI_Fields.POP_UP).modal('show');
+            });
+
+            $(UI_Fields.TBL_TASK_ASSIGN).on('change', ".Evidance", function () {
+                let Photo_Path = $(this).closest('tr').find('.Photo_Path');
+                let Imgtag = $(this).closest('tr').find('.Imgtag');
+                let Evidance = $(this).closest('tr').find('.Evidance');
+
+                //  FormData
+                let fileName = Evidance[0].files[0].name;
+                let fileExtension = fileName.split('.').pop().toLowerCase();
+                if (!(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension))) {
+                    ToastrMessage("error", "Please select a valid image file.");
+                    return false;
+                }
+                let formData = new FormData();
+                formData.append('file', Evidance[0].files[0]);
+                let token = "";
+
+                AjaxAsynFile('/DrillSchedule/Upload_Evid_File', formData, token, function (data) {
+                    if (data == "Failed") {
+                        Photo_Path.val("NA");
+                        ToastrMessage("error", "Error While processing your request.");
+                    }
+                    else {
+                        ToastrMessage("info", "Uploaded Successfully.");
+                        Imgtag.attr("src", data);
+                        Photo_Path.val(data);
+                    }
+                });
+
+            });
+            ApplySelect2(UI_Fields.DC_DRP);
+        });
+        function REASSIGN_ASSIGN_SUB() {
+            let valid = $(UI_Fields.DRILL_ASSIGN_FRM).valid();
+            let CRR_ID_ACTION = $(UI_Fields.CRR_ID_ACTION).val();
+            let DC_DRP = $(UI_Fields.DC_DRP).val();
+            if (valid) {
+                let token = GetformToken(UI_Fields.DRILL_ASSIGN_FRM);
+
+                let model = {
+                    Drill_CRR_ID: CRR_ID_ACTION,
+                    Assignee_Id: DC_DRP
+                };
+                AjaxAsynT('/DrillAction/Drill_Reassign', { Imp: model }, token, function (resp) {
+                     if (resp.STATUS_CODE == "200") {
+                        $(UI_Fields.POP_UP).modal('hide');
+                        $(UI_Fields.POP_UP).modal('hide');
+                        ToastrMessage("info", "Added Successfully");
+                        LOAD_GRID();
+                     }
+                });
+            }
+
+        }
+    </script>
+
+}

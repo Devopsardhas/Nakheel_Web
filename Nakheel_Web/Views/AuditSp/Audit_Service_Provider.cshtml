@@ -1,0 +1,443 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Service Provider Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Find_width {
+        width: 200px;
+    }
+
+    .error {
+        color: red !important;
+    }
+
+    .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-results > .select2-results__options {
+        width: 252px !important;
+        background-color: white !important;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        width: 252px !important;
+    }
+     .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .bg-darkcyan{
+        background-color: darkcyan;
+    }
+</style>
+<style>
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        .controls:focus {
+            border-color: #4d90fe;
+        }
+
+    .title {
+        font-weight: bold;
+    }
+
+    #infowindow-!importantontent {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+</style>
+<style>
+    .pac-container {
+        z-index: 100000;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Service Provider Audit</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Audit ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Audit Type</th>
+                            <th style="text-align:left;">Audit Date</th>
+                            <th style="text-align:left;">HSE Officer</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllRequestList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Scheduled_Initiated_Div" style="display:none">
+    <div class="preloader_add" style="display:none">
+        <img style="width: 10%;text-align: center;margin-left: 39%;margin-top: 10%;" src="/assets/images/Loader_new.gif">
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"><h4>Service Provider Audit</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect btn_back_View waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i> Back </button>
+                    </div>
+                </div>
+            </div>
+
+                <div class="card-body">
+                    <div class="card-body Load_Add_Am_Scheduled_Initiated">
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade add-Find-Approve-Line-Manager" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Line_Manager_Approve">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="LM_Find_App_Details" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div style="text-align:center;">
+                        <button onclick="btn_Line_Manager_Approval('4')" type="button" class="btn btn_Line_Manager_Approval btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Find-Reject-Line-Manager" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Line_Manager_Rej">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="LM_Find_Reject_Details" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div style="text-align:center;">
+                        <button onclick="btn_Line_Manager_Approval('3')" type="button" class="btn btn_Line_Manager_Approval btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade add-Find-Approve-Director" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Hse_Dir_Approve">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Dir_App_Find_App_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_Director_Approval('6')" type="button" class="btn btn_Director_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Find-Reject-Director" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Hse_Dir_Rej">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Dir_App_Find_Rej_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_Director_Approval('5')" type="button" class="btn btn_Director_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade add-Find-Approve-Final-HSE-Manager" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_HSE_Manager_Final_Approve">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="HSE_Man_Find_App_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_HSE_Manager_Approval('10')" type="button" class="btn btn_HSE_Manager_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Find-Reject-HSE-Manager" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_HSE_Manager_Rej">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="HSE_Man_Find_Reject_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_HSE_Manager_Approval('9')" type="button" class="btn btn_HSE_Manager_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade add-Find-Approve-Lead_Auditor" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Lead_Auditor_Approve">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="LA_Find_Approve_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_Lead_Auditor_Approval('8')" type="button" class="btn btn_Lead_Auditor_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Find-Reject-Lead_Auditor" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FM_Lead_Auditor_Rej">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="LA_Find_Reject_Details" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="btn_Lead_Auditor_Approval('12')" type="button" class="btn btn_Lead_Auditor_Approval btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/validation/audit_sp/auditspseverside.js"></script>
+<script src="~/assets/js/validation/audit_sp/auditspvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        List_View_Div: "#List_View_Div",
+        TBODY_TABLE: "#GetAllRequestList",
+        MainTable: "#MainTable",
+        BTN_BACK: "#btn_back",
+        btn_back_View: ".btn_back_View",
+        Add_Scheduled_Initiated_Div: "#Add_Scheduled_Initiated_Div",
+        Load_Add_Am_Scheduled_Initiated: ".Load_Add_Am_Scheduled_Initiated",
+    });
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+        ServerSideTable_Request();
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        }); 
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function Edit(id, Name, Access) {
+        if (Name == "View") {
+            $(UI_Fields.List_View_Div).hide(100);
+            $(UI_Fields.Add_Scheduled_Initiated_Div).show(100);
+
+            $.post("@Url.Action("P_Audit_Sp_AddView", "AuditSp")", { ID: id }, function (data) {
+                $(UI_Fields.Load_Add_Am_Scheduled_Initiated).html('');
+                $(UI_Fields.Load_Add_Am_Scheduled_Initiated).html(data);
+            });
+
+        } else {
+            $(UI_Fields.List_View_Div).hide(100);
+            $(UI_Fields.Add_Scheduled_Initiated_Div).show(100);
+            
+            $.post("@Url.Action("P_Audit_Sp_AddView", "AuditSp")", { ID: id }, function (data) {
+                $(UI_Fields.Load_Add_Am_Scheduled_Initiated).html('');
+                $(UI_Fields.Load_Add_Am_Scheduled_Initiated).html(data);
+            });
+        }
+    }
+</script>

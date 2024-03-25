@@ -1,0 +1,199 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@model Nakheel_Web.Models.HandOverInsMaster.M_HandOver_Insp_Model;
+@if (Model != null)
+{
+    <form id="F_HndOver_Building_ChkList_View" action="#" method="post" class="row NotValid" novalidate="novalidate">
+        <div class="row">
+            <div class="col-12">
+                <!-- Contact Detail -->
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="" style="height:500px;overflow-x:scroll;overflow-y:scroll;">
+                        <br />
+                        <table class="table table-sm tab">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width:20%;vertical-align: middle;">Questionnaire</th>
+                                    <th style="width:5%;">Action</th>
+                                    <th style="width:20%;">Photo</th>
+                                    <th style="width:20%;">Risk Level</th>
+                                    <th style="width:20%;">Risk Description</th>
+                                    <th style="width:20%;">Description of Action</th>
+                                    <th style="width:25%;">Category</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHandOverBuildingQn">
+                                @if (Model.L_Insp_HandOver_Questionnaires != null)
+                                {
+                                    var subSno = 1;
+
+                                    foreach (var Question in Model.L_Insp_HandOver_Questionnaires)
+                                    {
+                                        @*<tr>Authority Approval / Legal Compliance</tr>*@
+                                        <tr>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                            <td><b>@subSno</b></td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>
+                                                <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="Yes" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','Yes')" />&nbsp;Yes<br />
+                                                <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="No" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','No')" />&nbsp;No<br />
+                                                <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="NA" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','NA')" checked />&nbsp;NA
+                                            </td>
+                                            <td>
+                                                <input type="file" name="QnPhoto" id="QnPhoto" class="form-control QnPhoto" />
+                                            </td>
+                                            <td>
+                                                <select class="form-control Insp_Risk" id="Insp_Risk_@subSno" name="Insp_Risk" style='text-align:center;'>
+                                                    <option value="0">--Select--</option>
+                                                    <option value="Low">Low</option>
+                                                    <option value="Medium">Medium</option>
+                                                    <option value="High">High</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <textarea type="file" name="Risk_Description" id="Risk_Description_@subSno" class="form-control Risk_Description" style="overflow-y:scroll;"></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea type="file" name="QnDescription" id="QnDescription" class="form-control QnDescription" style="overflow-y:scroll;"></textarea>
+                                            </td>
+                                            <td>
+                                                <select class="form-control Insp_Category" id="Insp_Category" name="Insp_Category" style='text-align:center;'>
+                                                    <option value="0">--Select--</option>
+                                                    <option value="1">Environmental</option>
+                                                    <option value="2">Fire & Life Safety</option>
+                                                    <option value="3">Health & Safety</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model!.Status == "2")
+        {
+            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+            {
+                <div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit_InfraQns" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </form>
+}
+<script>
+    $(".submit_InfraQns").click(function () {
+        debugger;
+        var QNS_ARR = [];
+        var subSno = 1;
+        $('#divViewHandOverQns tbody > tr').each(function () {
+            debugger
+            var varInsp_Question_Id = $(this).closest('tr').find('.Insp_Question_Id').val();
+            var varQns_Action = $(this).closest('tr').find('input[name="Action_' + subSno + '"]:checked').val();
+            var varPhoto_File_Path = $(this).closest('tr').find('.QnPhoto').val();
+            var varRisk_Level = $(this).closest('tr').find('.Insp_Risk').val();
+            var varRisk_Description = $(this).closest('tr').find('.Risk_Description').val();
+            var varAction_Description = $(this).closest('tr').find('.QnDescription').val();
+            var varCategory = $(this).closest('tr').find('.Insp_Category').val();
+
+            var data = {};
+            data.Insp_Questionnaires_Id = varInsp_Question_Id;
+            data.Qns_Action = varQns_Action;
+            data.Photo_File_Path = varPhoto_File_Path;
+            data.Risk_Level = varRisk_Level;
+            data.Risk_Description = varRisk_Description;
+            data.Description_Action = varAction_Description;
+            data.Category = varCategory;
+            QNS_ARR.push(data);
+            //alert(QNS_ARR);
+            subSno++;
+        });
+        debugger
+        var val = $("#Insp_HndOver_BId").val();
+        //alert(val)
+        var Obj = {
+            Insp_HndOver_Building_Id: $("#Insp_HndOver_BId").val(),
+            L_Insp_HandOver_Questionnaires: QNS_ARR
+        };
+        $.ajax({
+            url: "/HandOverInspection/AddHandOverBuilding",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+</script>
+<script>
+    var Qns_Action_Check = $(".Qns_Action").val();
+    if (Qns_Action_Check == "Yes" || Qns_Action_Check == "NA") {
+        $(".Insp_Risk").attr('disabled', 'disabled');
+        $(".Risk_Description").attr('disabled', 'disabled');
+    }
+    function Fn_ActionCheck(rowval, status) {
+        debugger;
+        if (status == "Yes" || status == "NA") {
+            $("#Insp_Risk_" + rowval).prop('selectedIndex', 0);
+            $("#Risk_Description_" + rowval).val('');
+            $("#Insp_Risk_" + rowval).attr('disabled', 'disabled');
+            $("#Risk_Description_" + rowval).attr('disabled', 'disabled');
+        }
+        else {
+            $("#Insp_Risk_" + rowval).removeAttr('disabled');
+            $("#Risk_Description_" + rowval).removeAttr('disabled');
+        }
+    }
+</script>

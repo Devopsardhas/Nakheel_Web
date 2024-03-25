@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Nakheel_Web.props" />
+</Project>

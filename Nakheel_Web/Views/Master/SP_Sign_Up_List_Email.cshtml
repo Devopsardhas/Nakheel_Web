@@ -1,0 +1,216 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.AccountsMaster.ServiceProviderSignUp>;
+@{
+    ViewData["Title"] = "Sign Up Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Sign Up Users List</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive tblround" style="width:100%">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">&nbsp;Company Name</th>
+                            <th style="text-align:left;">&nbsp;Manager Incharge</th>
+                            <th style="text-align:left;">&nbsp;Zone Name</th>
+                            <th style="text-align:left;">&nbsp;Community</th>
+                            <th style="text-align:left;">&nbsp;Contract End date</th>
+                            <th style="text-align:left;">&nbsp;Scope Of Work</th>
+                            <th style="text-align:left;">&nbsp;DMS Number</th>
+                            <th style="text-align:left;">&nbsp;Contract Status</th>
+                            <th style="text-align:left;">&nbsp;Approval Status</th>
+                            <th style="text-align:left;">&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Main_tbody">
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Company_Name</td>
+                                    <td align="left" valign="middle">@item.Manager_Incharge</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left" valign="middle">@item.Contract_End_Date</td>
+                                    <td align="left" valign="middle">@item.W_Scope_of_work</td>
+                                    <td align="left" valign="middle">@item.Purchase_Order_Number</td>
+
+                                    @if (DateTime.Parse(item.Contract_End_Date) < DateTime.Now.Date)
+                                    {
+                                        <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-danger">Contract Expired</span> </td>
+                                    }
+                                    else
+                                    {
+                                        <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-success">Active</span> </td>
+                                    }
+                                    @if (item.Status == "Open")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                    @if (item.Status == "In Progress")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                    @if (item.Status == "Rejected")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                    @if (item.Status == "Approved")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                                        <td align="left">
+
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                                <a onclick="Fn_SignUpPDF(@item.SignUp_Id,'@item.Unique_Id')" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="PDF" aria-label="View"><i class="mdi mdi-file-pdf font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Inc_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View User </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewUserList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#Drp_Zone",
+        COMMUNITY_ID: "#Drp_Community",
+        //BUSINESS_ID: "#Business_Unit_Id",
+        BUILDING_ID: "#Drp_Building",
+        MODULE_ID: "#Business_Unit_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        BUSINESS_UNIT_NAME: "#Business_Unit_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#List_View",
+        BTN_ADD: "#btnadd",
+        BTN_BACK: "#btn_ViewIncback",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        DETAILS_VIEW: "#Inc_View",
+        VIEW_USER: "#ViewUserList",
+        FILTER_SUBMIT: "#Submit_Filter"
+    });
+
+    $(document).ready(function () {
+        debugger;
+     
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.DETAILS_VIEW).hide(100);
+        });
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+
+    function Fn_View(val) {
+        debugger
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $(UI_Fields.DETAILS_VIEW).show(100);
+        var Hzurl = "";
+        Hzurl = '/Master/_ViewUserReport';
+        Hzurl += '/?Sign_Up=' + val;
+        $(UI_Fields.VIEW_USER).load(Hzurl);
+    }
+    
+
+    function Fn_SignUpPDF(id, Unique_Id) {
+        debugger
+        $(".preloader").show();
+        $("#List_View").hide();
+        let NotiID = parseInt(id);
+        $.post("/Report/Genral_Work_Permit_Report", { Sign_Up_Id: NotiID, Unique_Id: Unique_Id }, function (data) {
+            if (data) {
+                window.open(data);
+            }
+            else {
+                toastr["error"]("Please try again");
+            }
+        }).always(function () {
+            $("#List_View").show();
+            $(".preloader").hide();
+        });
+    }
+
+</script>

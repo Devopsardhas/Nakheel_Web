@@ -1,0 +1,641 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.Emergency.Trigger_Alert;
+<head>
+    <style>
+        .form-label, .form-control {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 13px;
+        }
+
+        label {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular' !important;
+            font-size: 13px;
+        }
+
+        table {
+            font-family: 'Nakheel-Textregular';
+        }
+
+        span {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        .tdtxt {
+            color: #00617F;
+        }
+
+        .font-bold {
+            color: #00263a !important;
+        }
+
+        .table > :not(caption) > * > * {
+            padding: 0.35rem 0.35rem !important;
+            background-color: var(--bs-table-bg);
+            border-bottom-width: 1px;
+            -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+            box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        }
+
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+
+    </style>
+    <style>
+        #trigger_map_spots_view {
+            height: 300px;
+            width: 100%;
+            border-radius: 14px;
+        }
+
+    </style>
+</head>
+<div id="View_Trigger_Alert_List">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                @if (Model != null)
+                {
+
+                    <div>
+                        <input type="hidden" id="V_Trigger_Id" value="@Model.Trigger_ID" />
+
+                        <table class="table tab">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Zone</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Zone</td>
+
+                                    <td><b class="font-bold">Community</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Community</td>
+
+                                    <td><b class="font-bold">Emergency Type </b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Mitigation</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div id="trigger_map_spots_view"></div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="table-responsive">
+                                <table class="table tblround table-sm" style="width:100%;">
+                                    <tr style="background-color:#00263a;color:white">
+                                        <th>Building</th>
+                                        <th>Assignee</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <tbody>
+                                        @if (Model._Building_Lists != null)
+                                        {
+                                            var count = 1;
+                                            @foreach (var item in Model._Building_Lists)
+                                            {
+                                                <tr>
+                                                    <td style="display:none;"><input type="hidden" id="Alert_TaskId_@count" value="@item.Alert_Task_Id" class="TaskID" /></td>
+                                                    <td style="display:none" id="Building_@count" class="Building">@item.Sub_Building_Id</td>
+                                                    <td id="Buil_Name_@count" class="Buil_Name">@item.Building_Name</td>
+
+                                                    @if (item.Service_Provider != null)
+                                                    {
+                                                        <td><label class="tdtxt" id="name_@count">@item.Service_Provider</label></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><label class="tdtxt" id="name_@count">----</label></td>
+                                                    }
+
+                                                    @if (@item.Status == "1")
+                                                    {
+                                                        <td><a id="status_@count" class="badge bg-warning">Assign Service Provider</a></td>
+                                                        <td><a href="javascript:void(0);" onclick="Action_Toggle(@item.Sub_Building_Id,status_@count,name_@count,Alert_TaskId_@count,this)" title="Review" id="icon_@count" class="text-primary icon" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-account-hard-hat font-size-18"></i></a></td>
+                                                    }
+                                                    else if (item.Status == "2")
+                                                    {
+                                                        <td><a id="status_@count" class="badge bg-info">Service Provider Action Pending</a></td>
+                                                        <td><a id="icon_@count" onclick="Trigger_View('@item.Alert_Task_Id')" href="javascript:void(0);" title="Review" class="text-info" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i></a></td>
+                                                    }
+                                                    else if (item.Status == "3")
+                                                    {
+                                                        <td><a id="status_@count" class="badge bg-warning">Zone Supervisor Approval Pending</a></td>
+                                                        <td><a id="icon_@count" onclick="Trigger_View('@item.Alert_Task_Id')" href="javascript:void(0);" title="Review" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i></a></td>
+                                                    }
+                                                    else if (item.Status == "4")
+                                                    {
+                                                        <td><a id="status_@count" class="badge bg-danger">Rejected</a></td>
+                                                        <td><a id="icon_@count" onclick="Trigger_View('@item.Alert_Task_Id')" href="javascript:void(0);" title="Review" class="text-danger" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i></a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><a id="status_@count" class="badge bg-success">Approved</a></td>
+                                                        <td><a id="icon_@count" onclick="Trigger_View('@item.Alert_Task_Id')" href="javascript:void(0);" title="Review" class="text-success" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i></a></td>
+                                                    }
+
+
+
+                                                   @* @if (item.Status == "1")
+                                                    {
+                                                        <td><a href="javascript:void(0);" onclick="Action_Toggle(@item.Sub_Building_Id,status_@count,name_@count,Alert_TaskId_@count,this)" title="Review" id="icon_@count" class="text-primary icon" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-account-hard-hat font-size-18"></i></a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td><a id="icon_@count" onclick="Trigger_View('@item.Alert_Task_Id')" href="javascript:void(0);" title="Review" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i></a></td>
+                                                    }*@
+                                                </tr>
+                                                count++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr class="Placeholder">
+                                                <td colspan="4" style="text-align: center;">No Hot-spot Available</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>                 
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Add_SP_Toggle" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add Service Provider</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="TriggerID" id="TriggerID" value="0">
+                            <input class="form-control" name="Createdby" id="Createdby" value="">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="" class="col-md-10 col-form-label">Service Provider<span class="requ">*</span></label>
+                        <div class="form-group">
+                            <select class="form-select" id="Sp_Name" name="Sp_Name" required>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-7">
+                        <button type="submit" class="btn btn-success" onclick="Assign_Provider()"> Submit</button>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/emergency/serversidedatatabletriggeralert.js"></script>
+
+
+<script>
+    var Building_Id = "";
+    var statusid = "";
+    var iconid = "";
+    var nameid = "";
+    var Taskid = "";
+
+    var App_Spot_Id = ""
+    var App_Alert_Task_Id = ""
+
+    var varstatuslabel = "";
+    var statusclickId = "";
+    $(function () {
+        let View_Map_Spots = JSON.parse('@Html.Raw(Json.Serialize(Model!._Building_Lists!))');
+        if (View_Map_Spots != null) {
+            Load_Hot_Spots(View_Map_Spots);
+        }
+        //$("#Spot_Table").on('click', '.Statusclick', function () {
+        //    var Addres = $(this).closest('tr').find('.address').text();
+        //    var Spotid = $(this).closest('tr').find('.Spot_Id').val();
+        //    var AlertTaskid = $(this).closest('tr').find('.A_Task_Id').val();
+        //    varstatuslabel = $(this).closest('tr').find('.Statusclick').text();
+        //    statusclickId = $(this).closest('tr').find('.Statuslabel').attr("id");
+        //    if (varstatuslabel == "Approved" || varstatuslabel == "Rejected" || varstatuslabel == "Action Pending") {
+        //        $("#Div_App_Rej").hide();
+        //    } else {
+        //        $("#Div_App_Rej").show();
+        //    }
+
+        //    $("#tbody_Action_Spot").empty();
+        //    Statusclick(Addres, Spotid, AlertTaskid, varstatuslabel);
+        //});
+
+        $("#Close").on('click', function () {
+            $("#Spot_Name").val('');
+            $("#Div_Tbl_Spot").hide();
+            $("#Spot_Txt_Div").hide();
+            $("#Div_App_Rej").hide();
+        });
+    });
+
+    function Load_Hot_Spots(Map_Spots) {
+        if (Map_Spots != null) {
+            if (Map_Spots.length != 0) {
+                var map = new google.maps.Map(document.getElementById('trigger_map_spots_view'), {
+                    zoom: 10,
+                    center: new google.maps.LatLng(Map_Spots[0].Latitude, Map_Spots[0].Longitude),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                let infowindow = new google.maps.InfoWindow();
+                let marker, i;
+                let image = '';
+                $.each(Map_Spots, function (i, e) {
+                    if (e.Status == "1") {
+                        image = '../assets/images/mapicons/F.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-info">Action Pending</a>'
+                    }
+                    else if (e.Status == "2") {
+                        image = '../assets/images/mapicons/F.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-warning">Action Pending</a>'
+                    }
+                    else if (e.Status == "3") {
+                        image = '../assets/images/mapicons/V.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-warning">Approval Pending</a>'
+                    }
+                    else if (e.Status == "4") {
+                        image = '../assets/images/mapicons/V.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-danger">Rejected</a>'
+                    }
+                    else if (e.Status == "5") {
+                        image = '../assets/images/mapicons/E.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-success">Approved</a>'
+                    }
+                    else {
+                        image = '../assets/images/mapicons/E.png'
+                        var Status_label = '<a style="cursor:pointer" class="badge bg-success">Completed</a>'
+                    }
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(e.Latitude, e.Longitude),
+                        map: map,
+                        animation: google.maps.Animation.DROP,
+                        //animation: google.maps.Animation.BOUNCE,
+                        icon: image
+                    });
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            infowindow.setContent(e.Reason);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
+
+                });
+
+            }
+        }
+    }
+
+    function Statusclick(Addres, Spotid, AlertTaskid, varstatuslabel) {
+        debugger;
+        $("#Div_Tbl_Spot").show();
+        $("#Spot_Txt_Div").show();
+        //$("#Div_App_Rej").show();
+        Spot_Id = Spotid;
+        $("#Spot_Name").val(Addres);
+
+        App_Spot_Id = Spotid;
+        App_Alert_Task_Id = AlertTaskid;
+        if (varstatuslabel == "5" || varstatuslabel == "4" || varstatuslabel == "2" || varstatuslabel == "1") {
+            $("#Div_App_Rej").hide();
+        } else {
+            $("#Div_App_Rej").show();
+        }
+        if (varstatuslabel == "1") {
+            $.post("@Url.Action("_Checklist_GetBy_SpotId", "MigitationAction")", { Alert_Task_Id: AlertTaskid, Hot_Spot_Id: Spotid }, function (data) {
+                if (data != null) {
+                    $("#tbody_Action_Spot").empty();
+                    $.each(data, function (i, e) {
+                        var html = ""
+                        html += '<tr>'
+                        html += '<td>' + e.Remarks + '</td>'
+                        html += '<td>---</td>'
+                        html += '<td>---</td>'
+                        html += '<td>---</td>'
+                        html += '</tr>'
+                        $("#tbody_Action_Spot").append(html);
+                    });
+                }
+            });
+        }
+        else {
+            var count = 1
+            $.post("@Url.Action("_Checklist_GetBy_SpotId", "MigitationAction")", { Alert_Task_Id: AlertTaskid, Hot_Spot_Id: Spotid }, function (data) {
+                if (data != null) {
+                     $("#tbody_Action_Spot").empty();
+                    $.each(data, function (i, e) {
+                        var vartask_Id = "Alert_task_id" + count;
+                        var varHotspot_Id = "Hot_Spot_id" + count;
+                        var varAlertChk_Id = "Alert_Chk_id" + count;
+                        var varLocRemarks = "Location" + count;
+                        var varactiontaken = "actiontaken" + count;
+                        var vardivImg = "img_div" + count;
+                        var varfiles = "Files" + count;
+                        var varUploadPhotos = "UploadPhotos" + count;
+                        var varsubmit = "submit" + count;
+                        var html = ""
+                        html += '<tr>'
+                        html += '<td style="display:none;"><input type="hidden" id="' + vartask_Id + '" class="AlertTaskId" value="' + e.Alert_Task_Id + '" /></td>'
+                        html += '<td style="display:none;"><input type="hidden" id="' + varHotspot_Id + '" class="HotSpotId" value="' + e.Hot_Spot_Id + '" /></td>'
+                        html += '<td style="display:none;"><input type="hidden" id="' + varAlertChk_Id + '" class="ChklistId" value="' + e.Alert_Checklist_Id + '" /></td>'
+                        html += '<td>' + e.Remarks + '</td>'
+                        if (e.Action_Taken == "NA") {
+                            html += '<td><textarea id="' + varactiontaken + '" class="form-control actiontaken" style="width:200px;"></textarea></td>'
+                        } else {
+                            html += '<td>' + e.Action_Taken + '</td>'
+                        }
+
+                        if (e.Action_Taken == "NA") {
+                            html += '<td><div id="' + vardivImg + '" class="img_photos" style="display:none;"></div> <input id="' + varfiles + '" name="' + varfiles + '" type="file" accept=".png,.jpg,.jpeg" multiple class="form-control cls_files" onchange="File_Upload(' + "'" + varfiles + "'" + ',' + "'" + varUploadPhotos + "'" + ')" /> <input type="hidden" class="UploadPhotosfiles ' + varUploadPhotos + '"></td>'
+                        }
+                        else {
+                            html += '<td><a href="' + e.File_Path + '" target="_blank"><img src="' + e.File_Path + '" alt="" width="50" height="60"></a></td>'
+                        }
+                        if (e.Action_Taken == "NA") {
+                            html += '<td> <button type="button" class="btn btn-success waves-effect waves-light submit Btn_Submit" style="width:100px;" id="' + varsubmit + '"><i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit</button></td>'
+                        } else {
+                            html += '<td>---</td>'
+                        }
+                        html += '</tr>'
+                        $("#tbody_Action_Spot").append(html);
+                        count++;
+                    });
+                }
+                else {
+                    $("#Div_Tbl_Spot").hide();
+                }
+            });
+        }
+    }
+
+    function Action_Toggle(togg_Build_Id, status, name, Task_id, icon) {
+        //$('.Add_SP_Toggle').modal('show');
+        Building_Id = togg_Build_Id;
+        statusid = $(status).attr("id");
+        iconid = $(icon).attr("id");
+        nameid = $(name).attr("id");
+        Taskid = $(Task_id).attr("id");
+        LOAD_SERVICE_PROVIDER(Building_Id);
+    }
+
+    function ToastrMessage(type, Msg) {
+        toastr[type](Msg);
+    }
+
+    function Assign_Provider() {
+        var status_label = statusid;
+        var icon_label = iconid;
+        var name_label = nameid;
+        var varAlertTask_Id = Taskid;
+
+        var varServiceid = $("#Sp_Name").val();
+
+        var varservice_txt = $("#Sp_Name option:selected").text();
+
+        if (varServiceid === null || varServiceid === "") {
+            ToastrMessage("error", "Please select a service provider!");
+            return false;
+        }
+
+        var obj = {
+            Alert_Task_Id: "0",
+            Sub_Building_Id: Building_Id,
+            Service_Provider: varServiceid,
+            Trigger_ID: $("#V_Trigger_Id").val(),
+            Created_By: '@LoginClass.Employee_Identity_Id',
+        };
+
+        $.post("@Url.Action("Add_TRG_Assign_Action", "TriggerAlert")", { model: obj }, function (data) {
+            if (data.STATUS_CODE == "200") {
+
+                //var Alt_tsk_id = $("#" + varAlertTask_Id).val(data.Return_1);
+
+                var Alt_tsk_id = data.Return_1;
+
+                let F1 = $('<a class="badge bg-info">').text("Action Pending");
+                $("#" + status_label).replaceWith(F1);
+
+                let F3 = $('<label class="tdtxt">').text(varservice_txt);
+                $("#" + name_label).replaceWith(F3);
+
+                //let F2 = $('<a class="badge bg-success">').text("Service Provider Assigned");
+                //$("#" + icon_label).replaceWith(F2);
+
+                let F4 = $('<a onclick="Trigger_View(' + Alt_tsk_id + ')" href="javascript:void(0);" title="Action" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-18"></i>')
+                $("#" + icon_label).replaceWith(F4);
+
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.Add_SP_Toggle').modal('hide');
+            } else {
+                ToastrMessage("danger", "Something went wrong");
+            }
+        });
+    }
+
+    function LOAD_SERVICE_PROVIDER(Building_Id) {
+        $.post("@Url.Action("Trigger_Alert_Assign", "TriggerAlert")", { Sub_Building_Id: Building_Id }, function (data) {
+            if (data == "404") {
+                toastr.error("There is no service provider for this building!", "Error");
+            } else {
+                $('.Add_SP_Toggle').modal('show');
+                $("#Sp_Name").empty();
+                $("#Sp_Name").append("<option selected value='0' style='text-align:center' disabled> --Select Service Provider--</option>");
+                $(data).each(function (i, e) {
+                    $("#Sp_Name").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                });
+            }
+        });
+    }
+
+    function Trigger_View(Task_Id) {
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $(UI_Fields.TRIGGER_ALERT_VIEW).hide(100);
+        $(UI_Fields.TRIGGER_CHK_VIEW).show(100);
+
+        $.post("@Url.Action("_View_Trigger_Action", "MigitationAction")", { Alert_Task_Id: Task_Id, }, function (data) {
+            if (data != null) {
+                $("#Zone_View").text(data.Zone);
+                $("#Comm_View").text(data.Community);
+                $("#Mitigation_View").text(data.Mitigation);
+
+                if (data._Spots.length != 0) {
+                    var map = new google.maps.Map(document.getElementById('map-canvas_view'), {
+                        zoom: 10,
+                        center: new google.maps.LatLng(25.114491, 55.139020),
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    let infowindow = new google.maps.InfoWindow();
+                    let marker, i;
+                    let image = '';
+                    $.each(data._Spots, function (i, e) {
+                        if (e.Status == "1") {
+                            image = '../assets/images/mapicons/F.png'
+                            var Status_label = '<a style="cursor:pointer" class="badge bg-info">Action Pending</a>'
+                        }
+                        else if (e.Status == "3") {
+                            image = '../assets/images/mapicons/V.png'
+                            var Status_label = '<a style="cursor:pointer" class="badge bg-warning">Approval Pending</a>'
+                        }
+                        else if (e.Status == "4") {
+                            image = '../assets/images/mapicons/V.png'
+                            var Status_label = '<a style="cursor:pointer" class="badge bg-danger">Rejected</a>'
+                        }
+                        else if (e.Status == "5") {
+                            image = '../assets/images/mapicons/E.png'
+                            var Status_label = '<a style="cursor:pointer" class="badge bg-success">Approved</a>'
+                        }
+                        else {
+                            image = '../assets/images/mapicons/E.png'
+                            var Status_label = '<a style="cursor:pointer" class="badge bg-success">Completed</a>'
+                        }
+                        $("#Spot_Table").append([
+                            '<tr>',
+                            '<td style="display:none;">' + '<input type="hidden" class="A_Task_Id" value="' + e.Alert_Task_Id + '"/>' + '</td>',
+                            '<td>' + '<input type="hidden" class="Spot_Id" value="' + e.Hot_Spot_Id + '"/><lable class="address">' + e.Address + ' </lable>' + '</td>',
+                            '<td>' + '<lable>' + e.Exact_Loc + ' </lable>' + '</td>',
+                            '<td class="Statusclick">' + '<lable class="Statuslabel" id="status_id">' + Status_label + '</lable>' + '</td>',
+                            '</tr>'
+                        ].join(''));
+
+
+                        marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(e.Latitude, e.Longitude),
+                            map: map,
+                            animation: google.maps.Animation.DROP,
+                            //animation: google.maps.Animation.BOUNCE,
+                            icon: image
+                        });
+                        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                            return function () {
+                                infowindow.setContent(e.Reason);
+                                infowindow.open(map, marker);
+                            }
+                        })(marker, i));
+
+                        Statusclick(e.Address, e.Hot_Spot_Id, e.Alert_Task_Id, e.Status);
+                    });
+
+                } else {
+                    $("#Spot_Table").append([
+                        '<tr class="Placeholder">',
+                        '<td colspan="3" style="text-align: center;">' + 'No Hot-spot Available' + '</td>',
+                        '</tr>'
+                    ].join(''));
+                }
+            }
+
+        });
+    }
+
+    function Approval_Btn() {
+        //$("#Div_App_Rej").show();
+        //var statuslabelclick = statusclickId;
+        //var statusclickId = $("#Spot_Table").closest('tr').find('.Statuslabel').attr("id");
+        var obj = {
+            Alert_Task_Id: App_Alert_Task_Id,
+            Hot_Spot_Id: App_Spot_Id,
+            Status: "5"
+        };
+
+        $.post("@Url.Action("Approve_Action", "MigitationAction")", { model: obj }, function (data) {
+            if (data == "200") {
+                //let F1 = $('<a class="badge bg-success">').text("Approved");
+                //$("#" + statuslabelclick).replaceWith(F1);
+                //$("#Div_App_Rej").hide();
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Approved Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    //window.location.reload();
+                    Fn_Edit_Trigger($("#V_Trigger_Id").val())
+                });
+            }
+
+        });
+    }
+
+    function Reject_Emergency_Action() {
+       debugger;
+        var obj = {
+            Alert_Trig_Rej_Id : "0",
+            Alert_Task_Id: App_Alert_Task_Id,
+            Trigger_ID  :$("#V_Trigger_Id").val(),
+            Reason :$("#Reject_Reason").val(),
+            Rejected_By :'@LoginClass.Employee_Identity_Id',
+            Hot_Spot_Id: App_Spot_Id,
+           
+        };
+
+        $.post("@Url.Action("Reject_Action", "MigitationAction")", { model: obj }, function (data) {
+            if (data == "200") {
+             
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    //window.location.reload();
+                    $('.Reject_trigger').modal('hide');
+                    $("#Reject_Reason").val('');
+                    Fn_Edit_Trigger($("#V_Trigger_Id").val())
+                });
+            }
+
+        });
+    }
+
+</script>

@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Environmental Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+     .error {
+        color: red !important;
+    }
+</style>
+
+<div class="row" id="Env_Audit_List">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"><h4 class="card-title">Environmental Audit List</h4></div>                  
+                    <div class="col-lg-2" style="padding:13px"></div>                      
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="MainTable_wrapper" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Business Unit</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>HSE Officer</th>
+                            <th>Service Provider</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="EnvAudit_Tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Div_Env_Audit_Sch_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Environmental Audit </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="Env_Audit_Sch_View">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/js/validation/audit_environment/serversidedatatableaudenv.js"></script>
+<script>
+    "Use strict";
+    const UI_Fields = Object.freeze({
+        MAINTABLE: "#MainTable_wrapper",
+        TBODY: "#EnvAudit_Tbody",
+        LIST_VIEW: "#Env_Audit_List",
+        DIV_AUD_SCH_VIEW: "#Div_Env_Audit_Sch_View",
+        LOAD_AUD_SCH_VIEW: "#Env_Audit_Sch_View",
+        BTN_BACK: "#btn_back"
+    });
+
+    var login = "";
+    $(function () {
+       login = '@LoginClass.Employee_Identity_Id'
+        Serversidetable_Env(login);
+
+         $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.DIV_AUD_SCH_VIEW).hide(100);
+            window.location.reload();
+        })
+    });
+</script>

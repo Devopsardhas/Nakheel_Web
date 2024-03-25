@@ -1,0 +1,362 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+<style>
+    .form-label, .form-control {
+        margin-bottom: -0.5rem;
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    label {
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 15px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .Cls_History_Approval {
+        background: #00263a;
+        color: white;
+        height: 30px;
+        width: 100%;
+    }
+</style>
+<style>
+    .accordion-button {
+        background-color: #00263a !important;
+        color: white;
+    }
+
+        .accordion-button:not() {
+            background-color: #00263a !important;
+            color: white;
+        }
+
+    .accordion-body {
+        padding: 0rem 0.25rem !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+        color: white !important;
+    }
+</style>
+@model Nakheel_Web.Models.HandOverInsMaster.M_Insp_FireLifeSafety_Model;
+@if (Model != null)
+{
+    <form id="F_FireLifeSafety_View" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <!-- Fire & Life Safety Detail -->
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            <br />
+                            <input type="hidden" value="@Model.Insp_Request_Id" id="EInsp_Request_Id">
+                            <input type="hidden" value="@Model.Unique_Id" id="EUnique_Id">
+                            <input type="hidden" value="@LoginClass.Employee_Identity_Id" id="ECreatedBy">
+                            <input type="hidden" value="@Model.Business_Unit_Id" id="EBusiness_Unit_Id">
+                            <input type="hidden" value="@Model.Zone_Id" id="EZone_Id">
+                            <input type="hidden" value="@Model.Community_Id" id="ECommunity_Id">
+                            <input type="hidden" value="@Model.Building_Id" id="EBuilding_Id">
+                            <input type="hidden" value="@Model.Inspection_Date" id="EInspection_Date">
+                            <table class="table table-sm tblround tab">
+                                <tbody id="tblFireLifeSafetyView">
+                                    <tr>
+                                        <td><b class="font-bold">Reference No</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">NCM-@Model.Unique_Id</td>
+
+                                        <td style="display:none"><b class="font-bold">Company Name</b></td>
+                                        <td style="display:none">:</td>
+                                        <td class="tdtxt" style="display:none">@Model.Company_Name</td>
+
+                                        <td><b class="font-bold">Inspected By</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Inspected_By_Name</td>
+
+                                        <td><b class="font-bold">Inspection Date</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Inspection_Date</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="font-bold">Business Unit</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                        <td><b class="font-bold">Zone</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Zone_Name</td>
+
+                                        <td><b class="font-bold">Community</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Community_Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b class="font-bold">Building</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Building_Name</td>
+
+                                        @*@if (Model.Business_Unit_Type_Name != "0" && Model.Business_Unit_Type_Name != null)
+                                        {
+                                            var obane = "";
+                                            <td><b class="font-bold">Business Unit Type</b></td>
+                                            <td>:</td>
+                                            @if (Model.Business_Unit_Type_Name == "Party")
+                                            {
+                                                obane = "JOP 3rd Party";
+                                            }
+                                            else if (Model.Business_Unit_Type_Name == "JOP_Common")
+                                            {
+                                                obane = "JOP-Common Area";
+                                            }
+                                            else
+                                            {
+                                                obane = "Master Community";
+                                            }
+                                            <td class="tdtxt" style="word-break: break-all">@obane</td>
+                                        }*@
+                                        
+                                        @if (Model!.Status == "15")
+                                        {
+                                            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                            {
+
+                                                <td><b class="font-bold">Zone Team Attended?</b></td>
+                                                <td>:</td>
+                                                <td>
+                                                    <label for="Yes"> <input id="Zone_Rep_AttendedCS" onclick="FnZone_Rep_AttendedCS('1')" class="Zone_Rep_AttendedCS" name="Zone_Rep_AttendedCS" type="radio" value="Yes" />&nbsp;Yes</label>
+                                                    <label for="No"> <input id="Zone_Rep_AttendedCS" onclick="FnZone_Rep_AttendedCS('2')" class="Zone_Rep_AttendedCS" name="Zone_Rep_AttendedCS" type="radio" value="No" />&nbsp;No</label>
+                                                </td>
+                                                <td><b class="font-bold">Service Provider Attended?</b></td>
+                                                <td>:</td>
+                                                <td>
+                                                    <label for="Yes" onclick="FnService_Provider_AttendedCS('1')"> <input id="Service_Provider_AttendedCS" class="Service_Provider_AttendedCS" name="Service_Provider_AttendedCS" type="radio" value="Yes" />&nbsp;Yes</label>
+                                                    <label for="No" onclick="FnService_Provider_AttendedCS('2')"> <input id="Service_Provider_AttendedCS" class="Service_Provider_AttendedCS" name="Service_Provider_AttendedCS" type="radio" value="No" />&nbsp;No</label>
+                                                </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td><b class="font-bold">Zone Team Attended</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Zone_Rep_Attended</td>
+
+                                            <td><b class="font-bold">Service Provider Attended</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Service_Provider_Attended</td>
+                                        }
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3 row" id="div_Zone_Rep_IdCS" style="display:none;">
+                                        <label for="example-text-input" class="col-md-4 col-form-label">Zone Representative<span class="requ">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="form-control" name="Zone_Rep_IdCS" id="Zone_Rep_IdCS" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 row" id="div_Service_Provider_IdCS" style="display:none;">
+                                        <label for="example-text-input" class="col-md-4 col-form-label">Service Provider<span class="requ">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="form-control" name="Service_Provider_IdCS" id="Service_Provider_IdCS" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- History of Fire & Life Safety -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mt-xl-0 mt-4">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed Cls_History_Approval" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="text-muted">
+                                            @if (Model!.L_Insp_FireLifeSafety_History != null && Model.L_Insp_FireLifeSafety_History.Count != 0)
+                                            {
+                                                <br>
+                                                <table id="tblInspFireLifeHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Employee Name</th>
+                                                            <th>Role</th>
+                                                            <th>Assigned/ Created Date</th>
+                                                            <th>Action Taken Date</th>
+                                                            <th>Prev.Status</th>
+                                                            <th>Cur.Status</th>
+                                                            <th>Next Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="GettblIncidentHistory">
+                                                        @foreach (var item in Model.L_Insp_FireLifeSafety_History)
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td align="left" valign="middle">@item.Emp_Id</td>
+                                                                <td align="left" valign="middle">@item.Role_Id</td>
+                                                                <td align="left" valign="middle">@item.History_DateTime</td>
+                                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                                                <td align="left" valign="middle">@item.Status</td>
+                                                                <td align="left" valign="middle">@item.Remarks</td>
+                                                                <td align="left" valign="middle">@item.Next_Action</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </form>
+}
+<script>
+    $(document).ready(function () {
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $("#Inspection_Date").val(today);
+
+        ApplySelect2("#Zone_Rep_IdCS");
+        ApplySelect2("#Service_Provider_IdCS");
+    })
+    $(".submit_Approval").click(function () {
+        var val = $("#EInsp_Request_Id").val();
+        var Obj = {
+            Insp_Request_Id: $("#EInsp_Request_Id").val(),
+            Zone_Rep_Attended: $("#Zone_Rep_AttendedCS").val(),
+            Service_Provider_Attended: $("#Service_Provider_AttendedCS").val(),
+            Zone_Rep_Id: $("#Zone_Rep_IdCS").val(),
+            Service_Provider_Id: $("#Service_Provider_IdCS").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/Update_FireLifeSafety_Schedule",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    
+    function FnZone_Rep_AttendedCS(val) {
+        var zraname = $('input[name="Zone_Rep_AttendedCS"]:checked').val();
+        var Zone_Id = $("#EZone_Id").val();
+        var Community_Id = $("#ECommunity_Id").val();
+        if (zraname == "Yes") {
+            $("#div_Zone_Rep_IdCS").show();
+            ZONE_EMP_DRP_DWNCS('Supervisor', Zone_Id, Community_Id);
+        }
+        else {
+            $("#div_Zone_Rep_IdCS").hide();
+        }
+    }
+    function FnService_Provider_AttendedCS(val) {
+        var spaname = $('input[name="Service_Provider_AttendedCS"]:checked').val();
+        var Zone_Id = $("#EZone_Id").val();
+        var Community_Id = $("#ECommunity_Id").val();
+        if (spaname == "Yes") {
+            $("#div_Service_Provider_IdCS").show();
+            SERVICE_EMP_DRP_DWNCS('Service_Provider', Zone_Id, Community_Id);
+        }
+        else {
+            $("#div_Service_Provider_IdCS").hide();
+        }
+    }
+    function ZONE_EMP_DRP_DWNCS(Role_Name, Zone_Id, Community_Id) {
+        debugger;
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Zone_Rep_IdCS").empty();
+            $("#Zone_Rep_IdCS").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Zone_Rep_IdCS").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+            });
+        });
+    }
+    function SERVICE_EMP_DRP_DWNCS(Role_Name, Zone_Id, Community_Id) {
+        debugger;
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Service_Provider_IdCS").empty();
+            $("#Service_Provider_IdCS").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Service_Provider_IdCS").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+            });
+        });
+    }
+    function ApplySelect2(id) {
+        debugger;
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+</script>

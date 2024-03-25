@@ -1,0 +1,97 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.ServiceStatistics.Service_Sat_Model>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr class="clstr">
+            <td align="left" valign="middle">@item.Company_Name</td>
+            <td align="left" valign="middle">@item.Purchase_Order_Number</td>
+            <td align="left" valign="middle">@item.Service_Year</td>
+            <td align="left" valign="middle">@item.Service_Month</td>
+            <td align="left" valign="middle">@item.Business_Unit_Name</td>
+            <td align="left" valign="middle">@item.Zone_Name</td>
+            <td align="left" valign="middle">@item.Community_Name</td>
+            <td align="left" valign="middle">@item.Service_Total_Employees</td>
+            <td align="left" valign="middle">@item.Service_Man_of_Hours</td>
+            @if (@item.Status == "1")
+            {
+                <td align="left" valign="middle"><span class="badge bg-warning">HSE Staff/HSE Team Approval Pending</span></td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                        {
+                            <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                            <a onclick="Edit('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                        }
+                        else
+                        {
+                            <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                        }
+                    </div>
+                </td>
+
+            }
+            else if (@item.Status == "2")
+            {
+                <td align="left" valign="middle"><span class="badge bg-success">HSE Staff/HSE Team Approved</span></td>
+                <td align="left">
+                <div class="d-flex gap-3">
+                    @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                    {
+                        <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                        <a onclick="Edit('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                    }
+                    else
+                    {
+                        <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                    }
+                </div>
+            </td>
+
+            }
+            else
+            {
+                <td align="left" valign="middle"><span class="badge bg-danger">Returned For More Information Required</span></td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                        {
+                            <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                            <a onclick="Edit('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                        }
+                        else
+                        {
+                            <a onclick="View('@item.Service_Monthly_Id')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                        }
+                    </div>
+                </td>
+
+            }
+        </tr>
+    }
+}
+
+<script>
+    $("#Service_Month_Tbl").DataTable({
+        "order": [[0, "desc"]],
+        "initComplete": function (settings, json) {
+            $("#Service_Month_Tbl").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+        },
+        dom: 'lBfrtip',
+        buttons: ['excel', 'pdf', 'print'],
+    });
+</script>

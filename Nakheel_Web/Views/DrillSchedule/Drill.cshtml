@@ -1,0 +1,827 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    label {
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 15px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+
+    .accordion-button {
+        background-color: #00263a !important;
+        color: white;
+        font-size: 14px !important;
+        height: 10px !important;
+    }
+
+        .accordion-button:not() {
+            background-color: #00263a !important;
+            color: white;
+        }
+
+    .accordion-body {
+        padding: 0rem 0.25rem !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+        color: white !important;
+    }
+</style>
+
+
+@*Grid View*@
+<div class="row" id="List_View">
+    @*    <h4 b-87akhl1a11="" class="page-title mb-4">Emergency Alerts</h4>*@
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Drill Management</h4></div>
+                    <div class="col-lg-2" style="padding:15px;"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tbl_Action" class="table table-striped dt-responsive tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Drill ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Drill Type</th>
+                            <th>Created By</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_Action">
+                        <tr>
+                            <td>DRILL-0001</td>
+                            <td>Zone 1</td>
+                            <td>Shorelines</td>
+                            <td>Fire Drill</td>
+                            <td>Admin</td>
+                            <td><a href="#" class="badge bg-warning" onclick="event.preventDefault();">Observer Details Pending</a></td>
+                            <td>
+                                <a href="javascript:void(0);AddAction(3);" title="view" class="text-info" data-bs-original-title="Delete" aria-label="Delete">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-20"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DRILL-0002</td>
+                            <td>Zone 1</td>
+                            <td>Shorelines</td>
+                            <td>Elevator Rescue</td>
+                            <td>Admin</td>
+                            <td><a href="#" class="badge bg-warning" onclick="event.preventDefault();">Action Details Pending</a></td>
+                            <td>
+                                <a href="javascript:void(0);AddAction(1);" title="view" class="text-info" data-bs-original-title="Delete" aria-label="Delete">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-20"></i></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>DRILL-0003</td>
+                            <td>Zone 1</td>
+                            <td>Shorelines</td>
+                            <td>Elevator Rescue</td>
+                            <td>Admin</td>
+                            <td><a href="#" class="badge bg-warning" onclick="event.preventDefault();">Observer Details Pending</a></td>
+                            <td>
+                                <a href="javascript:void(0);AddAction(2);" title="view" class="text-info" data-bs-original-title="Delete" aria-label="Delete">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-eye font-size-20"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Action_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Drill Management</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <div class="row mb-1">
+                    <table class="table table-sm tab">
+                        <tbody id="tblIncidentDetailsViewPage">
+                            <tr>
+                                <td><b class="font-bold">Drill ID </b></td>
+                                <td>:</td>
+                                <td class="tdtxt">DRILL-0001</td>
+
+                                <td><b class="font-bold">Drill Type</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Elevator Rescue</td>
+
+                                <td><b class="font-bold">Company Name</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Zone Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 1</td>
+
+                                <td><b class="font-bold">HSE Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 2</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">SP 2</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Commnader</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">CMM 2</td>
+
+                                <td><b class="font-bold">Date and Time</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">12-Oct-2023 / 8:18PM</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Zone 1</td>
+                                <td><b class="font-bold">Building</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">PJ-SH-03</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Shorelines</td>
+
+                                <td style="display:none"><b class="font-bold">Master Community</b></td>
+                                <td style="display:none">:</td>
+                                <td class="tdtxt" style="display:none"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <form id="F_EMR_Team" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Inc_Obser_Report_Id">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Drill Location<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Drill_Loc" name="Drill_Loc">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-6 col-form-label">Elevator Keys Available on Site <span class="requ">*</span></label>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="CategoryPositive" class="">
+                                        <label for="Positive"> <input id="Positive" class="category" name="Category" type="radio" value="Yes">&nbsp;Yes</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-form-label">
+                                    <div id="CategoryNegative" class="floatBlock">
+                                        <label for="Negative"> <input id="Negative" class="category" name="Category" type="radio" value="No">&nbsp;No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Overall Standard of the Drill<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-select" id="Obs_Business_Unit_Type" name="Obs_Business_Unit_Type">
+                                        <option value="0">--Select--</option>
+                                        <option value="Party">Very good</option>
+                                        <option value="Party">Good</option>
+                                        <option value="JOP_Common">Satisfactory</option>
+                                        <option value="Party">Unsatisfactory</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-4">
+
+                        <div class="col-md-6">
+                            <label for="" class="col-md-4 col-form-label">Comments on Drill<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" data-gramm="false" wt-ignore-input="true" style="height: 260px;"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            @*<label class="d-flex align-items-center mb-3">Improvement Actions<span class="requ">*</span> </label>*@
+                            <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreTM" onclick="AddTM()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+                            <table id="tbl_TeamMem" class="table table-striped" style="width:98%;overflow:auto">
+                                <thead>
+                                    <tr class="TR_Color">
+                                        <th style="text-align:left;">Improvement Action</th>
+                                        <th style="text-align:left;">Assignee</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_TeamMem">
+                                    <tr>
+                                        <td>
+
+                                            <div class="form-group">
+
+                                                <textarea class="form-control" style="resize:vertical;height:17px"></textarea>
+
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <input type="hidden" value="0" />
+                                            <div class="form-group">
+                                                <select class="form-select">
+                                                    <option value="" style="text-align:center;">--Select--</option>
+                                                    <option value="1">Employee 1</option>
+                                                    <option value="2">Employee 2</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <hr />
+
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Photo Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                                    <div class="">
+                                        <input id="inputVideo" name="files" type="file" accept="video/*" multiple>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+
+                    <div class="row" style="text-align: center;">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Observer_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Drill Management</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <div class="row mb-1">
+                    <table class="table table-sm tab">
+                        <tbody id="tblIncidentDetailsViewPage">
+                            <tr>
+                                <td><b class="font-bold">Drill ID </b></td>
+                                <td>:</td>
+                                <td class="tdtxt">DRILL-0001</td>
+
+                                <td><b class="font-bold">Drill Type</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Elevator Rescue</td>
+
+                                <td><b class="font-bold">Company Name</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Zone Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 1</td>
+
+                                <td><b class="font-bold">HSE Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 2</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">SP 2</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Commnader</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">CMM 2</td>
+
+                                <td><b class="font-bold">Date and Time</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">12-Oct-2023 / 8:18PM</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Zone 1</td>
+                                <td><b class="font-bold">Building</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">PJ-SH-03</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Shorelines</td>
+
+                                <td style="display:none"><b class="font-bold">Master Community</b></td>
+                                <td style="display:none">:</td>
+                                <td class="tdtxt" style="display:none"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <form id="F_EMR_Team" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Inc_Obser_Report_Id">
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="col-12">
+                                <div class="mb-3 row">
+                                    <label for="" class="col-md-6 col-form-label">Time of fist sound of Fire Alarm / signal<span class="requ">*</span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="time" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="mb-3 row">
+                                    <label for="" class="col-md-6 col-form-label">Time of first occupant reporting to assembly point<span class="requ">*</span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="time" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="mb-3 row">
+                                    <label for="" class="col-md-6 col-form-label">Time of last occupant reporting at assembly point<span class="requ">*</span></label>
+                                    <div class="col-md-6">
+                                        <input class="form-control" type="time" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Nature of Occupants<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+
+
+                        <div class="col-md-6 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Performance of Life Safety Equipment<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Status of Lifts During Evacuation<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+                        <div class="col-md-12 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Status of Lifts During Evacuation<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+                        <div class="col-md-12 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Evacuation Process<span class="requ">*</span></label>
+                            <div id="EvacProcess"></div>
+                        </div>
+                    </div>
+                    <hr />
+
+
+                    <!-- Submit Button -->
+
+                    <div class="row" style="text-align: center;">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" id="Fire_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Drill Management</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <div class="row mb-1">
+                    <table class="table table-sm tab">
+                        <tbody id="tblIncidentDetailsViewPage">
+                            <tr>
+                                <td><b class="font-bold">Drill ID </b></td>
+                                <td>:</td>
+                                <td class="tdtxt">DRILL-0001</td>
+
+                                <td><b class="font-bold">Drill Type</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Elevator Rescue</td>
+
+                                <td><b class="font-bold">Company Name</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Zone Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 1</td>
+
+                                <td><b class="font-bold">HSE Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Employee 2</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">SP 2</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Commnader</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">CMM 2</td>
+
+                                <td><b class="font-bold">Date and Time</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">12-Oct-2023 / 8:18PM</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">NCM</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Zone 1</td>
+                                <td><b class="font-bold">Building</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">PJ-SH-03</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">Shorelines</td>
+
+                                <td style="display:none"><b class="font-bold">Master Community</b></td>
+                                <td style="display:none">:</td>
+                                <td class="tdtxt" style="display:none"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr />
+                <form id="F_EMR_Team" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Inc_Obser_Report_Id">
+
+                    <div class="row mb-1">
+
+                        <table class="table table-striped col-lg-12">
+                            <tr>
+                                <td><b class="font-bold">Weather Conditions</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <select class="form-select">
+                                        <option value="" style="text-align:center;">--Select--</option>
+                                        <option value="1">Rainy</option>
+                                        <option value="2">Sunny</option>
+                                    </select>
+                                </td>
+                                <td><b class="font-bold">Drill Start Time</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="time" class="form-control" /></td>
+                                <td><b class="font-bold">Drill End Time</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="time" class="form-control" /></td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Time of last person reporting to assembly point</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="time" class="form-control" /></td>
+
+                                <td><b class="font-bold">Time of previous last person reporting to assembly Point</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="time" class="form-control" /></td>
+
+                                <td><b class="font-bold">Assembly Point Number</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="number" class="form-control" /></td>
+                            </tr>
+
+                            <tr>
+
+                                <td><b class="font-bold">Total Participants</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="number" class="form-control" /></td>
+
+                                <td><b class="font-bold">Total Number of Fire Wardens</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="number" class="form-control" /></td>
+
+                                <td><b class="font-bold">Total Time of Evacuation</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt"><input type="number" class="form-control" /></td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold"> Overall standard of Fire Drill</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td>
+                                    <select class="form-select" id="Obs_Business_Unit_Type" name="Obs_Business_Unit_Type">
+                                        <option value="0">--Select--</option>
+                                        <option value="1">Very good</option>
+                                        <option value="2">Good</option>
+                                        <option value="3">Satisfactory</option>
+                                        <option value="4">Unsatisfactory</option>
+                                    </select>
+                                </td>
+
+                            </tr>
+
+                        </table>
+                    </div>
+                    <div class="row mb-1">
+
+
+                        <div class="col-md-6 mb-1">
+                            <label for="" class="col-md-12 col-form-label">How soon the team was able to extinguish the fire<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-1">
+                            <label for="" class="col-md-6 col-form-label">Did the smoke management work efficiently<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" style="height: 170px;"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="row mb-4">
+
+                        <div class="col-md-6">
+                            <label for="" class="col-md-4 col-form-label">Comments on Drill<span class="requ">*</span></label>
+                            <textarea class="form-control" id="" name="" data-gramm="false" wt-ignore-input="true" style="height: 260px;"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            @*<label class="d-flex align-items-center mb-3">Improvement Actions<span class="requ">*</span> </label>*@
+                            <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreTM" onclick="AddTM()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+                            <table id="tbl_TeamMem" class="table table-striped" style="width:98%;overflow:auto">
+                                <thead>
+                                    <tr class="TR_Color">
+                                        <th style="text-align:left;">Improvement Action</th>
+                                        <th style="text-align:left;">Assignee</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_TeamMem">
+                                    <tr>
+                                        <td>
+
+                                            <div class="form-group">
+
+                                                <textarea class="form-control" style="resize:vertical;height:17px"></textarea>
+
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <input type="hidden" value="0" />
+                                            <div class="form-group">
+                                                <select class="form-select">
+                                                    <option value="" style="text-align:center;">--Select--</option>
+                                                    <option value="1">Employee 1</option>
+                                                    <option value="2">Employee 2</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <!-- Submit Button -->
+
+                    <div class="row" style="text-align: center;">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/emr_common/common.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ACTION_DIV: "#Action_Div",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncidentObservation",
+        TBODY_TABLE: "#GetObservationList",
+        BTN_ADD_TEAM: "#btn_add_team",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        M_ZONE: "#Zone",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        MASTER_COMMUNITY_ID: "#Master_Community_Id",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        EDIT_GOOGLE_MAP_API: "#map-canvas_view",
+        BUSINESS_UNIT_TYPE: "#Fn_Business_Unit_Type",
+        EMR_DATE: "#Emr_Date",
+        TEAM_MEM: "#tbl_TeamMem",
+        TEAM_MEM_TBODY: "#tbody_TeamMem",
+        EMR_TIME: "#EMR_Time",
+        TBL_SPOT: "#tbl_Spot",
+        TBODY_SPOT: "#tbody_Spot",
+        OBSERVER_DIV: "#Observer_Div",
+        FIRE_DIV: "#Fire_Div",
+        TBL_ACT_DEL: ".TblTMDelBtn",
+    });
+
+    $(function () {
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/ObservationUploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        var $el2 = $("#inputVideo");
+        $el2.fileinput({
+            allowedFileExtensions: ['mp4', 'avi', 'flv'],
+            uploadUrl: '/Incident/ObservationUploadVideoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el2.fileinput("upload");
+        });
+
+        ClassicEditor.create(document.querySelector("#EvacProcess")).then(function (e) {
+            e.ui.view.editable.element.style.height = "200px"
+        }).catch(function (e) {
+        });
+    });
+    function AddAction(id) {
+        if (id == 1) {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.FIRE_DIV).hide(100);
+            $(UI_Fields.OBSERVER_DIV).hide(100);
+            $(UI_Fields.ACTION_DIV).show(100);
+        }
+        else if (id == 2) {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.FIRE_DIV).hide(100);
+            $(UI_Fields.ACTION_DIV).hide(100);
+            $(UI_Fields.OBSERVER_DIV).show(100);
+        }
+        else if (id == 3) {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.FIRE_DIV).show(100);
+            $(UI_Fields.OBSERVER_DIV).hide(100);
+            $(UI_Fields.ACTION_DIV).hide(100);
+
+        }
+    }
+
+</script>

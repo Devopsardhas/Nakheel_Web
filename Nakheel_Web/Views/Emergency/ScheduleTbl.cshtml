@@ -1,0 +1,255 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.EMR_Drill.Drill_Cal
+
+<style>
+    .lblColorG {
+        color: green !important;
+        font-weight: bold !important;
+    }
+
+    .lblColorO {
+        color: orange !important;
+        font-weight: bold !important;
+    }
+</style>
+@if (Model != null && Model.Drill_SCH != null && Model.Drill_SCH.Count() > 0)
+{
+
+    <form action="#" method="post" autocomplete="off" id="Frm_Drill_Schedule">
+        @Html.AntiForgeryToken()
+        @if (Model.Building_ID != null)
+        {
+            <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreSCH" onclick="AddSCH()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+        }
+        <table id="Drill_Sch_table" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%;">
+            <thead>
+                <tr>
+                    <th style="width:10%">Building Name</th>
+                    <th style="width:10%">Initial Date</th>
+                    <th>Frequency</th>
+                    <th>NCM HSE Officers</th>
+                    <th>Commander/ NCM Supervisors</th>
+                    <th>Service Provider</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="Drill_Sch_Tbody">
+                @foreach (var item in Model.Drill_SCH)
+                {
+                    int index = Model.Drill_SCH.IndexOf(item);
+                    <tr class="">
+                        <td>
+                            <input type="hidden" class="Drill_Cal_ID" value="@item.Drill_Calendar_ID" />
+                            <input type="hidden" class="Drill_BLD_ID" value="@item.Sub_Building_Id" />
+                            <label class="Projectname">@item.Building_Name</label>
+                        </td>
+                        <td>
+                            <input type="date" class="form-control Drill_Date" id="DD_@index" asp-for="@item.Initial_Date" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </td>
+                        <td>
+                            <select class="form-select Drill_Frequency" id="FQC_@index" asp-for="@item.Frequency">
+                                <option value="" style="text-align:center">--Select--</option>
+                                <option value="1">Monthly</option>
+                                <option value="2">Bimonthly</option>
+                                <option value="3">Quarterly</option>
+                                <option value="4">Semi annually</option>
+                                <option value="5">Yearly</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select Drill_HSE" id="HSE_@index" asp-for="@item.HSE_Officer" asp-items="@(new SelectList(Model!.HSE_Team,"Value","Text"))">
+                                <option value="" style="text-align:center">--Select--</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select Drill_Commander" id="HSE_@index" asp-for="@item.Commander" asp-items="@(new SelectList(Model!.Commander_Team,"Value","Text"))">
+                                <option value="" style="text-align:center">--Select--</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select Drill_SP" id="HSE_@index" asp-for="@item.Service_Provider" asp-items="@(new SelectList(Model!.SP_Team,"Value","Text"))">
+                                <option value="" style="text-align:center">--Select--</option>
+                            </select>
+                        </td>
+                        <td>
+                            @if (item.Drill_Calendar_ID == "0")
+                            {
+                                <label class="SCH_lbl lblColorO">Not Scheduled</label>
+                            }
+                            else
+                            {
+                                <label class="SCH_lbl lblColorG">Scheduled</label>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-success bg-gradient btn-sm mb-1 SCH_Submit" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save">
+                                <i class="bx bx-save font-size-15 align-middle me-1"></i>
+                            </button>
+                            @if (item.Drill_Calendar_ID != "0")
+                            {
+                                <button type="button" class="btn btn-success btn-sm SCH_DEL" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete">
+                                    <i class="bx bxs-trash-alt font-size-15 align-middle me-1"></i>
+                                </button>
+                            }
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </form>
+}
+<script>
+    var dateSCH = '@DateTime.Now.ToString("yyyy-MM-dd")';
+    var varHSE = '';
+    var varComm = '';
+    var varSP = '';
+    $(function () {
+        let building = '@Model!.Building_ID';
+        if (building != '') {
+            let HSE = JSON.parse('@Html.Raw(Json.Serialize(Model!.HSE_Team))');
+            let Comm = JSON.parse('@Html.Raw(Json.Serialize(Model!.Commander_Team))');
+            let SP = JSON.parse('@Html.Raw(Json.Serialize(Model!.SP_Team))');
+            varHSE = FormOpt(HSE);
+            varComm = FormOpt(Comm);
+            varSP = FormOpt(SP);
+        }
+        $(UI_Fields.DRILL_SCH_TABLE).on('click', '.SCH_Submit', function () {
+            let Id = $(this).closest('tr').find('.Drill_Cal_ID');
+            let BId = $(this).closest('tr').find('.Drill_BLD_ID').val();
+            let Date = $(this).closest('tr').find('.Drill_Date');
+            let Freq = $(this).closest('tr').find('.Drill_Frequency');
+            let HSE = $(this).closest('tr').find('.Drill_HSE');
+            let COMM = $(this).closest('tr').find('.Drill_Commander');
+            let SP = $(this).closest('tr').find('.Drill_SP');
+            let LblSCH = $(this).closest('tr').find('.SCH_lbl');
+            let Dt = $(UI_Fields.DRILL_TYPE).val();
+
+            if (!Date.val()) {
+                toastr["error"]("Select Date!");
+                Date.focus();
+                return false;
+            }
+            else if (!Freq.val()) {
+                toastr["error"]("Select Freqency!");
+                Freq.focus();
+                return false;
+            }
+            else if (!HSE.val()) {
+                toastr["error"]("Select HSE Officer/ Observer!");
+                HSE.focus();
+                return false;
+            }
+            else if (!COMM.val()) {
+                toastr["error"]("Select Commander!");
+                COMM.focus();
+                return false;
+            }
+            else if (!SP.val()) {
+                toastr["error"]("Select Service Provider!");
+                SP.focus();
+                return false;
+            }
+            Swal.fire(
+                {
+                    title: "Are you sure?",
+                    text: "You want to add/ update the details.",
+                    icon: "warning", showCancelButton: !0,
+                    confirmButtonColor: "#34c38f",
+                    cancelButtonColor: "#f46a6a",
+                    confirmButtonText: "Yes"
+                }).then(function (t) {
+                    if (t.isConfirmed) {
+                        let modelData = {
+                            Drill_Calendar_ID: Id.val(),
+                            Sub_Building_Id: BId,
+                            Initial_Date: Date.val(),
+                            Frequency: Freq.val(),
+                            HSE_Officer: HSE.val(),
+                            Commander: COMM.val(),
+                            Service_Provider: SP.val(),
+                            Drill_Type_ID: Dt,
+                        };
+                        let token = GetformToken(UI_Fields.FRM_SCH);
+                        AjaxAsynT('/Emergency/Schedule_Add_Update', { model: modelData }, token, function (data) {
+                            if (data.STATUS_CODE == "200") {
+                                Id.val(data.Return_1);
+                                let lbl = LblSCH.text();
+                                if (lbl == "Not Scheduled") {
+                                    LblSCH.removeClass('lblColorO');
+                                    LblSCH.text("Scheduled");
+                                    LblSCH.addClass("lblColorG");
+                                }
+                                Swal.fire("Updated!", "Updated Successfully", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        });
+                    }
+                });
+        });
+
+        $(UI_Fields.DRILL_SCH_TABLE).on('click', '.SCH_DEL', function () {
+            let tr = $(this).closest('tr');
+            let Id = tr.find('.Drill_Cal_ID').val();
+            Swal.fire(
+                {
+                    title: "Are you sure?",
+                    text: "You want to delete the schedule.",
+                    icon: "warning", showCancelButton: !0,
+                    confirmButtonColor: "#34c38f",
+                    cancelButtonColor: "#f46a6a",
+                    confirmButtonText: "Yes"
+                }).then(function (t) {
+                    if (t.isConfirmed) {
+                        let modelData = {
+                            Drill_Calendar_ID: Id,
+                        };
+                        let token = GetformToken(UI_Fields.FRM_SCH);
+                        AjaxAsynT('/Emergency/Schedule_Delete', { model: modelData }, token, function (data) {
+                            if (data.STATUS_CODE == "200") {
+                                tr.remove();
+                                Swal.fire("Updated!", "Deleted Successfully", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        });
+                    }
+                });
+        });
+    });
+    function AddSCH() {
+        let bval = $(UI_Fields.BUILDING_ID).val();
+        let btxt = $(UI_Fields.BUILDING_ID + ' option[value=' + bval + ']').text();
+        if (bval) {
+            let html = "";
+            html += '<tr><td><input type="hidden" class="Drill_Cal_ID" value="0" /><input type="hidden" class="Drill_BLD_ID" value="' + bval + '" /> <label class="Projectname">' + btxt + '</label></td>';
+            html += '<td><input type="date" class="form-control Drill_Date"  min="' + dateSCH + '" /></td>';
+            html += '<td><select class="form-select Drill_Frequency"><option value="" style="text-align:center">--Select--</option><option value="1">Monthly</option><option value="2">Bimonthly</option><option value="3">Quarterly</option><option value="4">Semi annually</option><option value="5">Yearly</option></select></td>';
+            html += '<td><select class="form-select Drill_HSE"><option value="" style="text-align:center">--Select--</option>' + varHSE + '</select></td>';
+            html += '<td><select class="form-select Drill_Commander"><option value="" style="text-align:center">--Select--</option>' + varComm + '</select></td>';
+            html += '<td><select class="form-select Drill_SP"><option value="" style="text-align:center">--Select--</option>' + varSP + '</select></td>';
+            html += '<td><label class="SCH_lbl lblColorO">Not Scheduled</label></td>';
+            html += '<td><button type="button" class="btn btn-success bg-gradient btn-sm SCH_Submit" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save"><i class="bx bx-save font-size-15 align-middle me-1"></i></button></td></tr>';
+            // html += '<td><button type="button" class="btn btn-danger DelBtn">Remove</button></td></tr>';
+            $(UI_Fields.DRILL_SCH_TBODY).append(html);
+        }
+    }
+
+    function FormOpt(data) {
+        let options = '';
+        if (data) {
+            $(data).each(function (i, e) {
+                options += '<option value = "' + e.Value + '">' + e.Text + '</option>'
+            });
+        }
+        return options;
+    }
+</script>
+

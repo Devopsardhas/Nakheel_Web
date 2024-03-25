@@ -1,0 +1,237 @@
+﻿@{
+    Layout = null;
+    var HSE = (bool)TempData["HSE"]!;
+    var ZS = (bool)TempData["ZS"]!;
+    string ST = "";
+}
+@model Nakheel_Web.Models.EMR_Drill.Get_All_DrillSCH;
+@if (Model != null)
+{
+    ST = Model.Schedule!.Status!;
+    <form id="FrmSchTaskAssign" method="post" action="#">
+        @Html.AntiForgeryToken()
+        <div class="row">
+
+            @if (HSE)
+            {
+                <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreTM" onclick="AddNewAction()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+            }
+
+            @if (ZS)
+            {
+                @if (Model.TotalActions != null && Model.TotalActions.Count > 0)
+                {
+                    var Closed = Model.TotalActions.Where(x => x.Close_On_Spot == "Yes").ToList();
+                    var Open = Model.TotalActions.Where(x => x.Close_On_Spot == "No" || x.Close_On_Spot == null).ToList();
+
+                    @if (Closed != null && Closed.Count > 0)
+                    {
+                        <table class="table table-sm table-striped table-responsive mb-2" style="width:98%;overflow:auto">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="text-align:left;">Suggested By</th>
+                                    <th style="text-align:left;">Improvement Action</th>
+                                    <th style="text-align:left;">Is Closed On spot?</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                    <th style="text-align:left;">Action Taken</th>
+                                    <th style="text-align:left;">Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in Closed)
+                                {
+                                    <tr>
+                                        <td><label class="tdtxt">@item.Created_By</label></td>
+                                        <td><label class="tdtxt">@item.Action_Des</label></td>
+                                        <td><label class="tdtxt">@item.Close_On_Spot</label></td>
+                                        <td><label class="tdtxt">@item.Target_Date</label></td>
+                                        <td><label class="tdtxt">@item.Corrective_Action</label></td>
+                                        @if (item.Photo_Path != null)
+                                        {
+                                            <td><a href="@item.Photo_Path" target="_blank"><img src="@item.Photo_Path" style="height:50px;width:50px" /></a></td>
+                                        }
+                                        else
+                                        {
+                                            <td><label class="tdtxt">No files</label></td>
+                                        }
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    @if (Open != null && Open.Count > 0)
+                    {
+
+                      
+                        <table id="tblTaskAssignZS" class="table table-sm table-striped table-responsive" style="width:98%;overflow:auto">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="text-align:left;">Suggested By</th>
+                                    <th style="text-align:left;">Improvement Action</th>
+                                    <th style="text-align:left;">Is Closed On spot?</th>
+                                    <th style="text-align:left;">Assign Action To</th>
+                                    <th style="text-align:left;">Assignee</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyTaskAssignZS">
+
+                                @foreach (var item in Open)
+                                {
+                                    int i = Open.IndexOf(item);
+                                    <tr class="NewActions">
+                                        <td><input type="hidden" class="Drill_CRR_ID" value="@item.Drill_CRR_ID" /><label class="tdtxt">@item.Created_By</label></td>
+                                        <td><label class="tdtxt">@item.Action_Des</label></td>
+                                        <td><label class="tdtxt">No</label></td>
+                                        <td>
+                                            <div class="form-group">
+                                                <select class="form-control Assignee_Type" required id="Assign_@i" name="Assign_@i">
+                                                    <option value="" style="text-align:center">--Select--</option>
+                                                    <option value="1">Zone Team</option>
+                                                    <option value="2">Service Provider</option>
+                                                </select>
+                                                <label id="LblAssign_@i" style="font-size: small;" class="error text-danger" for="Assign_@i"></label>
+                                                @*<span data-valmsg-replace="true" data-valmsg-for="Assign_@i" class="field-validation-valid text-danger"></span>*@
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <select class="form-control Assign_Mem selectDrp" required id="Mem_@i" name="Mem_@i">
+                                                    <option value="" style="text-align:center">--Select--</option>
+                                                </select>
+                                                @*<span data-valmsg-replace="true" data-valmsg-for="Mem_@i" class="field-validation-valid text-danger"></span>*@
+                                                <label id="LblAssign_Mem_@i" style="font-size: small;" class="error text-danger" for="Mem_@i"></label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="date" class="form-control Assign_Date" required id="Date_@i" name="Date_@i" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                                @*<span data-valmsg-replace="true" data-valmsg-for="Date_@i" class="field-validation-valid text-danger"></span>*@
+                                                <label id="LblDate_@i" style="font-size: small;" class="error text-danger" for="Date_@i"></label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+                }
+
+            }
+            else
+            {
+                <table id="tblTaskAssign" class="table table-sm table-striped table-responsive" style="width:98%;overflow:auto">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;">Suggested By</th>
+                            <th style="text-align:left;">Improvement Action</th>
+                            <th style="text-align:left;">Assignee</th>
+                            <th style="text-align:left;">Is Closed On spot?</th>
+                            <th style="text-align:left;">Target Date</th>
+                            <th style="text-align:left;">Action Taken</th>
+                            <th style="text-align:left;">Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyTaskAssign">
+                        @if (Model.TotalActions != null && Model.TotalActions.Count > 0)
+                        {
+
+                            @foreach (var item in Model.TotalActions)
+                            {
+                                string CL = @item.Close_On_Spot == null ? "No" : @item.Close_On_Spot;
+                                <tr>
+                                    <td><label class="tdtxt">@item.Created_By</label></td>
+                                    <td><label class="tdtxt">@item.Action_Des</label></td>
+                                    <td><label class="tdtxt">@item.Remarks</label></td>
+                                    <td><label class="tdtxt">@CL</label></td>
+                                    @if (item.Status == "3")
+                                    {
+                                        <td><label class="tdtxt">@item.Target_Date</label></td>
+                                        <td><label class="tdtxt">@item.Corrective_Action</label></td>
+                                        @if (item.Photo_Path != null)
+                                        {
+                                            <td><a href="@item.Photo_Path" target="_blank"><img src="@item.Photo_Path" style="height:50px;width:50px" /></a></td>
+                                        }
+                                        else
+                                        {
+                                            <td><label class="tdtxt">No files</label></td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @*<td colspan="3" style="text-align:center"><label class="tdtxt">Pending</label></td>*@
+                                        <td><label class="tdtxt">----</label></td>
+                                        <td><label class="tdtxt">----</label></td>
+                                        <td><label class="tdtxt">----</label></td>
+                                    }
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+        @{
+            @if (HSE)
+            {
+                <div class="row mb-2" style="text-align: center;">
+                    <div class="d-grid gap-2 d-md-block">
+                        <button type="button" class="btn btn-success waves-effect waves-light Btn_App" value="3">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Verify
+                        </button>
+                    </div>
+                </div>
+            }
+            else if (ZS)
+            {
+                <div class="row" style="text-align: center;">
+                    <div class="d-grid gap-2 d-md-block">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="ZS_Submit">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+    </form>
+}
+@*<script src="~/assets/js/Emr_Common/masters-form-validation.js"></script>*@
+<script>
+    var HSSE;
+    var SP;
+    $(function () {
+        $(UI_Fields.ZS_SUBMIT).on('click', ZMSubmit);
+        $(UI_Fields.TBL_TASK_ASSIGN).on('click', UI_Fields.DEL_BTN_ACT, function () {
+            $(this).closest('tr').remove();
+        });
+        let Status = '@ZS';
+        if (Status == 'True') {
+            HSSE = JSON.parse('@Html.Raw(Json.Serialize(Model!.HseTeam))');
+            SP = JSON.parse('@Html.Raw(Json.Serialize(Model.ServiceProvider))');
+            $(UI_Fields.TBL_TASK_ASSIGN_ZS).on('change', UI_Fields.ASSIGNEE_TYPE, function () {
+                let Val = $(this).closest('tr').find('.Assignee_Type').val();
+                let ele = $(this).closest('tr').find('.Assign_Mem');
+                if (Val == "1") {
+                    PopulateDrp(ele, HSSE, '--Select--');
+                }
+                else if (Val == "2") {
+                    PopulateDrp(ele, SP, '--Select--');
+                }
+                else {
+                    ele.find('option:not(:first)').remove();
+                }
+            });
+            ApplySelect2(".selectDrp");
+            //$.validator.addMethod("req", function (value, element) {
+            //    return value !== "";
+            //}, "This field is required");
+        }
+
+       
+    });
+</script>

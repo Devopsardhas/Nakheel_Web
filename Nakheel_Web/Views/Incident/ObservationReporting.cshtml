@@ -1,0 +1,891 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Observation Reporting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+@model Nakheel_Web.Models.IncidentReport.M_IncidentObservationReport;
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+    #search_input_1 {
+        font-size: 18px;
+        width: 330px;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: 311px !important;
+    }
+    #search_input {
+        font-size: 18px;
+        width: 51% !important;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: -6px !important;
+    }
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+@*Grid View*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Observation Reporting List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Observation</button>
+                    </div>
+                    @*else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }*@
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncidentObservation" class="table table-sm table-striped dt-responsive tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Observation ID</th>
+                            <th style="text-align: center;">Zone</th>
+                            <th style="text-align: center;">Community</th>
+                            <th style="text-align: center;">Observation Type</th>
+                            <th style="text-align: center;">Last Action By</th>
+                            <th style="text-align: center;">Status</th>
+                            <th style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetObservationList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Incident_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Observation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Observation_Report" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Inc_Obser_Report_Id">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Company Name</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="NCM" id="Company_Name" name="Company_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Reported By<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="@LoginClass.First_Name" id="Contact_Name" name="Contact_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Date Of Observation<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="date" id="Obser_Date" name="Obser_Date" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Business_Unit" id="Business_Unit" onchange="FnBusiness_Unit()">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Community" id="Community_Id" onchange="Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row" style="display:none">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Master Community</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Master_Community_Id" id="Master_Community_Id">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Category<span class="requ">*</span></label>
+                                <div class="col-md-4 col-form-label">
+                                    <div id="CategoryPositive" class="">
+                                        <label for="Positive"> <input id="Positive" class="category" name="Category" type="radio" value="Positive (Good Practice)" />&nbsp;Positive (Good Practice)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-form-label">
+                                    <div id="CategoryNegative" class="floatBlock">
+                                        <label for="Negative"> <input id="Negative" class="category" name="Category" type="radio" value="Negative (Action Required)" />&nbsp;Negative (Action Required)</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Observation Type: Health & Safety  -->
+                            <div id="divHealthSafety" style="display:none">
+                                @*<div class="row">*@
+                                <div class="mb-3 row">
+                                    @*<label for="example-number-input" class="col-md-4 col-form-label">Observation Type:</label><br />*@
+                                    <label for="example-text-input" class="col-md-4 col-form-label">Health & Safety<span class="requ">*</span></label>
+                                    <div class="col-md-8">
+                                        <select class="form-control clsHealth_Safety" name="Health_Safety_Type_List" id="HealthySafetyList">
+                                        </select>
+                                        @*<div id="HealthySafetyList" style="display: contents;">
+                                        </div>
+                                        </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Observation Type: Environment List -->
+                            <div id="divEnvironment" style="display:none">
+                                <div class="row">
+                                    <div class="mb-3 row">
+                                        @*<label for="example-number-input" class="col-md-4 col-form-label">Observation Type:</label><br />*@
+                                        <label for="example-text-input" class="col-md-4 col-form-label">Environment<span class="requ">*</span></label>
+                                        <div class="col-md-8">
+                                            <select class="form-control clsEnvironment_Type" name="Environment_Type_List" id="EnvironmentList">
+                                            </select>
+                                            @*<div id="EnvironmentList" style="display: contents;">
+                                            </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-url-input" class="col-md-4 col-form-label">Time Of Observation<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="time" id="Obser_Time" name="Obser_Time">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone" id="Zone" onchange="Fn_Zone(this.value)">
+                                      
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Building_Id" id="Building_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Observation Type<span class="requ">*</span></label>
+                                <div class="col-md-4 col-form-label">
+                                    <div id="OT_Health_Safety" class="" onclick="FnObservationType('1')">
+                                        <label for="Health_Safety"> <input id="Health_Safety" class="observation_Type" name="Observation_Type" type="radio" value="Health_Safety" />&nbsp;Health & Safety</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-form-label">
+                                    <div id="OT_Environment" class="floatBlock" onclick="FnObservationType('2')">
+                                        <label for="Environment"> <input id="Environment" class="observation_Type" name="Observation_Type" type="radio" value="Environment" />&nbsp;Environment</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none" id="Fn_Business_Unit_Type">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit Type</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Obs_Business_Unit_Type" name="Obs_Business_Unit_Type">
+                                        <option value="0">--Select--</option>
+                                        <option value="Party">JOP 3rd Party</option>
+                                        <option value="JOP_Common">JOP-Common Area</option>
+                                        <option value="Master_Community">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="col-md-12">
+                                <label class="form-label">Observation Location</label>
+                                <div id="GoogleMapApi" style="display:none"></div>
+                                <div id="map-canvas_view_Edit" style="display:none"></div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="col-md-12">
+                                <label class="form-label">Description Of The Observation:<span class="requ">*</span></label>
+                                <textarea class="form-control" id="Obser_Details" name="Obser_Details" style="height:125px;"></textarea>
+                            </div>
+                            <br/>
+                            <div class="col-md-12">
+                                <label class="form-label">Immediate Action Taken:<span class="requ">*</span></label>
+                                <textarea class="form-control" id="Imm_Corrective_Actions" name="Imm_Corrective_Actions" style="height:125px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Photo & Video Uploading -->
+                    <div class="MediaEditDiv" id="MediaEditDiv" style="display:none">
+                        <div class="row">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Reject Evidence</label>
+                            <div class="row mb-3">
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Photos</label>
+                                    <div class="" id="EditinputPhoto">
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Videos</label>
+                                    <div class="" id="EditinputVideo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                                    <div class="">
+                                        <input id="inputVideo" name="files" type="file" accept="video/*" multiple>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="display:none">
+                        <div class="mb-3 ">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Description Of The Observation<span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Description_Observation" name="Description_Observation"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <br />
+                    <!-- Submit Button -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Observation_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Observation Report</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewObsBack" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewObservationList">
+                </div>
+                <div id="ViewIncidentList_Supervisor">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/incident_validation/incidentobservationvalidation.js"></script>
+<script src="~/assets/js/validation/incident_validation/serversidedatatable_observationreport.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncidentObservation",
+        TBODY_TABLE: "#GetObservationList",
+        BTN_ADD_INC: "#btn_add_incident",
+        HEALTHY_CHECKBOX: "#Healthy_Checkbox",
+        DIV_HEALTHY: "#div_healthy",
+        HEALTHY_SAFETY_LIST: "#HealthySafetyList",
+        ENVIRONMENT_LIST: "#EnvironmentList",
+        ENVIRONMENT_CHECKBOX: "#Environment_Checkbox",
+        DIV_ENVIRONMENT: "#div_Environment",
+        OBS_DETAILS_VIEW: "#Observation_View",
+        BTN_VIEW_OBS_BACK: "#btn_ViewObsBack",
+        VIEW_OBSERVATION_LIST: "#ViewObservationList",
+        VIEW_OBSERVATION_FINAL_LIST: "#ViewIncidentList_Supervisor",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        M_ZONE: "#Zone",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        MASTER_COMMUNITY_ID: "#Master_Community_Id",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        EDIT_GOOGLE_MAP_API: "#map-canvas_view",
+        BUSINESS_UNIT_TYPE: "#Fn_Business_Unit_Type",
+        REJECT_EVIDENCE: "#MediaEditDiv"
+    });
+    
+    $(document).ready(function () {
+        //debugger;
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#Obser_Date').val(today);
+        
+        $(function () {
+            var dtToday = new Date();
+
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            var maxDate = year + '-' + month + '-' + day;
+            $('#Obser_Date').attr('max', maxDate);
+        });
+
+        ApplySelect2("#Business_Unit");
+        ApplySelect2("#Zone");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Master_Community_Id");  
+        ApplySelect2("#HealthySafetyList");
+        ApplySelect2("#EnvironmentList");
+
+        ServerSideTable_Observation();
+        Load_GoogleMaps();
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            LOAD_BUSINESS_UNIT();
+            //LOAD_ZONE();
+            LOAD_ZONE('@LoginClass.Zone_Id');
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+            $(UI_Fields.GOOGLE_MAP_API).show(100);
+            $(UI_Fields.EDIT_GOOGLE_MAP_API).hide(100);
+            $(UI_Fields.ENVIRONMENT_LIST).empty();
+            $(UI_Fields.HEALTHY_SAFETY_LIST).empty();
+        });
+        $(UI_Fields.BTN_VIEW_OBS_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+            $(UI_Fields.OBS_DETAILS_VIEW).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/ObservationUploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+            //debugger;
+            //alert('Photo');
+        });
+
+        var $el2 = $("#inputVideo");
+        $el2.fileinput({
+            allowedFileExtensions: ['mp4', 'avi', 'flv'],
+            uploadUrl: '/Incident/ObservationUploadVideoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el2.fileinput("upload");
+            //debugger;
+        });
+    })
+</script>
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function FnObservationType(val) {
+        if (val == "1") {
+            LOAD_HEALTH_SAFETY();
+            $("#divHealthSafety").show();
+            $("#divEnvironment").hide();
+        } else if (val == "2") {
+            LOAD_ENVIRONMENT();
+            $("#divEnvironment").show();
+            $("#divHealthSafety").hide();
+        } else {
+            $("#divHealthSafety").hide();
+            $("#divEnvironment").hide();
+        }
+    }
+    function LOAD_HEALTH_SAFETY() {
+        $.post("@Url.Action("LoadAllHealthSafety", "CommonMaster")", function (data) {
+            $(UI_Fields.HEALTHY_SAFETY_LIST).empty();
+            $(UI_Fields.HEALTHY_SAFETY_LIST).append("<option selected value='0' style='text-align:center' disabled> --Select Health & Safety--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.HEALTHY_SAFETY_LIST).append("<option value=" + e.Health_Safety_Type_Id + ">" + e.Health_Safety_Type_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ENVIRONMENT() {
+        $.post("@Url.Action("LoadAllEnvironment", "CommonMaster")", function (data) {
+            $(UI_Fields.ENVIRONMENT_LIST).empty();
+            $(UI_Fields.ENVIRONMENT_LIST).append("<option selected value='0' style='text-align:center' disabled> --Select Environment--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ENVIRONMENT_LIST).append("<option value=" + e.Environment_Type_Id + ">" + e.Environment_Type_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE(selectedValue) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_ZONE).val(selectedValue);
+            Fn_Zone(selectedValue);
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+        });
+    }
+    function FnBusiness_Unit(val) {
+        var buname = $("#Business_Unit option:selected").text();
+        if (buname == "NCM") {
+            $("#Fn_Business_Unit_Type").show();
+        }
+        else {
+            $("#Fn_Business_Unit_Type").hide();
+        }
+    }
+    function LOADEMP_FILTERS() {
+        var Emp_Community_Id = $(UI_Fields.COMMUNITY_ID).val();
+        var Emp_Building_Id = $(UI_Fields.BUILDING_ID).val();
+        var Emp_Master_Community_Id = $(UI_Fields.MASTER_COMMUNITY_ID).val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Emp_Community_Id: Emp_Community_Id, Emp_Building_Id: Emp_Building_Id, Emp_Master_Community_Id: Emp_Master_Community_Id }, function (data) {
+            $(UI_Fields.VIEW_EMPLOYEE).empty();
+            $(UI_Fields.VIEW_EMPLOYEE).append("<option selected value='0' disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.VIEW_EMPLOYEE).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Building() {
+        LOADEMP_FILTERS()
+    }
+    function Fn_Master_Community() {
+        LOADEMP_FILTERS()
+    }
+    function Load_GoogleMaps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+</script>
+<script>
+    function Location() {
+        // if HTML DOM Element that contains the map is found...
+        if (document.getElementById('map-canvas_view_Edit')) {
+            var content;
+            var latitude = $("#Lat").val();
+            var longitude = $("#Long").val();
+            //alert(latitude + ' ' + longitude);
+            var map;
+            var marker;
+            navigator.geolocation.getCurrentPosition(loadMap);
+
+            function loadMap(location) {
+                if (location.coords) {
+                    latitude = $("#Lat").val();//location.coords.latitude;
+                    longitude = $("#Long").val();//location.coords.longitude;
+                }
+
+                // Coordinates to center the map
+                var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+                // Other options for the map, pretty much selfexplanatory
+                var mapOptions = {
+                    zoom: 12,
+                    center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                    mapTypeId: google.maps.MapTypeId.PLAN,
+                };
+                var image = '../../assets/images/mappin.png';
+                // Attach a map to the DOM Element, with the defined settings
+                map = new google.maps.Map(document.getElementById("map-canvas_view_Edit"), mapOptions);
+
+                content = document.getElementById('information');
+                google.maps.event.addListener(map, 'click', function (e) {
+                    placeMarker(e.latLng);
+                });
+                marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    icon: image
+                });
+            }
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>
+<script>
+    function LOAD_BUSINESS_UNIT_EDIT(selectedValue) {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_BUSINESS_UNIT).val(selectedValue);
+        });
+    }
+    function LOAD_ZONE_EDIT(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_ZONE).val(selectedValue);
+            Fn_Zone(selectedValue, Community_Id, Building_Id)
+        });
+    }
+    function Fn_Zone(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+            Fn_Community(Community_Id, Building_Id);
+        });
+    }
+    function Fn_Community(Community_Id, Building_Id) {
+        debugger;
+        LOADEMP_FILTERS();
+        var Zone_Id = $("#Zone").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+    }
+</script>
+<script>
+    function btn_Submit_Action_Closure_HSE() {
+        //alert(1)
+        if ($("#Priority").val() == "0") {
+            $('#txtvalidemail').text("Select the Priority");
+            return false;
+        }
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Priority: $("#Priority").val()
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Submit_Action_Closure_SE() {
+        //alert(2)
+        if ($("#Priority").val() == "0") {
+            $('#txtvalidemail').text("Select the Priority");
+            return false;
+        }
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Priority: $("#Priority").val()
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Reject_Action_Closure_HSE() {
+        var Cor = $("#hdn_Corrective_Action_Id").val()
+        //alert(Cor)
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#hdn_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+            Obs_Reject_Id: $("#Obs_Reject_Id").val(),
+            Reject_Reason_Stage: $("#Reject_Reason_Stage").val(),
+            Reject_Reason_Description: $("#Reject_Reason_Description").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Reject_Action_Closure_SE() {
+        //alert('SE Reject')
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+            Obs_Reject_Id: $("#Obs_Reject_Id").val(),
+            Reject_Reason_Stage: $("#Reject_Reason_Stage_SE").val(),
+            Reject_Reason_Description: $("#Reject_Reason_Description_SE").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>

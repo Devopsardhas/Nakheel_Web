@@ -1,0 +1,60 @@
+﻿@model Nakheel_Web.Models.Masters.Emergency_Alert_Master
+
+@if (Model != null)
+{
+    <table class="table tab ">
+        <tbody id="tblIncidentDetailsViewPage">
+            <tr>
+                <td><b class="font-bold">Crisis Master Id</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Unique_Id</td>
+                <td><b class="font-bold">Emergency Category</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Emergency_Category_Id</td>
+                <td><b class="font-bold">Alert Description</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Description</td>
+            </tr>
+            <tr>
+                <td><b class="font-bold">Emergency Date</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Emergency_Date</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="mt-xl-0 mt-4">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                Zone List
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Zone Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model!.L_Emergency_SubZone_Alert_Master)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Zone_Id</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

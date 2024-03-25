@@ -1,0 +1,1088 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .table > :not(caption) >* >* {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .error {
+        color: red !important;
+        font-size: 12px;
+    }
+</style>
+@model Nakheel_Web.Models.HandOverInsMaster.M_HandOver_Insp_Model;
+@if (Model!.Status == "3")
+{
+    <form id="F_HndOver_Building_ChkList_View" action="#" method="post" class="row NotValid" novalidate="novalidate">
+        <div class="row">
+            <div class="col-12">
+                <!-- Question Details -->
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="" style="height:500px;overflow-y:scroll">
+                        <br />
+                        <table class="table table-sm tblround tab">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width:15%;">Questionnaire</th>
+                                    <th>Action</th>
+                                    <th>Risk Level</th>
+                                    <th>Risk Description</th>
+                                    <th>Description of Action</th>
+                                    <th>Category</th>
+                                    <th>Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHandOverBuildingQn">
+                                @if (Model != null)
+                                {
+                                    <input type="hidden" value="@Model.Zone_Id" id="Zone_Id_Qns">
+                                    <input type="hidden" value="@Model.Community_Id" id="Community_Id_Qns">
+                                    var subSno = 1;
+                                    foreach (var Question in Model.L_Insp_HandOver_Questionnaires!)
+                                    {
+                                        <input type="hidden" id="Bldg_Action_Id" value="0">
+                                        <input type="hidden" value="@Question.Insp_HndOver_Building_Id" id="Insp_HndOver_BId">
+                                        <tr>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                            <td><b>@subSno</b></td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>@Question.Qns_Action</td>
+                                            <td>@Question.Risk_Level</td>
+                                            <td>@Question.Risk_Description</td>
+                                            <td>@Question.Description_Action</td>
+                                            <td>@Question.Category</td>
+                                            @if (@Question.Photo_File_Path != null)
+                                            {
+                                                <td>
+                                                    <a href="@Question.Photo_File_Path" target="_blank"><img src='@Question.Photo_File_Path' style="height:75px;width:75px;padding:12px;" /></a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Observation Details -->
+                @if (Model!.L_Insp_HandOver_Observation != null && Model!.L_Insp_HandOver_Observation.Count != 0)
+                {
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        <div class="" style="overflow-y:scroll">
+                            <br />
+                            <table class="table table-sm table-striped dt-responsive nowrap tblround">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Observation</th>
+                                        <th>Hazard & Risk</th>
+                                        <th>Requirements</th>
+                                        <th>Description of Action</th>
+                                        <th>Category</th>
+                                        <th>Sub Category</th>
+                                        <th>Risk Level</th>
+                                        <th>Photo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblHandOverObservation">
+                                    @if (Model != null)
+                                    {
+                                        var subSno = 1;
+                                        foreach (var Observ in Model.L_Insp_HandOver_Observation!)
+                                        {
+                                            <tr>
+                                                <td style="display:none;"><input type="hidden" value="@Observ.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                                <td style="display:none;"><input type="hidden" value="@Observ.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                                <td><b>@subSno</b></td>
+                                                <td>
+                                                    <b disabled class="Questionaire_Id" asp-for="@Observ.Insp_Questionnaires_Name">@Observ.Insp_Questionnaires_Name </b>
+                                                </td>
+                                                <td>@Observ.Hazard_Risk</td>
+                                                <td>@Observ.Requirements</td>
+                                                <td>@Observ.Description_Action</td>
+                                                <td>@Observ.Category</td>
+                                                <td>@Observ.Sub_Category</td>
+                                                <td>@Observ.Risk_Level</td>
+                                                @if (@Observ.Photo_File_Path != null)
+                                                {
+                                                    <td><a href="@Observ.Photo_File_Path" target="_blank"><img src='@Observ.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                            </tr>
+                                            subSno++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @if (LoginClass.Role_Id == "10")
+        {
+            <div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <button type="button" class="btn btn-success waves-effect waves-light submit_Qns_Approval" style="float: right;cursor:pointer">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approval
+                        </button>
+                    </div>
+                    <div class="col-lg-6">
+                        <button onclick="Fn_HO_Insp_Reject(@Model!.Insp_HndOver_Building_Id)" data-bs-toggle="modal" data-bs-target=".Add_HO_Insp_Reject" type="button" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;" id="btn-save-event">
+                            <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                        </button>
+                        @*<button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                            <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                        </button>*@
+                    </div>
+                </div>
+            </div>
+        }
+    </form>
+}
+@if (Model!.Status == "4")
+{
+    <form id="F_HndOver_Building_ChkList_View" action="#" method="post" class="row NotValid" novalidate="novalidate">
+        <div class="row">
+            <div class="col-12">
+                <!-- Question Details -->
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="" style="height:500px;overflow-y:scroll">
+                        <br />
+                        <table class="table table-sm tblround tab">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width:15%;">Questionnaire</th>
+                                    <th>Action</th>
+                                    <th>Risk Level</th>
+                                    <th>Risk Description</th>
+                                    <th>Description of Action</th>
+                                    <th>Category</th>
+                                    <th>Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHandOverBuildingQn">
+                                @if (Model != null)
+                                {
+                                    <input type="hidden" value="@Model.Zone_Id" id="Zone_Id_Qns">
+                                    <input type="hidden" value="@Model.Community_Id" id="Community_Id_Qns">
+                                    var subSno = 1;
+                                    foreach (var Question in Model.L_Insp_HandOver_Questionnaires!)
+                                    {
+                                        <input type="hidden" id="Bldg_Action_Id" value="0">
+                                        <input type="hidden" value="@Question.Insp_HndOver_Building_Id" id="Insp_HndOver_BId">
+                                        <tr>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                            <td><b>@subSno</b></td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>@Question.Qns_Action</td>
+                                            <td>@Question.Risk_Level</td>
+                                            <td>@Question.Risk_Description</td>
+                                            <td>@Question.Description_Action</td>
+                                            <td>@Question.Category</td>
+                                            @if (@Question.Photo_File_Path != null)
+                                            {
+                                                <td>
+                                                    <a href="@Question.Photo_File_Path" target="_blank"><img src='@Question.Photo_File_Path' style="height:75px;width:75px;padding:12px;" /></a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Observation Details -->
+                @if (Model!.L_Insp_HandOver_Observation != null && Model!.L_Insp_HandOver_Observation.Count != 0)
+                {
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        <div class="" style="overflow-y:scroll">
+                            <br />
+                            <table class="table table-sm table-striped dt-responsive nowrap tblround">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Observation</th>
+                                        <th>Hazard & Risk</th>
+                                        <th>Requirements</th>
+                                        <th>Description of Action</th>
+                                        <th>Category</th>
+                                        <th>Sub Category</th>
+                                        <th>Risk Level</th>
+                                        <th>Photo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblHandOverObservation">
+                                    @if (Model != null)
+                                    {
+                                        var subSno = 1;
+                                        foreach (var Observ in Model.L_Insp_HandOver_Observation!)
+                                        {
+                                            <tr>
+                                                <td style="display:none;"><input type="hidden" value="@Observ.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                                <td style="display:none;"><input type="hidden" value="@Observ.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                                <td><b>@subSno</b></td>
+                                                <td>
+                                                    <b disabled class="Questionaire_Id" asp-for="@Observ.Insp_Questionnaires_Name">@Observ.Insp_Questionnaires_Name </b>
+                                                </td>
+                                                <td>@Observ.Hazard_Risk</td>
+                                                <td>@Observ.Requirements</td>
+                                                <td>@Observ.Description_Action</td>
+                                                <td>@Observ.Category</td>
+                                                <td>@Observ.Sub_Category</td>
+                                                <td>@Observ.Risk_Level</td>
+                                                @if (@Observ.Photo_File_Path != null)
+                                                {
+                                                    <td><a href="@Observ.Photo_File_Path" target="_blank"><img src='@Observ.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                            </tr>
+                                            subSno++;
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </form>
+    @if (LoginClass.Role_Id == "7")
+    {
+        <div>
+            <br />
+            <form id="F_HndOver_Assign_Action" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                <div class="col-lg-6"> <h5 class="card-title">Assign Action Details </h5></div>
+                <table id="tblAssignEmpNameList" class="table table-sm tblround table-striped dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Assign Action</th>
+                            <th>Target Date</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="AddMoreAssignToList">
+                        <tr>
+                            <td>
+                                <select class="form-control Responsible_Id" required name="Action_Employee_Id" id="Action_Employee_Id_0">
+                                </select>
+                            </td>
+                            <td><input type="date" class="form-control Target_Date" required id="Target_Date" name="Target_Date" autocomplete="off" /></td>
+                            <td><textarea type="text" class="form-control Action_Description" required id="Action_Description" name="Action_Description" autocomplete="off"></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <button type="button" class="btn btn-success waves-effect waves-light submit_Assign" style="float: right;cursor:pointer">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                        </button>
+                    </div>
+                    <div class="col-lg-6">
+                        <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                            <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+}
+@if (Model!.Status == "5")
+{
+    <div class="row">
+        <div class="col-12">
+            <!-- Question Details -->
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                <div class="" style="height:500px;overflow-y:scroll">
+                    <br />
+                    <table class="table table-sm table-striped dt-responsive nowrap tblround">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th style="width:20%;">Questionnaire</th>
+                                <th>Action</th>
+                                <th>Risk Description</th>
+                                <th>Description of Action</th>
+                                <th>Category</th>
+                                <th>Risk Level</th>
+                                <th>Photo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblHandOverQnView">
+                            @if (Model != null)
+                            {
+                                var subSno = 1;
+                                foreach (var Question in Model.L_Insp_HandOver_Questionnaires!)
+                                {
+                                    <tr>
+                                        <td style="display:none;"><input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                        <td style="display:none;"><input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                        <td><b>@subSno</b></td>
+                                        <td>
+                                            <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                        </td>
+                                        <td>@Question.Qns_Action</td>
+                                        <td>@Question.Risk_Description</td>
+                                        <td>@Question.Description</td>
+                                        <td>@Question.Category</td>
+                                        <td>@Question.Risk_Level</td>
+                                        @if (@Question.Photo_File_Path != null)
+                                        {
+                                            <td>
+                                                <a href="@Question.Photo_File_Path" target="_blank"><img src='@Question.Photo_File_Path' style="height:75px;width:75px;padding:12px;" /></a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                    subSno++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Observation Details -->
+            @if (Model!.L_Insp_HandOver_Observation != null && Model!.L_Insp_HandOver_Observation.Count != 0)
+            {
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="" style="overflow-y:scroll">
+                        <br />
+                        <table id="tbl_Temp_Insp_Find_CA" class="table table-sm table-striped dt-responsive nowrap tblround">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Observation</th>
+                                    <th>Hazard & Risk</th>
+                                    <th>Requirements</th>
+                                    <th>Description of Action</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
+                                    <th>Risk Level</th>
+                                    <th>Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHandOverObs" class="MainTR">
+                                @if (Model != null)
+                                {
+                                    var subSno = 1;
+                                    foreach (var Observ in Model.L_Insp_HandOver_Observation!)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" value="@Observ.Insp_Topic_Id" class="Insp_Topic_Id" />
+                                                <input type="hidden" value="@Observ.Insp_HsObs_Id" class="Insp_HObs_Id" id="Insp_HObs_Id" />
+                                                <b>@subSno</b>
+                                            </td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Observ.Insp_Questionnaires_Name">@Observ.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>@Observ.Hazard_Risk</td>
+                                            <td>@Observ.Requirements</td>
+                                            <td>@Observ.Description_Action</td>
+                                            <td>@Observ.Category</td>
+                                            <td>@Observ.Sub_Category</td>
+                                            <td>@Observ.Risk_Level</td>
+                                            @if (@Observ.Photo_File_Path != null)
+                                            {
+                                                <td><a href="@Observ.Photo_File_Path" target="_blank"><img src='@Observ.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a></td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            @if (Model != null)
+            {
+                var subSno = 1;
+                var CAsubSno = 1;
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-6">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Corrective Action Details
+                            </label> <br />
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="Sub_ActionTableCA_@subSno" class="Sub_ActionTable table-sm table-bordered tblround nowrap" style="width:100%;">
+                        <thead style="background-color:#0b5578">
+                            <tr>
+                                <th scope="col" class="table-responsive">S.No</th>
+                                @*<th scope="col" class="table-responsive">Assign Action to</th>*@
+                                <th scope="col" class="table-responsive">Assignee</th>
+                                <th scope="col" class="table-responsive">Target Date</th>
+                                <th scope="col" class="table-responsive">Description</th>
+                                <th scope="col" class="table-responsive">Status</th>
+                                <th scope="col" class="table-responsive">Action Taken</th>
+                                <th scope="col" class="table-responsive">Evidence</th>
+                                <th scope="col" class="table-responsive">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="Sub_ActionTable_Tbody_@subSno">
+                            @foreach (var Actions in Model.L_Insp_HandOver_CA!)
+                            {
+                                <tr class="SubAssigntr_@CAsubSno">
+                                    <td>
+                                        <input type="hidden" value="@Actions.Corrective_Action_Id" id="Corrective_Action_CAId" class="Corrective_Action_CAId">
+                                        @CAsubSno
+                                    </td>
+                                    @*<td style="min-width:150px;">@Actions.Assignee_Type</td>*@
+                                    <td style="min-width:100px;">@Actions.Responsible_Name</td>
+                                    <td style="min-width:100px;">@Actions.Target_Date</td>
+                                    <td style="min-width:180px;">@Actions.Description_Action</td>
+                                    <td style="width: 180px;">
+                                        @if (@Actions.Status == "Completed")
+                                        {
+                                            <label style="color:green;">@Actions.Status</label>
+                                        }
+                                        else if (@Actions.Status == "Rejected")
+                                        {
+                                            <label style="color:red">@Actions.Status</label>
+                                        }
+                                        else
+                                        {
+                                            <label style="color:#17a2b8;">@Actions.Status</label>
+                                        }
+                                    </td>
+                                    <td style="min-width:180px;">
+                                        @if (@Actions.Status == "Completed")
+                                        {
+                                            @Actions.Description_Action
+                                        }
+                                        else if (@Actions.Status == "HSE Approvel Pending")
+                                        {
+                                            @Actions.Description_Action
+                                        }
+                                        else if (@Actions.Status == "Rejected")
+                                        {
+                                            @Actions.Description_Action
+                                        }
+                                        else
+                                        {
+                                            <label>--</label>
+                                            @*<textarea id="Description_Action" class="form-control Description_Action" name="Description_Action" rows="1" required></textarea>*@
+                                        }
+                                    </td>
+                                    <td style="width: 80px;">
+                                        @if (@Actions.Status == "Completed")
+                                        {
+                                            <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                        }
+                                        else if (@Actions.Status == "HSE Approvel Pending")
+                                        {
+                                            <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                        }
+                                        else if (@Actions.Status == "Rejected")
+                                        {
+                                            <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                        }
+                                        else
+                                        {
+                                            <label>--</label>
+                                            @*<input id="file_@CAsubSno" class="form-control file InputPhoto" onchange="uploadFiles('file_@CAsubSno','UploadPhotos_@CAsubSno')" type="file" accept=".png, .jpg, .jpeg" multiple>
+                                            <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos_@CAsubSno">*@
+                                        }
+                                    </td>
+                                    <td style="width: 150px;">
+                                        @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                        {
+                                            @if (@Actions.Status == "Completed")
+                                            {
+                                                <label>--</label>
+                                            }
+                                            else if (@Actions.Status == "Rejected")
+                                            {
+                                                <label>--</label>
+                                            }
+                                            else
+                                            {
+                                                <button onclick="Fn_CA_Approval_Submit_HO('Approve',@Actions.Corrective_Action_Id)" type="button" class="btn btn-success Fn_CA_Approval_Submit eva-plus-circle-outline icon nav-icon button_Show_Hide" style="height: 29px;width: 75px;background-color: green;border: green;">Approve</button>
+                                                <button onclick="Fn_CA_Reject_HO(@Actions.Corrective_Action_Id)" data-bs-toggle="modal" data-bs-target=".Add_HOCA_Reject" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon button_Show_Hide" style="height: 29px;width: 63px;background-color: red;border: red;" id="btn-save-event">Reject</button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <label class="Dash_Show_Hide">--</label>
+                                        }
+                                    </td>
+                                </tr>
+                                CAsubSno++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+@if (Model!.Status == "6" || Model!.Status == "7")
+{
+    @if (LoginClass.Role_Id == "7" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+    {
+        <div class="row">
+            <div class="col-12">
+                <!-- Question Details -->
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="" style="height:500px;overflow-y:scroll">
+                        <br />
+                        <table class="table table-sm table-striped dt-responsive nowrap tblround">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width:20%;">Questionnaire</th>
+                                    <th>Action</th>
+                                    <th>Risk Description</th>
+                                    <th>Description of Action</th>
+                                    <th>Category</th>
+                                    <th>Risk Level</th>
+                                    <th>Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHandOverQnView">
+                                @if (Model != null)
+                                {
+                                    var subSno = 1;
+                                    foreach (var Question in Model.L_Insp_HandOver_Questionnaires!)
+                                    {
+                                        <tr>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" /></td>
+                                            <td style="display:none;"><input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" /></td>
+                                            <td><b>@subSno</b></td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>@Question.Qns_Action</td>
+                                            <td>@Question.Risk_Description</td>
+                                            <td>@Question.Description</td>
+                                            <td>@Question.Category</td>
+                                            <td>@Question.Risk_Level</td>
+                                            @if (@Question.Photo_File_Path != null)
+                                            {
+                                                <td>
+                                                    <a href="@Question.Photo_File_Path" target="_blank"><img src='@Question.Photo_File_Path' style="height:75px;width:75px;padding:12px;" /></a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Observation Details -->
+                @if (Model!.L_Insp_HandOver_Observation != null && Model!.L_Insp_HandOver_Observation.Count != 0)
+                {
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        <div class="" style="overflow-y:scroll">
+                            <br />
+                            <table id="tbl_Temp_Insp_Find_CA" class="table table-sm table-striped dt-responsive nowrap tblround">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Observation</th>
+                                        <th>Hazard & Risk</th>
+                                        <th>Requirements</th>
+                                        <th>Description of Action</th>
+                                        <th>Category</th>
+                                        <th>Sub Category</th>
+                                        <th>Risk Level</th>
+                                        <th>Photo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblHandOverObs" class="MainTR">
+                                    @if (Model != null)
+                                    {
+                                        var subSno = 1;
+                                        foreach (var Observ in Model.L_Insp_HandOver_Observation!)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="hidden" value="@Observ.Insp_Topic_Id" class="Insp_Topic_Id" />
+                                                    <input type="hidden" value="@Observ.Insp_HsObs_Id" class="Insp_HObs_Id" id="Insp_HObs_Id" />
+                                                    <b>@subSno</b>
+                                                </td>
+                                                <td>
+                                                    <b disabled class="Questionaire_Id" asp-for="@Observ.Insp_Questionnaires_Name">@Observ.Insp_Questionnaires_Name </b>
+                                                </td>
+                                                <td>@Observ.Hazard_Risk</td>
+                                                <td>@Observ.Requirements</td>
+                                                <td>@Observ.Description_Action</td>
+                                                <td>@Observ.Category</td>
+                                                <td>@Observ.Sub_Category</td>
+                                                <td>@Observ.Risk_Level</td>
+                                                @if (@Observ.Photo_File_Path != null)
+                                                {
+                                                    <td><a href="@Observ.Photo_File_Path" target="_blank"><img src='@Observ.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+                @if (Model != null)
+                {
+                    var subSno = 1;
+                    var CAsubSno = 1;
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-6">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Corrective Action Details
+                                </label> <br />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="Sub_ActionTableCA_@subSno" class="Sub_ActionTable table-sm table-bordered tblround nowrap" style="width:100%;">
+                            <thead style="background-color:#0b5578">
+                                <tr>
+                                    <th scope="col" class="table-responsive">S.No</th>
+                                    @*<th scope="col" class="table-responsive">Assign Action to</th>*@
+                                    <th scope="col" class="table-responsive">Assignee</th>
+                                    <th scope="col" class="table-responsive">Target Date</th>
+                                    <th scope="col" class="table-responsive">Description</th>
+                                    <th scope="col" class="table-responsive">Status</th>
+                                    <th scope="col" class="table-responsive">Action Taken</th>
+                                    <th scope="col" class="table-responsive">Evidence</th>
+                                    <th scope="col" class="table-responsive">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Sub_ActionTable_Tbody_@subSno">
+                                @foreach (var Actions in Model.L_Insp_HandOver_CA!)
+                                {
+                                    <tr class="SubAssigntr_@CAsubSno">
+                                        <td>
+                                            <input type="hidden" value="@Actions.Corrective_Action_Id" id="Corrective_Action_CAId" class="Corrective_Action_CAId">
+                                            @CAsubSno
+                                        </td>
+                                        @*<td style="min-width:150px;">@Actions.Assignee_Type</td>*@
+                                        <td style="min-width:100px;">@Actions.Responsible_Name</td>
+                                        <td style="min-width:100px;">@Actions.Target_Date</td>
+                                        <td style="min-width:180px;">@Actions.Description_Action</td>
+                                        <td style="width: 180px;">
+                                            @if (@Actions.Status == "Completed")
+                                            {
+                                                <label style="color:green;">@Actions.Status</label>
+                                            }
+                                            else if (@Actions.Status == "Rejected")
+                                            {
+                                                <label style="color:red">@Actions.Status</label>
+                                            }
+                                            else
+                                            {
+                                                <label style="color:#17a2b8;">@Actions.Status</label>
+                                            }
+                                        </td>
+                                        <td style="min-width:180px;">
+                                            @if (@Actions.Status == "Completed")
+                                            {
+                                                @Actions.Description_Action
+                                            }
+                                            else if (@Actions.Status == "HSE Approvel Pending")
+                                            {
+                                                @Actions.Description_Action
+                                            }
+                                            else if (@Actions.Status == "Rejected")
+                                            {
+                                                @Actions.Description_Action
+                                            }
+                                            else
+                                            {
+                                                <textarea id="Description_Action" class="form-control Description_Action" name="Description_Action" rows="1" required></textarea>
+                                            }
+                                        </td>
+                                        <td style="width: 80px;">
+                                            @if (@Actions.Status == "Completed")
+                                            {
+                                                <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                            }
+                                            else if (@Actions.Status == "HSE Approvel Pending")
+                                            {
+                                                <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                            }
+                                            else if (@Actions.Status == "Rejected")
+                                            {
+                                                <a href="@Actions.Photo_File_Path" target="_blank"><img src='@Actions.Photo_File_Path' style="height:70px;width:70px;padding:12px;" /></a>
+                                            }
+                                            else
+                                            {
+                                                <input id="file_@CAsubSno" class="form-control file InputPhoto" onchange="uploadFiles('file_@CAsubSno','UploadPhotos_@CAsubSno')" type="file" accept=".png, .jpg, .jpeg">
+                                                <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos_@CAsubSno">
+                                            }
+                                        </td>
+                                        <td style="width: 150px;">
+                                            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                            {
+                                                @if (@Actions.Status == "Completed")
+                                                {
+                                                    <label>--</label>
+                                                }
+                                                else if (@Actions.Status == "Rejected")
+                                                {
+                                                    <label>--</label>
+                                                }
+                                                else
+                                                {
+                                                    <button onclick="Fn_CA_Approval_Submit_HO('Approve',@Actions.Corrective_Action_Id)" type="button" class="btn btn-success Fn_CA_Approval_Submit eva-plus-circle-outline icon nav-icon button_Show_Hide" style="height: 29px;width: 75px;background-color: green;border: green;">Approve</button>
+                                                    <button onclick="Fn_CA_Reject_HO(@Actions.Corrective_Action_Id)" data-bs-toggle="modal" data-bs-target=".Add_HOCA_Reject" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon button_Show_Hide" style="height: 29px;width: 63px;background-color: red;border: red;" id="btn-save-event">Reject</button>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <label class="Dash_Show_Hide">--</label>
+                                            }
+                                        </td>
+                                    </tr>
+                                    CAsubSno++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+<script>
+    //debugger;
+    $(document).ready(function () {
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/ObservationUploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+    });
+    $(".submit_Qns_Approval").click(function () {
+        //debugger
+        //var val = $("#Insp_HndOver_BId").val();
+        //alert(val)
+        var Obj = {
+            Insp_HndOver_Building_Id: $("#Insp_HndOver_BId").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/Update_HndOver_Bldg_Qns_Approval",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    ApplySelect2("#Action_Employee_Id_0");
+    $('input[name=AssignActionTo]').change(function () {
+        var Role_Name = $('input[name=AssignActionTo]:checked').val();
+        var Zone_Id = $("#Zone_Id_Qns").val();
+        var Community_Id = $("#Community_Id_Qns").val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+            $('#txtvalidemail').text('');
+        }
+        else {
+            EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+            $('#txtvalidemail').text('');
+        }
+    });
+
+    $("#tblAssignEmpNameList").on("click", ".TblDeleteButton", function () {
+        $(this).closest("tr").remove();
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    Target_Date();
+    function Target_Date() {
+    var Target_Date_Valid = "#Target_Date";
+    var dtToday = new Date();
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if (month < 10)
+        month = '0' + month.toString();
+    if (day < 10)
+        day = '0' + day.toString();
+    var minDate = year + '-' + month + '-' + day;
+    $(Target_Date_Valid).attr('min', minDate);
+    }
+    var i = 1;
+    function AddEmployeeList() {
+        //debugger
+        var Html = "";
+        var varResponsible_Id = "Action_Employee_Id_" + i;
+        Html += '<tr><td><select style="width: 227px;" class="form-control Responsible_Id" id="Action_Employee_Id_' + i + '" name="Responsible_Id"><label id="txtvalidemail" style="color:red"> </label></select></td>';
+        Html += '<td><input class="form-control Target_Date" type="date"></td>';
+        Html += '<td><textarea type="text" class="form-control Action_Description" id="Action_Description" name="Action_Description"></textarea></td>';
+        Html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $("#AddMoreAssignToList").append(Html);
+
+        //var Role_Name = $('input[name=AssignActionTo]:checked').val();
+        var Zone_Id = $("#Zone_Id_Qns").val();
+        //var Community_Id = $("#Community_Id_Qns").val();
+
+        EMP_DRP_DWN(Zone_Id);
+        //EMP_DRP_DWN(Role_Name, id, Zone_Id, Community_Id)
+        ApplySelect2("#" + varResponsible_Id);
+        i++;
+    }
+    var Zone_Id = $("#Zone_Id_Qns").val();
+    EMP_DRP_DWN(Zone_Id);
+    function EMP_DRP_DWN(Zone_Id) {
+        debugger;
+        $.post("@Url.Action("LoadEmpbyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#Action_Employee_Id_0").empty();
+            $("#Action_Employee_Id_0").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Action_Employee_Id_0").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    $(".submit_Assign").click(function () {
+        //debugger
+        let valid = $("#F_HndOver_Assign_Action").valid();
+        if (!valid) {
+            $("#Action_Employee_Id_0-error").addClass('m-100');
+            return false;
+        }
+        var val = $("#Insp_HndOver_BId").val();
+        //alert(val)
+        var Obj = {
+            Bldg_Action_Id: $("#Bldg_Action_Id").val(),
+            Insp_HndOver_Building_Id: $("#Insp_HndOver_BId").val(),
+            Responsible_Id: $(".Responsible_Id").val(),
+            Target_Date: $(".Target_Date").val(),
+            Description_Action: $("#Action_Description").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/Add_Bldg_Assign_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    $(".submit_Closure").click(function () {
+        debugger
+        //var val = $("#Insp_HndOver_BId").val();
+        //alert(val)
+        var Obj = {
+            Bldg_Photo_Id: $("#Bldg_Photo_Id").val(),
+            Insp_HndOver_Building_Id: $("#Insp_HndOver_BId").val(),
+            Description_Action: $("#Description_Closure").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/Add_Bldg_Closure_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+</script>
+<script>
+    ApplySelect2("#Responsible_Name");
+    var Zone_Id = $("#Zone_Id_Qns").val();
+    var Community_Id = $("#Community_Id_Qns").val();
+    //alert(Zone_Id + ' ' + Community_Id);
+    EMPLOYEE_LIST_QNS(Zone_Id);
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function EMPLOYEE_LIST_QNS(Zone_Id) {
+        $.post("@Url.Action("LoadEmpbyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#Responsible_Name").empty();
+            $("#Responsible_Name").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Responsible_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+            });
+        });
+    }
+    function Fn_CA_Approval_Submit_HO(Status, Id) {
+        debugger;
+        $('.Fn_CA_Approval_Submit').prop('disabled', true);
+        var varInsp_HndOver_HSEId = "";
+        var varCorrective_Action_Id = Id;
+        varInsp_HndOver_HSEId = $("#Insp_HndOver_BId").val();
+        $.post("@Url.Action("HandOver_Closure_Action_Approval", "HandOverInspection")", { Insp_HndOver_Building_Id: varInsp_HndOver_HSEId, Corrective_Action_Id: varCorrective_Action_Id }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Approved Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.Fn_CA_Approval_Submit').prop('disabled', false);
+                    FnHO_CA_ApprovalReject(varInsp_HndOver_HSEId);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.Fn_CA_Approval_Submit').prop('disabled', false);
+            }
+            $('.Fn_CA_Approval_Submit').prop('disabled', false);
+        });
+    }
+</script>

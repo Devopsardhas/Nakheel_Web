@@ -1,0 +1,1137 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.M_Employee_Master>;
+@{
+    ViewData["Title"] = "Employee Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-check-label {
+        cursor: pointer;
+        margin-bottom: 0;
+        width: max-content;
+    }
+
+    .chkBox {
+        width: 100%;
+        height: 150px;
+        overflow-y: auto;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+@*/*GRID VIEW*/*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-6"> <h4 class="card-title">Employee Management List</h4></div>
+                    <div class="col-lg-6">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btn_add_Employee"><i class="mdi mdi-plus me-1"></i> Add Employee </button>
+                    </div>
+                    @*<div class="col-md-2" id="Bulk_Upload">
+                    <button class="btn btn-success waves-effect waves-light" style="float: right;" id="btn_Bulk_Upload">
+                    <i class="bx bx-plus"></i>  Bulk Upload
+                    </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>*@
+                </div>
+                @* <div class="col-md-6">
+                <h2>Business Unit</h2>
+                </div>*@
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-3">
+                        <label>Zone</label>
+                        <select class="form-select rounded-pill InputField" id="Filter_Zone" onchange="FnZone_Id(this.value)">
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Community</label>
+                        <select class="form-select rounded-pill InputField" id="Filter_Community" onchange="Fn_Community(this.value)">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Building</label>
+                        <select class="form-select rounded-pill InputField" id="Filter_Building">
+                        </select>
+
+
+                    </div>
+                    <div class="col-lg-4 pull-right">
+                        <br />
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Submit_Filter_Btn">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                        </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Clr_Filter_Btn">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;">&nbsp;Employee ID</th>
+                            <th style="text-align:left;">&nbsp;Employee Name</th>
+                            <th style="text-align:left;">&nbsp;Zone Name</th>
+                            <th style="text-align:left;">&nbsp;Role</th>
+                            <th style="text-align:left;">&nbsp;Designation</th>
+                            <th style="text-align:left;">&nbsp;Created Date</th>
+                            <th style="text-align:left;">&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Tbody_Emp">
+                        @* id="GetIncidentList">*@
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.First_Name</td>
+                                    <td align="left" valign="middle">@item.Zone_Name</td>
+                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                    <td align="left" valign="middle">@item.Designation_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="View(@item.Employee_Identity_Id)" href="javascript:void(0);" title="" class="text-primary" data-bs-original-title="View" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            <a onclick="Edit(@item.Employee_Identity_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Employee_Identity_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            @*<a onclick="View(@item.Designation_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>*@
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*/*ADD PAGE*/*@
+<div class="row" id="Add_Employee_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Employee </h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Employee_Master" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="Employee_Identity_Id" id="Employee_Identity_Id" value="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Employee Type<span class="requ">*</span></label>
+                                <select class="form-control" name="Employee_Type" id="Employee_Type" placeholder="--Select Employee Type--">
+                                    <option value="1">Employee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Employee Id</label>
+                                <input type="text" class="form-control" id="EmployeeId" name="EmployeeId" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">First Name <span class="requ">*</span></label>
+                                <input type="text" class="form-control" id="First_Name" name="First_Name" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Last Name </label>
+                                <input type="text" class="form-control" id="Last_Name" name="Last_Name" autocomplete="off">
+                                <input type="hidden" name="Password" value="" id="Password" />
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="Mobile_Number">Mobile No <span class="requ">*</span> </label>
+                                <input type="text" class="form-control" id="Mobile_Number" name="Mobile_Number" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="Email_Id">Email ID <span class="requ">*</span></label>
+                                <input type="email" class="form-control" id="Email_Id" name="Email_Id" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Address 1</label>
+                                <input type="text" class="form-control" id="Address" name="Address" @*placeholder="Enter Business Unit Name"*@>
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Address 2</label>
+                                <input type="text" class="form-control" id="Address2" name="Address2">
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">State </label>
+                                <input type="text" class="form-control" id="State" name="State">
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label" for="Country">Country</label>
+                                <input type="text" class="form-control" id="Country" name="Country">
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label" for="Pin_Code">Country Code</label>
+                                <input type="text" class="form-control" id="Pin_Code" name="Pin_Code">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Business Unit<span class="requ">*</span></label>
+                                <select class="form-control" name="Business_Unit_Id" id="Business_Unit_Id">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Zone_Id" id="Zone_Id">
+                                    </div>
+                                </div>
+                                <label for="" class="form-model">Zone<span class="requ">*</span></label>
+                                <select class="form-control" name="Zone_Name" id="Zone_Name" onchange="LOAD_COMMUNITY_BY_ZONE(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Department<span class="requ">*</span></label>
+                                <select class="form-control" name="Department" id="Department">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Role_Id" id="Role_Id">
+                                    </div>
+                                </div>
+                                <label for="" class="form-model">Role<span class="requ">*</span></label>
+                                <select class="form-control" name="Role_Name" id="Role_Name" placeholder="This is a search placeholder">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Designation_Id" id="Designation_Id">
+                                    </div>
+                                </div>
+                                <label for="" class="form-model">Designation<span class="requ">*</span></label>
+                                <select class="form-control" name="Designation_Name" id="Designation_Name" placeholder="This is a search placeholder">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Line_Manager_Id" id="Line_Manager_Id">Line_Manager_ID
+                                    </div>
+                                </div>
+                                <label for="" class="form-model">Line Manager<span class="requ">*</span></label>
+                                <select class="form-control" name="Line_Manager_Name" id="Line_Manager_Name" placeholder="This is a search placeholder">
+                                </select>
+                            </div>
+                        </div>
+                       
+                        <div class="col-md-4" style="display:none;">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Master Community</label>
+                                <div class="row chkBox" style="margin-left: 0%;">
+                                    <div id="HealthySafetyList_2" class="chkBox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Community<span class="requ">*</span></label>
+                                <div class="row" style="margin-left: 0%;">
+                                    <div id="CommunityByZoneList" class="chkBox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Building<span class="requ">*</span></label>
+                                <div class="row" style="margin-left: 0%;">
+                                    <div id="HealthySafetyList_1" class="chkBox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12" align="center">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                            </button>
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+@*/*BULK UPLOAD*/*@
+
+<div class="row" id="Add_Bulk_Upload" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Bulk Upload</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back1" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+
+                <div class="row">
+                    <div>
+                    </div>
+                    <div class="col-lg-1 ">
+                        <button type="button" style="" download onclick="SampleExcelFile('')" class="btn btn-success waves-effect waves-light">Format</button>
+
+
+                    </div>
+                    <div class="col-lg-6 ">
+                        <input type="file" class="form-control" accept=".xlsx,.xls" />
+
+                    </div>
+                    <div class="col-lg-2 ">
+                        <button type="button" class="btn btn-success waves-effect waves-light" value="Import" onclick="ExcelData()">Upload</button>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row mt-2">
+                    <div @*class="col-12 text-end"*@ style="text-align:center;">
+                        <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#success-btn" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*VIEW PAGE*/*@
+<div class="row" id="View_Employee_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Employee Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Employee Id</label>
+                            <input type="text" readonly class="form-control" id="Employee_Id_View" name="Employee_Id_View">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">First Name</label>
+                            <input type="text" readonly class="form-control" id="First_Name_View" name="First_Name_View">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Last Name </label>
+                            <input type="text" readonly class="form-control" id="Last_Name_View" name="Last_Name_View">
+
+                        </div>
+                    </div>
+                   
+                </div>
+
+                <div class="row">
+
+                     <div class="col-md-4">
+                        <div class="mb-3">
+                           <label class="form-label" for="Mobile_Number">Mobile No </label>
+                            <input type="text" readonly class="form-control" id="Mobile_Number_View" name="Mobile_Number_View" @*placeholder="Enter Business Unit Name"*@>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="Email_Id">Email ID </label>
+                            <input type="email" readonly class="form-control" id="Email_Id_View" name="Email_Id_View" @*placeholder="Enter Business Unit Name"*@>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Business Unit</label>
+                            <input type="text" readonly class="form-control" name="Business_Unit_Id_View" id="Business_Unit_Id_View" />
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Zone</label>
+                            <input type="text" readonly class="form-control" id="Zone_View" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Department</label>
+                            <input type="text" readonly class="form-control" id="Department_View" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3 ">
+                            <label for="" class="form-model">Role</label>
+                            <input type="text" readonly class="form-control" id="Role_View" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3 ">
+                            <label for="" class="form-model">Designation</label>
+                            <input type="text" readonly class="form-control" id="Designation_View" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3 ">
+                            <label for="" class="form-model">Line Manager</label>
+                            <input type="text" readonly class="form-control" id="Line_Manager_View" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table class="table table-striped dt-responsive nowrap tblround" id="tbl_Community">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:left;">&nbsp;Community</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblviewCommunity">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table class="table table-striped dt-responsive nowrap tblround" id="tbl_Building">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:left;">&nbsp;Building</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblviewBuilding">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/incident_validation/employeemanagementvalidation.js"></script>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Employee_Identity_Id",
+        ADD_EMPLOYEE_LIST: "#Add_Employee_List",
+        ADD_BULK_UPLOAD: "#Add_Bulk_Upload",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        BTN_BACK1: "#btn_back1",
+        BTN_BACK_VIEW: "#btn_back_View",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_BULK_UPLOAD: "#btn_Bulk_Upload",
+        BTN_ADD_EMPLOYEE: "#btn_add_Employee",
+        M_BUSINESS_UNIT: "#Business_Unit_Id",
+        ZONE_ID: "#Zone_Id",
+        ZONE_FILTER: "#Filter_Zone",
+        COMMUNITY_FILTER: "#Filter_Community",
+        BUILDING_FILTER: "#Filter_Building",
+        M_ZONE: "#Zone_Name",
+        COMMUNITY_BY_ZONE_LIST: "#CommunityByZoneList",
+        HEALTHY_SAFETY_LIST_1: "#HealthySafetyList_1",
+        HEALTHY_SAFETY_LIST_2: "#HealthySafetyList_2",
+        DEPARTMENT_ID: "#Department",
+        //DEPARTMENT_NAME: "#Department_Name",
+        ROLE_ID: "#Role_Id",
+        ROLE_NAME: "#Role_Name",
+        DESIGNATION_ID: "#Designation_Id",
+        DESIGNATION_NAME: "#Designation_Name",
+        FIRST_NAME: "#First_Name",
+        LAST_NAME: "#Last_Name",
+        EMAIL_ID: "#Email_Id",
+        LINE_MANAGER_ID: "#Line_Manager_Id",
+        LINE_MANAGER_NAME: "#Line_Manager_Name",
+        MOBILE_NUMBER: "#Mobile_Number",
+        ADDRESS: "#Address",
+        STATE: "#State",
+        COUNTRY: "#Country",
+        FILTER_SUBMIT_BTN: "#Submit_Filter_Btn",
+
+    });
+
+    $(document).ready(function () {
+        LOAD_ZONE_FILTER();
+        ApplySelect2("#Filter_Zone");
+        ApplySelect2("#Filter_Community");
+        ApplySelect2("#Filter_Building");
+        $(UI_Fields.BTN_ADD_EMPLOYEE).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_EMPLOYEE_LIST).show(100);
+
+            LOAD_BUSINESS_UNIT();
+            LOAD_ZONE();
+            LOAD_DEPARTEMNT_DRP();
+            LOAD_ROLE_DRP();
+            LOAD_DESIGNATION_DRP();
+            ClearAll();
+            GeneratePassword();
+        });
+        ApplySelect2("#Role_Name");
+        ApplySelect2("#Line_Manager_Name");
+        ApplySelect2("#Designation_Name");
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Name");
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        });
+        $(UI_Fields.BTN_BACK_VIEW).click(function () {
+            window.location.reload();
+        });
+        $(UI_Fields.BTN_BACK1).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_BULK_UPLOAD).hide(100);
+        });
+        $(UI_Fields.BTN_BULK_UPLOAD).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_BULK_UPLOAD).show(100);
+        });
+        $("#Clr_Filter_Btn").click(function () {
+            LOAD_ZONE_FILTER("0");
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_EMPLOYEE_LIST).hide(100);
+            $(UI_Fields.MAIN_TABLE).dataTable().fnDestroy();
+            $.post("@Url.Action("Get_Employee_Filter", "Master")", { Zone_Id: '0', Community_Id: '0', Building_Id: '0' }, function (data) {
+                $("#Tbody_Emp").html('');
+                $("#Tbody_Emp").html(data);
+            });
+        });
+        $(UI_Fields.FILTER_SUBMIT_BTN).click(function () {
+            var ZoneId = $("#Filter_Zone").val();
+            var CommunityId = $("#Filter_Community").val();
+            var Building = $("#Filter_Building").val();
+
+            if (ZoneId == null) {
+                ZoneId = '0';
+            }
+            if (CommunityId == null) {
+                CommunityId = '0';
+            }
+            if (Building == null) {
+                Building = '0';
+            }
+            $(UI_Fields.MAIN_TABLE).dataTable().fnDestroy();
+            $.post("@Url.Action("Get_Employee_Filter", "Master")", { Zone_Id: ZoneId, Community_Id: CommunityId, Building_Id: Building }, function (data) {
+                debugger;
+                $("#Tbody_Emp").html('');
+                $("#Tbody_Emp").html(data);
+            });
+
+        });
+    })
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+
+            });
+        });
+    }
+    function LOAD_COMMUNITY_BY_ZONE(Zone_Id) {
+        debugger;
+        $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+        $(UI_Fields.HEALTHY_SAFETY_LIST_1).empty();
+        $(UI_Fields.HEALTHY_SAFETY_LIST_2).empty();
+        $(UI_Fields.ZONE_ID).val(Zone_Id);
+        LOAD_LINEMANAGER_DRP(Zone_Id);
+        $.post("@Url.Action("LoadAllCommunitybyZone","CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+                html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-12">';
+                    html += '<input class="form-check-input clsHealth_Safety" onclick="Fn_Building(' + value.Community_Master_Id + ')" type="checkbox" name="Health_Safety_Type_List" value="' + value.Community_Master_Id + '" id="HST_' + value.Community_Master_Id + '">';
+                    html += '<label class="form-check-label" for="HST_' + value.Community_Master_Id + '">' + value.Community_Master_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+            }
+        });
+    }
+
+    function GeneratePassword() {
+        debugger
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("CreatePassword", "Master"))',
+            type: "POST",
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+
+            success: function (data) {
+                $("#Password").val(data);
+                //$("#ac_con_password").val(data);
+            }
+        });
+    }
+    function Fn_Building(Community_Id) {
+        debugger
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+                html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-12">';
+                    html += '<input class="form-check-input clsHealth_Safety_1" type="checkbox" name="Health_Safety_Type_List_1" value="' + value.Sub_Building_Id + '" id="MST_' + value.Sub_Building_Id + '">';
+                    html += '<label class="form-check-label" for="MST_' + value.Sub_Building_Id + '">' + value.Building_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+
+            }
+            else {
+                var html = "";
+                $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+            }
+        });
+
+        //$.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+        //    if (data != null) {
+        //        var html = "";
+        //        $(UI_Fields.HEALTHY_SAFETY_LIST_2).append(html);
+        //        html += '<div class="col-md-4 chkBox">';
+        //        $.each(data, function (key, value) {
+        //            html += '<div class="col-md-4">';
+        //            html += '<div class="form-check mb-12">';
+        //            html += '<input class="form-check-input clsHealth_Safety_2" type="checkbox" name="Health_Safety_Type_List_2" value="' + value.Sub_MasterCommunity_Id + '" id="VST_' + value.Sub_MasterCommunity_Id + '">';
+        //            html += '<label class="form-check-label" for="VST_' + value.Sub_MasterCommunity_Id + '">' + value.MasterCommunity_Name + '</label>';
+        //            html += '</div>';
+        //            html += '</div>';
+        //        });
+        //        html += '</div>';
+        //        $(UI_Fields.HEALTHY_SAFETY_LIST_2).append(html);
+        //    }
+        //    else {
+        //        var html = "";
+        //        $(UI_Fields.HEALTHY_SAFETY_LIST_2).append(html);
+        //    }
+        //});
+    }
+    function LOAD_DEPARTEMNT_DRP() {
+        debugger
+        $.post("@Url.Action("LoadAllDepartment", "CommonMaster")", function (data) {
+            $(UI_Fields.DEPARTMENT_ID).empty();
+            $(UI_Fields.DEPARTMENT_ID).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.DEPARTMENT_ID).append("<option value=" + e.Department_Id + ">" + e.Department_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ROLE_DRP() {
+        $.post("@Url.Action("LoadAllRole", "CommonMaster")", function (data) {
+            $(UI_Fields.ROLE_NAME).empty();
+            $(UI_Fields.ROLE_NAME).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ROLE_NAME).append("<option value=" + e.Role_Id + ">" + e.Role_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_DESIGNATION_DRP() {
+        debugger
+        $.post("@Url.Action("LoadAllDes", "CommonMaster")", function (data) {
+            $(UI_Fields.DESIGNATION_NAME).empty();
+            $(UI_Fields.DESIGNATION_NAME).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.DESIGNATION_NAME).append("<option value=" + e.Designation_Id + ">" + e.Designation_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_LINEMANAGER_DRP(Zone_Id) {
+        debugger
+        $.post("@Url.Action("LoadEmpbyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.LINE_MANAGER_NAME).empty();
+            $(UI_Fields.LINE_MANAGER_NAME).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.LINE_MANAGER_NAME).append("<option value=" + e.Employee_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function Edit(id) {
+        debugger
+        var Community_Arr = [];
+        $(".add-new").modal('show');
+        $.post("@Url.Action("Employee_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger;
+            $(UI_Fields.MAIN_TABLE).hide(100);
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_EMPLOYEE_LIST).show(100);
+            $("#EmployeeId").val(data.Employee_Id);
+            $("#Employee_Identity_Id").val(data.Employee_Identity_Id);
+            $("#Employee_Type").val(data.Employee_Type);
+            $("#First_Name").val(data.First_Name);
+            $("#Last_Name").val(data.Last_Name);
+            $("#Email_Id").val(data.Email_Id);
+            $("#Mobile_Number").val(data.Mobile_Number);
+
+            EDIT_BUSINESS_UNIT("#Business_Unit_Id", data.Business_Unit_Id);
+            EDIT_ZONE("#Zone_Name", data.Zone_Id, data.Community_Id, data.Building_Id);
+            EDIT_LOAD_COMMUNITY_BY_ZONE(data.Zone_Id, "#CommunityByZoneList", data.L_Employee_Community_List, data.L_Employee_Building_List);
+            EDIT_DEPARTEMNT_DRP("#Department", data.Department_Id);
+            EDIT_ROLE_DRP("#Role_Name", data.Role_Id);
+            EDIT_DESIGNATION_DRP("#Designation_Name", data.Designation_Id);
+            EDIT_LINEMANAGER_DRP(data.Zone_Id, "#Line_Manager_Name", data.Line_Manager_Id);
+
+        });
+    }
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Employee_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                                $(UI_Fields.MAIN_TABLE).show(100);
+                                $(UI_Fields.ADD_EMPLOYEE_LIST).hide(100);
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    function View(id) {
+        $("#Add_Employee_List").hide();
+        $("#View_Employee_List").show();
+        $("#List_View").hide();
+        $.post("@Url.Action("Employee_Master_GetByID", "Master")", { ID: id }, function (data) {
+            $("#Employee_Id_View").val(data.Employee_Id);
+            $("#First_Name_View").val(data.First_Name);
+            $("#Last_Name_View").val(data.Last_Name);
+            $("#Email_Id_View").val(data.Email_Id);
+            $("#Mobile_Number_View").val(data.Mobile_Number);
+            $("#Business_Unit_Id_View").val(data.Business_Unit_Name);
+            $("#Zone_View").val(data.Zone_Name);
+            $("#Department_View").val(data.Department_Name);
+            $("#Role_View").val(data.Role_Name);
+            $("#Designation_View").val(data.Designation_Name);
+            $("#Line_Manager_View").val(data.Line_Manager_Name);
+
+            if (data.L_Employee_Community_List.length != 0) {
+                $("#tbl_Community").show();
+                $.each(data.L_Employee_Community_List, function (key, value) {
+                    $("#tblviewCommunity").append([
+                        '<tr>',
+                        '<td>' + '<lable>' + value.Community_Master_Name + ' </lable>' + '</td>',
+                        '</tr>'
+                    ].join(''));
+                });
+            }
+            else {
+                $("#tbl_Community").hide();
+            }
+
+            if (data.L_Employee_Building_List.length != 0) {
+                $("#tbl_Building").show();
+                $.each(data.L_Employee_Building_List, function (key, value) {
+                    $("#tblviewBuilding").append([
+                        '<tr>',
+                        '<td>' + '<lable>' + value.Building_Name + ' </lable>' + '</td>',
+                        '</tr>'
+                    ].join(''));
+                });
+            }
+            else {
+                $("#tbl_Building").hide();
+            }
+        });
+
+    }
+    function LOAD_ZONE_FILTER(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONE_FILTER).empty();
+            $(UI_Fields.ZONE_FILTER).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONE_FILTER).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+    function FnZone_Id(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_FILTER).empty();
+        $(UI_Fields.BUILDING_FILTER).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_FILTER).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_FILTER).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_FILTER).val(Community_Id);
+            Fn_Community(Community_Id, Building_Id);
+
+        });
+
+    }
+    function Fn_Community(Community_Id, Building_Id) {
+        var Zone_Id = $("#Filter_Zone").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_FILTER).empty();
+            $(UI_Fields.BUILDING_FILTER).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_FILTER).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_FILTER).val(Building_Id);
+        });
+
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function EDIT_BUSINESS_UNIT(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields.M_BUSINESS_UNIT).empty();
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function EDIT_ZONE(controlid, selectedValue, Community_Id, Building_Id) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function EDIT_DEPARTEMNT_DRP(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllDepartment", "CommonMaster")", function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Department_Id + ">" + e.Department_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function EDIT_ROLE_DRP(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllRole", "CommonMaster")", function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Role_Id + ">" + e.Role_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function EDIT_DESIGNATION_DRP(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllDes", "CommonMaster")", function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Designation_Id + ">" + e.Designation_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function EDIT_LINEMANAGER_DRP(Zone_Id, controlid, selectedValue) {
+        debugger;
+        $(controlid).html("");
+        $.post("@Url.Action("LoadEmpbyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            debugger;
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Employee_Id + ">" + e.First_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function EDIT_LOAD_COMMUNITY_BY_ZONE(Zone_Id, controlid, selectedValue, selectedValue_Building) {
+        $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+        $(UI_Fields.HEALTHY_SAFETY_LIST_1).empty();
+        $(UI_Fields.HEALTHY_SAFETY_LIST_2).empty();
+        $(UI_Fields.ZONE_ID).val(Zone_Id);
+        var edit_comm = $.map(selectedValue, function (item) {
+            return item.Community_Id;
+        });
+
+        var edit_Build = $.map(selectedValue_Building, function (obj) {
+            return obj.Building_Id;
+        });
+        $.post("@Url.Action("LoadAllCommunitybyZone","CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            if (data != null) {
+                var html = "";
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+                html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    var varcomm_id = value.Community_Master_Id;
+                    var varcommunity_check = $.inArray(varcomm_id, edit_comm) !== -1;
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-12">';
+                    if (varcommunity_check == true) {
+                        html += '<input class="form-check-input clsHealth_Safety" checked type="checkbox" name="Health_Safety_Type_List" onclick="Fn_Building(' + value.Community_Master_Id + ')" value="' + value.Community_Master_Id + '" id="HST_' + value.Community_Master_Id + '">';
+                        html += '<label class="form-check-label" for="HST_' + varcomm_id + '">' + value.Community_Master_Name + '</label>';
+                    }
+                    else {
+                        html += '<input class="form-check-input clsHealth_Safety" type="checkbox" name="Health_Safety_Type_List" onclick="Fn_Building(' + value.Community_Master_Id + ')" value="' + value.Community_Master_Id + '" id="HST_' + value.Community_Master_Id + '">';
+                        html += '<label class="form-check-label" for="HST_' + varcomm_id + '">' + value.Community_Master_Name + '</label>';
+                    }
+
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).append(html);
+            }
+            else {
+                var html = "";
+                $(UI_Fields.COMMUNITY_BY_ZONE_LIST).empty();
+            }
+        });
+
+        $.each(selectedValue, function (i, e) {
+            $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: e.Community_Id }, function (data) {
+                if (data != null) {
+                    var html = "";
+                    $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+                    html += '<div class="col-md-4">';
+                    $.each(data, function (key, value) {
+                        var var_build_id = value.Sub_Building_Id;
+                        var Var_Building_chk = $.inArray(var_build_id, edit_Build) !== -1;
+                        html += '<div class="col-md-4">';
+                        html += '<div class="form-check mb-12">';
+                        if (Var_Building_chk == true) {
+                            html += '<input class="form-check-input clsHealth_Safety_1" checked type="checkbox" name="Health_Safety_Type_List_1" value="' + value.Sub_Building_Id + '" id="MST_' + value.Sub_Building_Id + '">';
+                            html += '<label class="form-check-label" for="MST_' + value.Sub_Building_Id + '">' + value.Building_Name + '</label>';
+                        }
+                        else {
+                            html += '<input class="form-check-input clsHealth_Safety_1" type="checkbox" name="Health_Safety_Type_List_1" value="' + value.Sub_Building_Id + '" id="MST_' + value.Sub_Building_Id + '">';
+                            html += '<label class="form-check-label" for="MST_' + value.Sub_Building_Id + '">' + value.Building_Name + '</label>';
+                        }
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                    $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+
+                }
+                else {
+                    var html = "";
+                    $(UI_Fields.HEALTHY_SAFETY_LIST_1).append(html);
+                }
+            });
+
+        });
+
+    }
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+
+    });
+
+    $(document).ready(function () {
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+</script>

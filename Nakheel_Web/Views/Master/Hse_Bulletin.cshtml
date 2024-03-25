@@ -1,0 +1,196 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model IReadOnlyCollection<Nakheel_Web.Models.Masters.Hse_BulletinMaster>;
+@{
+    ViewData["Title"] = "Hse Bulletin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">HSE Bulletin</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;HSE Bulletin Id</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Bulletin Name</th>
+                            <th style="text-align:left;"><i class="bx bxs-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.HSE_Bulletin_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Delete(@item.HSE_Bulletin_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            @*<a onclick="View(@item.Designation_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>*@
+                                        </div>
+                                        @* <ul class="list-unstyled hstack gap-1 mb-0">
+                                <li title="Edit"><a href="javascript:void(0);" class="text-success" onclick="Edit(@item.Business_Unit_Id)"><i class="mdi mdi-pencil-outline font-size-18 "></i></a></li>
+                                <li title="Delete"><a href="javascript:void(0);" class="text-danger" onclick="Delete(@item.Business_Unit_Id)"><i class="mdi mdi-delete-outline font-size-18"></i></a></li>
+                                </ul>*@
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="F_Hse_Bulletin" action="#" method="post">
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" type="hidden" value="0" id="HSE_Bulletin_Id">
+                                <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" name="CreatedBy" readonly>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-6">
+                            <label class="col-md-8 col-form-label" for="example-password-input">Bulletin Name</label>
+                            <div class="col-md-12">
+                                <input class="form-control" type="text" name="HSE_Bulletin_Name" id="HSE_Bulletin_Name" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="">
+                                <label class="col-md-8 col-form-label" for="example-password-input">Image Upload <span class="requ">*</span></label>
+                                <div class="">
+                                    <input id="HSe_Bulletin_Files" name="HSe_Bulletin_Files" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control required" onchange="HSe_Bulleting_File_Upload('HSe_Bulletin_Files','UploadEvidence')" />
+                                    <input type="hidden" class="UploadEvidence">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="">
+                        <div class="col-12" style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</form>
+<script src="~/assets/js/validation/Hse_Bulletin_Validation/HSE_Bulletin.js"></script>
+
+<script>
+    $(document).ready(function () {
+        
+         $("#MainTable").DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+    function Delete(id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Hse_Bulletin_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    function HSe_Bulleting_File_Upload(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Hse_BulletinFile_Upload", "Master")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            //$("#" + Cls_pdf_icon).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+</script>

@@ -1,0 +1,482 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+    string AlertSpotid = "";
+    string HotSpotid = "";
+    string Address = "";
+    string RejStatus = "";
+    string Triggerid = "";
+}
+@model Nakheel_Web.Models.Emergency.Trigger_Alert;
+<head>
+    <style>
+        .form-label, .form-control {
+            margin-bottom: 0.5rem;
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        label {
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular' !important;
+            font-size: 15px;
+        }
+
+        table {
+            font-family: 'Nakheel-Textregular';
+        }
+
+        span {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        .tdtxt {
+            color: #00617F;
+        }
+
+        .accordion-button {
+            background-color: #00263a !important;
+            color: white;
+            font-size: 14px !important;
+            height: 10px !important;
+        }
+
+            .accordion-button:not() {
+                background-color: #00263a !important;
+                color: white;
+            }
+
+        .accordion-body {
+            padding: 0rem 0.25rem !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: white !important;
+        }
+
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+    </style>
+</head>
+<div id="View_Trigger_Alert_List">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                @if (Model != null)
+                {
+                    Triggerid = Model.Trigger_ID!;
+                    @if (Model._Spots != null && Model._Spots.Count > 0)
+                    {
+                        AlertSpotid = Model._Spots[0].Alert_Task_Id!;
+                        HotSpotid = Model._Spots[0].Hot_Spot_Id!;
+                        Address = Model._Spots[0].Address!;
+                        RejStatus = Model._Spots[0].Status!;
+                    }
+                    <div>
+                        <table class="table tab">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Zone</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Zone</td>
+
+                                    <td><b class="font-bold">Community</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Community</td>
+
+                                    <td><b class="font-bold">Emergency type </b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Mitigation</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="col-md-12" style="display:none;">
+                        <label>Spotted Location</label>
+                        <div class="table-responsive">
+                            <table id="Spot_Table" class="table tblround table-sm" style="width:100%">
+                                <tr style="background-color:#00263a;color:white">
+                                    <th>Location</th>
+                                    <th>Exact Location</th>
+                                    <th>Status</th>
+                                </tr>
+                                <tbody>
+                                    @if (Model._Spots != null && Model._Spots.Count > 0)
+                                    {
+                                        foreach (var item in Model._Spots)
+                                        {
+                                            <tr>
+                                                <td style="display:none"><input type="hidden" class="A_Task_Id" value="@item.Alert_Task_Id" /></td>
+                                                <td><input type="hidden" class="Spot_Id" value="@item.Hot_Spot_Id" /><label class="address">@item.Address</label></td>
+                                                <td>@item.Exact_Loc</td>
+                                                @if (item.Status == "1" || item.Status == "2")
+                                                {
+                                                    <td class="Statusclick"><a style="cursor:pointer" class="badge bg-info">Action Pending</a></td>
+                                                }
+                                                else if (item.Status == "3")
+                                                {
+                                                    <td class="Statusclick"><a style="cursor:pointer" class="badge bg-warning">Approval Pending</a></td>
+                                                }
+                                                else if (item.Status == "4")
+                                                {
+                                                    <td class="Statusclick"><a style="cursor:pointer" class="badge bg-danger">Rejected</a></td>
+                                                }
+                                                else if (item.Status == "5")
+                                                {
+                                                    <td class="Statusclick"><a style="cursor:pointer" class="badge bg-success">Approved </a></td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr class="Placeholder">
+                                            <td colspan="3" style="text-align: center;">No Hot-spot Available</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row" id="Spot_Txt_Div" style="display:none;">
+                        <label for="example-password-input" class="col-md-2 col-form-label">Spotted Location</label>
+                        <div class="col-md-4">
+                            <textarea readonly id="Spot_Name" class="form-control"></textarea>
+                        </div>
+                        <div class="col-md-2" style="display:none;">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit" id="Close">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Cancel
+                            </button>
+                        </div>
+
+                    </div>
+                    <br />
+                    @if (Model._Reject != null)
+                    {
+                        @if (Model._Reject != null && Model._Reject.Count != 0)
+                        {
+                            <div class="row">
+                                <div class="table-responsive">
+                                    <table id="tbl_Rain_Reject" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%;">
+                                        <thead>
+                                            <tr style="background-color:#00263a;color:white">
+                                                <th>Reason</th>
+                                                <th>Rejected By</th>
+                                                <th>Created_Date </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblRain_Reject">
+                                            @foreach (var item in Model._Reject)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Reason</td>
+                                                    <td align="left" valign="middle">@item.Rejected_By</td>
+                                                    <td align="left" valign="middle">@item.Created_Date</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+
+
+                    }
+                    <br />
+                    <div class="col-md-12" style="display:none" id="Div_Tbl_Spot">
+                        <div class="table-responsive">
+                            <table id="Tbl_Action_Spot" class="table tblround table-sm" style="width:100%">
+                                <tr style="background-color:#00263a;color:white">
+                                    <th>Checklist</th>
+                                    <th>Action Taken</th>
+                                    <th>File Upload</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tbody id="tbody_Action_Spot">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @* @if (Model._Spots[0].Status == "4")
+                {*@
+                    <div class="row" style="display:none;" id="update_div_Btn">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-7">
+                            <button type="submit" class="btn btn-success" id="Update_Action" onclick="Action_Update()">Update</button>
+                        </div>
+                    </div>
+                    @* }*@
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var Spot_Id = "";
+    var var_ALert_id = '';
+    var var_hotspot_id = '';
+    var var_Address = '';
+    var var_Status = '';
+    var var_Triggerid = '';
+    $(function () {
+        var_ALert_id = '@AlertSpotid';
+        var_hotspot_id = '@HotSpotid';
+        var_Address = '@Address';
+        var_Status = '@RejStatus';
+        var_Triggerid = '@Triggerid';
+        Statusclick(var_Address, var_hotspot_id, var_ALert_id, var_Status);
+        //$("#Spot_Table").on('click', '.Statusclick', function () {
+        //    var Addres = $(this).closest('tr').find('.address').text();
+        //    var Spotid = $(this).closest('tr').find('.Spot_Id').val();
+        //    var AlertTaskid = $(this).closest('tr').find('.A_Task_Id').val();
+        //    $("#tbody_Action_Spot").empty();
+        //    Statusclick(Addres, Spotid, AlertTaskid);
+        //});
+
+        $("#Close").on('click', function () {
+            $("#Spot_Name").val('');
+            $("#Div_Tbl_Spot").hide();
+            $("#Spot_Txt_Div").hide();
+        });
+
+        $("#Tbl_Action_Spot").on('click', '.Btn_Submit', function () {
+            debugger;
+            var varaction_id = $(this).closest('tr').find('.actiontaken').attr("id");
+            var varfile_id = $(this).closest('tr').find('.cls_files').attr("id");
+            var varphotos_div = $(this).closest('tr').find('.img_photos').attr("id");
+            var submit_btn_id = $(this).closest('tr').find('.Btn_Submit').attr("id");
+
+            var ViewPhotos = $(this).closest('tr').find('.clsimageview').attr("id");
+           var src_empty = "#" + ViewPhotos;
+           $(src_empty).empty();
+            $(varfile_id).hide();
+            $(varphotos_div).show();
+
+            if (var_Status == "4") {
+                $("#update_div_Btn").show();
+            }
+            else {
+                $("#update_div_Btn").hide();
+            }
+
+            var File_ARR = "";
+            var varAlert_Task_Id = $(this).closest('tr').find('.AlertTaskId').val();
+            var varChkMapId = $(this).closest('tr').find('.ChklistId').val();
+            var varactiontaken = $(this).closest('tr').find('.actiontaken').val();
+            var varphotos = $(this).closest('tr').find('.UploadPhotosfiles').val();
+            var varchkMapId = $(this).closest('tr').find('.ChklistMapId').val();
+            var varimgicon = $(this).closest('tr').find('.Photosfiles').val();
+
+            if ((varphotos != "") && (varphotos != undefined) && (varphotos != null)) {
+                var valNew = varphotos.split(',');
+                for (var i = 0; i < valNew.length; i++) {
+                    var t = valNew[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    //var File_data = {};
+                    //File_data.File_Path = t;
+                    File_ARR = t;
+                }
+            }else{
+                
+                if ((varimgicon != "") && (varimgicon != undefined) && (varimgicon != null) ){
+                    File_ARR = varimgicon;
+                }
+            }
+            if (var_Status != "4") {
+                if (varactiontaken === null || varactiontaken === "") {
+                    ToastrMessage("error", "Please enter the action taken!");
+                    return false;
+                }
+                if (varphotos === null || varphotos === "") {
+                    ToastrMessage("error", "Please choose the file!");
+                    return false;
+                }
+            }
+
+            var obj = {
+                Hot_Spot_Id: Spot_Id,
+                Alert_Checklist_Id: varChkMapId,
+                Alert_Task_Id: varAlert_Task_Id,
+                Action_Taken: varactiontaken,
+                File_Path: File_ARR,
+                Created_By: '@LoginClass.Employee_Identity_Id',
+                Chk_Map_Id: varchkMapId,
+            };
+
+            $.post("@Url.Action("Add_Mitigation_Action", "MigitationAction")", { model: obj }, function (data) {
+                debugger;
+                if (data == "200") {
+                    debugger;
+                   
+                    let F1 = $('<label class="tdtxt">').text(varactiontaken);
+                    $("#" + varaction_id).replaceWith(F1);
+
+                    if(var_Status == "4"){
+                        var divimg = "#" + varphotos_div;
+                        $(divimg).empty();
+                        $('<img />').attr('src', "" + File_ARR + "").width('50px').height('60px').appendTo($(divimg));
+                        $("#" + varfile_id).hide();
+                    }else{
+                        let F2 = $('<img src="' + File_ARR + '" alt="" width="50" height="60">').val(divimg);
+                        $("#" + varphotos_div).replaceWith(F2);
+                        $("#" + varfile_id).hide();
+                    }
+                  
+
+                  
+
+
+                    let F3 = $('<a class="badge bg-success">').text("Completed");
+                    $("#" + submit_btn_id).replaceWith(F3);
+                    $("#" + submit_btn_id).hide();
+
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        });
+
+    });
+    function ToastrMessage(type, Msg) {
+        toastr[type](Msg);
+    }
+    function Statusclick(Addres, Spotid, AlertTaskid, Rejstatus) {
+        $("#Div_Tbl_Spot").show();
+        $("#Spot_Txt_Div").show();
+        Spot_Id = Spotid;
+        $("#Spot_Name").val(Addres);
+
+
+        var count = 1
+        $.post("@Url.Action("_Checklist_GetBy_SpotId", "MigitationAction")", { Alert_Task_Id: AlertTaskid, Hot_Spot_Id: Spotid }, function (data) {
+            if (data != null) {
+                $.each(data, function (i, e) {
+                    var vartask_Id = "Alert_task_id" + count;
+                    var varHotspot_Id = "Hot_Spot_id" + count;
+                    var varAlertChk_Id = "Alert_Chk_id" + count;
+                    var varChk_Map_Id = "Chk_Map_id" + count;
+                    var varLocRemarks = "Location" + count;
+                    var varactiontaken = "actiontaken" + count;
+                    var vardivImg = "img_div" + count;
+                    var varfiles = "Files" + count;
+                    var varUploadPhotos = "UploadPhotos" + count;
+                    var varsubmit = "submit" + count;
+                    var varImgIcon = "ImageIcon" + count;
+                    var varPhotos = "Uploadphotos" + count;
+                    var html = ""
+                    html += '<tr>'
+                    html += '<td style="display:none;"><input type="hidden" id="' + vartask_Id + '" class="AlertTaskId" value="' + e.Alert_Task_Id + '" /></td>'
+                    html += '<td style="display:none;"><input type="hidden" id="' + varHotspot_Id + '" class="HotSpotId" value="' + e.Hot_Spot_Id + '" /></td>'
+                    html += '<td style="display:none;"><input type="hidden" id="' + varAlertChk_Id + '" class="ChklistId" value="' + e.Alert_Checklist_Id + '" /></td>'
+                    html += '<td style="display:none;"><input type="hidden" id="' + varChk_Map_Id + '" class="ChklistMapId" value="' + e.Chk_Map_Id + '" /></td>'
+                    html += '<td style="display:none;"><input type="hidden" id="' + varPhotos + '" class="Photosfiles" value="' + e.File_Path + '" /></td>'
+                    html += '<td>' + e.Remarks + '</td>'
+                    if (e.Action_Taken == "NA") {
+                        html += '<td><textarea id="' + varactiontaken + '" class="form-control actiontaken" style="width:200px;"></textarea></td>'
+                    }
+                    else if (Rejstatus == "4") {
+                        html += '<td><textarea id="' + varactiontaken + '" value="' + e.Action_Taken + '" class="form-control actiontaken" style="width:200px;">' + e.Action_Taken + '</textarea></td>'
+                    }
+                    else {
+                        html += '<td>' + e.Action_Taken + '</td>'
+                    }
+
+                    if (e.Action_Taken == "NA") {
+                        html += '<td><div id = "' + vardivImg + '" class="img_photos" style = "display:none;" > </div><input id = "' + varfiles + '" name = "' + varfiles + '" type = "file" accept = ".png,.jpg,.jpeg" class="form-control cls_files" onchange = "File_Upload(' + "'" + varfiles + "'" + ',' + "'" + varUploadPhotos + "'" + ')" /><input type="hidden" class="UploadPhotosfiles ' + varUploadPhotos + '" > </td>'
+                    }
+                    else if (Rejstatus == "4") {
+                        html += '<td><div id="' + vardivImg + '" class="img_photos"><a href="' + e.File_Path + '" target="_blank"><img src="' + e.File_Path + '" alt="" width="50" height="60"></a>              </div> <input id="' + varfiles + '" name="' + varfiles + '" type="file" accept=".png,.jpg,.jpeg" class="form-control cls_files" onchange="File_Upload(' + "'" + varfiles + "'" + ',' + "'" + varUploadPhotos + "'" + ')" /> <input type="hidden" class="UploadPhotosfiles ' + varUploadPhotos + '"></td>'
+                    }
+                    else {
+                        html += '<td><a href="' + e.File_Path + '" target="_blank"><img src="' + e.File_Path + '" alt="" width="50" height="60"></a></td>'
+                    }
+
+                    if (e.Action_Taken == "NA") {
+                        html += '<td><button type="button" class="btn btn-success waves-effect waves-light submit Btn_Submit" style="width:100px;" id="' + varsubmit + '"><i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit</button></td>'
+                    }
+                    else if (Rejstatus == "4") {
+                        html += '<td><button type="button" class="btn btn-success waves-effect waves-light submit Btn_Submit" style="width:100px;" id="' + varsubmit + '"><i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit</button></td>'
+                    }
+                    else {
+                        html += '<td>---</td>'
+                    }
+                    html += '</tr>'
+                    $("#tbody_Action_Spot").append(html);
+                    count++;
+                });
+            }
+            else {
+                $("#Div_Tbl_Spot").hide();
+            }
+        });
+
+    }
+
+    function Action_Update() {
+        var obj = {
+            Alert_Task_Id: var_ALert_id,
+            Trigger_ID: var_Triggerid,
+        };
+        $.post("@Url.Action("Update_Mitigation_Action", "MigitationAction")", { model: obj }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Updated Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    window.location.reload();
+                });
+            }
+        });
+    }
+
+    function File_Upload(inputId, UploadPhotoId, Imgicon) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("SpotFileUpload", "MigitationAction")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Imgicon).hide();
+        }
+    }
+</script>

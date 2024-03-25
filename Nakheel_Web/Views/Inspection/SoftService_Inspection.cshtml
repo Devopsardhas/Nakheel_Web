@@ -1,0 +1,465 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Soft Service Inspection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Find_width {
+        width: 200px;
+    }
+
+    .error {
+        color: red !important;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<style>
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        .controls:focus {
+            border-color: #4d90fe;
+        }
+
+    .title {
+        font-weight: bold;
+    }
+
+    #infowindow-!importantontent {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+</style>
+<style>
+    .pac-container {
+        z-index: 100000;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">SoftService Inspection List</h4></div>
+                    @if (LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd_WalkInsp"><i class="mdi mdi-plus me-1"></i> Add SoftService </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllRequestList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row Add_Insp_Finding_Div" id="Add_Insp_Finding_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">SoftService Inspection Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="F_Add_Insp_Leader_Findings" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row Find_Load_AddView_Find_Details">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row Edit_Insp_Landscape_Div" id="Edit_Insp_Landscape_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">SoftService Inspection Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="F_Edit_Insp_Landscape" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row Load_Edit_Insp_Landscape">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade Add_CA_Rej" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_CA_Reject" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control hdn_Corrective_Action_Id" id="hdn_Corrective_Action_Id" />
+                                <textarea class="form-control CA_Reject_Remarks" id="CA_Reject_Remarks" required></textarea>
+                                <label id="CA_Reject_Remarks-error" style="font-size: small;" class="error" for="CA_Reject_Remarks"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_CA_Reject_Submit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade Final_Add_CA_Approve" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_CA_Approve" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control hdn_Insp_Req_Id" id="hdn_Insp_Req_Id" />
+                                <textarea class="form-control CA_Approve_Remarks" id="CA_Approve_Remarks" required></textarea>
+                                <label id="CA_Approve_Remarks-error" style="font-size: small;" class="error" for="CA_Approve_Remarks"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_CA_Final_Approve_Submit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/validation/landscape_inspection/softservicescapeinspseverside.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Insp_Request_Id: "#Insp_Request_Id",
+        Add_Request_Div: "#Add_Request_Div",
+        List_View_Div: "#List_View_Div",
+        TBODY_TABLE: "#GetAllRequestList",
+        MainTable: "#MainTable",
+        BTN_BACK: "#btn_back",
+        btn_back_View: ".btn_back_View",
+        M_BUSINESS_UNIT: "#Business_Unit_Id",
+        M_ZONE: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        Walk_In_Insp_Name: "#Walk_In_Insp_Name",
+        Find_Load_AddView_Find_Details: ".Find_Load_AddView_Find_Details",
+        Add_Insp_Finding_Div: "#Add_Insp_Finding_Div",
+        Edit_Insp_Landscape_Div: "#Edit_Insp_Landscape_Div",
+        Load_Edit_Insp_Landscape: ".Load_Edit_Insp_Landscape",
+
+    });
+    $(document).ready(function () {
+        debugger
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        ServerSideTable_SoftService();
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+
+        $("#btnadd_WalkInsp").click(function () {
+            $(UI_Fields.List_View_Div).hide(100);
+            $.post("@Url.Action("P_SoftService_Inspection_AddView", "Inspection")", { ID: "0" }, function (data) {
+                $(UI_Fields.Find_Load_AddView_Find_Details).html('');
+                $(UI_Fields.Find_Load_AddView_Find_Details).html(data);
+            }).always(function () {
+                $(UI_Fields.Add_Insp_Finding_Div).show(100);
+            });
+        });
+    });
+    function Fn_Zone(Zone_Id) {
+        debugger
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $(UI_Fields.BUILDING_ID).empty();
+        $("#Company_Id").empty();
+        $("#All_Zone_Emp_Id").empty();
+        var Responsible = $('input[name="Responsible_Dept"]:checked').val();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+        $.post("@Url.Action("Insp_Land_ZoneWise_All_Emp_GetbyId", "Inspection")", { Zone_Id: Zone_Id }, function (data) {
+            $(data).each(function (i, e) {
+                $("#All_Zone_Emp_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+        if (Responsible != "Service_provider" || Responsible != undefined) {
+            $.post("@Url.Action("Insp_Land_ZoneWise_All_Emp_GetbyId", "Inspection")", { Zone_Id: Zone_Id }, function (data) {
+                $("#Company_Id").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+                $(data).each(function (i, e) {
+                    $("#Company_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                });
+            });
+        }
+    }
+    function Fn_Land_Zone(Zone_Id) {
+        debugger
+        $("#Company_Id").empty();
+        $.post("@Url.Action("Insp_Land_ZoneWise_All_Emp_GetbyId", "Inspection")", { Zone_Id: Zone_Id }, function (data) {
+            $("#Company_Id").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Company_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Building(Sub_Building_Id) {
+        debugger
+        var Responsible = $('input[name="Responsible_Dept"]:checked').val();
+        if (Responsible == "Service_provider") {
+            $("#Company_Id").empty();
+            $.post("@Url.Action("Insp_Land_Service_Provider_Company_GetbyId", "Inspection")", { Sub_Building_Id: Sub_Building_Id }, function (data) {
+                $("#Company_Id").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+                $(data).each(function (i, e) {
+                    $("#Company_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                });
+            });
+        }
+    }
+
+    function Landscape_Edit(Insp_Request_Id) {
+        $(UI_Fields.List_View_Div).hide(100);
+        $(UI_Fields.Add_Insp_Finding_Div).hide(100);
+        $.post("@Url.Action("P_Edit_SoftService_Inspection", "Inspection")", { ID: Insp_Request_Id }, function (data) {
+            $(UI_Fields.Load_Edit_Insp_Landscape).html('');
+            $(UI_Fields.Load_Edit_Insp_Landscape).html(data);
+        }).always(function () {
+            $(UI_Fields.Edit_Insp_Landscape_Div).show(100);
+        });
+    }
+
+    function Fn_CA_Rej_Model(rowid) {
+        $("#hdn_Corrective_Action_Id").val("");
+        $("#hdn_Corrective_Action_Id").val(rowid);
+    }
+    function Fn_Final_CA_Approval(rowid) {
+        $("#hdn_Insp_Req_Id").val("");
+        $("#hdn_Insp_Req_Id").val(rowid);
+    }
+
+    function Fn_CA_Reject_Submit() {
+        debugger
+        var Landscape_Qns_Id = $("#hdn_Corrective_Action_Id").val();
+        var Remarks = "Reject";
+        var Status = "2";
+        var Reject_Reason = $("#CA_Reject_Remarks").val();
+        let valid = $("#Fm_CA_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+
+        var Obj = {
+            Landscape_Qns_Id: Landscape_Qns_Id,
+            Remarks: Remarks,
+            Status: Status,
+            Reject_Reason: Reject_Reason,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_SoftService_CA_Approval",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $("#CA_Reject_Remarks").val("");
+                        $(".Add_CA_Rej").modal('toggle');
+                        Landscape_Edit(data.Return_1);
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function Fn_CA_Final_Approve_Submit() {
+        debugger
+        var varhdn_Insp_Req_Id = $("#hdn_Insp_Req_Id").val();
+        var varCA_Approve_Remarks = $("#CA_Approve_Remarks").val();
+        let valid = $("#Fm_CA_Approve").valid();
+        if (!valid) {
+            return false;
+        }
+
+        var Obj = {
+            Insp_Request_Id: varhdn_Insp_Req_Id,
+            Remarks: varCA_Approve_Remarks,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_SoftService_CA_Final_Approve",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+</script>

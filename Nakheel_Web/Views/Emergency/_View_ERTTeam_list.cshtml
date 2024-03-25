@@ -1,0 +1,75 @@
+﻿@model Nakheel_Web.Models.Masters.ERT_Team_Details
+
+@if (Model != null)
+{
+    <table class="table tab ">
+        <tbody id="tblIncidentDetailsViewPage">
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Id</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Unique_Id</td>
+                <td><b class="font-bold">Employee Name</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Employee_Name</td>
+                <td><b class="font-bold">Gender</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Gender</td>
+            </tr>
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Langauge</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Langauge</td>
+                <td><b class="font-bold">Nationality</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Nationality</td>
+                <td><b class="font-bold">Age</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Age</td>
+            </tr>
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Department</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Department</td>
+                <td><b class="font-bold">Position</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Position</td>
+                <td><b class="font-bold">Role</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Role</td>
+            </tr>
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Type</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Type</td>
+                <td><b class="font-bold">Certificate Date</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Certificate_Date</td>
+                <td><b class="font-bold">Exprity Date</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Exprity_Date</td>
+            </tr>
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Staff Status</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Staff_Status</td>
+                <td><b class="font-bold">Training Status</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Training_Status</td>
+                <td><b class="font-bold">Business Unit</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Business_Unit</td>
+            </tr>
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Building No</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Building_No</td>
+                <td><b class="font-bold">Floor No</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Floor_No</td>
+                <td><b class="font-bold">Declaration Completed</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Declaration_Completed</td>
+            </tr>
+        </tbody>
+    </table>
+}

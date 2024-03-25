@@ -1,0 +1,46 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.ERT_Team_Details>;
+
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr class="clstr">
+            <td align="left" valign="middle">@item.Unique_Id</td>
+            <td align="left" valign="middle">@item.Employee_Name</td>
+            <td align="left" valign="middle">@item.Gender</td>
+            <td align="left" valign="middle">@item.Langauge</td>
+            <td align="left" valign="middle">@item.Department</td>
+            <td align="left" valign="middle">@item.Position</td>
+            <td align="left" valign="middle">@item.Role</td>
+            <td align="left" valign="middle">@item.Type</td>
+            <td align="left" valign="middle">@item.Certificate_Date</td>
+            <td align="left" valign="middle">@item.Exprity_Date</td>
+            <td align="left" valign="middle">@item.Training_Status</td>
+            <td align="left">
+                <div class="d-flex gap-3">
+                    <a onclick="Fn_Edit(@item.ERT_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                    <a onclick="Fn_Delete(@item.ERT_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                    <a onclick="Fn_View(@item.ERT_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="Delete"><i class="mdi mdi-eye font-size-18"></i></a>
+                </div>
+            </td>
+        </tr>
+    }
+}
+
+<script>
+
+    $(document).ready(function(){
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel',  {
+                extend: 'pdf',
+                orientation: 'landscape'
+            }],
+        });
+    });
+</script>

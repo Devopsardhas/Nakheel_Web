@@ -1,0 +1,180 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.AuditMaster.M_Audit_Category>
+@{
+    ViewData["Title"] = "Audit Category";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Audit Category List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd" data-bs-toggle="modal" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Category ID</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Category</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Audit_Category_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Audit_Category_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+@*                                            <a onclick="Delete(@item.Audit_Category_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+*@                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="Add_div" asp-controller="Audit" asp-action="AddAuditCategory" method="post">
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Audit_Category_Id" id="Audit_Category_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-4 ">
+                                <label for="example-search-input" class="form-model" style="color:black;">Audit Category</label>
+                                <input class="form-control" type="text" name="Audit_Category_Name" id="Audit_Category_Name" required minlen="1" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</form>
+
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Audit_Category_Id: "#Audit_Category_Id",
+        Audit_Category_Name: "#Audit_Category_Name",
+        Add_div: "#Add_div",
+        List_View_Div: "#List_View_Div",
+        MainTable: "#MainTable",
+    });
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        $(UI_Fields.MainTable).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MainTable).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+        $("#btnadd").click(function () {
+            $(UI_Fields.Audit_Category_Id).val('0');
+            $(UI_Fields.Audit_Category_Name).val('');
+        });
+    });
+    function Edit(id) {
+        debugger;
+        $(".add-new").modal('show');
+        $.post("@Url.Action("Audit_Category_GetByID", "Audit")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.Audit_Category_Id).val(data.Audit_Category_Id);
+            $(UI_Fields.Audit_Category_Name).val(data.Audit_Category_Name);
+        });
+    }
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Audit_Category_Delete", "Audit"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+</script>

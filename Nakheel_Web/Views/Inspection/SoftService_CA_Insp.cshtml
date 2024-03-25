@@ -1,0 +1,257 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Soft Service Inspection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Find_width {
+        width: 200px;
+    }
+
+    .error {
+        color: red !important;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<style>
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        .controls:focus {
+            border-color: #4d90fe;
+        }
+
+    .title {
+        font-weight: bold;
+    }
+
+    #infowindow-!importantontent {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+</style>
+<style>
+    .pac-container {
+        z-index: 100000;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">SoftService Inspection List</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllRequestList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row Edit_Insp_Landscape_Div" id="Edit_Insp_Landscape_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">SoftService Inspection Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="F_Edit_Insp_SoftService" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row Load_Edit_Insp_Landscape">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade View_CA_Rej_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Unique_Id" disabled class="form-control CA_View_Unique_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Reject_Reason" disabled class="form-control CA_View_Reject_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Rejected <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedDate" disabled class="form-control CA_View_CreatedDate" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedBy" disabled class="form-control CA_View_CreatedBy" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<script src="~/assets/js/validation/landscape_inspection/softservicescapeinspcaseverside.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Insp_Request_Id: "#Insp_Request_Id",
+        Add_Request_Div: "#Add_Request_Div",
+        List_View_Div: "#List_View_Div",
+        TBODY_TABLE: "#GetAllRequestList",
+        MainTable: "#MainTable",
+        BTN_BACK: "#btn_back",
+        btn_back_View: ".btn_back_View",
+        M_BUSINESS_UNIT: "#Business_Unit_Id",
+        M_ZONE: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        Walk_In_Insp_Name: "#Walk_In_Insp_Name",
+        Find_Load_AddView_Find_Details: ".Find_Load_AddView_Find_Details",
+        Add_Insp_Finding_Div: "#Add_Insp_Finding_Div",
+        Edit_Insp_Landscape_Div: "#Edit_Insp_Landscape_Div",
+        Load_Edit_Insp_Landscape: ".Load_Edit_Insp_Landscape",
+
+    });
+    $(document).ready(function () {
+        debugger
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        ServerSideTable_CA_SoftService();
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+    });
+    function Landscape_Edit(Insp_Request_Id) {
+        $(UI_Fields.List_View_Div).hide(100);
+        $(UI_Fields.Add_Insp_Finding_Div).hide(100);
+        $.post("@Url.Action("P_Edit_CA_SoftService_Insp", "Inspection")", { ID: Insp_Request_Id }, function (data) {
+            $(UI_Fields.Load_Edit_Insp_Landscape).html('');
+            $(UI_Fields.Load_Edit_Insp_Landscape).html(data);
+        }).always(function () {
+            $(UI_Fields.Edit_Insp_Landscape_Div).show(100);
+        });
+    }
+
+    function FnViewRejectDetails(Unique_Id, Reject_Reason, CreatedDate, CreatedBy) {
+        $("#CA_View_Unique_Id").val("");
+        $("#CA_View_Reject_Reason").val("");
+        $("#CA_View_CreatedDate").val("");
+        $("#CA_View_CreatedBy").val("");
+        $("#CA_View_Unique_Id").val(Unique_Id);
+        $("#CA_View_Reject_Reason").val(Reject_Reason);
+        $("#CA_View_CreatedDate").val(CreatedDate);
+        $("#CA_View_CreatedBy").val(CreatedBy);
+    }
+</script>

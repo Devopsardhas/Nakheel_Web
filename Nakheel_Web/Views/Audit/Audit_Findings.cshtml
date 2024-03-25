@@ -1,0 +1,277 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.AuditMaster.M_AuditFindings>
+@{
+    ViewData["Title"] = "Audit Findings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<div class="row" id="List_View_Findings">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Audit Findings List</h4></div>
+                   @* <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd_findings" data-bs-toggle="modal" data-bs-target=".add-newFindings"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>*@
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable_Findings" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Findings ID</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Findings Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            bool varUniqueId;
+
+                            foreach (var item in Model)
+                            {
+                                varUniqueId = @item.Unique_Id!.Contains("A_CAT-");
+                                <tr>
+                                    @if (varUniqueId)
+                                    {
+                                        <td align="left" valign="middle">@item.Unique_Id.Replace("A_CAT-", "A_FIN-")</td>
+                                    }
+                                    <td align="left" valign="middle">@item.Audit_Category_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Audit_Category_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Findings_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade add-newFindings" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="Add_Findings" action="#" method="post" class="" novalidate="novalidate">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div style="display:none;">
+                                <div class="form-group">
+                                    <input class="form-control" name="Findings_Id" id="Findings_Id" value="0">
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4 ">
+                                    <label class="form-model" style="color:black;">Audit Findings Type</label>
+                                    <select class="form-control Findings_Type" name="Findings_Type" id="Findings_Type" disabled>
+                                        
+                                    </select>
+
+
+                                </div>
+                            </div>
+                      
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="btn_add_findings" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="addmorFindings();"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br /> <br />
+                        <table id="tblAuditFindingsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Findings Name</th>
+                                    <th id="ActionHead">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAuditFindingsList">
+                            </tbody>
+                        </table>
+                        <div class="">
+                            <div style="text-align:center;">
+                                <button type="submit" class="btn btn-success" id="Save_Findings"> Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+<script src="~/assets/js/validation/audit_validation/auditmastervalidation.js"></script>
+
+<script type="text/javascript">
+    "use strict";
+    const UI_FIELDS1 = Object.freeze({
+        LIST_VIEW_FINDINGS: "#List_View_Findings",
+        MAINTABLE_FINDINGS: "#MainTable_Findings",
+        FINDINGS_TYPE: "#Findings_Type",
+        FINDINGS_NAME: "#Findings_Name",
+        BTNADD_FINDINGS: "#btnadd_findings",
+        FINDINGS_ID: "#Findings_Id",
+        ADD_NEW_FINDINGS: ".add-newFindings",
+        GET_AUDIT_FINDINGS_LIST: "#GetAuditFindingsList",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        TBL_DELETE_BUTTON: ".TblDeleteButton"
+    });
+    $(document).ready(function(){
+     
+        LoadAudit_Type();
+        $(UI_FIELDS1.MAINTABLE_FINDINGS).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_FIELDS1.MAINTABLE_FINDING).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+        $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).on("click", ".TblDeleteButton", function () {
+          $(this).closest("tr").remove();
+        });
+        $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).on("click", UI_FIELDS1.TBL_DELETE_BUTTON, function () {
+            debugger
+            let varFindingsID = $(this).closest('tr').find('.Findings_Id').val();
+            if (varFindingsID == '0' || varFindingsID == null) {
+                $(this).closest("tr").remove();
+            }
+            else {
+                Delete(varFindingsID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+        $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).on("click", UI_FIELDS1.TBL_EDIT_BUTTON, function () {
+            debugger
+            //$(UI_Fields.Submit_Div).show(100);
+            let varSubName = $(this).closest('tr').find('.Findings_Name').prop('readonly', false);
+            $(this).closest('tr').addClass('Modified');
+        });
+
+        $(UI_FIELDS1.BTNADD_FINDINGS).on("click", function () {
+            $(UI_FIELDS1.FINDINGS_ID).val('0');
+            $(UI_FIELDS1.AUDIT_FINDINGS_NAME).val('');
+            $(UI_FIELDS1.FINDINGS_TYPE).val('');
+        });
+
+    });
+   
+    //function Edit_Findings(Findings_Id, Findings_Type) {
+    //    debugger;
+    //    $(UI_FIELDS1.ADD_NEW_FINDINGS).modal('show');
+    //    $.post("@Url.Action("Audit_Findings_ByID", "Audit")", { ID: Findings_Id, Type_Id: Findings_Type }, function (data1) {
+           
+    //        $(data1).each(function (i, e) {
+    //            debugger
+               
+    //            var html = "";
+    //            var varName = "Findings_Name" + index;
+    //            html += '<tr><td><input type="hidden" class="Findings_Id" value="0"/><input type="text" class="form-control" name="Findings_Name" id="' + varName + '" value = "'+e.Findings_Name+'"></td>';
+    //            html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+    //            $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).append(html);
+                
+    //            index++;
+    //        });
+    //    });
+    //}
+
+    function Edit(Findings_Type) {
+        debugger;
+        $(UI_FIELDS1.ADD_NEW_FINDINGS).modal('show');
+       
+        let varFindings_Type = Findings_Type;
+        $(UI_FIELDS1.FINDINGS_TYPE).val(varFindings_Type);
+        var index=1;
+        var indexval = 1;
+        $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).html('');
+        $.post("@Url.Action("Audit_Findings_ByID", "Audit")", { Findings_Type: Findings_Type }, function (data) {
+            if (data != null) {
+                $(data).each(function (x, y) {
+                    debugger
+                    var html = "";
+                    var varName = "Findings_Name" + index;
+                    html += '<tr><td><input type=hidden class= "form-control Findings_Id" value = "'+y.Findings_Id+'"><input type="hidden" class="form-control Findings_Type" name="Findings_Type" value="' + y.Findings_Type + '"/><input type="text" class="form-control required Findings_Name" name="Findings_Name" id="' + varName + '" value="' + y.Findings_Name + '" readonly/></td > ';
+                    html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                    $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).append(html);
+                    index++;
+                });
+            } else {
+                var html = "";
+                var varName = "Findings_Name" + indexval;
+                html += '<tr class="Modified"><td><input type="hidden" class="Findings_Id" value="0"/><input type="text" class="form-control required Findings_Name" name="Findings_Name" onchange="duplicate_Community(this.value);"  id="' + varName + '" /></td>';
+                html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).append(html);
+                indexval++;
+            }
+            
+        });
+    }
+    function LoadAudit_Type(){
+        $.post("@Url.Action("Load_Audit_Type","CommonMaster")", function(Data2){
+            $(Data2).each(function(x,y){
+                $(UI_FIELDS1.FINDINGS_TYPE).append("<option value=" + y.Audit_Type_Id + ">" + y.Audit_Type_Name + "</option")
+            });
+            
+        });
+    }
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Audit_Findings_Delete", "Audit"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { id: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    var count=1;
+    function addmorFindings(){
+        var auditFinding = "";
+        var varName = "Findings_Name" + count;
+        auditFinding += '<tr class="Modified"><td><input type="hidden" class="Findings_Id" value="0"/><input type="text" class="form-control Findings_Name" name="Findings_Name" id="' + varName + '" ></td>'
+        auditFinding += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_FIELDS1.GET_AUDIT_FINDINGS_LIST).append(auditFinding);
+        count++;
+    }
+</script>  

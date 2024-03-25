@@ -1,0 +1,1838 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Health Safety & Environment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/assets/css/layout.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+<style>
+    .row {
+        --bs-gutter-x: 6px !important;
+        --bs-gutter-y: -13px !important;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--bs-gutter-y));
+        margin-right: calc(-.5 * var(--bs-gutter-x));
+        margin-left: calc(-.5 * var(--bs-gutter-x));
+    }
+
+    .carddashboard_1 {
+        background-color: #00617F;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/2.png');
+    }
+
+    .carddashboard_2 {
+        background-color: #00263A;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/10.png');
+    }
+
+    .carddashboard_3 {
+        background-color: #33979d;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/10.png');
+    }
+
+    .carddashboard_4 {
+        background-color: #00646c;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/2.png');
+    }
+
+    .carddashboard_5 {
+        background-color: #7775c0;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/10.png');
+    }
+
+    .carddashboard_6 {
+        background-color: #0D87AC;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/10.png');
+    }
+
+
+    .carddashboard_9 {
+        background-color: #543859;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/1.png');
+    }
+
+    .carddashboard_10 {
+        background-color: #36563D;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/2.png');
+    }
+
+    .carddashboard_11 {
+        background-color: #7D5959;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        background-image: url('/assets/images/nakheel_pattern/1.png');
+    }
+
+    .d-none {
+        font-family: 'Nakheel-Textregular' !important;
+        padding: 3px !important;
+    }
+
+    .mb-1 {
+        margin-bottom: 0.25rem rem !important;
+        color: #00263a !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: calc(82% + 0.08vw);
+    }
+
+    .mb-15 {
+        color: #00263a !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: calc(82% + 0.08vw);
+    }
+
+    .mb-11 {
+        margin-bottom: 0.25rem rem !important;
+        color: #fff !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .mb-11 {
+        margin-bottom: 0.25rem rem !important;
+        color: #fff !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .text-muted {
+        color: #000000 !important;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .text-muted_5 {
+        color: #fff !important;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .text-muted_1 {
+        color: #fff !important;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .mt-4 {
+        margin-top: -3.5rem !important;
+        margin-left: 4.3rem !important;
+    }
+
+    .mb-55 {
+        color: #fff !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: calc(80% + 0.15vw);
+    }
+
+    .swiper-location-widget {
+        height: 350px;
+        overflow-y: scroll !important;
+    }
+
+        .swiper-location-widget .swiper-slide .card {
+            margin: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            height: 100%;
+            width: 98% !important;
+        }
+
+    .font-size-15 {
+        font-size: 18px !important;
+        font-family: 'Nakheel-HeadlineBold';
+        color: #fff;
+    }
+</style>
+
+<style>
+
+    .owl-carousel .item {
+        margin: 10px 15px 10px 15px !important;
+        margin-right: 10px !important;
+    }
+
+        .owl-carousel .item a img {
+            width: auto;
+            height: auto;
+            /* padding: 0px 20px 0px 20px; */
+        }
+
+    .owl-carousel {
+        direction: ltr;
+    }
+
+    .text-truncate-h4 {
+        font-size: calc(80% + 0.35vw) !important;
+    }
+
+    .commonBox {
+        min-height: 210px !important;
+        max-height: 190px !important;
+    }
+
+</style>
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+
+<style>
+    .card-body-12 {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 7px;
+        font-family: 'Nakheel-Textregular' !important;
+    }
+
+    ol, ul {
+        padding-left: 0rem;
+    }
+
+    dl, ol, ul {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        list-style-type: none;
+    }
+
+    .card_1_btn {
+        border-radius: 5px;
+        border: none;
+        color: #bf40d5;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_2_btn {
+        border-radius: 5px;
+        border: none;
+        color: #00263A;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_3_btn {
+        border-radius: 5px;
+        border: none;
+        color: #00617F;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_4_btn {
+        border-radius: 5px;
+        border: none;
+        color: #001316;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_5_btn {
+        border-radius: 5px;
+        border: none;
+        color: #d9450a;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_8_btn {
+        margin-left: 20%;
+        background-color: #fff;
+        border-radius: 5px;
+        border: none;
+        color: #d9450a;
+        padding: 4px;
+        font-weight: bold;
+        float: inline-end;
+    }
+
+    .card_6_btn {
+        border-radius: 5px;
+        border: none;
+        color: #1b5ec7;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .card_99_btn {
+        border-radius: 5px;
+        border: none;
+        color: #d9450a;
+        font-weight: bold;
+        font-size: 11px;
+        float: inline-end;
+    }
+
+    .mb-55 {
+        margin-bottom: -2px !important;
+    }
+
+    .nav-tabs-custom .nav-item .nav-link.active {
+        color: #ffffff !important;
+        background: #00617F !important;
+        font-family: 'Nakheel-HeadlineBold' !important;
+        font-size: 16px !important;
+    }
+</style>
+
+@model Nakheel_Web.Models.Masters.MainDashBoards_Model
+<body>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xxl-8">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_5">
+                            <div class="card-body-12" style="height: 122px;">
+                                @if (Model.L_M_Notification_Dashboard_Count.Count > 1)
+                                {
+                                    <h4 class="text-truncate mb-11 text-truncate-h4" style="color:#00263a !important">Incident</h4>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Open - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Closed - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Total Actions - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Open - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a  !important">Overdue - <span style="color:#fff  !important">0</span> </p>
+                                    <span style="text-decoration: underline;color:#00263a !important;font-size:calc(80% + 0.2vw);">Report Incident</span>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-6"><span class="font-size-15 mb-2">Incident</span></div>
+                                            <div class="col-lg-6"> <a asp-action="IncidentReporting" asp-controller="Incident" asp-route-id="All"><button class="card_1_btn">Report Incident</button></a></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('1')">Open - <span class="count">@item!.Inc_Open_Count</span> </li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('2')">Closed - <span class="count">@item!.Inc_Close_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('6')">Investigation - <span class="count">@item!.Inc_Total_Investigation_Count</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    @* <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('3')">Total Actions - <span class="count">@item!.Inc_Total_Action_Count</span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('4')">Open - <span class="count">@item!.Inc_Total_Action_Open_Count</span></li> *@
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Inc_in('5')">Overdue - <span class="count">@item!.Inc_Total_Action_OverDue_Count</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        break;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_1">
+                            <div class="card-body-12" style="height: 122px;">
+                                @if (Model.L_M_Notification_Dashboard_Count.Count > 1)
+                                {
+                                    <h4 class="text-truncate mb-11 text-truncate-h4" style="color:#00263a !important">Observation</h4>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Open - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Closed - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Total Actions - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a !important">Open - <span>0</span> </p>
+                                    <p class="text-truncate text-muted_1 mb-0" style="color:#00263a  !important">Overdue - <span style="color:#fff  !important">0</span> </p>
+                                    <span style="text-decoration: underline;color:#00263a !important;font-size:calc(80% + 0.2vw);">Report Observation</span>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-6"><span class="font-size-15 mb-2">Observation</span></div>
+                                            <div class="col-lg-6"> <a asp-action="ObservationReporting" asp-controller="Incident" asp-route-id="All"><button class="card_2_btn">Report Observation</button></a></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('1')">Open - <span class="count">@item.Obs_Open_Count </span> </li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('2')">Closed - <span class="count">@item.Obs_Close_Count</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('3')">Total Actions - <span class="count">@item.Obs_Total_Action_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('4')">Open - <span class="count">@item.Obs_Total_Action_Open_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('5')">Overdue - <span class="count">@item.Obs_Total_Action_OverDue_Count</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        break;
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_2">
+                            <div class="card-body-12" style="height: 122px;">
+                                <div class="row">
+                                    <div class="col-lg-6"><span class="font-size-15 mb-2">Audit</span></div>
+                                    @if (LoginClass.Role_Id == "10")
+                                    {
+                                        <div class="col-lg-6"> <a asp-action="Create_Audit_Insp_Sch" asp-controller="Inspection" asp-route-id="All"><button class="card_3_btn">Create Schedule</button></a></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-6"><a asp-action="" asp-controller=""> <button class="card_3_btn">Action Closure</button></a></div>
+                                    }
+                                </div>
+                                @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Audit_Inc('1')">Planned - @item.Audit_Planned_Count </li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Audit_Inc('2')">Open - @item.Audit_Planned_Completed_Count</li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Audit_Inc('3')">Closed - @item.Audit_Planned_Total_Actions_Closed_Count</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <ul>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_NCR_in('1')">NCR - Open - @item.Audit_NCR_Open_Count</li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_NCR_in('2')">NCR - Closed - @item.Audit_NCR_Close_Count</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_4">
+                            <div class="card-body-12" style="height: 161px;">
+                                <div class="row">
+                                    <div class="col-lg-6"><span class="font-size-15 mb-2">Inspection</span></div>
+                                    @if (LoginClass.Role_Id == "10")
+                                    {
+                                        <div class="col-lg-6">
+                                            <a asp-action="Create_Audit_Insp_Sch" asp-controller="Inspection">  <button class="card_4_btn">Create Schedule</button></a>
+                                        </div>
+                                    }
+                                    else if (LoginClass.Role_Id == "11" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "1" || LoginClass.Role_Id == "6")
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-6">
+                                            <a asp-action="Insp_Spot_Corrective_Action" asp-controller="Inspection">   <button class="card_4_btn">Action Closure</button></a>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <ul>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details('1','#Insp_Sch_Planned_Count','tbl_Insp')">Planned - <span class="count">@Model.Main_Dash_Insp_Count!.Insp_Sch_Planned_Count </span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details('2','#Insp_Sch_Closed_Count','tbl_Insp')">Completed - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Sch_Closed_Count</span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details('7','#Insp_Sch_Pending_Count','tbl_Insp')">Pending - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Sch_Pending_Count </span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details('3','#Insp_Sch_Persentage','tbl_Insp')">Close Out - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Sch_Persentage </span>%</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <ul>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details_CA('4','#Insp_Walk_Planned_Count','tbl_Insp_CA')">Action Open - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Walk_Planned_Count</span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details_CA('5','#Insp_Walk_Closed_Count','tbl_Insp_CA')">Action Closed - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Walk_Closed_Count</span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details_CA('8','#Insp_Walk_Persentage','tbl_Insp_CA')">Overdue - <span class="count">@Model.Main_Dash_Insp_Count.Insp_CA_Overdue_Count</span></li>
+                                            <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_Model_Insp_Details_CA('9','#Insp_Walk_Persentage','tbl_Insp_CA')">Close Out - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Walk_Persentage</span>% </li>
+                                        </ul>
+                                    </div>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;list-style-type: none;" onclick="event.preventDefault();Fn_Model_Insp_Details('6','#Insp_Walk_Completed_Count','tbl_Insp')">Walk-In Completed - <span class="count">@Model.Main_Dash_Insp_Count.Insp_Walk_Completed_Count</span></li>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_3">
+                            <div class="card-body-12" style="height: 161px;">
+                                @if (Model.L_M_Notification_Dashboard_Count.Count > 1)
+                                {
+                                    <p class="text-truncate text-muted_5 mb-0">Service Providers - <span>0</span> </p>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-7"><span class="font-size-15 mb-2">Control of Work</span></div>
+
+                                            @if (LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "1" || LoginClass.Role_Id == "6" ||
+                                           LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5")
+                                            {
+                                                <div class="col-lg-5">
+                                                    <a asp-action="SP_Sign_Up_List" asp-controller="Master" asp-route-id="All"> <button class="card_5_btn">Service Provider</button></a>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-lg-5">
+                                                    <a asp-action="SP_Sign_Up_List_Email" asp-controller="Master" asp-route-id="All"> <button class="card_99_btn">List Of Contracts</button></a>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Details_Inc('2')">Total SP- <span class="count">@item.ServiceProvider_Count</span> </li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Details_Inc('3')">Pending - <span class="count">@item.ServiceProvider_Pen_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Details_Inc('4')">Open  - <span class="count">@item.ServiceProvider_Open_Count</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Safety_Inc('1')">Safety Permits - <span class="count">@item.ServiceProvider_Total_Permits_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Safety_Inc('2')">Open - <span class="count">@item.ServiceProvider_Permits_Open_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Safety_Inc('3')">Closed - <span class="count">@item.ServiceProvider_Permits_Close_Count</span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();Fn_ServiceProvider_Safety_Inc('4')">Pending - <span class="count">@item.ServiceProvider_Permit_Pending_Count</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        break;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_6">
+                            <div class="card-body-12" style="height: 161px;">
+                                @if (Model.L_M_Notification_Dashboard_Count.Count > 1)
+                                {
+                                    <p class="text-truncate text-muted_5 mb-0">Service Providers - <span>0</span> </p>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                    {
+                                        <div class="row">
+                                            <div class="col-lg-6"><span class="font-size-15 mb-2">Emergency</span></div>
+                                            @if (LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                            {
+                                                <div class="col-lg-6">  <a asp-action="Schedule" asp-controller="Emergency">   <button class="card_6_btn">Create Schedule</button></a></div>
+                                            }
+                                            else if (LoginClass.Role_Id == "16")
+                                            {
+                                                <div class="col-lg-6"><a asp-action="Index" asp-controller="DrillSchedule">   <button class="card_6_btn">Drill Schedule</button></a></div>
+                                            }
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <ul>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Drill_in('0')">Drill Planned / Year - <span class="count">@item.Drill_Planned_Count </span> </li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Drill_in('2')">Open - <span class="count">@item.Drill_Planned_Total_Actions_Count </span> </li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Drill_in('3')">Completed - <span class="count">@item.Drill_Planned_Closed_Count </span></li>
+                                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();">Pending - <span class="count">@item.Drill_Planned_Actions_Open_Count </span></li>
+                                                </ul>
+                                            </div>
+                                            @*  <div class="col-lg-6">
+                                    <ul>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('3')">Total Actions - <span class="count">@item.Drill_Planned_Total_Actions_Count </span></li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('4')">Open - <span class="count">@item.Drill_Planned_Actions_Open_Count </span></li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('5')">Closed - <span class="count">@item.Drill_Planned_Actions_Close_Count </span></li>
+                                    </ul>
+                                    </div> *@
+                                        </div>
+                                        break;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_10">
+                            <div class="card-body-12" style="height: 122px;">
+                                <div class="row">
+                                    <div class="col-lg-6"><span class="font-size-15 mb-2">Risk Heat Map</span></div>
+                                    @*  @if (LoginClass.Role_Id == "10")
+                                    {
+                                    <div class="col-lg-6"> <a asp-action="Create_Audit_Insp_Sch" asp-controller="Inspection" asp-route-id="All"><button class="card_3_btn">Create Schedule</button></a></div>
+                                    }
+                                    else
+                                    {
+                                    <div class="col-lg-6"><a asp-action="" asp-controller=""> <button class="card_3_btn">Action Closure</button></a></div>
+                                    } *@
+                                </div>
+
+                                @* <div class="row">
+                                <div class="col-lg-6">
+                                <ul>
+                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('1')">Open - 0</li>
+                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('2')">Closed - 0</li>
+                                </ul>
+                                </div>
+                                <div class="col-lg-6">
+                                <ul>
+                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('3')">Total Actions - 0</li>
+                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('4')">Open - 0</li>
+                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('5')">Closed - 0</li>
+                                </ul>
+                                </div>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_9">
+                            <div class="card-body-12" style="height: 122px;">
+                                @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-7"><span class="font-size-15 mb-2">Safety Violation</span></div>
+                                        @if (LoginClass.Role_Id == "10")
+                                        {
+                                            <div class="col-lg-5"> <a asp-action="Insp_Safety_Violation" asp-controller="Inspection" asp-route-id="All"><button class="card_3_btn">Create Safety Violation</button></a></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-lg-5"><a asp-action="" asp-controller=""> <button class="card_3_btn">Action Closure</button></a></div>
+                                        }
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Safety_Vio('1')">Open - <span class="count">@item.Safety_Vio_Open_Count </span></li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Safety_Vio('2')">Closed - <span class="count">@item.Safety_Vio_Closed_Count </span></li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Safety_Vio('3')">Overdue - <span class="count">@item.Safety_Vio_Overdue_Count </span></li>
+                                            </ul>
+                                        </div>
+                                        @* <div class="col-lg-6">
+                                    <ul>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('3')">Total Actions - 0</li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('4')">Open - 0</li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('5')">Closed - 0</li>
+                                    </ul>
+                                    </div> *@
+                                    </div>
+                                    break;
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4">
+                        <div class="card carddashboard_11">
+                            <div class="card-body-12" style="height: 122px;">
+                                @foreach (var item in Model.L_M_Notification_Dashboard_Count)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12"><span class="font-size-15 mb-2">Emergency Response Team</span></div>
+                                        @*  @if (LoginClass.Role_Id == "10")
+                                    {
+                                    <div class="col-lg-6"> <a asp-action="Create_Audit_Insp_Sch" asp-controller="Inspection" asp-route-id="All"><button class="card_3_btn">Create Schedule</button></a></div>
+                                    }
+                                    else
+                                    {
+                                    <div class="col-lg-6"><a asp-action="" asp-controller=""> <button class="card_3_btn">Action Closure</button></a></div>
+                                    } *@
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ul>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Emergency_Response('2')">First Aider - <span class="count">@item.First_Aider_Count </span></li>
+                                                <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Emergency_Response('1')">Fire Warden - <span class="count">@item.Fire_Warden_Count </span></li>
+                                            </ul>
+                                        </div>
+                                        @*  <div class="col-lg-6">
+                                    <ul>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('3')">Total Actions - 0</li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('4')">Open - 0</li>
+                                    <li class="mb-0" style="color: #fff;font-size: 15px;cursor: pointer;" onclick="event.preventDefault();ServerSideTable_Obs_in('5')">Closed - 0</li>
+                                    </ul>
+                                    </div> *@
+                                    </div>
+                                    break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-4">
+                <div class="card">
+                    <div class="">
+                        <div class="col-xl-12">
+                            <div class="">
+                                <div class="">
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
+                                                <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                                <span class="d-none d-sm-block">My Task</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
+                                                <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                                <span class="d-none d-sm-block">My Team Task</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#messages1" role="tab">
+                                                <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                                <span class="d-none d-sm-block">Escalation</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Tab panes -->
+                                    <div class="tab-content p-3 text-muted">
+                                        <div class="tab-pane active" id="home1" role="tabpanel">
+                                            <div class="col-lg-12">
+                                                <div>
+                                                    <div class="swiper swiper-location-widget overflow-hidden">
+                                                        @if (Model != null)
+                                                        {
+                                                            @foreach (var item in Model.L_M_Upcoming_Activity_My!)
+                                                            {
+                                                                DateTime dt_due = DateTime.Now;
+                                                                String sch_date = "";
+                                                                @if (item.Target_Date != null)
+                                                                {
+                                                                    dt_due = DateTime.ParseExact(item.Target_Date.ToString().Remove(10), "dd-MM-yyyy", null).AddDays(7);
+                                                                    sch_date = DateTime.ParseExact(item.Target_Date.ToString().Remove(10), "dd-MM-yyyy", null).ToShortDateString();
+                                                                }
+                                                                <div class="swiper-wrapper">
+                                                                    <div class="swiper-slide">
+                                                                        <div class="card">
+                                                                            <a href="@item.Hyper_Link">
+                                                                                <div class="card-body" style="border-left: 2px solid @item.Color_Code;border-radius: 13px;">
+                                                                                    <div class="d-flex align-items-start">
+                                                                                        <div class="">
+                                                                                            <div class="col-xl-12">
+                                                                                                <p class="text-muted mb-1" style="color:@item.Color_Code !important">@item.Module_Name - (@item.Zone_Id)</p>
+                                                                                                <h5 style="font-size: 11px !important;">@item.Remarks</h5>
+                                                                                                @if (item.Target_Date != null)
+                                                                                                {
+                                                                                                    <h5 style="font-size: 12px !important;">Date: @sch_date &nbsp;<font style="color:red;">Due on: @dt_due.ToShortDateString()</font> @*@item.Remarks*@</h5>
+                                                                                                }
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </a>
+                                                                            <!-- end card body -->
+                                                                        </div>
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="profile1" role="tabpanel">
+                                            <div class="col-lg-12">
+                                                <div>
+                                                    <div class="swiper swiper-location-widget overflow-hidden">
+                                                        @if (Model != null)
+                                                        {
+                                                            @foreach (var item in Model.L_M_Upcoming_Activity_Team!)
+                                                            {
+                                                                DateTime dt_due = DateTime.Now;
+                                                                String sch_date = "";
+                                                                @if (item.Target_Date != null)
+                                                                {
+                                                                    dt_due = DateTime.ParseExact(item.Target_Date.ToString().Remove(10), "dd-MM-yyyy", null).AddDays(7);
+                                                                    sch_date = DateTime.ParseExact(item.Target_Date.ToString().Remove(10), "dd-MM-yyyy", null).ToShortDateString();
+                                                                }
+
+                                                                <div class="swiper-wrapper">
+                                                                    <div class="swiper-slide">
+                                                                        <div class="card">
+                                                                            <a href="@item.Hyper_Link">
+                                                                                <div class="card-body" style="border-left: 2px solid @item.Color_Code;border-radius: 13px;">
+                                                                                    <div class="d-flex align-items-start">
+                                                                                        <div class="">
+                                                                                            <div class="col-xl-12">
+                                                                                                <p class="text-muted mb-1" style="color:@item.Color_Code !important">@item.Module_Name - (@item.Zone_Id)</p>
+                                                                                                <h5 style="font-size: 11px !important;">@item.Remarks</h5>
+                                                                                                @if (item.Target_Date != null)
+                                                                                                {
+                                                                                                    <h5 style="font-size: 12px !important;">Date: @sch_date &nbsp;<font style="color:red;">Due on: @dt_due.ToShortDateString()</font> @*@item.Remarks*@</h5>
+                                                                                                }
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </a>
+                                                                            <!-- end card body -->
+                                                                        </div>
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="messages1" role="tabpanel">
+                                            <div class="col-lg-12">
+                                                <div>
+                                                    <div class="swiper swiper-location-widget overflow-hidden">
+                                                        @if (Model != null)
+                                                        {
+                                                            @foreach (var item in Model.L_M_Upcoming_Activity_Emer_Escal!)
+                                                            {
+                                                                <div class="swiper-wrapper">
+                                                                    <div class="swiper-slide">
+                                                                        <div class="card">
+                                                                            <a href="@item.Hyper_Link">
+                                                                                <div class="card-body" style="border-left: 2px solid @item.Color_Code;border-radius: 13px;">
+                                                                                    <div class="d-flex align-items-start">
+                                                                                        <div class="">
+                                                                                            <div class="col-xl-12">
+                                                                                                <p class="text-muted mb-1" style="color:@item.Color_Code !important">@item.Module_Name - (@item.Zone_Id , @item.Community_Id)</p>
+                                                                                                <h5 style="font-size: 12px !important;">@item.Remarks -  @item.CreatedDate</h5>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </a>
+                                                                            <!-- end card body -->
+                                                                        </div>
+                                                                        <br>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body pb-0">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-4">HSE Bulletin</h5>
+                            </div>
+                        </div>
+                        <!-- end head -->
+                        <div class="container">
+                            <div class="owl-carousel owl-theme">
+                                @foreach (var item in Model.L_Hse_Bulletins)
+                                {
+                                    <div class="item">
+                                        <div class="row">
+
+                                            <a title="Nakheel Brandmark" target="_blank" href="#">
+                                                <img src="@item.File_Path" alt="Nakheel Brandmark" style="height: 313px;width: 100%;margin-left: -17px;" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end card body -->
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-4">Emergency Alert</h5>
+                            </div>
+                        </div>
+                        <table id="MainTable" class="table table-striped dt-responsive nowrap tblround" style="width: 100%;display: block;height: 286px;overflow-y: scroll;">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="width: 21%;"></th>
+                                    <th style="text-align:left;width: 30%;"><i class=""></i>&nbsp;Alert Type</th>
+                                    <th style="text-align:left;width: 35%;"><i class=""></i>&nbsp;Alert Description</th>
+                                    <th style="text-align:left;width: 21%;"><i class=""></i>&nbsp;Alert Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model!.L_M_Emergency_SubZone_Alert_Master_Dashboard != null)
+                                {
+                                    foreach (var item in Model.L_M_Emergency_SubZone_Alert_Master_Dashboard)
+                                    {
+                                        <tr class="clstr">
+                                            <td><p class="blink">New</p></td>
+                                            <td align="left" valign="middle">@item.Emergency_Category_Id</td>
+                                            <td align="left" valign="middle">@item.Description</td>
+                                            <td align="left" valign="middle">@item.Emergency_Date</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ImpactPop" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Incident Notification List</b></h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="ImapactDivTable" class="table table-striped tblround">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th>Incident ID</th>
+                                    <th>Inc Category</th>
+                                    <th>Inc Type</th>
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Last Action</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ImapactDiv_TBODY">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div id="Obs_ImpactPop" class="modal fade" tabindex="-1" aria-labelledby="#Obs_ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="Obs_ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Observation Notification List</b></h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="Obs_ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="Obs_ImapactDivTable" class="table table-striped tblround">
+                            <thead>
+                                <tr>
+                                    <th>Observation ID</th>
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Observation Type</th>
+                                    <th>Last Action By</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Obs_ImapactDiv_TBODY">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div id="Model_Insp_Details" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Inspection Report</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="tbl_Insp_Details_card_view" class="table table-striped" style="margin-top: 7px;">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Inspection ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Inspection Type</th>
+                                    <th style="text-align:left;">Inspection Date</th>
+                                    <th style="text-align:left;">Created By</th>
+                                    <th style="text-align:left;">Assigned To</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllInsp_Details_cardList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Model_Insp_Details_CA" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Inspection Report</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="tbl_Insp_Details_card_view_CA" class="table table-striped">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Inspection ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Inspection Type</th>
+                                    <th style="text-align:left;">Assignee Type</th>
+                                    <th style="text-align:left;">Assignee Name</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllInsp_Details_cardList_CA">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Service_ImpactPop" class="modal fade" tabindex="-1" aria-labelledby="#Service_ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="Service_ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Service Providers List</b></h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="Service_ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="Service_ImapactDivTable" class="table table-striped tblround">
+                            <thead>
+                                <tr>
+                                    <th>Company Name</th>
+                                    <th>Manager Incharge</th>
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Contract End date</th>
+                                    <th>Scope Of Work</th>
+                                    <th>DMS Number</th>
+                                    <th>Contract Status</th>
+                                    <th>Approval Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Service_ImapactDiv_TBODY">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div id="Model_Safety_Details_CA" class="modal fade" tabindex="-1" aria-labelledby="#SaImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="SaImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Safety Permits</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="tbl_Safety_Details_card_view_CA" class="table table-striped">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Safety ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Company Name</th>
+                                    <th style="text-align:left;">Created by</th>
+                                    <th style="text-align:left;">Permit Name</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllSaftey_Details_cardList_CA">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="Model_Audit_Details_CA" class="modal fade" tabindex="-1" aria-labelledby="#SaImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="SaImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Audit Report</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;--bs-gutter-y: 0px !important;">
+                        <table id="tbl_Audit_Details_card_view_CA" class="table table-striped">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Audit ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Created by</th>
+                                    <th style="text-align:left;">Audit Type</th>
+                                    <th style="text-align:left;">HSE officer</th>
+                                    <th style="text-align:left;">Service Provider</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllAudit_Details_cardList_CA">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (LoginClass.Role_Id == "18" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12"
+    || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "14" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "2" || LoginClass.Role_Id == "4"
+    || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "1" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" || LoginClass.Role_Id == "9")
+    {
+        <div class="row" style="display:none">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Incident Type</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="column_charts" data-colors='["#f56e6e", "#3b76e1", "#63ad6f"]' class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="display:none">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Nature Of Injury/Illness </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="Nature_charts" data-colors='["#f9c256", "#57c9eb", "#63ad6f"]' class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row" style="display:none">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Incident Category </h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="Incident_Category_charts" data-colors='["#bf3939", "#57c9eb", "#c77b9e", "#63ad6f"]' class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row" style="display:none">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Location Of Incident</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="Location_Incident_charts" data-colors='["#d2d96a", "#38567c", "#c77b9e", "#63ad6f"]' class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script src="~/assets/js/validation/incident_validation/serversidedatatable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.min.js")"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ACTIONS: "#Total_Action",
+            ACTIONS_COMPLETED: "#Total_Action_Completed",
+            ACTION_PENDING: "#Total_Action_Pending",
+            BUSINESS_UNIT_ID: "#Business_Unit_Id",
+            PROJ_BUILD_ID: "#Project_Building_Id",
+            DRP_YEAR: "#Drp_Year",
+            LAST_SIX: "#LastSix",
+            LAST_THREE: "#LastThree",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            PB_DIV: "#PB_Div",
+            DRP_CAT: "#Drp_Cat",
+            MAN_DAYS_LOST: "#Total_Man_Days_Lost",
+            INJURED_EMP: "#Total_Injured_Emp",
+            INJURED_CONTRACTOR: "#Total_Injured_Contractor",
+            HIGH_POTENTIAL: "#Total_High_Potential",
+            MOST_INJURED: "#MostInjured",
+            CARD_MODEL: "#ImpactPop",
+            IMAPACT_DIV_TBODY: "#ImapactDiv_TBODY",
+            POP_UP_TABLE: "#ImapactDivTable",
+            M_ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community",
+            BUILDINGTBODY: "#MappingBuildTBody",
+            INCIDENTTYPETBODY: "#IncidentTypeTBody",
+            OBS_CARD_MODEL: "#Obs_ImpactPop",
+            OBS_IMAPACT_DIV_TBODY: "#Obs_ImapactDiv_TBODY",
+            OBS_POP_UP_TABLE: "#Obs_ImapactDivTable",
+            SERVICE_CARD_MODEL: "#Service_ImpactPop",
+            SERVICE_IMAPACT_DIV_TBODY: "#Service_ImapactDiv_TBODY",
+            SERVICE_POP_UP_TABLE: "#Service_ImapactDivTable",
+            MAIN_TABLE: "#tblIncident",
+        });
+
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#tbl_Safety_Details_card_view_CA_wrapper").css({ "margin-top": "7px" });
+        });
+    </script>
+
+
+    <script>
+        function LOAD_Due_Dates(date_sch, nomonths) {
+            var x = nomonths; //or whatever offset
+            var CurrentDate = new Date(date_sch);
+            //alert(CurrentDate);
+            var curr = new Date(CurrentDate.setMonth(CurrentDate.getDate() + x));
+            var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+            return test;
+        }
+        function Fn_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let model = {
+                CreatedBy: '@LoginClass.Employee_Identity_Id',
+                Card_Access: Card_Access,
+            };
+            let data = GetDB_Data(model, '/InspectionDashboard/Insp_Main_Dash_Card_View_Data');
+            $("#tbl_Insp_Details_card_view").dataTable().fnDestroy();
+            $("#GetAllInsp_Details_cardList").html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Module_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Inspection_Date + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Reported_By + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Assign_Action_HSE + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+                $("#GetAllInsp_Details_cardList").append(htmls);
+                $("#Model_Insp_Details").modal('toggle');
+                ApplyDataTable("#tbl_Insp_Details_card_view", 'Inspection Report');
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+
+        function GetDB_Data(model, url) {
+            let H_data;
+            $.ajax({
+                url: url,
+                type: "POST",
+                cache: false,
+                async: false,
+                data: { dash_Params: model },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        H_data = data;
+                    }
+                    else {
+                        H_data = null;
+                    }
+                },
+                error: function (error) {
+                }
+            });
+            return H_data;
+        }
+
+        function ApplyDataTable(id, title) {
+            $(id).DataTable({
+                "initComplete": function (settings, json) {
+                    $(id).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+                },
+                "columnDefs": [
+                    {
+                        "visible": false,
+                        "searchable": false
+                    },
+                ],
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: title
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        title: title
+                    },
+                    {
+                        extend: 'colvis',
+                        text: 'Show Columns',
+                        columns: ':not(.dt-head-hidden)'
+                    }
+                ]
+            });
+            $(id).attr("style", "width:100%");
+        }
+
+        $(document).ready(function () {
+            $('.owl-carousel').owlCarousel({
+                ltr: false,
+                loop: true,
+                margin: 15,
+                nav: false,
+                autoplay: true,
+                autoplayTimeout: 3000,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    1000: {
+                        items: 1
+                    }
+                }
+            })
+        });
+    </script>
+
+    <script>
+        function Fn_Incident_Details(Cid, txtid, CreatedBy) {
+            let txt = $(txtid).text();
+            //alert(Cid + ' ' + txt);
+
+            debugger;
+            if (txt == "0" || txt == "0%") {
+                toastr["info"]("Data Not Available!");
+            }
+            else {
+                //ShowHideLoader(1);
+                $(UI_Fields.POP_UP_TABLE).dataTable().fnDestroy();
+                $(UI_Fields.IMAPACT_DIV_TBODY).html('');
+
+                $.post("/Home/Incident_Dashboard_Card_View", { CreatedBy: CreatedBy, Cid: Cid }, function (data) {
+                    if (data != null) {
+                        let hide = [];
+                        let html = "";
+
+                        $(data).each(function (i, e) {
+                            html += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Inc_Category_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Inc_Type_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Community_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Last_Reported_By + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Status + '</td>';
+                        });
+
+                        $(UI_Fields.IMAPACT_DIV_TBODY).append(html);
+                        $(UI_Fields.CARD_MODEL).modal('toggle');
+                        ApplyDataTable(UI_Fields.POP_UP_TABLE, hide, 'Incident Notification List');
+                    }
+                });
+            }
+        }
+
+        function Fn_Obs_Details(Cid, txtid, CreatedBy) {
+            let txt = $(txtid).text();
+            //alert(Cid + ' ' + txt);
+
+            debugger;
+            if (txt == "0" || txt == "0%") {
+                toastr["info"]("Data Not Available!");
+            }
+            else {
+                //ShowHideLoader(1);
+                $(UI_Fields.OBS_POP_UP_TABLE).dataTable().fnDestroy();
+                $(UI_Fields.OBS_IMAPACT_DIV_TBODY).html('');
+
+                $.post("/Home/Obs_Dashboard_Card_View", { CreatedBy: CreatedBy, Cid: Cid }, function (data) {
+                    if (data != null) {
+                        let hide = [];
+                        let html = "";
+
+                        $(data).each(function (i, e) {
+                            html += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Community_Id + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Observation_Type + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Last_Reported_By + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Status + '</td>';
+                        });
+
+                        $(UI_Fields.OBS_IMAPACT_DIV_TBODY).append(html);
+                        $(UI_Fields.OBS_CARD_MODEL).modal('toggle');
+                        ApplyDataTable(UI_Fields.OBS_POP_UP_TABLE, hide, 'Observation Notification List');
+                    }
+                });
+            }
+        }
+
+
+        function ApplyDataTable(id, hide, title) {
+            debugger
+            $(id).DataTable({
+                "order": [[0, "desc"]],
+                //"scrollX": true,
+                //"fixedHeader": true,
+                "initComplete": function (settings, json) {
+                    $(id).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+                },
+                "columnDefs": [
+                    {
+                        "targets": hide, // index of columns to be hidden initially
+                        "visible": false,
+                        "searchable": false
+                    },
+                ],
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: title
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        title: title
+                    },
+                    {
+                        extend: 'colvis',
+                        text: 'Show Columns',
+                        columns: ':not(.dt-head-hidden)'
+                    }
+                ]
+            });
+            $(id).attr("style", "width:100%");
+        }
+
+        function Fn_ServiceProvider_Details(Cid, txtid, CreatedBy) {
+            let txt = $(txtid).text();
+            //alert(Cid + ' ' + txt);
+            debugger;
+            if (txt == "0" || txt == "0%") {
+                toastr["info"]("Data Not Available!");
+            }
+            else {
+                //ShowHideLoader(1);
+                $(UI_Fields.SERVICE_POP_UP_TABLE).dataTable().fnDestroy();
+                $(UI_Fields.SERVICE_IMAPACT_DIV_TBODY).html('');
+
+                $.post("/Home/ServiceProv_Dashboard_Card_View", { CreatedBy: CreatedBy, Cid: Cid }, function (data) {
+                    if (data != null) {
+                        let hide = [];
+                        let html = "";
+
+                        $(data).each(function (i, e) {
+                            html += '<tr><td align="left" valign="middle">' + e.Company_Name + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Manager_Incharge + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Community_Master_Name + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Contract_End_Date + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Scope_Of_Work + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Purchase_Order_Number + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Contract_Status + '</td>';
+                            html += '<td align="left" valign="middle">' + e.Status + '</td>';
+                        });
+
+                        $(UI_Fields.SERVICE_IMAPACT_DIV_TBODY).append(html);
+                        $(UI_Fields.SERVICE_CARD_MODEL).modal('toggle');
+                        ApplyDataTable(UI_Fields.SERVICE_POP_UP_TABLE, hide, 'Service Provider Report');
+                    }
+                });
+            }
+        }
+
+        function ServerSideTable_Inc_in(val) {
+            debugger;
+            var loginid = @LoginClass.Role_Id;
+            var card_id = val;
+            if (card_id == "6") {
+                if (loginid == "16" || loginid == "5") {
+                    window.location.href = "/Incident/IncidentInvestigation";
+                }
+
+            } else {
+                window.location.href = "/Incident/IncidentReporting/?id=" + card_id + "";
+            }
+        }
+
+        function ServerSideTable_Obs_in(val) {
+            debugger;
+            var card_id = val;
+            window.location.href = "/Incident/ObservationReporting/?id=" + card_id + "";
+        }
+
+        function ServerSideTable_NCR_in(val) {
+            debugger;
+            var card_id = val;
+            window.location.href = "/AuditNCMForm/Audit_NCM_Form/?id=" + card_id + "";
+        }
+
+        function ServerSideTable_Emergency_Response(val) {
+            debugger;
+            var card_id = val;
+            window.location.href = "/Emergency/Index/?id=" + card_id + "";
+        }
+
+        function ServerSideTable_Safety_Vio(val) {
+            debugger;
+            var card_id = val;
+            window.location.href = "/Inspection/Insp_Safety_Violation/?id=" + card_id + "";
+        }
+
+        function ServerSideTable_Drill_in(val) {
+            debugger;
+            var card_id = val;
+            window.location.href = "/DrillSchedule/Index/?id=" + card_id + "";
+        }
+
+        function Fn_ServiceProvider_Details_Inc(val) {
+            debugger;
+            var loginid = @LoginClass.Role_Id;
+            //alert(loginid);
+
+            if (loginid == "16") {
+                //alert(loginid);
+                if (val == "2" || val == "3" || val == "4") {
+                    window.location.href = "/Master/SP_Sign_Up_List_Email";
+                }
+            }
+            else {
+                //alert(loginid);
+                var card_id = val;
+                window.location.href = "/Master/SP_Sign_Up_List/?id=" + card_id + "";
+            }
+        }
+    </script>
+
+    <script>
+        // $(".count").each(function () {
+        //     $(this)
+        //         .prop("Counter", 0)
+        //         .animate(
+        //             {
+        //                 Counter: $(this).text(),
+        //             },
+        //             {
+        //                 duration: 4000,
+        //                 easing: "swing",
+        //                 step: function (now) {
+        //                     now = Number(Math.ceil(now)).toLocaleString('en');
+        //                     $(this).text(now);
+        //                 },
+        //             }
+        //         );
+        // });
+
+
+        function Fn_Model_Insp_Details_CA(Card_Access, Row_ID, table_Access) {
+            let model = {
+                CreatedBy: '@LoginClass.Employee_Identity_Id',
+                Card_Access: Card_Access,
+            };
+            let data = GetDB_Data(model, '/InspectionDashboard/Insp_Main_Dash_Card_View_Data');
+            $("#tbl_Insp_Details_card_view_CA").dataTable().fnDestroy();
+            $("#GetAllInsp_Details_cardList_CA").html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Module_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Assignee_Type + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Responsibility_To + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Target_Date + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+
+                $("#GetAllInsp_Details_cardList_CA").append(htmls);
+                $("#Model_Insp_Details_CA").modal('toggle');
+                ApplyDataTable("#tbl_Insp_Details_card_view_CA", 'Inspection Report');
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+
+        function Fn_ServiceProvider_Safety_Inc(Card_Access) {
+            let model = {
+                CreatedBy: '@LoginClass.Employee_Identity_Id',
+                Card_Access: Card_Access,
+            };
+            let data = GetDB_Data(model, '/Home/SafetyPer_Main_Dash_Card_View_Data');
+            $("#tbl_Safety_Details_card_view_CA").dataTable().fnDestroy();
+            $("#GetAllSaftey_Details_cardList_CA").html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Company_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Created_by + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Permit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+
+                $("#GetAllSaftey_Details_cardList_CA").append(htmls);
+                $("#Model_Safety_Details_CA").modal('toggle');
+                ApplyDataTable("#tbl_Safety_Details_card_view_CA", 'Safety Permits Report');
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+
+
+        function Fn_ServiceProvider_Audit_Inc(Card_Access) {
+            let model = {
+                CreatedBy: '@LoginClass.Employee_Identity_Id',
+                Card_Access: Card_Access,
+            };
+            let data = GetDB_Data(model, '/Home/Audit_Main_Dash_Card_View_Data');
+            $("#tbl_Audit_Details_card_view_CA").dataTable().fnDestroy();
+            $("#GetAllAudit_Details_cardList_CA").html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Created_by + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Audit_Type_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.HSE_Rep_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Service_Provider_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+
+                $("#GetAllAudit_Details_cardList_CA").append(htmls);
+                $("#Model_Audit_Details_CA").modal('toggle');
+                ApplyDataTable("#tbl_Audit_Details_card_view_CA", 'Audit Report');
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+    </script>
+</body>
+

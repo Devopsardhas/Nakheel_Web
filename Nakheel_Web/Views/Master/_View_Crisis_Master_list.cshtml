@@ -1,0 +1,186 @@
+﻿@model Nakheel_Web.Models.Masters.Crisis_Team_Master
+
+@if (Model != null)
+{
+    <table class="table tab ">
+        <tbody id="tblIncidentDetailsViewPage">
+            <tr>
+                <td id="Crisis_id"><b class="font-bold">Crisis Master Id</b></td>
+                <td id="Crisis_co">:</td>
+                <td class="tdtxt" id="Crisis_name">@Model.Unique_Id</td>
+                <td><b class="font-bold">Zone</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Zone_Id</td>
+                <td><b class="font-bold">Community</b></td>
+                <td>:</td>
+                <td class="tdtxt">@Model.Community_Id</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col-xl-12">
+            @{
+                if (Model.L_M_Crisis_Team_Details != null)
+                {
+                    <table id="" class="table  dt-responsive nowrap" style="width:100%">
+                        <tr>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';text-align: end;">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                            <th style="background: #014d66;color: #014d66">Gold</th>
+                        </tr>
+                        <tr>
+                            <th style="background: #dbdbdb;"></th>
+                            <th style="background: #dbdbdb;text-align: center;color: black;font-family: 'Nakheel-HeadlineBold';">PRIMARY CONTACT</th>
+                            <th style="background: #dbdbdb;"></th>
+                            <th style="background: #dbdbdb;"></th>
+                            <th style="background: #dbdbdb;"></th>
+                            <th style="background: #7fc0d9;"></th>
+                            <th style="background: #7fc0d9;"></th>
+                            <th style="background: #7fc0d9;color: black;font-family: 'Nakheel-HeadlineBold';">ALTERNATE CONTACT</th>
+                        </tr>
+                    </table>
+                    <table id="tblGold" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Position</th>
+                                <th>Name</th>
+                                <th>Mobile </th>
+                                <th>Role</th>
+                                <th>Position</th>
+                                <th>Name</th>
+                                <th>Mobile </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var Gold in Model!.L_M_Crisis_Team_Details)
+                            {
+                                @if (Gold.Level_Id == "1")
+                                {
+                                    <tr>
+                                        <td>@Gold.Role</td>
+                                        <td>@Gold.Position</td>
+                                        <td>@Gold.Name</td>
+                                        <td>@Gold.Mobile</td>
+                                        <td>@Gold.A_Role</td>
+                                        <td>@Gold.A_Position</td>
+                                        <td>@Gold.A_Name</td>
+                                        <td>@Gold.A_Mobile</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    <table id="" class="table  dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                        <tr>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';width: 62%;">Silver</th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                        </tr>
+                    </table>
+                    <table id="tblSilver" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                       
+                        <tbody>
+                            @foreach (var Silver in Model!.L_M_Crisis_Team_Details)
+                            {
+                                @if (Silver.Level_Id == "2")
+                                {
+                                    <tr>
+                                        <td>@Silver.Role</td>
+                                        <td>@Silver.Position</td>
+                                        <td>@Silver.Name</td>
+                                        <td>@Silver.Mobile</td>
+                                        <td>@Silver.A_Role</td>
+                                        <td>@Silver.A_Position</td>
+                                        <td>@Silver.A_Name</td>
+                                        <td>@Silver.A_Mobile</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    <table id="" class="table  dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                        <tr>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';width: 62%;">Bronze</th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                        </tr>
+                    </table>
+                    <table id="tblBronze" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                       
+                        <tbody>
+                            @foreach (var Bronze in Model!.L_M_Crisis_Team_Details)
+                            {
+                                @if (Bronze.Level_Id == "3")
+                                {
+                                    <tr>
+                                        <td>@Bronze.Role</td>
+                                        <td>@Bronze.Position</td>
+                                        <td>@Bronze.Name</td>
+                                        <td>@Bronze.Mobile</td>
+                                        <td>@Bronze.A_Role</td>
+                                        <td>@Bronze.A_Position</td>
+                                        <td>@Bronze.A_Name</td>
+                                        <td>@Bronze.A_Mobile</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    
+                    <table id="" class="table  dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                        <tr>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';">Crisis Management Support Team</th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                            <th style="background: #014d66;"></th>
+                        </tr>
+                    </table>
+                    <table id="tblSupportTeam" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                      
+                        <tbody>
+                            @foreach (var SupportTeam in Model!.L_M_Crisis_Team_Details)
+                            {
+                                @if (SupportTeam.Level_Id == "4")
+                                {
+                                    <tr>
+                                        <td>@SupportTeam.Role</td>
+                                        <td>@SupportTeam.Position</td>
+                                        <td>@SupportTeam.Name</td>
+                                        <td>@SupportTeam.Mobile</td>
+                                        <td>@SupportTeam.A_Role</td>
+                                        <td>@SupportTeam.A_Position</td>
+                                        <td>@SupportTeam.A_Name</td>
+                                        <td>@SupportTeam.A_Mobile</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+        </div>
+    </div>
+}

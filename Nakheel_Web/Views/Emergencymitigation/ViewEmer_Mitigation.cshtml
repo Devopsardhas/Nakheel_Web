@@ -1,0 +1,639 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+<style>
+    .select2-search__field {
+        text-align: center !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search .select2-search__field {
+        width: 100%;
+        height: 1.5rem;
+        margin-top: -24px;
+        margin-left: 0;
+        font-family: inherit;
+        line-height: 1.5;
+        background-color: transparent;
+    }
+
+    .m-txt-req {
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+</style>
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 13px;
+    }
+
+    label {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 13px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+
+    .font-bold {
+        color: #00263a !important;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .submit_Req_Approval {
+        background-color: #3CB371;
+    }
+
+    .submit_Req_Approval_Hse {
+        background-color: #3CB371;
+    }
+
+    .Zone_Details_Approve {
+        background-color: #3CB371;
+    }
+
+    .HSE_Details_Approve {
+        background-color: #3CB371;
+    }
+
+    .btn-success_esc {
+        color: #fff;
+        background-color: #2632d2;
+        border-color: #2632d2;
+    }
+
+    .btn-success_gold {
+        color: #fff;
+        background-color: #d2b326;
+        border-color: #d2b326;
+    }
+
+    .btn:hover {
+        color: #ffffff !important;
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+@model Nakheel_Web.Models.Emergency.M_Emer_Mitigation_Add;
+<div class="" id="viewEmerMiti">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    @if (Model != null)
+                    {
+                        <div class="">
+                            <input type="hidden" value="@Model.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                            <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                            <input type="hidden" value="@Model.Building_Id" id="Building_Id">
+                            <input type="hidden" value="@Model.Emer_Miti_Id" id="EM_Emer_Miti_Id">
+                            <table class="table tab ">
+                                <tbody id="tblEmerMitiView">
+                                    <tr>
+                                        <td>
+                                            <b class="font-bold">Reference No </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Unique_Id</td>
+                                        <td>
+                                            <b class="font-bold">Company </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Emer_Company</td>
+                                        <td>
+                                            <b class="font-bold">Business Unit </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Business_Unit_Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b class="font-bold"> Zone  </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Zone_Name</td>
+                                        <td>
+                                            <b class="font-bold">Community </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Community_name</td>
+                                        <td>
+                                            <b class="font-bold">Building</b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Building_Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b class="font-bold"> Emergency Title  </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt" style="word-break: break-word;">@Model.Emer_Title</td>
+                                        <td>
+                                            <b class="font-bold"> Description  </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt" style="word-break: break-word;">@Model.Emer_Description</td>
+                                        <td>
+                                            <b class="font-bold">Potential Risk </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt" style="word-break: break-word;">@Model.Emer_Risk</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b class="font-bold">Current Situation</b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt" style="word-break: break-word;">@Model.Emer_Situation</td>
+                                        <td>
+                                            <b class="font-bold">Emergency Level </b>
+                                        </td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.CreatedBy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="mt-xl-0 mt-4">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo">
+                                                <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                                    Employee List - @Model.CreatedBy
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Employee Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="GettblIncidentHistory">
+                                                            @foreach (var item in Model!.L_Crisis_SubEmp_Master_Details)
+                                                            {
+                                                                <tr class="clstr">
+                                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model!.L_Emer_Miti_Photos != null && Model.L_Emer_Miti_Photos.Count != 0)
+                        {
+                            <div class="col-md-12">
+                                <label for="example-number-input" class="col-md-6 col-form-label"> Upload Photos</label>
+                                <div class="row">
+                                    @foreach (var item in Model.L_Emer_Miti_Photos!)
+                                    {
+                                        <div class="col-md-2">
+                                            <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding: 12px;" /></a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model!.L_Crisis_SubEmp_Update_History != null && Model.L_Crisis_SubEmp_Update_History.Count != 0)
+                        {
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="mt-xl-0 mt-4">
+                                        <div class="accordion" id="accordionExample">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                                        History of Approval
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                    <div class="accordion-body">
+                                                        <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Employee Name</th>
+                                                                    <th>Role</th>
+                                                                    <th>Date and Time</th>
+                                                                    <th>Approve Date</th>
+                                                                    <th>Remarks</th>
+                                                                    <th>Comments</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="GettblIncidentHistory">
+                                                                @foreach (var item in Model.L_Crisis_SubEmp_Update_History)
+                                                                {
+                                                                    <tr class="clstr">
+                                                                        <td align="left" valign="middle">@item.Emp_Id</td>
+                                                                        <td align="left" valign="middle">@item.Role_Id</td>
+                                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                                        <td align="left" valign="middle">@item.Remarks1</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        }
+
+
+                        @if (Model.Status == "1")
+                        {
+                            @foreach (var item in Model!.L_Crisis_SubEmp_Master_Details)
+                            {
+                                if (item.Emp_Id == LoginClass.Employee_Identity_Id)
+                                {
+                                    <form id="Bro_Form" method="get" action="#" novalidate="novalidate" class="cmxform">
+                                        <div class="col-md-12">
+                                            <label class="form-label" for="AddOrder-Billing-Name">Description</label>
+                                            <div class="col-md-12">
+                                                <textarea class="form-control required" id="BrzonAppDescription" name="ApprvalDescription"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <button type="button" class="btn btn-success waves-effect waves-light submitAdd" style="float: right;width: 90px;" onclick="btn_Broze_Apprval('1')">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Ok
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <button type="button" class="btn btn-success_esc waves-effect waves-light submitAdd" onclick="btn_Broze_Apprval('2')">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Escalate To Silver Team
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+                            }
+                        }
+                        @if (Model.Status == "2" || Model.Status == "5")
+                        {
+                            @foreach (var item in Model!.L_Crisis_SubEmp_Master_Details)
+                            {
+                                if (item.Emp_Id == LoginClass.Employee_Identity_Id)
+                                {
+                                    <form id="Sil_Form" method="get" action="#" novalidate="novalidate" class="cmxform">
+                                        <div class="col-md-12">
+                                            <label class="form-label" for="AddOrder-Billing-Name">Description</label>
+                                            <div class="col-md-12">
+                                                <textarea class="form-control required" id="GoldAppDescription" name="ApprvalDescription"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <button type="button" class="btn btn-success waves-effect waves-light submitAdd" style="float: right;width: 90px;" onclick="btn_Broze_Apprval('3')">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Ok
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <button type="button" class="btn btn-success_gold waves-effect waves-light submitAdd" onclick="btn_Broze_Apprval('4')">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Escalate To Gold Team
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+
+                            }
+
+                        }
+                        @if (Model.Status == "3")
+                        {
+                            @foreach (var item in Model!.L_Crisis_SubEmp_Master_Details)
+                            {
+                                if (item.Emp_Id == LoginClass.Employee_Identity_Id)
+                                {
+                                    <form id="gold_Form" method="get" action="#" novalidate="novalidate" class="cmxform">
+                                        <div class="col-md-12">
+                                            <label class="form-label" for="AddOrder-Billing-Name">Description</label>
+                                            <div class="col-md-12">
+                                                <textarea class="form-control required" id="FinAppDescription" name="ApprvalDescription"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <button type="button" class="btn btn-success waves-effect waves-light submitAdd" style="float: right;width: 90px;" onclick="btn_Broze_Apprval('5')">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+
+                            }
+
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function btn_Broze_Apprval(val) {
+        debugger
+
+        if (val == "1") {
+            let valid = $("#Bro_Form").valid();
+            if (!valid) {
+                $("#ApprvalDescription-error").addClass('m-txt-req');
+                return false;
+            }
+            else {
+                var Obj = {
+                    Em_Mit_Id: $("#EM_Emer_Miti_Id").val(),
+                    Status: "2",
+                    Remarks: "Reviewed",
+                    Remarks1: $("#BrzonAppDescription").val(),
+                    Remarks2: "1",
+                };
+
+                $.ajax({
+                    url: "/Emergencymitigation/UpdateEmergency_MitigationStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Added Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+        else if (val == "2") {
+            let valid = $("#Bro_Form").valid();
+            if (!valid) {
+                $("#ApprvalDescription-error").addClass('m-txt-req');
+                return false;
+            }
+            else {
+                var Obj = {
+                    Em_Mit_Id: $("#EM_Emer_Miti_Id").val(),
+                    Status: "3",
+                    Remarks: "Escalate To Silver Team",
+                    Remarks1: $("#BrzonAppDescription").val(),
+                    Remarks2: "2",
+                };
+
+                $.ajax({
+                    url: "/Emergencymitigation/UpdateEmergency_MitigationStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Update Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+
+        else if (val == "3") {
+            let S_valid = $("#Sil_Form").valid();
+            if (!S_valid) {
+                $("#GoldAppDescription-error").addClass('m-txt-req');
+                return false;
+            }
+            else {
+                var Obj = {
+                    Em_Mit_Id: $("#EM_Emer_Miti_Id").val(),
+                    Status: "4",
+                    Remarks: "Reviewed",
+                    Remarks1: $("#GoldAppDescription").val(),
+                    Remarks2: "3",
+                };
+
+                $.ajax({
+                    url: "/Emergencymitigation/UpdateEmergency_MitigationStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Added Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+        else if (val == "4") {
+            let S_valid = $("#Sil_Form").valid();
+            if (!S_valid) {
+                $("#GoldAppDescription-error").addClass('m-txt-req');
+                return false;
+            }
+            else {
+                var Obj = {
+                    Em_Mit_Id: $("#EM_Emer_Miti_Id").val(),
+                    Status: "3",
+                    Remarks: "Escalate To Gold Team",
+                    Remarks1: $("#GoldAppDescription").val(),
+                    Remarks2: "4",
+                };
+
+                $.ajax({
+                    url: "/Emergencymitigation/UpdateEmergency_MitigationStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Update Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+
+        else if (val == "5") {
+            let valid = $("#gold_Form").valid();
+            if (!valid) {
+                $("#FinAppDescription-error").addClass('m-txt-req');
+                return false;
+            }
+            else {
+                var Obj = {
+                    Em_Mit_Id: $("#EM_Emer_Miti_Id").val(),
+                    Status: "4",
+                    Remarks: "Reviewed",
+                    Remarks1: $("#FinAppDescription").val(),
+                    Remarks2: "5",
+                };
+
+                $.ajax({
+                    url: "/Emergencymitigation/UpdateEmergency_MitigationStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Added Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+    }
+</script>                                   

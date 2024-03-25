@@ -1,0 +1,1424 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+
+<style>
+    .select2-search__field {
+        text-align: center !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search .select2-search__field {
+        width: 100%;
+        height: 1.5rem;
+        margin-top: -24px;
+        margin-left: 0;
+        font-family: inherit;
+        line-height: 1.5;
+        background-color: transparent;
+    }
+
+    .form-check-input:checked {
+        background-color: #00263a;
+        border-color: #00263a;
+    }
+</style>
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 13px;
+    }
+
+    label {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 13px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+        text-align: justify;
+    }
+
+    .font-bold {
+        color: #00263a !important;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+@model Nakheel_Web.Models.IncidentReport.M_Incident_Report;
+@if (Model != null)
+{
+    <div class="" id="viewnotification">
+        <div class="row">
+            <div class="col-12">
+                <div class="">
+                    <!-- Contact detail -->
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            @if (Model.Status == "5")
+                            {
+                                if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "5")
+                                {
+                                    <div class="row col-md-12">
+                                        <div class="col-md-4">
+                                            @*<label class="form-label" style="font-size: 17px !important;">Incident Reference no : @Model.Unique_Id</label>*@
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input class="form-check-input clsReference" value="Interim" name="IncidentReferenceStatus" type="radio" id="chkInterim">
+                                            <label class="form-check-label" for="chkInterim" style="font-size: 18px !important;">
+                                                Interim
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-check-input clsReference" value="Final" name="IncidentReferenceStatus" type="radio" id="chkOpen" checked>
+                                            <label class="form-check-label" for="chkOpen" style="font-size: 18px !important;">
+                                                Final
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            <div class="">
+                                <input type="hidden" id="Unique_Id" value="@Model.Unique_Id">
+                                <input type="hidden" id="Inv_Inc_Id" value="@Model.Inc_Id">
+                                <input type="hidden" id="txt_Inc_Category_Id" value="@Model.Inc_Category_Id">
+                                <input type="hidden" class="form-check-input clsInjury_Illness" value="@Model.Is_Injury_Illness">
+                                <input type="hidden" value="@Model.Zone" id="Zone_Id" class="Zone_Ids">
+                                <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                                <input type="hidden" value="@Model.Master_Community_Id" id="Master_Community_Id">
+                                <input type="hidden" value="@Model.Building" id="Building_Id">
+                                <input type="hidden" value="@Model.Loc_Latitude" id="Loc_Latitude">
+                                <input type="hidden" value="@Model.Loc_Longitude" id="Loc_Longitude">
+                                <input type="hidden" value="@Model.Inc_Category_Id" id="Des_Inc_Category_Id">
+                                <input type="hidden" value="@Model.Inc_Type_Id" id="Des_IncType_Id">
+                                <input type="hidden" value="@Model.Inc_Description" id="Des_Inc_Description">
+                                <input type="hidden" value="@Model.Add_Description_3" id="Add_Description_3">
+                                <input type="hidden" value="@Model.Is_InsuranceClaim" id="Is_InsuranceClaim">
+                                <table class="table tab ">
+                                    <tbody id="tblIncidentDetailsViewPage">
+                                        <tr>
+                                            <td><b class="font-bold">Incident Reference No  </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">NCM-HSSE-@Model.Unique_Id</td>
+                                            <td><b class="font-bold">Company Name</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Company_Name</td>
+                                            <td><b class="font-bold">Contact Name</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Contact_Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Mobile Number</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Mobile_Number</td>
+                                            <td class="treatment" style="width: 28%;"><b class="font-bold">Incident Category</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt"> @Model.Inc_Category_Id</td>
+                                            <td><b class="font-bold">Incident Type</b></td>
+                                            <td>:</td>
+                                            <td id="View_INC_CAT_NAME" class="tdtxt">@Model.Inc_Type_Id</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Date And Time Of Incident</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Inc_Date / @Model.Inc_Time</td>
+
+                                            <td><b class="font-bold">Business Unit</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Business_Unit</td>
+
+                                            <td><b class="font-bold">Zone</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Zone_Name</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><b class="font-bold">Building</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Building_Name</td>
+                                            <td><b class="font-bold">Community</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Community_Name</td>
+                                            <td><b class="font-bold">Is There Any Injury/Illness</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Is_Injury_Illness</td>
+                                            <td style="display:none"><b class="font-bold">Master Community</b></td>
+                                            <td style="display:none">:</td>
+                                            <td class="tdtxt" style="display:none">@Model.Master_Community_Name</td>
+                                        </tr>
+                                        <tr>
+                                            @if (Model.Inc_Business_Unit_Type != "0")
+                                            {
+                                                var obane = "";
+                                                <td><b class="font-bold">Business Unit Type</b></td>
+                                                <td>:</td>
+                                                @if (Model.Inc_Business_Unit_Type == "Party")
+                                                {
+                                                    obane = "JOP 3rd Party";
+                                                }
+                                                else if (Model.Inc_Business_Unit_Type == "JOP_Common")
+                                                {
+                                                    obane = "JOP- Common Area";
+                                                }
+                                                else
+                                                {
+                                                    obane = "Master Community";
+                                                }
+                                                <td class="tdtxt" style="word-break: break-all">@obane</td>
+                                            }
+                                            <td><b class="font-bold">Incident Party</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt" style="word-break: break-all">@Model.Incident_Party</td>
+
+                                            @if (Model.Incident_Party == "Service Provider")
+                                            {
+                                                <td><b class="font-bold">Service Provider Name</b></td>
+                                                <td>:</td>
+                                                <td class="tdtxt" style="word-break: break-all">@Model.Service_Provider_Id</td>
+                                            }
+                                            else
+                                            {
+                                                <td><b class="font-bold">Description of Incident Party</b></td>
+                                                <td>:</td>
+                                                <td class="tdtxt" style="word-break: break-all">@Model.Description_of_Incident_Party</td>
+                                            }
+                                        </tr>
+                                        @if (Model.Inc_Fire_Location != "0")
+                                        {
+                                            <tr>
+                                                <td><b class="font-bold">Fire Location</b></td>
+                                                <td>:</td>
+                                                <td class="tdtxt" style="word-break: break-all">@Model.Inc_Fire_Location</td>
+                                            </tr>
+                                        }
+
+
+                                    </tbody>
+                                </table>
+                                <div class="row col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Description Of The Incident</label>
+                                    <label class="tdtxt">@Model.Inc_Description</label>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Immediate Actions Taken</label><br>
+                                    <label class="tdtxt" style="text-align: justify;">@Model.Immediate_Action</label>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-2 col-form-label">Follow Up Required?</label>
+                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>@Model.Is_Follow_required</span>
+                                </div>
+
+                                @if (Model.Is_Follow_required == "Yes")
+                                {
+                                    <div class="col-md-12">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">Follow Up Action Required</label><br>
+                                        <label class="tdtxt" style="text-align: justify;">@Model.Actions_Taken_Description</label>
+                                    </div>
+                                }
+
+                                <div class="">
+                                    @if (Model.Injured_Person == "Yes")
+                                    {
+                                        <div class="col-md-12">
+                                            <label for="example-number-input" class="col-md-4 col-form-label">Injury Type</label>
+                                            <div class="row" style="margin-left: 0%;">
+                                                <div id="InjuryInjuryTypesList" style="display: contents;">
+                                                    @{
+                                                        if (Model.L_Inc_Inve_Injury_Type != null)
+                                                        {
+                                                            @foreach (var item in Model.L_Inc_Inve_Injury_Type)
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    <div class="form-check mb-3">
+                                                                        <input class="form-check-input clsInjuryInjury_Illness" checked type="radio">
+                                                                        <label class="form-check-label">@item.Injury_Type_Id</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="example-number-input" class="col-md-4 col-form-label">Nature Of Injury /Illness </label>
+                                            <div class="row" style="margin-left: 0%;">
+                                                <div id="Nature_InjuryTypesList" style="display: contents;">
+                                                    @{
+                                                        if (Model.L_Inc_Inve_Nature_Injury != null)
+                                                        {
+                                                            @foreach (var item in Model.L_Inc_Inve_Nature_Injury)
+                                                            {
+                                                                <div class="col-md-3">
+                                                                    <div class="form-check mb-3">
+                                                                        <input class="form-check-input clsNatureInjury_Illness" checked type="radio">
+                                                                        <label class="form-check-label">@item.Nature_Injury_Id</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.Status == "5")
+                                        {
+                                            <div id="divInjurytype">
+                                                <div class="row">
+                                                    <div class="mb-3">
+                                                        <label for="example-number-input" class="col-md-4 col-form-label">Injury Type</label>
+                                                        <div class="row" style="margin-left: 0%;">
+                                                            <div id="InjuryTypesList" style="display: contents;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="mb-3 row">
+                                                        <label for="example-number-input" class="col-md-4 col-form-label">Nature Of Injury /Illness</label>
+                                                        <div class="row" style="margin-left: 0%;">
+                                                            <div id="NatureInjuryTypesList" style="display: contents;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+                                    @if (@Model.Inc_Category_Id == "Vehicle Accident")
+                                    {
+                                        <div class="col-md-12">
+                                            <label for="example-number-input" class="col-md-4 col-form-label">Vechicle Accident Type</label>
+                                            <div class="row" style="margin-left: 0%;">
+                                                <div id="VechicleInjuryTypesList" style="display: contents;">
+                                                    @{
+                                                        if (Model.L_M_Inc_Vehicle_Accident != null)
+                                                        {
+                                                            @foreach (var item in Model.L_M_Inc_Vehicle_Accident)
+                                                            {
+                                                                <div class="col-md-4">
+                                                                    <div class="form-check mb-3">
+                                                                        <input class="form-check-input clsInjury_Illness_1" checked type="radio">
+                                                                        <label class="form-check-label">@item.Vehicle_Accident_Id</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.Status == "5" && @Model.Is_Injury_Illness == "Yes")
+                                    {
+                                        if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "5")
+                                        {
+                                            <div id="PersonalDetails">
+                                                <div class="col-6">
+                                                    <div class="row">
+                                                        <label for="" class="col-md-7 col-form-label">Is There Any Injury/Illness Additional?</label>
+                                                        <div class="col-md-2 col-form-label">
+                                                            <div id="InjYes" class="" onclick="FnInjuryIllness('1')">
+                                                                <label for="Yes"> <input id="Yes" class="injuryillness" name="Injuredillness" type="radio" value="Yes" />&nbsp;Yes </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2 col-form-label">
+                                                            <div id="InjNo" class="floatBlock" onclick="FnInjuryIllness('2')">
+                                                                <label for="No"> <input id="No" class="injuryillness" name="Injuredillness" type="radio" value="No" />&nbsp;No </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="display:none" id="viewIncidentInjuredPerson">
+                                                    <div class="row">
+                                                        <div class="col-lg-10">
+                                                            <label for="" class="col-md-7 col-form-label">Injured Person’s Personal Details </label>
+                                                        </div>
+                                                        <div class="col-lg-2">
+                                                            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddPersonAction()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                    <table id="tblIncidentInjuredPerson" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Injured Person</th>
+                                                                <th>Name</th>
+                                                                <th>Contact No</th>
+                                                                <th>Person Injured Parts</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="GetInjuredPersonList">
+                                                            <tr>
+                                                                <td>
+                                                                    <div id="paymentContainer" name="paymentContainer" class="InjuredOptions">
+                                                                        <div id="InjVisitor" class="floatBlock">
+                                                                            <label for="Visitor"> <input id="Visitor" class="radioBtnClass" name="InjuredType" type="radio" value="Visitor" />&nbsp;Visitor </label>
+                                                                        </div>
+                                                                        <div id="InjResident" class="floatBlock">
+                                                                            <label for="Resident"> <input id="Resident" class="radioBtnClass" name="InjuredType" type="radio" value="Resident" />&nbsp;Resident </label>
+                                                                        </div>
+                                                                        <div id="InjStaff" class="floatBlock">
+                                                                            <label for="Staff"> <input id="Staff" class="radioBtnClass" name="InjuredType" type="radio" value="Staff" />&nbsp;Staff</label>
+                                                                        </div>
+                                                                        <div id="InjContractor" class="floatBlock">
+                                                                            <label for="Contractor"> <input id="Contractor" class="radioBtnClass" name="InjuredType" type="radio" value="Contractor" />&nbsp;Contractor</label>
+                                                                        </div>
+                                                                        <div id="InjOther" class="floatBlock">
+                                                                            <label for="Other"> <input id="Other" class="radioBtnClass" name="InjuredType" type="radio" value="Other" />&nbsp;Other</label>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td id="otherEmpname"><input type="text" class="form-control InjuredPersonName" id="Eemp_name" /></td>
+                                                                <td id="Empname">
+                                                                    <select class="form-control InjuredPersonName" name="Employee_Id" id="Employee_Id" onchange="Fn_EmpContacNo(this.value)">
+                                                                    </select>
+                                                                </td>
+                                                                <td id="otherEmpcontactno"><input type="text" class="form-control InjuredPersonContactNo numbersonly" maxlength="10" /></td>
+                                                                <td>
+                                                                    <div id="app">
+                                                                        <div id="viewbodyparts">
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <span class="boadyheader" hidden>{{data_clicked_id}}</span>
+                                                                            <div id="area" class="boadyheader-sub">
+                                                                                <span style="font-weight: bold;">Area: </span> <span id="EmergBPdata"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+                                    @if (Model.Is_Injury_Illness == "Yes")
+                                    {
+                                        if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "5")
+                                        {
+                                            <div class="col-md-12">
+                                                <label class="form-label">Injured Person’s Personal Details </label><br>
+                                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Injured Person</th>
+                                                            <th>Name</th>
+                                                            <th>Contact No</th>
+                                                            <th>Injury Body Parts</th>
+                                                            @if (Model.Status == "5")
+                                                            {
+                                                                <th>Total Man Days Lost</th>
+                                                                <th>Company Name</th>
+                                                                <th>Action</th>
+                                                            }
+                                                            @if (Model.Status == "6" || Model.Status == "7" || Model.Status == "8" || Model.Status == "9" || Model.Status == "10" || Model.Status == "11" || Model.Status == "13" || Model.Status == "15")
+                                                            {
+                                                                <th>Total Man Days Lost</th>
+                                                                <th>Company Name</th>
+                                                            }
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @foreach (var item in Model.L_M_Inc_Persons_Injured!)
+                                                        {
+
+                                                            <tr class="clstr_@item.Inc_Persons_Injured_Id" id="tr_@item.Inc_Persons_Injured_Id">
+                                                                <td hidden class="Is_Injury_Persons_Id" id="Persons_Id_@item.Persons_Id">@item.Persons_Id</td>
+                                                                <td align="left" class="Is_Injury_PersonList" valign="middle" id="Injured_Type_@item.Inc_Persons_Injured_Id">@item.Injured_Type</td>
+                                                                <td align="left" class="Par_InjuredPersonName" valign="middle" id="Persons_Name_@item.Inc_Persons_Injured_Id">@item.Persons_Name</td>
+                                                                <td align="left" class="Par_InjuredPersonContactNo" valign="middle" id="Persons_ContactNo_@item.Inc_Persons_Injured_Id">@item.Persons_ContactNo</td>
+                                                                <td align="left" class="InjuredPersonbodyList" valign="middle" id="BodyParts_List_@item.Inc_Persons_Injured_Id">@item.BodyParts_List</td>
+                                                                @if (Model.Status == "5")
+                                                                {
+                                                                    <td><input type="text" class="form-control numbersonly Total_man_days" id="Total_man_days" maxlength="3" name="Total_man_days_Req" required /></td>
+                                                                    @if (item.Injured_Type == "Staff")
+                                                                    {
+                                                                        <td><input type="text" class="form-control Company_Name" id="Company_Name" value="NCM" /></td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td><input type="text" class="form-control Company_Name" id="Company_Name" value="" /></td>
+                                                                    }
+                                                                    <td align="left" valign="middle"><a onclick="Fn_Edit_Report(@item.Inc_Persons_Injured_Id, @item.Persons_Id)" href="javascript:void(0);" title="Edit" class="text-info" data-bs-original-title="Report" aria-label="Report">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-account-edit" style="color:black;font-size:20px;cursor:pointer"></i></a>&nbsp;&nbsp;&nbsp;<a onclick="Fn_Delete_Report()" href="javascript:void(0);" title="Edit" class="text-info TBL_DELETE_BUTTON" data-bs-original-title="Report" aria-label="Report">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-delete" style="color:red;font-size:20px;cursor:pointer"></i></a></td>
+                                                                }
+                                                                @if (Model.Status == "6" || Model.Status == "7" || Model.Status == "8" || Model.Status == "9" || Model.Status == "10" || Model.Status == "11" || Model.Status == "13" || Model.Status == "15")
+                                                                {
+                                                                    <td><input type="text" class="form-control numbersonly Total_man_days" id="Total_man_days" maxlength="3" value="@item.Total_man_days" readonly /></td>
+                                                                    <td><input type="text" class="form-control Company_Name" id="Company_Name" value="@item.Company_Name" readonly /></td>
+                                                                }
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        }
+                                    }
+
+                                    @if (Model.Inc_Category_Id == "Fire" || Model.Inc_Category_Id == "Vehicle Accident")
+                                    {
+                                        <div class="row col-md-12">
+                                            <div class="col-md-6">
+                                                <label for="example-number-input" class="col-md-6 col-form-label">If Any Nakheel Property Damaged?</label>
+                                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>@Model.Is_PropertyDamaged</span>
+                                            </div>
+                                            @if (@Model.Is_PropertyDamaged == "Yes")
+                                            {
+                                                <div class="col-md-6">
+                                                    <label for="example-number-input" class="col-md-6 col-form-label">If any Insurance Claim Needed?</label>
+                                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>@Model.Is_InsuranceClaim</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="row col-lg-12">
+                                        @if (Model.Loc_Latitude != "0.000000" && Model.Loc_Latitude != "0.000000")
+                                        {
+                                            @if (Model.L_Inc_Notification_Photos != null && Model.L_Inc_Notification_Photos.Count != 0 || Model.L_Inc_Notification_Videos != null && Model.L_Inc_Notification_Videos.Count != 0)
+                                            {
+                                                <div class="col-lg-6">
+                                                    <label for="example-number-input" class="col-md-6 col-form-label">Incident Location</label>
+                                                    <div id="map-canvas_view"></div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-lg-12">
+                                                    <label for="example-number-input" class="col-md-6 col-form-label">Incident Location</label>
+                                                    <div id="map-canvas_view"></div>
+                                                </div>
+                                            }
+                                        }
+
+                                        @if (Model.L_Inc_Notification_Photos != null && Model.L_Inc_Notification_Photos.Count != 0 || Model.L_Inc_Notification_Videos != null && Model.L_Inc_Notification_Videos.Count != 0)
+                                        {
+                                            <div class="col-md-6" style="height: 100px;min-height: 340px;overflow-y: scroll;">
+                                                <label for="example-number-input" class="col-md-6 col-form-label">Evidence Upload Photos / Videos</label>
+                                                <div class="row">
+                                                    @foreach (var item in Model.L_Inc_Notification_Photos!)
+                                                    {
+                                                        <div class="col-md-3">
+                                                            <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding: 12px;" /></a>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    @foreach (var item in Model.L_Inc_Notification_Videos!)
+                                                    {
+                                                        <div class="row col-md-4" style="padding: 10px;">
+                                                            <iframe src='@item.Video_File_Path' style="width: 165%;"></iframe>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <br>
+                                        }
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="preloader" style="display:none;">
+    <img style="height: 200px;width: 300px;text-align: center;margin-right: 150%;margin-left: 39%;margin-top: 1%;" src="/assets/images/Loader_new.Gif">
+</div>
+<link href="~/assets/js/multiselect/select_2.css" rel="stylesheet" />
+<link href="~/assets/js/multiselect/select_2_b.css" rel="stylesheet" />
+<script src="~/assets/js/multiselect/select_2.js"></script>
+<script>
+    var inju_id = "0";
+    $(document).ready(function () {
+        $("#Empname").hide();
+        Load_Incident_Classification();
+        Load_Body_Parts();
+        Load_Google_Maps();
+       //Load_Emp_List_Sig("Lead");
+
+        LOAD_INJURY_TYPE();
+        LOAD_NATURE_INJURY_TYPE();
+
+
+        $('input[name=InjuredType]').change(function () {
+            var value = $('input[name=InjuredType]:checked').val();
+            if (value == "Visitor" || value == "Resident" || value == "Other" || value == "Contractor") {
+                $("#PersonalDetails").show();
+                $("#otherEmpname").show();
+                $("#Empname").hide();
+                $(".InjuredPersonContactNo").val('');
+                $("#Eemp_name").val('');
+            }
+            else {
+                LOADEMP_FILTERS_EM();
+                $("#PersonalDetails").show();
+                $("#otherEmpname").hide();
+                $("#Empname").show();
+                $(".InjuredPersonContactNo").val('');
+                $("#Eemp_name").val('');
+            }
+        });
+
+        $('input[name=Injuredillness]').change(function () {
+            var value = $('input[name=Injuredillness]:checked').val();
+            if (value == "Yes") {
+                $("#viewIncidentInjuredPerson").show();
+            }
+            else {
+                $("#viewIncidentInjuredPerson").hide();
+            }
+        });
+
+        $('input[name=InvestigationhseReportable]').change(function () {
+            $('#txtvalidemailReportable').text('');
+            Load_Emp_List_Sig("Lead");
+        });
+
+        $('input[name=InvestigationhseReq]').change(function () {
+            $('#txtvalidemailhse').text('');
+            //alert($(this).val());
+            if ($(this).val() == "No") {
+                $("#em_LeadInvestigator").hide();
+                $("#Investigationrequired_no").show();
+            }
+            else {
+                Load_Emp_List_Sig("Lead");
+                $("#em_LeadInvestigator").show();
+                $("#Investigationrequired_no").hide();
+            }
+        });
+    });
+
+    function Fn_Edit_Report(Inc_Persons_Injured_Id, Persons_Id) {
+        debugger
+        inju_id = Inc_Persons_Injured_Id;
+        $("#viewIncidentInjuredPerson").show();
+        var Injured_Type = $("#Injured_Type_" + Inc_Persons_Injured_Id).text();
+        var Persons_Name = $("#Persons_Name_" + Inc_Persons_Injured_Id).text();
+        var Persons_ContactNo = $("#Persons_ContactNo_" + Inc_Persons_Injured_Id).text();
+        var BodyParts_List = $("#BodyParts_List_" + Inc_Persons_Injured_Id).text();
+        var array = $("#BodyParts_List_" + Inc_Persons_Injured_Id).text().split(",");
+        var Persons_Id = Persons_Id;
+        total_list = "," + BodyParts_List;
+        if (Injured_Type == "Visitor") {
+            $("#Visitor").prop("checked", true);
+            $("#otherEmpname").show();
+            $("#Empname").hide();
+            $("#Eemp_name").val(Persons_Name);
+            $(".InjuredPersonContactNo").val(Persons_ContactNo);
+            $("#EmergBPdata").text(BodyParts_List);
+        }
+        else if (Injured_Type == "Resident") {
+            $("#Resident").prop("checked", true);
+            $("#otherEmpname").show();
+            $("#Empname").hide();
+            $("#Eemp_name").val(Persons_Name);
+            $(".InjuredPersonContactNo").val(Persons_ContactNo);
+        }
+        else if (Injured_Type == "Staff") {
+            $("#Staff").prop("checked", true);
+            $("#otherEmpname").hide();
+            $("#Empname").show();
+            LOADEMP_FILTERS("#Employee_Id", Persons_Id);
+            $(".InjuredPersonContactNo").val(Persons_ContactNo);
+            $("#EmergBPdata").text(BodyParts_List);
+        }
+        else if (Injured_Type == "Contractor") {
+            $("#Contractor").prop("checked", true);
+            $("#otherEmpname").show();
+            $("#Empname").hide();
+            $("#Eemp_name").val(Persons_Name);
+            $(".InjuredPersonContactNo").val(Persons_ContactNo);
+            $("#EmergBPdata").text(BodyParts_List);
+        }
+        else if (Injured_Type == "Other") {
+            $("#Other").prop("checked", true);
+            $("#otherEmpname").show();
+            $("#Empname").hide();
+            $("#Eemp_name").val(Persons_Name);
+            $(".InjuredPersonContactNo").val(Persons_ContactNo);
+        }
+
+        $.each(array, function (i) {
+            if (array[i] == "head") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "face") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "neck") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "shoulder-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "shoulder-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "arm-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "forearm-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "arm-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "forearm-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "chest-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "chest-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "belly-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "ribs-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "belly-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "belly") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "ribs-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "thigh-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "innerthigh-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "feet-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "calf-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "knee-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "thigh-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "genitalia") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "innerthigh-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "right-feet") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "calf-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "knee-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "elbow-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "hand-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "elbow-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "hands-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "armback-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "leg-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "buttock") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "loin") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "column") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "head-back") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "nape") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "armback-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "leg-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "back-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "clavicule-right") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "back-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+            if (array[i] == "clavicule-left") {
+                $('#' + array[i]).css("fill", "rgb(140, 115, 75)");
+            }
+        });
+
+    }
+
+    function Load_Incident_Classification() {
+        $.post("@Url.Action("LoadAllIncident_Related", "CommonMaster")", function (data) {
+            $("#IncRelate_List").empty();
+            $("#IncRelate_List").append("<option selected value='0' disabled>--Select Incident Classification--</option>");
+            $(data).each(function (i, e) {
+                $("#IncRelate_List").append("<option value=" + e.Incident_Related_Id + ">" + e.Incident_Related_Name + "</option>");
+            });
+        });
+    }
+
+    function LOADEMP_FILTERS_EM() {
+        var Emp_Community_Id = $(".Community_Ids").val();
+        var Zone_Id = $(".Zone_Ids").val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Emp_Community_Id: Emp_Community_Id, Zone_Id: Zone_Id }, function (data) {
+            $("#Employee_Id").empty();
+            $("#Employee_Id").append("<option selected value='0' disabled>--Select Employee--</option>");
+            $(data).each(function (i, e) {
+                $("#Employee_Id").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function LOADEMP_FILTERS(controlid, selectedValue) {
+        $(controlid).html("");
+        var Emp_Community_Id = $("#Community_Id").val();
+        var Emp_Building_Id = $("#Building_Id").val();
+        var Emp_Master_Community_Id = $("#Master_Community_Id").val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Emp_Community_Id: Emp_Community_Id, Emp_Building_Id: Emp_Building_Id, Emp_Master_Community_Id: Emp_Master_Community_Id }, function (data) {
+            if (data != null) {
+                $(controlid).append("<option value='0'>-Select Employee--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.First_Name, item.Employee_Identity_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+        });
+    }
+
+    function Load_Body_Parts() {
+        INV_Hzurl = '/Incident/_ViewBodyParts';
+        $("#viewbodyparts").load(INV_Hzurl);
+    }
+
+    function Fn_EmpContacNo(Employee_Identity_Id) {
+        $.post("@Url.Action("LoadEmpContact", "CommonMaster")", { Employee_Identity_Id: Employee_Identity_Id }, function (data) {
+            $(".InjuredPersonContactNo").empty();
+            $(".InjuredPersonContactNo").val(data.Mobile_Number);
+        });
+    }
+
+    function Load_Google_Maps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $("#viewmap").load(map_Hzurl);
+    }
+</script>
+<script>
+    function Fn_Submit_Supervi() {
+        if ($('input[name="InvestigationReq"]:checked').length == 0) {
+            $('#txtvalidemail').text("Select Investigation required");
+            return false;
+        }
+        else {
+            //$("#viewnotification").hide();
+            $("#Inc_View").hide();
+            $(".preloader").show();
+            var Is_Investigation_req = $("input[type='radio'].Investigationval:checked").val();
+            var remaks = "";
+            var un = $("#Unique_Id").val();
+            var unq_val = "NCM-HSSE-" + un + "-V1";
+            if (Is_Investigation_req == "Yes") {
+                remaks = "Investigation Required";
+            }
+            else {
+                remaks = "Investigation Not required";
+            }
+            var Obj = {
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                Status: "2",
+                Remarks: remaks,
+                Is_Investigation_Req: Is_Investigation_req,
+                Unique_Id: unq_val,
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus_IsReq",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            $(".preloader").hide();
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            $("#Inc_View").show();
+                        });
+                    }
+                },
+            });
+        }
+        return false;
+    }
+</script>
+
+<script>
+   
+    function FN_submit_hseteam() {
+        debugger
+        var varInvestigationrequired = $('input[name=InvestigationhseReq]:checked').val();
+        var M_Is_Investigation_Req = $("#M_Is_Investigation_Req").val();
+        if ($('input[name="InvestigationhseReq"]:checked').length == 0) {
+            $('#txtvalidemailhse').text("Select Investigation required");
+            return false;
+        }
+
+        if ($('input[name="InvestigationhseReportable"]:checked').length == 0) {
+            $('#txtvalidemailReportable').text("Select Investigation Reportable required");
+            return false;
+        }
+
+        if ($("#IncRelate_List").val() == "0" || $("#IncRelate_List").val() == null) {
+            $('#txtvalidClassification').text("Select Incident Classification required");
+            return false;
+        }
+
+        if (varInvestigationrequired == "Yes") {
+            if ($("#LeadInvestigator").val() == "0" || $("#LeadInvestigator").val() == null) {
+                $('#txtvalidInvestigator').text("Select Lead Investigator required");
+                return false;
+            }
+            else {
+                var Is_Investigation_reqhse = $("input[type='radio'].InvestigationHseval:checked").val();
+                var status = "";
+                if (Is_Investigation_reqhse == "Yes") {
+                    status = "4";
+                }
+                else {
+                    status = "3";
+                }
+                var remaks = "";
+                if (Is_Investigation_reqhse == "Yes") {
+                    remaks = "Investigation Required";
+                }
+                else {
+                    remaks = "Investigation Not required";
+                }
+
+                var Obj = {
+                    Inc_Id: $("#Inv_Inc_Id").val(),
+                    Status: status,
+                    Remarks: remaks,
+                    Add_Description_2: Is_Investigation_reqhse,
+                    Is_Investigation_Req: "",
+                    Is_Investigation_Reportable: $("input[type='radio'].InvestigationReportable:checked").val(),
+                    Incident_Related_Id: $("#IncRelate_List").val(),
+                    Lead_Investigator_Id: $("#LeadInvestigator").val(),
+                };
+                $.ajax({
+                    url: "/Incident/UpdateIncStatus_IsReq",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Update Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+        else {
+            var Is_Investigation_reqhse = $("input[type='radio'].InvestigationHseval:checked").val();
+            var status = "";
+            if (Is_Investigation_reqhse == "Yes") {
+                status = "4";
+            }
+            else {
+                status = "3";
+            }
+            var remaks = "";
+            if (Is_Investigation_reqhse == "Yes") {
+                remaks = "Investigation Required";
+            }
+            else {
+                remaks = "Investigation Not required";
+            }
+
+            var Obj = {
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                Status: status,
+                Remarks: remaks,
+                Add_Description_2: Is_Investigation_reqhse,
+                Is_Investigation_Req: "",
+                Is_Investigation_Reportable: $("input[type='radio'].InvestigationReportable:checked").val(),
+                Incident_Related_Id: $("#IncRelate_List").val(),
+                Lead_Investigator_Id: $("#LeadInvestigator").val(),
+                Add_Description_1: $("#Investigationrequired_noDescription").val(),
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus_IsReq",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        return false;
+    }
+
+    function FN_submit_AssignInv() {
+        debugger
+        if ($('input[name="AssignInvestigationhseReq"]:checked').length == 0) {
+            $('#txtvalidemailhseAss').text("Select Investigation required");
+            return false;
+        }
+        if ($("#Employee_ListRole").val() == "") {
+            $('#txtvalidemailhseAss').text("Select Employee");
+            return false;
+        }
+        else {
+            var EMP_ARR = [];
+            var emp = $("#Employee_ListRole").val();
+            var Inc_Id = $("#Inv_Inc_Id").val();
+            $(emp).each(function (i, b) {
+                debugger;
+                var item = {};
+                item.Inc_Verification_TeamMember_Id = "0",
+                    item.Inc_Id = Inc_Id,
+                    item.Persons_Id = b,
+                    EMP_ARR.push(item);
+            });
+
+            var Obj = {
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                L_M_Inc_Invs_Emp: EMP_ARR
+            };
+            $.ajax({
+                url: "/Incident/AddInvestigationTeam",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        return false;
+    }
+
+    function AddPersonAction() {
+        debugger;
+
+        if (inju_id != "") {
+            $('table#tblIncidentInjuredPartsList tr#tr_' + inju_id).remove();
+        }
+
+        var PersonName = "";
+        var Persons_Id = "0";
+        if ($(".InjuredPersonName").val() == "") {
+            PersonName = $("#Employee_Id option:selected").text();
+            Persons_Id = $("#Employee_Id option:selected").val();
+        }
+        else {
+            PersonName = $(".InjuredPersonName").val();
+            Persons_Id = "0";
+        }
+        var htmlActionmarkup = "";
+        var PersonContactNo = $(".InjuredPersonContactNo").val();
+        var bodyparts = $("#EmergBPdata").text();
+        var Is_Injury_Person = $("input[type='radio'].radioBtnClass:checked").val();
+        htmlActionmarkup = '<tbody><tr><td class="Is_Injury_Persons_Id" style="display: none;">' + Persons_Id + '</td><td class="Is_Injury_PersonList">' + Is_Injury_Person + '</td><td class="Par_InjuredPersonName">' + PersonName + '</td><td class="Par_InjuredPersonContactNo">' + PersonContactNo + '</td><td class="InjuredPersonbodyList">' + bodyparts + '</td><td><input type="text" class="form-control numbersonly Total_man_days" id="Total_man_days" maxlength="3" /></td><td><input type="text" class="form-control Company_Name" id="Company_Name" /></td><td align="left" valign="middle"><a href="javascript:void(0);" title="view" class="text-info" data-bs-original-title="Report" aria-label="Report">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-checkbox-marked-outline" style="color:green;font-size:20px;cursor:pointer"></i></a></td></tr></tbody>';
+        $("#tblIncidentInjuredPartsList").append(htmlActionmarkup);
+        $(".InjuredPersonName").val('');
+        $(".InjuredPersonContactNo").val('');
+        LOADEMP_FILTERS_EM();
+        total_list = "";
+        if (total_list == "") {
+            var array = $('#EmergBPdata').text().split(",");
+            for (i = 0; i < array.length; i++) {
+                $("#" + array[i]).removeAttr('style');
+            }
+            $("#EmergBPdata").text('');
+        }
+    }
+
+    $("#tblIncidentInjuredPartsList").on("click", ".TBL_DELETE_BUTTON", function () {
+        $(this).closest("tr").remove();
+    });
+
+    $("#IncRelate_List").on("change", function () {
+        $("#txtvalidClassification").text('');
+    });
+    $("#LeadInvestigator").on("change", function () {
+        $("#txtvalidInvestigator").text('');
+    });
+</script>
+<script>
+    // if HTML DOM Element that contains the map is found...
+   
+    if (document.getElementById('map-canvas_view')) {
+        var content;
+        var latitude = $("#Loc_Latitude").val();
+        var longitude = $("#Loc_Longitude").val();
+        var map;
+        var marker;
+        navigator.geolocation.getCurrentPosition(loadMap);
+
+        function loadMap(location) {
+            if (location.coords) {
+                latitude = $("#Loc_Latitude").val();//location.coords.latitude;
+                longitude = $("#Loc_Longitude").val();//location.coords.longitude;
+            }
+
+            // Coordinates to center the map
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+            // Other options for the map, pretty much selfexplanatory
+            var mapOptions = {
+                zoom: 12,
+                center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                mapTypeId: google.maps.MapTypeId.PLAN,
+            };
+
+            var image = '../../assets/images/mappin.png';
+            // Attach a map to the DOM Element, with the defined settings
+            map = new google.maps.Map(document.getElementById("map-canvas_view"), mapOptions);
+
+            content = document.getElementById('information');
+            google.maps.event.addListener(map, 'click', function (e) {
+                placeMarker(e.latLng);
+            });
+            marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                icon: image
+            });
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>
+<script>
+
+    ApplySelect2CC("#Employee_Id");
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Load_Emp_List_Ass(Role_Name, Zone_Id, Community_Id) {
+        debugger
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $("#Employee_ListRole").empty();
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $("#Employee_ListRole").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+    function Load_Emp_List_Sig(Role_Name) {
+        var Zone_Id = $("#Zone_Id").val();
+        var Community_Id = $(".Community_Ids").val();
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $("#LeadInvestigator").empty();
+                $("#LeadInvestigator").append("<option selected value='0' disabled>--Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $("#LeadInvestigator").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+    $(".numbersonly").keypress(function (e) {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 9 && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 30 || e.which > 39)) {
+            //$(this).tooltip('show');
+            return false;
+        }
+        else {
+            //$(this).tooltip('hide');
+            return true;
+        }
+    });
+</script>
+
+<script>
+    function LOAD_INJURY_TYPE() {
+        $.post("@Url.Action("LoadAllInjuryTypes","CommonMaster")", function (data) {
+            if (data != null) {
+                var html = "";
+                $("#InjuryTypesList").html('');
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsInjury_Type" type="checkbox" name="Injury_Type_list" value="' + value.Injury_Type_Id + '" id="INJ_' + value.Injury_Type_Id + '">';
+                    html += '<label class="form-check-label" for="INJ_' + value.Injury_Type_Id + '">' + value.Injury_Type_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsInjury_Type clInjury_Typeoth" type="checkbox" onclick="FN_INJURY_TYPE_OTHER(this.value)" name="Injury_Type_list" value="0" id="INJ_0">';
+                html += '<label class="form-check-label" for="INJ_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="INJ_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtInjury_Typeothers" name="Injury_TypeRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $("#InjuryTypesList").append(html);
+            }
+            else {
+                var html = "";
+                $("#InjuryTypesList").append(html);
+            }
+        });
+    }
+
+    function FN_INJURY_TYPE_OTHER(val) {
+        if ($("input[type='checkbox'].clInjury_Typeoth").is(':checked')) {
+            $("#INJ_Oth").show()
+        } else {
+            $("#txtInjury_Typeothers").val('');
+            $("#INJ_Oth").hide()
+        }
+    }
+
+    function LOAD_NATURE_INJURY_TYPE() {
+        $.post("@Url.Action("LoadAllNatrueInjuryTypes","CommonMaster")", function (data) {
+            if (data != null) {
+                $("#NatureInjuryTypesList").html('');
+                var html = "";
+                //html += '<div class="col-md-4">';
+                $.each(data, function (key, value) {
+                    html += '<div class="col-md-4">';
+                    html += '<div class="form-check mb-3">';
+                    html += '<input class="form-check-input clsInjury_Illness" name="Injury_Illness_list" type="checkbox" value="' + value.Injury_Illness_Id + '" id="NAT_' + value.Injury_Illness_Id + '">';
+                    html += '<label class="form-check-label" for="NAT_' + value.Injury_Illness_Id + '">' + value.Injury_Illness_Name + '</label>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsInjury_Illness clInjury_Illnesseoth" type="checkbox" onclick="FN_INJURY_ILLNESS_OTHER(this.value)" name="Injury_Illness_list" value="0" id="NAT_0">';
+                html += '<label class="form-check-label" for="NAT_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="NAT_Oth">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtInjury_Illnesseothers" name="Injury_IllnesseRemarks">';
+                html += '</div>';
+                html += '</div>';
+                $("#NatureInjuryTypesList").append(html);
+            }
+            else {
+                var html = "";
+                $("#NatureInjuryTypesList").append(html);
+            }
+        });
+    }
+
+    function FN_INJURY_ILLNESS_OTHER(val) {
+        if ($("input[type='checkbox'].clInjury_Illnesseoth").is(':checked')) {
+            $("#NAT_Oth").show()
+        } else {
+            $("#txtInjury_Illnesseothers").val('');
+            $("#NAT_Oth").hide()
+        }
+    }
+</script>

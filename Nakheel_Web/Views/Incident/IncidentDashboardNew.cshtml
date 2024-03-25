@@ -1,0 +1,2132 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/assets/js/validation/incident_validation/serversidedatatable_incidentdashboard.js"></script>
+<style>
+    .tblround_DAsh {
+        border-radius: 10px;
+        margin: 0px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #0D87AC;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #48C7EE;
+    }
+
+
+    .inc_Mgmt {
+        padding-top: 10px;
+        padding-bottom: 20px;
+        border-radius: 10px;
+    }
+
+    .table > :not(caption) > > {
+        padding: 0.35rem 0.35rem !important;
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<style>
+
+    .tbl_card {
+        width: 100%;
+        display: flow;
+        min-height: 210px;
+        overflow-y: scroll !important;
+        height: 120px;
+    }
+
+    .card-body {
+        padding: 0.05rem 1.25rem !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        margin-top: -24px !important;
+    }
+
+    .btn-group, .btn-group-vertical {
+        margin-top: -60px !important;
+        padding: 32px !important;
+    }
+
+    .scroll {
+        max-height: 327px;
+        overflow-y: auto;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 0px;
+        height: 37px;
+        width: 101%;
+    }
+
+    .Space_Adj {
+        padding: 0.45rem 1.25rem !important;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #e1e1e1;
+        border-radius: 9px;
+    }
+
+    .dashboardtopdiv {
+        background-color: #1b334a !important;
+    }
+
+    .FilterHead {
+        color: #fff;
+        margin-top: 9px;
+    }
+
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        overflow-anchor: none;
+    }
+
+    .txt_lable {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 30%;
+    }
+
+    .txt_lable_Community {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 38%;
+    }
+
+    .txt_Injury_Label {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 36%;
+    }
+
+    .card-header {
+        padding: 6px !important;
+        margin-bottom: 0;
+        background-color: #fff;
+        border-bottom: 1px solid #eff0f2;
+        background: #fff;
+        color: #00263A;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    label {
+        font-weight: 500;
+        margin-bottom: 0px !important;
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 500px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .txtheader {
+        margin-left: 14px;
+        margin-top: 5px;
+        color: #fff;
+        font-family: 'Nakheel-Textregular';
+    }
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="HD1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                        <h5 class="FilterHead">Filter Option</h5>
+                    </button>
+                </h1>
+                <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                    <div class="accordion-body">
+                        <div>
+                            <input type="hidden" id="Zone_Name" />
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-lg-3">
+                                <label>Year</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Year" onchange="Filter();">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Zone</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Zone" onchange="LoadCommunity(this.value);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Community" onchange="LoadBuilding(this.value);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Building</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Building" onchange="Filter()">
+                                </select>
+                            </div>
+                            <div class="col-lg-3" style="display:none">
+                                <label>Master Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Master_Community" onchange="Filter(1)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Filter By Date</label><br />
+                                <div class="form-group">
+                                    <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="FilterDate()" />
+                                    <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                                </div>
+                            </div>
+                            <div id="Frm_ToDiv" class="col-lg-3" style="display:none;">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label class="form-check-label" for="inlineRadio2">From</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="DateFilter()" />
+                                        <label class="form-check-label" for="inlineRadio2">To</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="DateFilter()" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row" style="margin-top: -15px;">
+        <div class="col-sm-3">
+            <div class="card" style="height: 89%;">
+
+                <div class="card-header">
+                    <lable class="txt_lable">Incident Management</lable>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush inc_Mgmt tbl_card">
+                            @*<li class="list-group-item d-flex justify-content-between align-items-center Space_Adj" id="mapclick_popup">
+                            <a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(1,'#Total_Incident',@LoginClass.Employee_Identity_Id)">
+                            Total Incidents
+
+                            </a>
+                            <a href="#" id="Total_Incident">
+                            <span id="Total_Incident" class="badge rounded-pill align-items-end bg-info"></span>
+                            </a>
+                            </li>*@
+
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" id="mapclick_popup" style="background:#00263A;color:#fff"><h6 style="color:#fff">Total Incidents</h6><a href="#"> <span class="badge rounded-pill align-items-end" id="Total_Incident"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00617F;color:#fff"><h6 style="color:#fff">Injury</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(2,'#Total_Injury',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Total_Injury"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Non-Injury</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(3,'#Total_NonInjury',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Total_NonInjury"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Fire</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(4,'#Fire',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Fire"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Vehicle Accident</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(5,'#Vehicle_Accident',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Vehicle_Accident"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#3CD1FF;color:#fff"><h6 style="color:#fff">Property Damage</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(6,'#Property_Damage',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Property_Damage"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Fatality</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(7,'#Fatality',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="Fatality"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#3CD1FF;color:#fff"><h6 style="color:#fff">Near Miss</h6><a href="#" onclick="event.preventDefault();INC_Analytics_Trend_Monthwise(8,'#NearMiss',@LoginClass.Employee_Identity_Id)"><span class="badge rounded-pill align-items-end" id="NearMiss"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="height: 89%;width: 100%;">
+                <div class="card-header">
+                    <label class="txt_lable">Incident Type</label>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <table class="table dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                        <thead>
+                            @*style="background: #60605f;">*@
+                            <tr>
+                                <th style="width:100%;background-color:#00263A;">Type Of Incident</th>
+                                <th style="width:100%;background-color:#00263A;">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="IncidentTypeTBody_1">
+                        </tbody>
+                    </table>
+                </div>
+
+            </div><!--end card-->
+        </div><!-- end col -->
+        <div class="col-sm-3">
+            <div class="card" style="height: 89%;width: 100%;">
+                <div class="card-header">
+                    <label class="txt_Injury_Label">Employees</label>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <table class="table dt-responsive nowrap tblround dataTable no-footer dtr-inline">
+                        <thead>
+                            @*style="background: #60605f;">*@
+                            <tr>
+                                <th style="width:100%;background-color:#00263A;">Relation To NCM</th>
+                                <th style="width:100%;background-color:#00263A;">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="IncidentRelatedNCM">
+                        </tbody>
+                    </table>
+                    <br />
+
+                </div>
+            </div><!--end card-->
+        </div><!--end col-->
+
+        <div class="col-sm-3">
+            <div class="card" style="height: 89%;">
+                <div class="card-header">
+                    <label style="font-family: 'Nakheel-Textregular';margin-left: 24%;">Incident Management</label>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush inc_Mgmt tbl_card">
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00263A;color:#fff"><h6 style="color:#fff">Total Man Hours</h6><a href="#"><span class="badge rounded-pill align-items-end" id="Total_Man_Hours"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#00617F;color:#fff"><h6 style="color:#fff">Total Man Days Lost</h6><span class="badge rounded-pill align-items-end" id="Total_ManDays_Lost"></span></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Total Man Hours Without LTI</h6><span class="badge rounded-pill align-items-end" id="">0</span></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Incident Rate</h6><a href="#"><span class="badge rounded-pill align-items-end" id="Incident_Rate"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Severity Rate</h6><a href="#"><span class="badge rounded-pill align-items-end" id="Severity_Rate"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Injury Incident Rate</h6><a href="#"><span class="badge rounded-pill align-items-end" id="Injury_Incident_Rate"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center Space_Adj tblround_DAsh" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Total Manpower</h6><a href="#"><span class="badge rounded-pill align-items-end" id="Total_Daily_Manpower"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: -25px;">
+            <div class="col-sm-6">
+                <div class="card" style="height: 96%;">
+                    <div class="card-header">
+                        <lable class="txt_lable">Month-Wise Analytical Trends</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph7" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-sm-6">
+                <div class="card" style="height: 96%;width:104%;">
+                    <div class="card-header">
+                        <lable class="txt_lable">Current Year Analytical Trends</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph8" data-colors='["#3b76e1", "#63ad6f", "#f9c256", "#e83e8c", "#564ab1","#227282"]' class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <div class="row" style="margin-top: -3px;">
+            <div class="col-sm-4">
+                <div class="card" style="height: 96%;width: 100%;">
+                    <div class="card-header">
+                        <label class="txt_lable">Zone-Wise Incident Data</label>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph1" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div><!-- end col -->
+            <div class="col-sm-8">
+                <div class="card" style="height: 96%;width: 103%;">
+                    <div class="card-header">
+                        <lable class="txt_lable_Community">Community-Wise Incident Data</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <br />
+                        @*<p style="text-align:center;">Community-wise data based on Zone1</p>*@
+                        <div id="Graph9" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-lg-6">
+                <div class="card" style="height:94%;width: 100%;">
+                    <div class="card-header">
+                        <lable style="font-family: 'Nakheel-Textregular';margin-left: 41%;">Incident Classification</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph4" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div><!--end col-->
+            <div class="col-sm-6">
+                <div class="card" style="height: 93%;width:104%;">
+                    <div class="card-header">
+                        <lable class="txt_lable">Incident And Severity Rate</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph11" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+            <div class="col-sm-6" style="display:none;">
+                <div class="card" style="height:93%;width:105%;">
+                    <div class="card-header">
+                        <lable class="txt_lable">Incident Category</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph3" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div>
+        </div>
+        <div class="row" style="margin-top: -12px;">
+
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <lable class="txt_lable">Year-Wise Incident Data</lable>
+                    </div><!-- end card header -->
+                    <div class="card-body">
+                        <div id="Graph10" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div><!--end card-->
+            </div><!-- end col -->
+        </div>
+
+        @*  <div class="col-sm-3">
+        <div class="card" style="height: 88%;">
+        <div class="card-header">
+        <lable class="txt_lable">Employees</lable>
+        </div>
+        <div class="card-body">
+        <table class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline">
+        <thead>
+
+        <tr>
+        <th style="width:100%;">Relation to NCM</th>
+        <th style="width:100%;">Count</th>
+        </tr>
+        </thead>
+        <tbody id="IncidentRelatedNCM">
+        </tbody>
+        </table>
+        <br />
+        <h6>Incident Rate : 0.0</h6>
+        <h6>Severity Rate : 0.0</h6>
+        </div>
+        </div>
+        </div>*@
+        <div class="row" style="margin-top: 23px;">
+
+            @*<div class="col-sm-3">
+            <div class="card" style="height: 88%;width: 100%;">
+            <div class="card-header">
+            <label class="txt_Injury_Label">Injury & Non-Injury Incidents  </label>
+            </div><!-- end card header -->
+            <div class="card-body">
+            <div id="Graph2" data-colors='["#57c9eb","#f56e6e"]' class="apex-charts" dir="ltr"></div>
+            <div class="card-body">
+            <div id="Graph2" data-colors='["#57c9eb","#f56e6e"]' class="apex-charts" dir="ltr"></div>
+            </div>
+            </div>
+            </div><!--end card-->
+            </div><!--end col-->*@
+            @*<div class="col-sm-3">
+            <div class="card" style="height: 88%;">
+            <div class="card-header">
+            <label class="txt_lable">Incident Management</label>
+            </div><!-- end card header -->
+            <div class="card-body">
+            <div class="row">
+            <ul class="list-group list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center"><h6>Total Man Days Lost</h6><a href="#" onclick="event.preventDefault();INCCardToggle('9','#Total_Man_Days_Lost',@LoginClass.Employee_Identity_Id)"> <span class="badge rounded-pill align-items-end bg-info" id="Total_Man_Days_Lost"></span></a></li>*@
+            @* <li class="list-group-item  d-flex justify-content-between align-items-center">Injured Employees <a href="#" onclick="event.preventDefault();INCCardToggle('10','#Total_Injured_Emp')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Injured_Emp"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Injured Contractor<a href="#" onclick="event.preventDefault();INCCardToggle('11','#Total_Injured_Contractor')"><span class="badge bg-info rounded-pill align-items-end" id="Total_Injured_Contractor"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">High Potential Incidents<a href="#" onclick="event.preventDefault();INCCardToggle('12','#Total_High_Potential')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_High_Potential"></span></a></li>*@
+            @* <li class="list-group-item d-flex justify-content-between align-items-center" id="mapclick_popup"><h6>Total Incidents</h6><a href="#"> <span class="badge rounded-pill align-items-end bg-info" id="Total_INC"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Closed <a href="#" onclick="event.preventDefault();INCCardToggle('2','#Total_Completed_INC',@LoginClass.Employee_Identity_Id)"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Completed_INC"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Open<a href="#" onclick="event.preventDefault();INCCardToggle('3','#Total_Pending_INC',@LoginClass.Employee_Identity_Id)"><span class="badge bg-info rounded-pill align-items-end" id="Total_Pending_INC"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Pending Approval<a href="#" onclick="event.preventDefault();INCCardToggle('4','#Total_Inves_Approval_Pending',@LoginClass.Employee_Identity_Id)"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Inves_Approval_Pending"></span></a></li>*@
+            @*<li class="list-group-item d-flex justify-content-between align-items-center">Total Actions<a href="#" onclick="event.preventDefault();INCCardToggle('5','#Total_Action')"> <span class="badge rounded-pill align-items-end bg-info" id="Total_Action"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Closed <a href="#" onclick="event.preventDefault();INCCardToggle('7','#Total_Action_Completed')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Action_Completed"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Open<a href="#" onclick="event.preventDefault();INCCardToggle('6','#Total_Action_Pending')"><span class="badge bg-info rounded-pill align-items-end" id="Total_Action_Pending"></span></a></li>
+            <li class="list-group-item  d-flex justify-content-between align-items-center">Overdue Action<a href="#" onclick="event.preventDefault();INCCardToggle('8','#Total_Action_Closure_Pending')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Action_Closure_Pending"></span></a></li>*@
+            @*</ul>
+            </div>
+            </div>
+            </div>
+            </div>*@
+
+            @*<div class="row" style="margin-top: -32px;">*@
+
+            @*<div class="col-lg-4">
+            <div class="card" style="height: 86%;">
+            <div class="card-header">
+            <lable class="txt_lable">Incident Types</lable>
+            </div><!-- end card header -->
+            <div class="card-body">
+            <table class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+            <thead>
+            style="background: #60605f;">
+            <tr>
+            <th style="width:100%;">Type of Incident</th>
+            <th style="width:100%;">Count</th>
+            </tr>
+            </thead>
+            <tbody id="IncidentTypeTBody_1">
+            </tbody>
+            </table>
+            </div>
+            </div><!--end card-->
+            </div>*@
+
+            <div class="col-lg-6" style="display:none">
+                <div class="card">
+                    <div class="card-header">
+                        <lable class="txt_lable">Incident Statistics</lable>
+                    </div>
+                    <div class="card-body">
+                        <div id="Graph5" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: -16px;">
+            <div class="col-sm-6" style="display:none">
+                <div class="card">
+                    <div class="card-header">
+                        <lable class="txt_lable">Recordable & Reportable</lable>
+                    </div>
+                    <div class="card-body">
+                        <div id="Graph6" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Pop Up -->
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Incident Mapping</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6"> <div id="map-canvas_view"></div></div>
+
+                        <div class="col-6">
+                            <div class="col-md-12">
+                                <div class="">
+                                    <h5>Based on Building</h5>
+                                    <table id="Based_Building" class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 100%;">Building Name</th>
+                                                <th>Time</th>
+                                                <th>Report by</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="MappingBuildTBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div><br />
+                            <div class="col-md-12">
+                                <div class="">
+                                    <h5>Incident Type</h5>
+                                    <table class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                        <thead>
+                                            @*style="background: #60605f;">*@
+                                            <tr>
+                                                <th style="width:100%;">Type of Incident</th>
+                                                <th style="width:100%;">Count</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="IncidentTypeTBody">
+                                            @*<tr>
+                                            <td>Palm Jumeriah</td>
+                                            <td>10.30AM</td>
+                                            </tr>
+                                            <tr>
+                                            <td>Al Furjan</td>
+                                            <td>11.30AM</td>
+                                            </tr>
+                                            <tr>
+                                            <td>Logo Islands</td>
+                                            <td>12.45PM</td>
+                                            </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <!-- Modal Grid Pop Up -->
+    <div id="ImpactPop" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Reported Hazard</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;">
+                        <table id="ImapactDivTable" class="table table-striped tblround">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="text-align:left;">Incident ID</th>
+                                    @*<th style="text-align:left;" id="TH_5">Notified By</th>*@
+                                    <th style="text-align:left;">Business Unit</th>
+                                    @*<th style="text-align:left;">Project/ Building/ Mall</th>*@
+                                    <th style="text-align:left;">Incident Category</th>
+                                    <th style="text-align:left;">Incident Type</th>
+                                    <th style="text-align:left;" id="TH_2">Description</th>
+                                    <th style="text-align:left;" id="TH_1">Date</th>
+                                    <th style="text-align:left;" id="TH_3">Time</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    @*<th style="text-align:left;">Is Injury Illness?</th>
+                                    <th style="text-align:left;">Business Unit Name</th>
+                                    <th style="text-align:left;">Master_Community_Name</th>
+                                    <th style="text-align:left;">Root Causes Category</th>
+                                    <th style="text-align:left;" id="TH_4">Status</th>
+                                    <th style="text-align:left;">Created Date</th>*@
+                                </tr>
+                            </thead>
+                            <tbody id="ImapactDiv_TBODY">
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <script src="~/assets/js/apexcharts.js"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ACTIONS: "#Total_Action",
+            ACTIONS_COMPLETED: "#Total_Action_Completed",
+            ACTION_PENDING: "#Total_Action_Pending",
+            BUSINESS_UNIT_ID: "#Business_Unit_Id",
+            PROJ_BUILD_ID: "#Project_Building_Id",
+            DRP_YEAR: "#Drp_Year",
+            LAST_SIX: "#LastSix",
+            LAST_THREE: "#LastThree",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            PB_DIV: "#PB_Div",
+            DRP_CAT: "#Drp_Cat",
+            MAN_DAYS_LOST: "#Total_Man_Days_Lost",
+            INJURED_EMP: "#Total_Injured_Emp",
+            INJURED_CONTRACTOR: "#Total_Injured_Contractor",
+            HIGH_POTENTIAL: "#Total_High_Potential",
+            MOST_INJURED: "#MostInjured",
+            CARD_MODEL: "#ImpactPop",
+            IMAPACT_DIV_TBODY: "#ImapactDiv_TBODY",
+            POP_UP_TABLE: "#ImapactDivTable",
+            M_ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community",
+            BUILDINGTBODY: "#MappingBuildTBody",
+            INCIDENTTYPETBODY: "#IncidentTypeTBody",
+            INCIDENTTYPETBODY_1: "#IncidentTypeTBody_1",
+            INCIDENT_RELATED_NCM: "#IncidentRelatedNCM"
+        });
+    </script>
+    <script>
+        var Role_Ids = @LoginClass.Role_Id;
+        if ((Role_Ids != '3') || (Role_Ids != '4') || (Role_Ids != '5')) {
+            LOAD_ZONE();
+        }
+        FilterOpt_Load();
+        function FilterOpt_Load() {
+            let yr = $("#Drp_Year").val();
+            let Zone = "All";
+            let Community_Id = "";
+            let Building_Id = "";
+            let From_Date = "";
+            let To_date = "";
+            let CreatedBy = @LoginClass.Employee_Identity_Id
+                let model = {
+                    Year: yr,
+                    Zone_ID: Zone,
+                    Community_Id: Community_Id,
+                    Building_ID: Building_Id,
+                    From_Date: From_Date,
+                    To_date: To_date,
+                    Category_Name: '',
+                    CreatedBy: CreatedBy
+                };
+            var sh = true;
+            let Dash_data = FilterOpt();
+            ApplyINCFilter(Dash_data, sh)
+        }
+        var currentYear = new Date().getFullYear();
+        LoadYear(currentYear);
+        $("#mapclick_popup").click(function () {
+            let DashData = FilterOpt();
+            $(".add-new").modal('show');
+            Mapping_Locations(DashData);
+            BuildingTBody(DashData);
+            IncidentTypeTBody(DashData);
+            //Load_GoogleMaps();
+        });
+        //$("#mapclick_popup_1").click(function () {
+        //    $(".add-new").modal('show');
+        //    Mapping_Locations();
+        //    BuildingTBody();
+        //    //Load_GoogleMaps();
+        //});
+        function Filter(name) {
+            var sh = false;
+            let DashData = FilterOpt(name);
+            ApplyINCFilter(DashData, sh);
+        }
+        function LoadYear(currentYearr) {
+            $(UI_Fields.DRP_YEAR).empty();
+            $(UI_Fields.DRP_YEAR).append("<option selected value='All' style='text-align:center'>All</option>");
+            for (let i = currentYearr; i >= 2022; i--) {
+                $(UI_Fields.DRP_YEAR).append("<option class='center' value=" + i + ">" + i + "</option>");
+            }
+        }
+        function ApplyINCFilter(DashData, sh) {
+            var Dash_Data = DashData
+            Incident_ZoneData(Dash_Data, sh);
+            //Incident_Injury_NonInjury(Dash_Data);
+            //Incident_Category(Dash_Data);
+            Incident_Classification(Dash_Data);
+            //Incident_Rec_NonRec(Dash_Data);
+            //Incident_Statistics(Dash_Data);
+            IncidentRelatedNCM(Dash_Data);
+            IncidentTypeTBody(Dash_Data);
+            //Dashboard_Counts(Dash_Data);
+            Incident_Trend(Dash_Data, sh);
+            Total_Counts_Inc_Manage(Dash_Data);
+            Incident_Trend_YearWise(Dash_Data, sh);
+            Incident_CommunityWise(Dash_Data, sh);
+            Total_Incident_YearWise(Dash_Data, sh);
+            Incident_SeverityRate(Dash_Data);
+            //BuildingTBody_Closed(Dash_Data)
+        }
+        function Total_Counts_Inc_Manage(Dash_Data) {
+            var Chartdata = [];
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Total_Inc_Manage_Count).each(function (i, m) {
+                        var violation = {};
+                        var monthdata = [];
+
+                        $("#Total_Incident").empty();
+                        var Total_CountInc = document.createTextNode(m.Total_Inc_Count);
+                        document.getElementById('Total_Incident').appendChild(Total_CountInc);
+
+                        $("#Total_Injury").empty();
+                        var Injury = document.createTextNode(m.Injury_Count);
+                        document.getElementById('Total_Injury').appendChild(Injury);
+
+                        $("#Total_NonInjury").empty();
+                        var Non_injury = document.createTextNode(m.Non_Injury_Count);
+                        document.getElementById('Total_NonInjury').appendChild(Non_injury);
+
+                        $("#Fire").empty();
+                        var Fire = document.createTextNode(m.Fire);
+                        document.getElementById('Fire').appendChild(Fire);
+
+                        $("#Vehicle_Accident").empty();
+                        var Vehicle_Accident = document.createTextNode(m.Vehicle_Accident);
+                        document.getElementById('Vehicle_Accident').appendChild(Vehicle_Accident);
+
+                        $("#Property_Damage").empty();
+                        var Property_Damage = document.createTextNode(m.Property_Damage);
+                        document.getElementById('Property_Damage').appendChild(Property_Damage);
+
+                        $("#Fatality").empty();
+                        var Fatality = document.createTextNode(m.Fatality);
+                        document.getElementById('Fatality').appendChild(Fatality);
+
+                        $("#NearMiss").empty();
+                        var NearMiss = document.createTextNode(m.NearMiss);
+                        document.getElementById('NearMiss').appendChild(NearMiss);
+
+                        $("#Total_Man_Hours").empty();
+                        var Total_Man_Hours = document.createTextNode(m.Total_Man_Hours);
+                        document.getElementById('Total_Man_Hours').appendChild(Total_Man_Hours);
+
+                        $("#Total_ManDays_Lost").empty();
+                        var Total_ManDays_Lost = document.createTextNode(m.Total_ManDays_Lost);
+                        document.getElementById('Total_ManDays_Lost').appendChild(Total_ManDays_Lost);
+                    });
+
+                    $(data.Total_INC_Ser_Count).each(function (i, a) {
+                        $("#Incident_Rate").empty();
+                        var Incident_Rate = document.createTextNode(a.Incident_Rate);
+                        document.getElementById('Incident_Rate').appendChild(Incident_Rate);
+
+                        $("#Severity_Rate").empty();
+                        var Severity_Rate = document.createTextNode(a.Severity_Rate);
+                        document.getElementById('Severity_Rate').appendChild(Severity_Rate);
+
+                        $("#Injury_Incident_Rate").empty();
+                        var Injury_Incident_Rate = document.createTextNode(a.Injury_Incident_Rate);
+                        document.getElementById('Injury_Incident_Rate').appendChild(Injury_Incident_Rate);
+
+                        $("#Total_Daily_Manpower").empty();
+                        var Total_Daily_Manpower = document.createTextNode(a.Total_Daily_Manpower);
+                        document.getElementById('Total_Daily_Manpower').appendChild(Total_Daily_Manpower);
+                    })
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function LOAD_ZONE() {
+            $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+                $(UI_Fields.M_ZONE).empty();
+                $(UI_Fields.M_ZONE).append("<option selected value='All' style='text-align:center'>All</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                });
+            });
+        }
+        function FilterOpt(name) {
+            let F_model;
+            let yr = $("#Drp_Year").val();
+            //if (yr = null || yr == "" || yr == undefined) {
+            //    yr = "All";
+            //}
+            let Zone = $("#Drp_Zone").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            var CreatedBy = @LoginClass.Employee_Identity_Id;
+            let model;
+
+            if ((Role_Ids == '3') || (Role_Ids == '4') || (Role_Ids == '5')) {
+                model = {
+                    Year: yr,
+                    CreatedBy: CreatedBy,
+                    Zone_Id: '',
+                    Category_Name: '',
+                    Community_Id: '',
+                    Building_Id: ''
+                };
+                $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: model }, function (data) {
+                    if (data != null) {
+                        $(data.Zone_List_Dropdown).each(function (i, a) {
+                            $(UI_Fields.M_ZONE).empty();
+                            $(UI_Fields.M_ZONE).append("<option value=" + a.Value + ">" + a.Name + "</option>");
+                        });
+                        if (data.Buidling_List_Dropdown == "" || data.Buidling_List_Dropdown == null || data.Buidling_List_Dropdown == undefined) {
+                            var Zone_Id = $("#Drp_Zone").val();
+                            $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone }, function (data) {
+                                $(UI_Fields.COMMUNITY_ID).empty();
+                                $(UI_Fields.COMMUNITY_ID).append("<option selected value='All'style='text-align:center'>--All--</option>");
+                                $(data).each(function (i, e) {
+                                    $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                                });
+                            });
+                        }
+                        else {
+                            $(data.Commnuity_List_Dropdown).each(function (i, b) {
+                                $(UI_Fields.COMMUNITY_ID).empty();
+                                $(UI_Fields.COMMUNITY_ID).append("<option value=" + b.Value + ">" + b.Name + "</option>");
+                            });
+                        }
+                        if (data.Buidling_List_Dropdown == "" || data.Buidling_List_Dropdown == null || data.Buidling_List_Dropdown == undefined) {
+                            var Zone_Id = $("#Drp_Zone").val();
+                            var Community_Id = $("#Drp_Community").val();
+                            $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community }, function (data) {
+                                $(UI_Fields.BUILDING_ID).empty();
+                                $(UI_Fields.BUILDING_ID).append("<option selected value='All'style='text-align:center'>--All--</option>");
+                                $(data).each(function (i, e) {
+                                    $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                                });
+                            });
+                        } else {
+                            $(data.Buidling_List_Dropdown).each(function (i, c) {
+                                $(UI_Fields.BUILDING_ID).empty();
+                                $(UI_Fields.BUILDING_ID).append("<option value=" + c.Value + ">" + c.Name + "</option>");
+                            });
+                        }
+                    }
+                    else {
+                        //toastr.error(data.MESSAGE, "Error");
+                    }
+                });
+            }
+            model = {
+                Year: yr,
+                CreatedBy: CreatedBy,
+                Zone_Id: Zone,
+                Category_Name: name,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id
+            };
+
+
+            return model;
+        }
+        function LoadCommunity(Zone) {
+            if (Zone == "All") {
+                $(UI_Fields.COMMUNITY_ID).empty();
+                $(UI_Fields.BUILDING_ID).empty();
+            }
+            else {
+                $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone }, function (data) {
+                    $(UI_Fields.COMMUNITY_ID).empty();
+                    $(UI_Fields.COMMUNITY_ID).append("<option selected value='All'style='text-align:center'>--All--</option>");
+                    $(data).each(function (i, e) {
+                        $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Community").val("");
+            $("#Drp_Building").val("");
+            Filter();
+        }
+        function LoadBuilding(Community) {
+            var Zone_Id = $("#Drp_Zone").val();
+            //var Community_Id = Community.value;
+            if (Community == "All") {
+                $(UI_Fields.BUILDING_ID).empty();
+            } else {
+                $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community }, function (data) {
+                    $(UI_Fields.BUILDING_ID).empty();
+                    $(UI_Fields.BUILDING_ID).append("<option selected value='All'style='text-align:center'>--All--</option>");
+                    $(data).each(function (i, e) {
+                        $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Building").val("");
+            Filter();
+        }
+        function Dashboard_Counts(Dash_Data) {
+            var Chartdata = [];
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Total_Count_List).each(function (i, l) {
+                        var violation = {};
+                        var monthdata = [];
+                        $("#Total_Man_Days_Lost").empty();
+                        var Man_Day_Lost = document.createTextNode(l.Inc_Man_Day_Lost);
+                        document.getElementById('Total_Man_Days_Lost').appendChild(Man_Day_Lost);
+
+                        //var Injured_Employee = document.createTextNode(l.Inc_Injured_Employee);
+                        //document.getElementById('Total_Injured_Emp').appendChild(Injured_Employee);
+
+                        //var Injured_Contractor = document.createTextNode(l.Inc_Injured_Contractor);
+                        //document.getElementById('Total_Injured_Contractor').appendChild(Injured_Contractor);
+
+                        //var High_Potential = document.createTextNode(l.Inc_High_Potential);
+                        //document.getElementById('Total_High_Potential').appendChild(High_Potential);
+                        $("#Total_INC").empty();
+                        var Total_Count = document.createTextNode(l.Total_Inc_Count);
+                        document.getElementById('Total_INC').appendChild(Total_Count);
+
+                        $("#Total_Completed_INC").empty();
+                        var Closed_Count = document.createTextNode(l.Inc_Closed_Count);
+                        document.getElementById('Total_Completed_INC').appendChild(Closed_Count);
+
+                        $("#Total_Pending_INC").empty();
+                        var Open_Count = document.createTextNode(l.Inc_Open_Count);
+                        document.getElementById('Total_Pending_INC').appendChild(Open_Count);
+
+                        //var Today_Count = document.createTextNode(l.Today_Inc_Count);//Missing - OverDue Action
+                        //document.getElementById('Total_Verification_Pending').appendChild(Today_Count);
+
+                        $("#Total_Inves_Approval_Pending").empty();
+                        var Approval_Pending = document.createTextNode(l.Inc_Approval_Pending);
+                        document.getElementById('Total_Inves_Approval_Pending').appendChild(Approval_Pending);
+
+                        //var Total_Action = document.createTextNode(l.Inc_Total_Action);
+                        //document.getElementById('Total_Action').appendChild(Total_Action);
+
+                        //var Open_Action = document.createTextNode(l.Inc_Open_Action);
+                        //document.getElementById('Total_Action_Pending').appendChild(Open_Action);
+
+                        //var Closed_Action = document.createTextNode(l.Inc_Closed_Action);
+                        //document.getElementById('Total_Action_Completed').appendChild(Closed_Action);
+
+                        //var OverDue_Action = document.createTextNode(l.Inc_OverDue_Action);
+                        //document.getElementById('Total_Action_Closure_Pending').appendChild(OverDue_Action);
+                    });
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function BuildingTBody(DashData) {
+            var html = "";
+            $("#MappingBuildTBody").html('');
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: DashData }, function (data) {
+                if (data != null) {
+                    $(data.Total_Incident_Count_List).each(function (i, l) {
+                        html += '<tr><td>' + l.Name + '</td>';
+                        html += '<td>' + l.Incident_Time + '</td>';
+                        html += '<td>' + l.Employee_Name + '</td></tr>';
+                    });
+                    $("#MappingBuildTBody").append(html);
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function IncidentTypeTBody(Dash_Data) {
+            var html = "";
+            CreatedBy = '1';
+            Category_Name = '';
+            $(UI_Fields.INCIDENTTYPETBODY).html('');
+            $(UI_Fields.INCIDENTTYPETBODY_1).html('');
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Incident_Type_List).each(function (i, l) {
+                        html += '<tr><td align="left" valign="middle"><h6>' + l.Name + '</h6></td>';
+                        html += '<td align="left" valign="middle"><h6>' + l.Incident_Time + '</h6></td><</tr >';
+                    });
+                    $(UI_Fields.INCIDENTTYPETBODY).append(html);
+                    $(UI_Fields.INCIDENTTYPETBODY_1).append(html);
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function FilterDate() {
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                $(".InputField").attr("disabled", true);
+                $(UI_Fields.LAST_SIX).attr("disabled", true);
+                $(UI_Fields.FROM_DATE).attr("disabled", false);
+                $(UI_Fields.TO_DATE).attr("disabled", false);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).show(100);
+            }
+            else {
+                $(".InputField").attr("disabled", false);
+                $(UI_Fields.LAST_SIX).attr("disabled", false);
+                $(UI_Fields.FROM_DATE).attr("disabled", true);
+                $(UI_Fields.TO_DATE).attr("disabled", true);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).hide(100);
+                $(UI_Fields.FROM_DATE).val('');
+                $(UI_Fields.TO_DATE).val('');
+            }
+        }
+        function DateFilter() {
+            let Dash_data = CMMDateFilter();
+            ApplyINCFilter(Dash_data);
+        }
+        function CMMDateFilter() {
+            let model;
+            let FD = $("#From_Date").val();
+            let TD = $("#To_Date").val();
+            if (TD == null || TD == '') {
+                return false;
+            }
+            if (FD == null || FD == '') {
+                toastr["error"]("Please Select From Date!");
+                return false;
+            }
+            if (Date.parse(TD) > Date.parse(FD)) {
+                let Zone = $("#Drp_Zone").val();
+                let Community_Id = $("#Drp_Community").val();
+                let Building_Id = $("#Drp_Building").val();
+                var CreatedBy = @LoginClass.Employee_Identity_Id;
+                if (Zone == "" || Zone == null) { Zone = '' };
+                if (Community_Id == "" || Community_Id == null) { Community_Id = '' };
+                if (Building_Id == "" || Building_Id == null) { Building_Id = '' };
+                model = {
+                    Year: '',
+                    CreatedBy: CreatedBy,
+                    Zone_Id: '',
+                    Category_Name: '',
+                    Community_Id: '',
+                    Building_Id: '',
+                    From_Date: FD,
+                    To_Date: TD
+
+                };
+                return model;
+            }
+            else {
+                toastr["error"]("Invalid Date Range!");
+                return false;
+            }
+        }
+        //Related to Ncm
+        function IncidentRelatedNCM(Dash_Data) {
+            var html = "";
+            $(UI_Fields.INCIDENT_RELATED_NCM).html('');
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Related_NCM_List).each(function (i, a) {
+                        html += '<tr><td><h6>Direct Employee</h6></td><td align="left" valign="middle">' + a.Direct_Employee + '</td></tr>';
+                        html += '<tr><td><h6>Contractor</h6></td><td align="left" valign="middle">' + a.Contractor + '</td></tr>';
+                        html += '<tr><td><h6>Work Visitor</h6></td><td align="left" valign="middle">' + a.Work_Visitor + '</td></tr>';
+                        html += '<tr><td><h6>Resident</h6></td><td align="left" valign="middle">' + a.Resident + '</td></tr>';
+                    });
+                    $(UI_Fields.INCIDENT_RELATED_NCM).append(html);
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        //Zone Wise Data
+        function Incident_ZoneData(Dash_Data, sh) {
+
+            var Chartdata = [];
+            var monthdata = [];
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+
+                if (data != null) {
+                    $(data.Zone_Count_List).each(function (i, m) {
+                        monthdata.push(parseInt(m.Zone_Count));
+                        Chartdata.push(m.Zone_Name);
+                    });
+                    DrawGraphZone_Datas(monthdata, Chartdata, sh, 'Zone');
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function DrawGraphZone_Datas(arr1, arr2, sh, name) {
+            if (sh == true) {
+                let chartOption;
+                chartOption = {
+                    height: 310,
+                    type: "pie",
+                    events: {
+                        dataPointSelection: (event, chartContext, config) => {
+                            let selectedValue = options.labels[config.dataPointIndex];
+                            //Zone_Name(selectedValue);
+                            Filter(selectedValue);
+                        }
+                    },
+                    toolbar: {
+                        show: true,
+                        download: true,
+                    },
+                    id: "chart-id"
+
+                };
+                var barchartColors = ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                    options = {
+                        chart: chartOption,
+                        series: arr1,
+                        labels: arr2,
+                        noData: {
+                            text: "No data Available",
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            offsetX: 0,
+                            offsetY: 0,
+                            style: {
+                                color: "#000",
+                                fontSize: '14px',
+                            }
+                        },
+                        legend: {
+                            position: "bottom"
+                        },
+                        dataLabels: {
+                            dropShadow: {
+                                enabled: !1
+                            }
+                        },
+                        colors: barchartColors,
+
+                    };
+                chart = new ApexCharts(document.querySelector("#Graph1"), options);
+                chart.render();
+            }
+            else {
+                ApexCharts.exec('chart-id', 'updateOptions', {
+                    series: arr1,
+                    labels: arr2
+                });
+            }
+
+        }
+
+        //function Incident_Injury_NonInjury(Dash_Data) {
+        //    var Chartdata = [];
+        //    var Inc_Labels = [];
+        //    //let Dash_data = FilterOpt();
+        //    $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+        //        if (data != null) {
+        //            $(data.Injury_NonInjury_List).each(function (i, n) {
+        //                var violation = {};
+        //                var monthdata = [];
+        //                violation["name"] = n.Name;
+        //                monthdata.push(n.January);
+        //                monthdata.push(n.February);
+        //                monthdata.push(n.March);
+        //                monthdata.push(n.April);
+        //                monthdata.push(n.May);
+        //                monthdata.push(n.June);
+        //                monthdata.push(n.July);
+        //                monthdata.push(n.August);
+        //                monthdata.push(n.September);
+        //                monthdata.push(n.October);
+        //                monthdata.push(n.November);
+        //                monthdata.push(n.December);
+        //                violation["data"] = monthdata;
+        //                Chartdata.push(violation);
+
+        //            });
+        //            DrawGraphInjury_NonInjury();
+        //        }
+        //        else {
+        //            //toastr.error(data.MESSAGE, "Error");
+        //        }
+        //    });
+        //}
+
+        //Incident Rate & Severity Rate
+        function Incident_SeverityRate(Dash_Data) {
+            debugger;
+            var Chartdata = [];
+            //var monthdata = [];
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                   
+                    if (data != null) {
+                        $(data.Inc_Sev_Month_List).each(function (i, a) {
+                            var violation = {};
+                            var monthdata = [];
+                            violation["name"] = a.Name;
+                            monthdata.push(a.January);
+                            monthdata.push(a.February);
+                            monthdata.push(a.March);
+                            monthdata.push(a.April);
+                            monthdata.push(a.May);
+                            monthdata.push(a.June);
+                            monthdata.push(a.July);
+                            monthdata.push(a.August);
+                            monthdata.push(a.September);
+                            monthdata.push(a.October);
+                            monthdata.push(a.November);
+                            monthdata.push(a.December);
+                            violation["data"] = monthdata;
+                            Chartdata.push(violation);
+                        });
+                        DrawIncident_SeverityRate(Chartdata, 'Incident and Severity Rate');
+                    }
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function DrawIncident_SeverityRate(arr, Name) {
+            options = {
+                chart: {
+                    height: 250,
+                    type: "line",
+                    zoom: {
+                        enabled: !1
+                    },
+                    toolbar: {
+                        show: !1
+                    }
+                },
+                colors: ["#00263A", "#48C7EE"],
+                dataLabels: {
+                    enabled: !1
+                },
+                stroke: {
+                    width: [3, 3],
+                    curve: "straight"
+                },
+                series: arr,
+                grid: {
+                    row: {
+                        colors: ["transparent", "transparent"],
+                        opacity: .2
+                    },
+                    borderColor: "#f1f1f1"
+                },
+                markers: {
+                    style: "inverted",
+                    size: 6
+                },
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    title: {
+                        text: "Month"
+                    }
+                },
+                yaxis: {
+                },
+                legend: {
+                    position: "top",
+                    horizontalAlign: "right",
+                    floating: !0,
+                    offsetY: -25,
+                    offsetX: -5
+                },
+                responsive: [{
+                    breakpoint: 600,
+                    options: {
+                        chart: {
+                            toolbar: {
+                                show: !1
+                            }
+                        },
+                        legend: {
+                            show: !1
+                        }
+                    }
+                }]
+            };
+            (chart = new ApexCharts(document.querySelector("#Graph11"), options)).render();
+            chart.updateOptions({
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                },
+                series: arr,
+            });
+        }
+        //    //options = {
+        //    //    chart: {
+        //    //        height: 250,
+        //    //        type: "line",
+        //    //        zoom: {
+        //    //            enabled: !1
+        //    //        },
+        //    //        toolbar: {
+        //    //            show: true,
+        //    //            download: true,
+        //    //        },
+        //    //        id: "chart-id1"
+        //    //    },
+        //    //    colors: barchartColors = getChartColorsArray("Graph2"),
+        //    //    dataLabels: {
+        //    //        enabled: !1,
+        //    //    },
+        //    //    stroke: {
+        //    //        width: [2, 2],
+        //    //        curve: "straight"
+        //    //    },
+        //    //    series: arr1,
+        //    //    grid: {
+        //    //        row: {
+        //    //            colors: ["transparent", "transparent"],
+        //    //            opacity: .2
+        //    //        },
+        //    //        borderColor: "#f1f1f1"
+        //    //    },
+        //    //    markers: {
+        //    //        style: "inverted",
+        //    //        size: 3
+        //    //    },
+        //    //    xaxis: {
+        //    //        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+
+        //    //    },
+        //    //    yaxis: {
+        //    //        title: {
+        //    //            text: ""
+        //    //        },
+        //    //        min: 1,
+        //    //        max: 20
+        //    //    },
+        //    //    legend: {
+        //    //        position: "top",
+        //    //        horizontalAlign: "right",
+        //    //        floating: !0,
+        //    //        offsetY: -25,
+        //    //        offsetX: -5
+        //    //    },
+        //    //    responsive: [{
+        //    //        breakpoint: 600,
+        //    //        options: {
+        //    //            chart: {
+        //    //                toolbar: {
+        //    //                    show: !1
+        //    //                }
+        //    //            },
+        //    //            legend: {
+        //    //                show: !1
+        //    //            }
+        //    //        }
+        //    //    }]
+        //    //};
+        //    //(chart = new ApexCharts(document.querySelector("#Graph2"), options)).render();
+        //    //ApexCharts.exec('chart-id1', 'updateOptions', {
+        //    //    series: arr1
+        //    //});
+        //}
+        //Incident Category
+        //function Incident_Category(Dash_Data) {
+        //    var Chartdata = [];
+        //    var Cate_Labels = [];
+        //    //let Dash_Data = FilterOpt();
+        //    $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+        //        if (data != null) {
+        //            $(data.Categroy_Count_List).each(function (i, j) {
+        //                var violation = {};
+        //                var monthdata = [];
+        //
+        //                violation["name"] = j.Category_Name;
+
+        //                monthdata.push(j.Category_Count);
+
+        //                violation["data"] = monthdata;
+        //                Chartdata.push(violation);
+        //                Cate_Labels.push(j.Category_Name);
+        //            });
+        //            DrawGraphIncidentCategory(Chartdata, Cate_Labels, 'Incident Category');
+        //        }
+        //        else {
+        //            toastr.error(data.MESSAGE, "Error");
+        //        }
+        //    });
+        //}
+        //function DrawGraphIncidentCategory(arr, arr1, name) {
+        //    var barchartColors = ["#63ad6f", "#f9c256", "#1b334a", "#e6291c"],
+        //        options = {
+        //            chart: {
+        //                height: 270,
+        //                type: "bar",
+        //                toolbar: {
+        //                    show: true,
+        //                    download: true,
+        //                }
+
+        //            },
+        //            plotOptions: {
+        //                bar: {
+        //                    horizontal: !0
+        //                }
+        //            },
+        //            dataLabels: {
+        //                enabled: !1,
+        //            },
+        //            series: arr,
+        //            colors: barchartColors,
+        //            grid: {
+        //                borderColor: "#f1f1f1"
+        //            },
+        //            xaxis: {
+        //                categories: arr1
+        //            }
+        //        },
+
+        //        chart = new ApexCharts(document.querySelector("#Graph3"), options);
+        //    chart.render();
+        //    chart.updateOptions({
+        //        xaxis: {
+        //            categories: arr1
+        //        },
+        //        series: arr
+        //    });
+        //}
+        //Classification
+
+        function Incident_Classification(Dash_Data) {
+            var Chartdata = [];
+            var Classifi_Labels = [];
+            //let Dash_data = FilterOpt();
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Classification_List).each(function (i, k) {
+                        Chartdata.push(k.Name);
+                        Classifi_Labels.push(k.Total)
+                    });
+                    DrawGraphIncidentClassification(Chartdata, Classifi_Labels, 'Classification');
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function DrawGraphIncidentClassification(arr, arr1, name) {
+            var options = {
+                series: [
+                    {
+                        name: "",
+                        data: arr1,
+                    },
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 270,
+                    toolbar: {
+                        show: true
+                    }
+                },
+                noData: {
+                    text: "No data Available",
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    offsetX: 0,
+                    offsetY: 0,
+                    style: {
+                        color: "#000",
+                        fontSize: '14px',
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 0,
+                        horizontal: true,
+                        distributed: true,
+                        barHeight: '80%',
+                        //isFunnel: true,
+                    },
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                //dataLabels: {
+                //    enabled: true,
+                //    formatter: function (val, opt) {
+                //        return opt.w.globals.labels[opt.dataPointIndex] + ':  ' + val
+                //    },
+                //    dropShadow: {
+                //        enabled: true,
+                //    },
+                //},
+                title: {
+                    fontFamily: 'Nakheel-Textregular'
+                },
+                xaxis: {
+                    categories: arr,
+                },
+                legend: {
+                    show: false,
+                },
+            };
+
+            var chart = new ApexCharts(document.querySelector("#Graph4"), options);
+            chart.render();
+            chart.updateOptions({
+                xaxis: {
+                    categories: arr,
+                },
+                series: [
+                    {
+                        name: "",
+                        data: arr1,
+                    },
+                ],
+            });
+        }
+        //CommunityWise Data
+        function Incident_CommunityWise(Dash_Data) {
+            var Chartdata = [];
+            var communtiy_Lable = [];
+            //let Dash_data = FilterOpt();
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Community_List).each(function (i, a) {
+                        var violation = {};
+                        var monthdata = [];
+                        violation["name"] = a.Name;
+                        monthdata.push(a.January);
+                        monthdata.push(a.February);
+                        monthdata.push(a.March);
+                        monthdata.push(a.April);
+                        monthdata.push(a.May);
+                        monthdata.push(a.June);
+                        monthdata.push(a.July);
+                        monthdata.push(a.August);
+                        monthdata.push(a.September);
+                        monthdata.push(a.October);
+                        monthdata.push(a.November);
+                        monthdata.push(a.December);
+                        violation["data"] = monthdata;
+                        Chartdata.push(violation);
+                    });
+                    DrawGraphIncidentCommunity(Chartdata, 'Community data');
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function DrawGraphIncidentCommunity(arr, name) {
+            options = {
+                series: arr,
+                chart: {
+                    type: "bar",
+                    height: 230,
+                    stacked: !0,
+
+                    toolbar: {
+                        show: true,
+                        download: true,
+                    }
+
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: "bottom",
+                            offsetX: -10,
+                            offsetY: 0
+                        }
+                    }
+                }],
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                },
+                fill: {
+                    opacity: 1
+                },
+                legend: {
+                    position: "bottom"
+
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+            };
+            (chart = new ApexCharts(document.querySelector("#Graph9"), options)).render();
+            chart.updateOptions({
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                },
+                series: arr
+            });
+        }
+        //Incident Trend
+        function Incident_Trend(Dash_Data, sh) {
+            var Chartdata = [];
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+                    $(data.Incident_Trend_Statistics_List).each(function (i, m) {
+                        var violation = {};
+                        var monthdata = [];
+                        violation["name"] = m.Name;
+                        monthdata.push(m.January);
+                        monthdata.push(m.February);
+                        monthdata.push(m.March);
+                        monthdata.push(m.April);
+                        monthdata.push(m.May);
+                        monthdata.push(m.June);
+                        monthdata.push(m.July);
+                        monthdata.push(m.August);
+                        monthdata.push(m.September);
+                        monthdata.push(m.October);
+                        monthdata.push(m.November);
+                        monthdata.push(m.December);
+                        violation["data"] = monthdata;
+                        Chartdata.push(violation);
+                    });
+                    DrawGraphInc_Trend(Chartdata, sh, 'Incident Trend');
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function DrawGraphInc_Trend(Data, sh, name) {
+            if (sh == true) {
+                var options = {
+                    series: Data,
+                    chart: {
+                        type: "bar",
+                        height: 250,
+                        stacked: !0,
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        },
+                        zoom: {
+                            enabled: !0
+                        }
+                    },
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                            fontFamily: 'Nakheel-Textregular',
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            legend: {
+                                position: "bottom",
+                                offsetX: -10,
+                                offsetY: 0
+                            }
+                        }
+                    }],
+                    plotOptions: {
+                        bar: {
+                            horizontal: !1,
+                            borderRadius: 10
+                        }
+                    },
+
+                    xaxis: {
+                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    },
+                    legend: {
+                        position: "bottom"
+                    },
+                    fill: {
+                        opacity: 1
+                    },
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+
+                };
+                (Value = new ApexCharts(document.querySelector("#Graph7"), options)).render();
+            }
+            else {
+                Value.updateOptions({
+                    xaxis: {
+                        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                    },
+                    series: Data
+                });
+            }
+
+        }
+        //Yearwise Incident Trend
+        function Incident_Trend_YearWise(Dash_Data, sh) {
+            var Chartdata = [];
+            var monthdata = [];
+
+            //let Dash_data = FilterOpt();
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+
+                    $(data.Total_Inc_count_YearList).each(function (i, n) {
+                        monthdata.push(parseInt(n.Total));
+                        Chartdata.push(n.Name);
+                    });
+                    DrawGraphInc_Trend_YearWise(monthdata, Chartdata, sh, 'Incident_Trend_YearWise');
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+
+
+            });
+        }
+        function DrawGraphInc_Trend_YearWise(arr1, arr, sh, name) {
+            if (sh == true) {
+                var options = {
+                    series: arr1,
+
+                    chart: {
+                        height: 280,
+                        type: "pie",
+                        toolbar: {
+                            show: true,
+                            download: true,
+                        },
+
+                        id: "chart_id1"
+                    },
+                    labels: arr,
+                    noData: {
+                        text: "No data Available",
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        offsetX: 0,
+                        offsetY: 0,
+                        style: {
+                            color: "#000",
+                            fontSize: '14px',
+                            fontFamily: 'Nakheel-Textregular',
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            dataLabels: {
+                                offset: -5
+                            }
+                        }
+                    },
+
+                    dataLabels: {
+                        dropShadow: {
+                            enabled: !1
+                        }
+                    },
+                    legend: {
+                        position: "bottom"
+                    },
+
+                    colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"]
+
+                };
+                (chart = new ApexCharts(document.querySelector("#Graph8"), options)).render();
+            }
+            else {
+                ApexCharts.exec('chart_id1', 'updateOptions', {
+                    series: arr1,
+                    labels: arr
+                });
+            }
+
+        }
+        //Total Incident Yearwise
+        function Total_Incident_YearWise(Dash_Data) {
+            var Chartdata = [];
+            var monthdata = [];
+            var YearData = [];
+            //let Dash_data = FilterOpt();
+            $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+                if (data != null) {
+
+                    $(data.Incident_TotalCount).each(function (i, b) {
+                        monthdata.push(parseInt(b.Total));
+                        Chartdata.push(b.Name);
+                        YearData.push(b.Year)
+                    });
+                    DrawGraphTotal_Incident_YearWise(monthdata, Chartdata, YearData, 'Total Incident Count');
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+
+
+            });
+        }
+        function DrawGraphTotal_Incident_YearWise(arr, arr1, arr2, name) {
+            var options = {
+                series: [{
+                    name: arr1[0],
+                    data: arr
+                }],
+                chart: {
+                    type: "bar",
+                    height: 230,
+                    stacked: !0,
+
+                    toolbar: {
+                        show: true,
+                        download: true,
+                    }
+
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        legend: {
+                            position: "bottom",
+                            offsetX: -10,
+                            offsetY: 0
+                        }
+                    }
+                }],
+                fill: {
+                    opacity: 1
+                },
+                legend: {
+                    position: "bottom"
+
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+
+                xaxis: {
+                    categories: arr2,
+                }
+            },
+                chart = new ApexCharts(document.querySelector("#Graph10"), options);
+            chart.render();
+            chart.updateOptions({
+                xaxis: {
+                    categories: arr2,
+                },
+                series: [{
+                    name: arr1[0],
+                    data: arr
+                }],
+            });
+        }
+        //Recordable and Non Recordable
+        //function Incident_Rec_NonRec(Dash_Data) {
+        //    var Chartdata = [];
+        //    $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+        //        if (data != null) {
+        //            $(data.Recordable_NonRecord_List).each(function (i, p) {
+        //                var violation = {};
+        //                var monthdata = [];
+        //                violation["name"] = p.Name;
+        //                monthdata.push(p.January);
+        //                monthdata.push(p.February);
+        //                monthdata.push(p.March);
+        //                monthdata.push(p.April);
+        //                monthdata.push(p.May);
+        //                monthdata.push(p.June);
+        //                monthdata.push(p.July);
+        //                monthdata.push(p.August);
+        //                monthdata.push(p.September);
+        //                monthdata.push(p.October);
+        //                monthdata.push(p.November);
+        //                monthdata.push(p.December);
+        //                violation["data"] = monthdata;
+        //                Chartdata.push(violation);
+        //            });
+        //            DrawGraphIncidentRec_NonRec(Chartdata, 'Recordable and Non-Recordable');
+        //        }
+        //        else {
+        //            toastr.error(data.MESSAGE, "Error");
+        //        }
+        //    });
+        //}
+        //function DrawGraphIncidentRec_NonRec(arr, name) {
+        //    options = {
+        //        series: arr,
+        //        chart: {
+        //            height: 130,
+        //            type: "area"
+        //        },
+        //        dataLabels: {
+        //            enabled: !1
+        //        },
+        //        stroke: {
+        //            curve: "smooth"
+        //        },
+        //        colors: barchartColors = ["#3b76e1", "#63ad6f"],
+        //        xaxis: {
+        //            type: "month",
+        //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        //        },
+
+        //    };
+        //    (chart = new ApexCharts(document.querySelector("#Graph6"), options)).render();
+        //    chart.updateOptions({
+        //        xaxis: {
+        //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        //        },
+        //        series: arr,
+        //    });
+        //}
+        //Incident Statistics
+        //function Incident_Statistics(Dash_Data) {
+        //    var Chartdata = [];
+        //    //let Dash_data = FilterOpt();
+        //    $.post("@Url.Action("GetIncidentTypeGraph1", "Incident")", { entity: Dash_Data }, function (data) {
+        //        if (data != null) {
+        //            $(data.Incident_Statistics_List).each(function (i, s) {
+        //                var violation = {};
+        //                var monthdata = [];
+
+        //                violation["name"] = s.Name;
+        //                monthdata.push(s.January);
+        //                monthdata.push(s.February);
+        //                monthdata.push(s.March);
+        //                monthdata.push(s.April);
+        //                monthdata.push(s.May);
+        //                monthdata.push(s.June);
+        //                monthdata.push(s.July);
+        //                monthdata.push(s.August);
+        //                monthdata.push(s.September);
+        //                monthdata.push(s.October);
+        //                monthdata.push(s.November);
+        //                monthdata.push(s.December);
+        //                violation["data"] = monthdata;
+        //                Chartdata.push(violation);
+        //            });
+        //            DrawGraphIncidentStatistics(Chartdata, 'Incident Statistics');
+        //        }
+        //        else {
+        //            toastr.error(data.MESSAGE, "Error");
+        //        }
+        //    });
+        //}
+        //function DrawGraphIncidentStatistics(arr1, name) {
+        //    options = {
+        //        series: arr1,
+        //        chart: {
+        //            type: "bar",
+        //            height: 350,
+        //            toolbar: {
+        //                show: true,
+        //                download: true,
+        //            }
+        //        },
+        //        plotOptions: {
+        //            bar: {
+        //                barHeight: "100%",
+        //                distributed: !0,
+        //                horizontal: !0,
+        //                dataLabels: {
+        //                    position: "bottom"
+        //                }
+        //            }
+        //        },
+        //        colors: barchartColors = ["#57c9eb", "#495057", "#e83e8c", "#63ad6f", "#f56e6e", "#2b908f", "#f9a3a4", "#564ab1", "#f1734f", "#3b76e1"],
+        //        dataLabels: {
+        //            enabled: !0,
+        //            textAnchor: "start",
+        //            style: {
+        //                colors: ["#fff"]
+        //            },
+        //            formatter: function (t, e) {
+        //                return e.w.globals.labels[e.dataPointIndex] + ":  " + t
+        //            },
+        //            offsetX: 0,
+        //            dropShadow: {
+        //                enabled: !1
+        //            }
+        //        },
+        //        stroke: {
+        //            width: 1,
+        //            colors: ["#fff"]
+        //        },
+        //        xaxis: {
+        //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        //        },
+        //        yaxis: {
+        //            labels: {
+        //                show: !1
+        //            }
+        //        },
+        //        tooltip: {
+        //            theme: "dark",
+        //            x: {
+        //                show: !1
+        //            },
+        //            y: {
+        //                title: {
+        //                    formatter: function () {
+        //                        return ""
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    };
+        //    (chart = new ApexCharts(document.querySelector("#Graph5"), options)).render();
+        //    chart.updateOptions({
+        //        xaxis: {
+        //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        //        },
+        //        yaxis: {
+        //            labels: {
+        //                show: !1
+        //            }
+        //        },
+        //        series: arr1,
+        //        stroke: {
+        //            width: 1,
+        //            colors: ["#fff"]
+        //        }
+        //    });
+        //}
+    </script>
+    <script type="text/javascript">
+        function Mapping_Locations(data) {
+            var Chartdata = [];
+
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { entity: data }, function (data) {
+                if (data != null) {
+                    $(data.G_List_Location).each(function (i, l) {
+                        var violation = [l.Name, l.Total_Inc_Count, l.Today_Inc_Count, l.Inc_Total_Action];
+                        Chartdata.push(violation);
+                    });
+                    var locations = Chartdata;
+                    var map = new google.maps.Map(document.getElementById('map-canvas_view'), {
+                        zoom: 10,
+                        center: new google.maps.LatLng(25.114491, 55.139020),
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                    var infowindow = new google.maps.InfoWindow();
+                    var marker, i;
+                    var image = '';
+                    for (i = 0; i < locations.length; i++) {
+
+                        if (locations[i][3] == "Fire") {
+                            image = '../assets/images/mapicons/F.png'
+                        }
+                        else if (locations[i][3] == "Health & Safety") {
+                            image = '../assets/images/mapicons/H.png'
+                        }
+                        else if (locations[i][3] == "Vehicle Accident") {
+                            image = '../assets/images/mapicons/V.png'
+                        }
+                        else if (locations[i][3] == "Environment") {
+                            image = '../assets/images/mapicons/E.png'
+                        }
+                        else if (locations[i][3] == "Security") {
+                            image = '../assets/images/mapicons/3.png'
+                        }
+                        marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                            map: map,
+                            animation: google.maps.Animation.DROP,
+                            animation: google.maps.Animation.BOUNCE,
+                            icon: image
+                        });
+                        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                            return function () {
+                                infowindow.setContent(locations[i][0]);
+                                infowindow.open(map, marker);
+                            }
+                        })(marker, i));
+                    }
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+    </script>
+</body>
+

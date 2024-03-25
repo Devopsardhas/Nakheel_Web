@@ -1,0 +1,147 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@model Nakheel_Web.Models.AuditMaster.Aud_Internal_Audit;
+
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+
+@if (Model != null)
+{
+    <div class="" id="viewnotification">
+        <div class="row">
+            <div class="col-12">
+                <div class="">
+                    <!-- Contact detail -->
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        <input type="hidden" id="Unique_Id" value="@Model.Unique_Id">
+                        <input type="hidden" id="Inv_Inc_Id" value="@Model.Internal_Audit_Id">
+                        <input type="hidden" value="@Model.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                        <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                        <input type="hidden" value="@Model.Aud_Lat" id="Loc_Latitude">
+                        <input type="hidden" value="@Model.Aud_Long" id="Loc_Longitude">
+                        <table class="table tab ">
+                            <tbody id="tblIncidentDetailsViewPage">
+                                <tr>
+                                    <td><b class="font-bold">Internal Audit Reference no</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">NCM-HSSE-@Model.Unique_Id</td>
+                                    <td><b class="font-bold">Reported By</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Reported_by</td>
+                                    <td><b class="font-bold">Designation</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Designation</td>
+                                </tr>
+
+                                <tr>
+                                    <td><b class="font-bold">Date Time</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Date_Time</td>
+                                    <td><b class="font-bold">Business Unit</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Business_Unit_Id</td>
+                                    <td><b class="font-bold">Zone</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Zone_Id</td>
+                                </tr>
+
+                                <tr>
+                                    <td><b class="font-bold">Community</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Community_Id</td>
+                                    <td><b class="font-bold">Lead Auditor</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Lead_Auditor_Id</td>
+                                    @if (Model.Business_Unit_Type_Id != "0")
+                                    {
+                                        var obane = "";
+                                        <td><b class="font-bold">Business Unit Type</b></td>
+                                        <td>:</td>
+                                        @if (Model.Business_Unit_Type_Id == "Party")
+                                        {
+                                            obane = "JOP 3rd Party";
+                                        }
+                                        else if (Model.Business_Unit_Type_Id == "JOP_Common")
+                                        {
+                                            obane = "JOP- Common Area";
+                                        }
+                                        else if (Model.Business_Unit_Type_Id == "Master_Community")
+                                        {
+                                            obane = "Master Community";
+                                        }
+                                        else
+                                        {
+                                            obane = "N/A";
+                                        }
+                                        <td class="tdtxt" style="word-break: break-all">@obane</td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <label for="example-number-input" class="col-md-6 col-form-label">Audit Team</label>
+                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.L_Aud_Internal_Audit_Team!)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Auditor_Id</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="example-number-input" class="col-md-6 col-form-label">Service Provider Team</label>
+                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.L_Aud_Internal_Service_Provider_Team!)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Service_Provider_Id</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

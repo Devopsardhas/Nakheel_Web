@@ -1,0 +1,698 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Observation Action Closure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+    .error {
+        color: red !important;
+        font-size: 12px;
+    }
+</style>
+@model IReadOnlyCollection<Nakheel_Web.Models.IncidentReport.M_Observation_Corrective_Action>;
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="" style="margin-top:16px"> <h4 class="card-title">Action Closure List</h4></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblActionClosure" class="table table-sm table-striped dt-responsive nowrap tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Observation ID</th>
+                            <th>Responsible Name</th>
+                            <th>Created Date</th>
+                            @*<th>Target Date</th>*@
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                    {
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@item.Obser_UId</td>
+                                        <td align="left" valign="middle">@item.Responsible_Name</td>
+                                        <td align="left" valign="middle">@item.Description_Action</td>
+                                        @*<td align="left" valign="middle">@item.Target_Date</td>*@
+                                        @if (item.Status == "Observation Action Closure Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5" && LoginClass.Employee_Identity_Id == item.Responsible_Id)
+                                                    {
+                                                        <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id,@item.Responsible_Id)" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                        <a onclick="Closure_ReAssign(@item.Inc_Observation_Id, @item.Obs_Corrective_Action_Id, @item.Obs_Reject_Id, @item.RejectedBy)" href="javascript:void(0);" title="Re-Assign" class="text-danger" data-bs-original-title="Re-Assign" aria-label="Re-assign"> <i class="mdi mdi-sync font-size-20"></i></a>
+                                                    }
+                                                    else if (LoginClass.Employee_Identity_Id == item.Responsible_Id)
+                                                    {
+                                                        <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id,@item.Responsible_Id)" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    }
+                                                    else if (LoginClass.Role_Id == "5")
+                                                    {
+                                                        <a onclick="Closure_View(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                        <a onclick="Closure_ReAssign(@item.Inc_Observation_Id, @item.Obs_Corrective_Action_Id, @item.Obs_Reject_Id, @item.RejectedBy)" href="javascript:void(0);" title="Re-Assign" class="text-danger" data-bs-original-title="Re-Assign" aria-label="Re-assign"> <i class="mdi mdi-sync font-size-20"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id,@item.Responsible_Id)" href="javascript:void(0);" title="Review" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Observation Action Approval Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-info">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5")
+                                                    {
+                                                        <a onclick="Closure_View(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-info" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Closure_View(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-info" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Closure Action Approval Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12")
+                                                    {
+                                                        <a onclick="Closure_Edit_HSE(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Closure_Edit_HSE(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Action Closure Approved")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    <a onclick="Closure_View(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        }
+                                        
+                                        @if (item.Status == "Observation Rejected")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                                    {
+                                                        <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-reload font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@item.Obser_UId</td>
+                                        <td align="left" valign="middle">@item.Responsible_Name</td>
+                                        <td align="left" valign="middle">@item.Description_Action</td>
+                                        @*<td align="left" valign="middle">@item.Target_Date</td>*@
+                                        @if (item.Status == "Observation Action Closure Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id,@item.Responsible_Id)" title="" class="text-success" data-bs-original-title="Edit" aria-label="View" style="cursor:pointer"><i class="mdi mdi-pencil font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Observation Action Approval Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-info">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    <a onclick="Closure_View(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Action Closure Approved")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    <a onclick="Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Status == "Observation Rejected")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    <a onclick="Obs_Closure_Edit(@item.Inc_Observation_Id,@item.Obs_Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-reload font-size-18"></i></a>
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="Obs_Corrective_Action_Id" />
+<input type="hidden" id="Inc_Observation_Id" />
+<input type="hidden" id="Zone_Id" />
+<input type="hidden" id="Community_Id" />
+<form id="F_CA_Observation_Report" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+    <div id="Inc_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">View Observation</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="ViewIncidentList">
+                    </div>
+                    <div class="row">
+                        <input type="hidden" id="Responsible_Id" value="" />
+                        <label for="example-number-input" class="col-md-4 col-form-label">Action Taken<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Description_Action" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-12">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Obs()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@*<form id="F_CA_Observation_Report" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+    <div id="Obs_Zone_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">View Observation</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="ViewIncidentList">
+                    </div>
+                    <div class="row">
+                        <input type="hidden" id="Responsible_Id" value="" />
+                        <label for="example-number-input" class="col-md-4 col-form-label">Action Taken<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Description_Action" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-12">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Obs()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>*@
+<div id="Inc_View_Evidence_Photos" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Observation </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback_Ev" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewIncidentList_Obs_Report">
+                </div>
+                <div id="ViewIncidentList_Supervisor">
+                </div>
+                <div id="ReassingEmployee" style="display:none">
+                    <input type="hidden" id="corr_id" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Re-Assign Employee<span class="requ">*</span></label>
+                            <select class="form-control EmpListName" id="Re_Assign_Employee"></select>
+                            <label id="txtvalidemailaction_remarks" style="color:red"> </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Reason for Re-Assign<span class="requ">*</span></label>
+                            <textarea class="form-control" id="Reason_Re_Assign" style="height:40px"></textarea>
+                            @*<label id="txtvalidemailaction_remarks" style="color:red"> </label>*@
+                        </div>
+                    </div>
+                    <br />
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_ReAssign()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*@if (Model != null)
+                {
+                    @if (LoginClass.Role_Id == "5")
+                    {
+                        <div class="" id="btnNotReassign">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_Action_Closure_Supervisor()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new" style="cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Observation</h5>
+                @*<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>*@
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="Obs_Reject_Id" id="Obs_Reject_Id" value="0">
+                            <input class="form-control" name="Reject_Reason_Stage" id="Reject_Reason_Stage" value="Rejected By Zone">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                            <textarea class="form-control" rows="1" cols="100" style="height: 150px;" id="Reject_Reason_Description" name="Reject_Reason_Description" required minlen="1"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="">
+                    <div style="text-align:center;">
+                        <button type="submit" class="btn btn-success" onclick="btn_Reject_Action_Closure_Zone()"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var Zone_Id = $('#Zone_Id').val();
+        var Community_Id = $('#Community_Id').val();
+        
+        ApplySelect2CC("#Re_Assign_Employee");
+
+        $('select[id=Re_Assign_Employee]').change(function () {
+            $('#txtvalidemailaction_remarks').text('');
+        });
+
+        function ApplySelect2CC(id) {
+            $(id).select2({
+                placeholder: "--Select--",
+                theme: 'bootstrap-5',
+            });
+        }
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/ObsUploadPhotoEvidence',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        $("#tblActionClosure").DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $("#tblActionClosure").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+
+    function btn_Submit_Action_Closure_Supervisor() {
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val()
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>
+<script>
+    $("#btn_ViewIncback").on('click', function () {
+        $("#List_View").show(100);
+        $("#Inc_View").hide(100);
+    });
+    $("#btn_ViewIncback_Ev").on('click', function () {
+        $("#List_View").show(100);
+        $("#Inc_View_Evidence_Photos").hide(100);
+    });
+    function Obs_Closure_Edit(val, Obs_Corrective_Action_Id, Responsible_Id) {
+        //alert(val);
+        //debugger;
+        $("#Inc_Observation_Id").val(val);
+        $("#Obs_Corrective_Action_Id").val(Obs_Corrective_Action_Id);
+        $("#Responsible_Id").val(Responsible_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View").show(100);
+        Hzurl = '/Incident/_ViewObservationReport';
+        Hzurl += '/?Inc_Obser_Report_Id=' + val;
+        $("#ViewIncidentList").load(Hzurl);
+    }
+    function btn_Submit_Action_Closure_Obs() {
+        //debugger;
+        //alert("CA");
+        let valid = $("#F_CA_Observation_Report").valid();
+        if (!valid) {
+            return false;
+        }
+        else {
+            var Obj = {
+                Corrective_Action_Id: "0",
+                Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+                Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+                Description_Action: $("#Description_Action").val(),
+                Responsible_Id: $("#Responsible_Id").val()
+            };
+            $.ajax({
+                url: "/Incident/Add_Observation_Corrective_Action",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Updated Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    }
+    function Closure_View(val, Obs_Corrective_Action_Id) {
+        //debugger
+        //alert(val);
+        $("#Inc_Observation_Id").val(val);
+        $("#Obs_Corrective_Action_Id").val(Obs_Corrective_Action_Id);
+        var Corrective_Action_Id = $("#Obs_Corrective_Action_Id").val(Obs_Corrective_Action_Id);
+        $("#List_View").hide(100);
+        //$("#btnNotReassign").show(100);
+        $("#Inc_View_Evidence_Photos").show(100);
+        Hzurl = '/Incident/_ViewObservationReport';
+        Hzurl += '/?Inc_Obser_Report_Id=' + val;
+        $("#ViewIncidentList_Obs_Report").load(Hzurl);
+        Hzurl = '/Incident/_ViewSupervisorObservationReport';
+        Hzurl += '/?Inc_Obser_Report_Id=' + Obs_Corrective_Action_Id;
+        $("#ViewIncidentList_Supervisor").load(Hzurl);
+    }
+    function Closure_ReAssign(val, Obs_Corrective_Action_Id, Obs_Reject_Id, RejectedBy) {
+        $("#Inc_Observation_Id").val(val);
+        $("#Obs_Corrective_Action_Id").val(Obs_Corrective_Action_Id);
+        Load_Emp_List("Supervisor", Obs_Reject_Id, RejectedBy);
+        $("#List_View").hide(100);
+        $("#Inc_View_Evidence_Photos").show(100);
+        //$("#btnNotReassign").hide(100);
+        $("#ReassingEmployee").show(100);
+        Hzurl = '/Incident/_ViewObservationReport';
+        Hzurl += '/?Inc_Obser_Report_Id=' + val;
+        $("#ViewIncidentList_Obs_Report").load(Hzurl);
+        //alert(Hzurl)
+    }
+    function Load_Emp_List(Role_Name, Zone_Id, Community_Id) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $("#Re_Assign_Employee").empty();
+                $("#Re_Assign_Employee").append("<option selected value='0' disabled>--Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $("#Re_Assign_Employee").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+    function btn_Reject_Action_Closure_Zone() {
+        //alert('Reject')
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+            Obs_Reject_Id: $("#Obs_Reject_Id").val(),
+            Reject_Reason_Stage: $("#Reject_Reason_Stage").val(),
+            Reject_Reason_Description: $("#Reject_Reason_Description").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Submit_Action_ReAssign() {
+        if ($("#Re_Assign_Employee").val() == "0" || $("#Re_Assign_Employee").val() == null) {
+            $('#txtvalidemailaction_remarks').text("Please Select Re-Assign Employee");
+            return false;
+        }
+        else {
+            var Obj = {
+                Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+                Responsible_Id: $("#Re_Assign_Employee").val(),
+                Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+                Remarks: $("#Reason_Re_Assign").val(),
+            };
+            $.ajax({
+                url: "/Incident/Obs_Re_Assign_Corrective_Assign_Action",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Updated Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    }
+</script>

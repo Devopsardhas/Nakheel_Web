@@ -1,0 +1,2314 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Landscape
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    b {
+        font-family: 'Nakheel-Textregular' !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
+        padding: 0.1em 0.1em !important;
+        font-size: small !important;
+    }
+
+</style>
+@if (Model != null)
+{
+    @if (Model.Status == "Corrective Action Pending" || Model.Status == "Review Pending")
+    {
+        <form id="FM_Insp_Landscape_CA_WalkIn">
+            <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="@Model.Insp_Request_Id">
+            <div class="table-responsive">
+                <table class="table table-sm Basic_Details">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Business_Unit_Name" class="form-control Business_Unit_Name" rows="1">@Model.Business_Unit_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Zone_Name" class="form-control Zone_Name" rows="1">@Model.Zone_Name</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Community_Name" class="form-control Community_Name" rows="1">@Model.Community_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Building_Name" class="form-control Building_Name" rows="1">@Model.Building_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Inspection_Date" class="form-control Inspection_Date" rows="1">@Model.Inspection_Date</textarea>
+                            </td>
+                        </tr>
+                        @if (LoginClass.Role_Id == "20")
+                        {
+                            <tr>
+                                <td><b class="font-bold">Service Provider</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <select required class="form-control Drop_Search" asp-for="Company_Id" asp-items="@(new SelectList(Model.Insp_landscap_SP_Company_List!,"Value","Text"))">
+                                        <option value="" style="text-align:center;">--Select--</option>
+                                    </select>
+                                </td>
+
+                                <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt" colspan="9">
+                                    <select multiple="multiple" required class="form-control Drop_Search" asp-for="All_Zone_Emp_Id" asp-items="@(new SelectList(Model.Insp_landscap_Zone_Emp_List!,"Value","Text"))">
+                                        <option value="" style="text-align:center;">--Select--</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Edit_Insp_landscap_List != null)
+            {
+                var S_Count = 0;
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive" style="margin-top: 1px;">
+                            <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 3%;">S.No</th>
+                                        <th style="width: 10%;">Description</th>
+                                        <th style="width: 25%;">Scope of Work</th>
+                                        <th style="width: 25%;">#<span class="requ">*</span></th>
+                                        <th style="width: 23%;">Remarks</th>
+                                        <th style="width: 18%;">Photo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                    @foreach (var item in Model.Edit_Insp_landscap_List)
+                                    {
+                                        @if (item.Edit_Insp_landscap_Sub_List != null)
+                                        {
+                                            var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                            foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                            {
+                                                @if (item_Sub.ROW_NUMBER == "1")
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td rowspan="@Sub_Count">
+                                                            <label>@item.ROW_NUMBER</label>
+                                                        </td>
+                                                        <td rowspan="@Sub_Count">
+                                                            <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="0" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Insp_landscap_History_List != null && Model.Insp_landscap_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                               <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_landscap_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+            @if (LoginClass.Role_Id == "20")
+            {
+                <div class="row">
+                    <div class="col-lg-6">
+                        <br>
+                        <button onclick="Fn_Landscape_Qns_CA_Submit()" type="button" class="btn Fn_Landscape_Qns_Submit btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            }
+        </form>
+    }
+    else if (Model.Status == "Action Closure Pending" || Model.Status == "All Action Completed")
+    {
+        <form id="FM_Insp_Landscape_AC_WalkIn">
+            <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="@Model.Insp_Request_Id">
+            <div class="table-responsive">
+                <table class="table table-sm Basic_Details">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Business_Unit_Name" class="form-control Business_Unit_Name" rows="1">@Model.Business_Unit_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Zone_Name" class="form-control Zone_Name" rows="1">@Model.Zone_Name</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Community_Name" class="form-control Community_Name" rows="1">@Model.Community_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Building_Name" class="form-control Building_Name" rows="1">@Model.Building_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Inspection_Date" class="form-control Inspection_Date" rows="1">@Model.Inspection_Date</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Responsible Department</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Responsible_Dept" class="form-control Responsible_Dept" rows="1">@Model.Responsible_Dept</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Assigned To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="9">
+                                @if (@Model.Responsible_Dept == "NCM Staff")
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name</textarea>
+                                }
+                                else
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name - ( @Model.All_Service_Emp )</textarea>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="12">
+                                <textarea disabled id="All_Zone_Emp_Id" class="form-control All_Zone_Emp_Id" rows="1">@Model.All_Zone_Emp_Id</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Edit_Insp_landscap_List != null)
+            {
+                var S_Count = 0;
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive" style="margin-top: 1px;">
+                            <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 3%;">S.No</th>
+                                        <th style="width: 7%;">Description</th>
+                                        <th style="width: 25%;">Scope of Work</th>
+                                        <th style="width: 10%;">#</th>
+                                        <th style="width: 15%;">Remarks</th>
+                                        <th style="width: 5%;">Photo</th>
+                                        <th style="width: 18%;">Action Taken Details</th>
+                                        <th style="width: 6%;">Evidence</th>
+                                        <th style="width: 10%;">Action Taken By</th>
+                                        <th style="width: 9%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                    @foreach (var item in Model.Edit_Insp_landscap_List)
+                                    {
+                                        @if (item.Edit_Insp_landscap_Sub_List != null)
+                                        {
+                                            var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                            foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                            {
+                                                @if (item_Sub.ROW_NUMBER == "1")
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td rowspan="@Sub_Count">
+                                                            <label>@item.ROW_NUMBER</label>
+                                                        </td>
+                                                        <td rowspan="@Sub_Count">
+                                                            <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                        {
+                                                            @if (@item_Sub.Status == "1")
+                                                            {
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td><label style="color: #17a2b8;">Closure Pending</label></td>
+                                                            }
+                                                            else if (@item_Sub.Status == "2")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td><label style="color: red;">Rejected</label></td>
+                                                            }
+                                                            else if (@item_Sub.Status == "3")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (LoginClass.Employee_Identity_Id == Model.CreatedBy)
+                                                                    {
+                                                                        <a href="#" onclick="L_CA_Action_Approve('@item_Sub.Landscape_Qns_Id','Approve','@item_Sub.Insp_Request_Id')" data-toggle="tooltip" title="Approve!"><i style="color:green;" class="fa fa-thumbs-up"></i>&nbsp;&nbsp;</a>
+                                                                        <a href="#" onclick="Fn_CA_Rej_Model(@item_Sub.Landscape_Qns_Id)" data-bs-toggle="modal" data-bs-target=".Add_CA_Rej" data-toggle="tooltip" title="Reject!"><i style="color:red;" class="fa fa-thumbs-down"></i></a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label style="color: #17a2b8;">Approval Pending</label>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                            else if (@item_Sub.Status == "4")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label style="color: green;">Approved</label>
+                                                                </td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                        }
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                        {
+                                                            @if (@item_Sub.Status == "1")
+                                                            {
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td><label style="color: #17a2b8;">Closure Pending</label></td>
+                                                            }
+                                                            else if (@item_Sub.Status == "2")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td><label style="color: red;">Rejected</label></td>
+                                                            }
+                                                            else if (@item_Sub.Status == "3")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (LoginClass.Employee_Identity_Id == Model.CreatedBy)
+                                                                    {
+                                                                        <a href="#" onclick="L_CA_Action_Approve('@item_Sub.Landscape_Qns_Id','Approve','@item_Sub.Insp_Request_Id')" data-toggle="tooltip" title="Approve!"><i style="color:green;" class="fa fa-thumbs-up"></i>&nbsp;&nbsp;</a>
+                                                                        <a href="#" onclick="Fn_CA_Rej_Model(@item_Sub.Landscape_Qns_Id)" data-bs-toggle="modal" data-bs-target=".Add_CA_Rej" data-toggle="tooltip" title="Reject!"><i style="color:red;" class="fa fa-thumbs-down"></i></a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label style="color: #17a2b8;">Approval Pending</label>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                            else if (@item_Sub.Status == "4")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td>
+                                                                    <label style="color: green;">Approved</label>
+                                                                </td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                        }
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Insp_landscap_History_List != null && Model.Insp_landscap_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                              <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_landscap_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    }
+    else if (Model.Status == "TCOE Manager Approval Pending")
+    {
+        <form id="FM_Insp_Landscape_TCOE_WalkIn">
+            <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="@Model.Insp_Request_Id">
+            <div class="table-responsive">
+                <table class="table table-sm Basic_Details">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Business_Unit_Name" class="form-control Business_Unit_Name" rows="1">@Model.Business_Unit_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Zone_Name" class="form-control Zone_Name" rows="1">@Model.Zone_Name</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Community_Name" class="form-control Community_Name" rows="1">@Model.Community_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Building_Name" class="form-control Building_Name" rows="1">@Model.Building_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Inspection_Date" class="form-control Inspection_Date" rows="1">@Model.Inspection_Date</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Responsible Department</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Responsible_Dept" class="form-control Responsible_Dept" rows="1">@Model.Responsible_Dept</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Assigned To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="9">
+                                @if (@Model.Responsible_Dept == "NCM Staff")
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name</textarea>
+                                }
+                                else
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name - ( @Model.All_Service_Emp )</textarea>
+                                }
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="12">
+                                <textarea disabled id="All_Zone_Emp_Id" class="form-control All_Zone_Emp_Id" rows="1">@Model.All_Zone_Emp_Id</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Edit_Insp_landscap_List != null)
+            {
+                var S_Count = 0;
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive" style="margin-top: 1px;">
+                            <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 3%;">S.No</th>
+                                        <th style="width: 7%;">Description</th>
+                                        <th style="width: 18%;">Scope of Work</th>
+                                        <th style="width: 10%;">#</th>
+                                        <th style="width: 12%;">Remarks</th>
+                                        <th style="width: 5%;">Photo</th>
+                                        <th style="width: 13%;">Action Taken Details</th>
+                                        <th style="width: 6%;">Evidence</th>
+                                        <th style="width: 8%;">Action Taken By</th>
+                                        <th class="If_Status_Class" style="width: 8%;">Status</th>
+                                        <th class="If_Reject_Class" style="width: 5%; display:none;">If Reject</th>
+                                        <th class="If_Reject_Class" style="width: 15%; display:none;">Reject Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                    @foreach (var item in Model.Edit_Insp_landscap_List)
+                                    {
+                                        @if (item.Edit_Insp_landscap_Sub_List != null)
+                                        {
+                                            var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                            foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                            {
+                                                @if (item_Sub.ROW_NUMBER == "1")
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td rowspan="@Sub_Count">
+                                                            <label>@item.ROW_NUMBER</label>
+                                                        </td>
+                                                        <td rowspan="@Sub_Count">
+                                                            <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                        {
+                                                            @if (@item_Sub.Status == "4")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td class="If_Status_Class">
+                                                                    <label style="color: green;">Approved</label>
+                                                                </td>
+                                                                <td class="If_Reject_Class" style="display:none;">
+                                                                    <label><input type="checkbox" onclick="Fn_Check_Box_Reject('@S_Count')" class="If_Check_Reject" id="If_Check_Reject_@S_Count" name="If_Check_Reject_@S_Count" value="Bike"></label>
+                                                                </td>
+                                                                <td class="If_Reject_Class" style="display:none;">
+                                                                    <textarea required disabled id="Reject_Reason_Chk_@S_Count" name="Reject_Reason_Chk_@S_Count" class="form-control Reject_Reason_Chk" rows="1"></textarea>
+                                                                </td>
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td class="If_Reject_Class" style="text-align: center; display:none;">--</td>
+                                                        }
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                        {
+                                                            @if (@item_Sub.Status == "4")
+                                                            {
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Description</label>
+                                                                </td>
+                                                                <td>
+                                                                    @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                    {
+                                                                        var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                        <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    <label>@item_Sub.Closure_Emp_Name</label>
+                                                                </td>
+                                                                <td class="If_Status_Class">
+                                                                    <label style="color: green;">Approved</label>
+                                                                </td>
+                                                                <td class="If_Reject_Class" style="display:none;">
+                                                                    <label><input type="checkbox" onclick="Fn_Check_Box_Reject('@S_Count')" class="If_Check_Reject" id="If_Check_Reject_@S_Count" name="If_Check_Reject_@S_Count" value="Bike"></label>
+                                                                </td>
+                                                                <td class="If_Reject_Class" style="display:none;">
+                                                                    <textarea required disabled id="Reject_Reason_Chk_@S_Count" name="Reject_Reason_Chk_@S_Count" class="form-control Reject_Reason_Chk" rows="1"></textarea>
+                                                                </td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td style="text-align: center;">--</td>
+                                                            <td class="If_Reject_Class" style="text-align: center; display:none;">--</td>
+                                                        }
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Insp_landscap_History_List != null && Model.Insp_landscap_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                              <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_landscap_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Status == "TCOE Manager Approval Pending")
+            {
+                @if (LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8")
+                {
+                    <div class="row col-lg-12" id="Approve_Submit_Div">
+                        <div class="col-lg-6" style="text-align: right;">
+                            <br>
+                            <button data-bs-toggle="modal" data-bs-target=".Final_Add_CA_Approve" onclick="Fn_Final_CA_Approval('@Model.Insp_Request_Id')" type="button" style="background-color: green; border-color: green;" class="btn btn-success Fn_Spot_Find_Approval">
+                                Approve
+                            </button>
+                        </div>
+                        <div class="col-lg-6" style="text-align: left;">
+                            <br>
+                            <button onclick="Fn_btn_Reject_View()" type="button" class="btn btn-danger btn_Submit" id="btn-save-event"> Reject</button>
+                        </div>
+                    </div>
+
+                    <div class="row col-lg-12" id="Reject_Submit_Div" style="display:none;">
+                        <div class="col-lg-6" style="text-align: right;">
+                            <br>
+                            <button onclick="Multiple_Reject_CA_Add()" type="button" style="background-color: green; border-color: green;" class="btn btn-success Fn_Spot_Find_Approval">
+                                Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6" style="text-align: left;">
+                            <br>
+                            <button onclick="Fn_btn_Cancel_View()" type="button" class="btn btn-danger btn_Submit" id="btn-save-event"> Cancel</button>
+                        </div>
+                    </div>
+                }
+            }
+        </form>
+    }
+    else if (Model.Status == "TCOE Manager Review Pending")
+    {
+        <form id="FM_Insp_Landscape_TCOE_WalkIn">
+            <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="@Model.Insp_Request_Id">
+            <div class="table-responsive">
+                <table class="table table-sm Basic_Details">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Business_Unit_Name" class="form-control Business_Unit_Name" rows="1">@Model.Business_Unit_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Zone_Name" class="form-control Zone_Name" rows="1">@Model.Zone_Name</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Community_Name" class="form-control Community_Name" rows="1">@Model.Community_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Building_Name" class="form-control Building_Name" rows="1">@Model.Building_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Inspection_Date" class="form-control Inspection_Date" rows="1">@Model.Inspection_Date</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Responsible Department</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Responsible_Dept" class="form-control Responsible_Dept" rows="1">@Model.Responsible_Dept</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Assigned To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="9">
+                                @if (@Model.Responsible_Dept == "NCM Staff")
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name</textarea>
+                                }
+                                else
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name - ( @Model.All_Service_Emp )</textarea>
+                                }
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="12">
+                                <textarea disabled id="All_Zone_Emp_Id" class="form-control All_Zone_Emp_Id" rows="1">@Model.All_Zone_Emp_Id</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Edit_Insp_landscap_List != null)
+            {
+                var S_Count = 0;
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive" style="margin-top: 1px;">
+                            <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 3%;">S.No</th>
+                                        <th style="width: 7%;">Description</th>
+                                        <th style="width: 18%;">Scope of Work</th>
+                                        <th style="width: 10%;">#</th>
+                                        <th style="width: 12%;">Remarks</th>
+                                        <th style="width: 5%;">Photo</th>
+                                        @* <th style="width: 13%;">Action Taken Details</th>
+                            <th style="width: 6%;">Evidence</th>
+                            <th style="width: 8%;">Action Taken By</th>
+                            <th class="If_Status_Class" style="width: 8%;">Status</th>
+                            <th class="If_Reject_Class" style="width: 5%; display:none;">If Reject</th>
+                            <th class="If_Reject_Class" style="width: 15%; display:none;">Reject Reason</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                    @foreach (var item in Model.Edit_Insp_landscap_List)
+                                    {
+                                        @if (item.Edit_Insp_landscap_Sub_List != null)
+                                        {
+                                            var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                            foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                            {
+                                                @if (item_Sub.ROW_NUMBER == "1")
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td rowspan="@Sub_Count">
+                                                            <label>@item.ROW_NUMBER</label>
+                                                        </td>
+                                                        <td rowspan="@Sub_Count">
+                                                            <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @*@if (@item_Sub.Qns_Action == "Not- Accepted")
+                            {
+                            @if (@item_Sub.Status == "4")
+                            {
+                            <td>
+                            <label>@item_Sub.Closure_Description</label>
+                            </td>
+                            <td>
+                            @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                            {
+                            var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                            <a href="@item_Sub.Closure_File_Path" target="_blank">
+                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                            {
+                            <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                            }
+                            else
+                            {
+                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                            }
+                            </a>
+                            }
+                            else
+                            {
+                            <label>NA</label>
+                            }
+                            </td>
+                            <td>
+                            <label>@item_Sub.Closure_Emp_Name</label>
+                            </td>
+                            <td class="If_Status_Class">
+                            <label style="color: green;">Approved</label>
+                            </td>
+                            <td class="If_Reject_Class" style="display:none;">
+                            <label><input type="checkbox" onclick="Fn_Check_Box_Reject('@S_Count')" class="If_Check_Reject" id="If_Check_Reject_@S_Count" name="If_Check_Reject_@S_Count" value="Bike"></label>
+                            </td>
+                            <td class="If_Reject_Class" style="display:none;">
+                            <textarea required disabled id="Reject_Reason_Chk_@S_Count" name="Reject_Reason_Chk_@S_Count" class="form-control Reject_Reason_Chk" rows="1"></textarea>
+                            </td>
+                            }
+
+                            }
+                            else
+                            {
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td class="If_Reject_Class" style="text-align: center; display:none;">--</td>
+                            }*@
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                        <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                        <td>
+                                                            <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Action</label>
+                                                        </td>
+                                                        <td>
+                                                            <label>@item_Sub.Qns_Remarks</label>
+                                                        </td>
+                                                        <td>
+                                                            @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                            {
+                                                                var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                <a href="@item_Sub.File_Path" target="_blank">
+                                                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                    {
+                                                                        <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                    }
+                                                                </a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <label>NA</label>
+                                                            }
+                                                        </td>
+                                                        @*@if (@item_Sub.Qns_Action == "Not- Accepted")
+                            {
+                            @if (@item_Sub.Status == "4")
+                            {
+                            <td>
+                            <label>@item_Sub.Closure_Description</label>
+                            </td>
+                            <td>
+                            @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                            {
+                            var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                            <a href="@item_Sub.Closure_File_Path" target="_blank">
+                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                            {
+                            <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                            }
+                            else
+                            {
+                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                            }
+                            </a>
+                            }
+                            else
+                            {
+                            <label>NA</label>
+                            }
+                            </td>
+                            <td>
+                            <label>@item_Sub.Closure_Emp_Name</label>
+                            </td>
+                            <td class="If_Status_Class">
+                            <label style="color: green;">Approved</label>
+                            </td>
+                            <td class="If_Reject_Class" style="display:none;">
+                            <label><input type="checkbox" onclick="Fn_Check_Box_Reject('@S_Count')" class="If_Check_Reject" id="If_Check_Reject_@S_Count" name="If_Check_Reject_@S_Count" value="Bike"></label>
+                            </td>
+                            <td class="If_Reject_Class" style="display:none;">
+                            <textarea required disabled id="Reject_Reason_Chk_@S_Count" name="Reject_Reason_Chk_@S_Count" class="form-control Reject_Reason_Chk" rows="1"></textarea>
+                            </td>
+                            }
+                            }
+                            else
+                            {
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td style="text-align: center;">--</td>
+                            <td class="If_Reject_Class" style="text-align: center; display:none;">--</td>
+                            }*@
+                                                    </tr>
+                                                    S_Count++;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Insp_landscap_History_List != null && Model.Insp_landscap_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                               <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_landscap_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Status == "TCOE Manager Review Pending")
+            {
+                @if (LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8")
+                {
+                    <div class="row col-lg-12" id="Approve_Submit_Div">
+                        <div class="col-lg-6" style="text-align: right;">
+                            <br>
+                            <button data-bs-toggle="modal" data-bs-target=".Final_Add_CA_Approve" onclick="Fn_Final_CA_Approval('@Model.Insp_Request_Id')" type="button" style="background-color: green; border-color: green;" class="btn btn-success Fn_Spot_Find_Approval">
+                                Approve
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+        </form>
+    }
+    else if (Model.Status == "Completed")
+    {
+        <form id="FM_Insp_Landscape_TCOE_WalkIn">
+            <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="@Model.Insp_Request_Id">
+            <div class="table-responsive">
+                <table class="table table-sm Basic_Details">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Business_Unit_Name" class="form-control Business_Unit_Name" rows="1">@Model.Business_Unit_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Zone_Name" class="form-control Zone_Name" rows="1">@Model.Zone_Name</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Community_Name" class="form-control Community_Name" rows="1">@Model.Community_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Building_Name" class="form-control Building_Name" rows="1">@Model.Building_Name</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Inspection_Date" class="form-control Inspection_Date" rows="1">@Model.Inspection_Date</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Responsible Department</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <textarea disabled id="Responsible_Dept" class="form-control Responsible_Dept" rows="1">@Model.Responsible_Dept</textarea>
+                            </td>
+
+                            <td><b class="font-bold">Assigned To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="9">
+                                @if (@Model.Responsible_Dept == "NCM Staff")
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name</textarea>
+                                }
+                                else
+                                {
+                                    <textarea disabled id="Company_Id" class="form-control Company_Id" rows="1">@Model.Company_Name - ( @Model.All_Service_Emp )</textarea>
+                                }
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="12">
+                                <textarea disabled id="All_Zone_Emp_Id" class="form-control All_Zone_Emp_Id" rows="1">@Model.All_Zone_Emp_Id</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Edit_Insp_landscap_List != null)
+            {
+                var S_Count = 0;
+
+                @if (Model.If_Corrective_Action == "Yes")
+                {
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive" style="margin-top: 1px;">
+                                <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 3%;">S.No</th>
+                                            <th style="width: 7%;">Description</th>
+                                            <th style="width: 18%;">Scope of Work</th>
+                                            <th style="width: 10%;">#</th>
+                                            <th style="width: 12%;">Remarks</th>
+                                            <th style="width: 5%;">Photo</th>
+                                            <th style="width: 13%;">Action Taken Details</th>
+                                            <th style="width: 6%;">Evidence</th>
+                                            <th style="width: 8%;">Action Taken By</th>
+                                            <th style="width: 8%;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                        @foreach (var item in Model.Edit_Insp_landscap_List)
+                                        {
+                                            @if (item.Edit_Insp_landscap_Sub_List != null)
+                                            {
+                                                var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                                foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                                {
+                                                    @if (item_Sub.ROW_NUMBER == "1")
+                                                    {
+                                                        <tr>
+                                                            <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                            <td rowspan="@Sub_Count">
+                                                                <label>@item.ROW_NUMBER</label>
+                                                            </td>
+                                                            <td rowspan="@Sub_Count">
+                                                                <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Action</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Remarks</label>
+                                                            </td>
+                                                            <td>
+                                                                @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                                {
+                                                                    var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                    <a href="@item_Sub.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                        {
+                                                                            <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                            @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                            {
+                                                                @if (@item_Sub.Status == "4")
+                                                                {
+                                                                    <td>
+                                                                        <label>@item_Sub.Closure_Description</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                        {
+                                                                            var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                            <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                                @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                                {
+                                                                                    <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                                }
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label>NA</label>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        <label>@item_Sub.Closure_Emp_Name</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label style="color: green;">Approved</label>
+                                                                    </td>
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                            }
+                                                        </tr>
+                                                        S_Count++;
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                            <td>
+                                                                <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Action</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Remarks</label>
+                                                            </td>
+                                                            <td>
+                                                                @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                                {
+                                                                    var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                    <a href="@item_Sub.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                        {
+                                                                            <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                            @if (@item_Sub.Qns_Action == "Not- Accepted")
+                                                            {
+                                                                @if (@item_Sub.Status == "4")
+                                                                {
+                                                                    <td>
+                                                                        <label>@item_Sub.Closure_Description</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (@item_Sub.Closure_File_Path != "" && @item_Sub.Closure_File_Path != null)
+                                                                        {
+                                                                            var extn = @item_Sub.Closure_File_Path!.Split(".").Last();
+                                                                            <a href="@item_Sub.Closure_File_Path" target="_blank">
+                                                                                @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                                {
+                                                                                    <img target="_blank" src="@item_Sub.Closure_File_Path" width="30" height="30">
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                                }
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label>NA</label>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        <label>@item_Sub.Closure_Emp_Name</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <label style="color: green;">Approved</label>
+                                                                    </td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                                <td style="text-align: center;">--</td>
+                                                            }
+                                                        </tr>
+                                                        S_Count++;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="table-responsive" style="margin-top: 1px;">
+                                <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 3%;">S.No</th>
+                                            <th style="width: 7%;">Description</th>
+                                            <th style="width: 18%;">Scope of Work</th>
+                                            <th style="width: 10%;">#</th>
+                                            <th style="width: 12%;">Remarks</th>
+                                            <th style="width: 5%;">Photo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                        @foreach (var item in Model.Edit_Insp_landscap_List)
+                                        {
+                                            @if (item.Edit_Insp_landscap_Sub_List != null)
+                                            {
+                                                var Sub_Count = @item.Edit_Insp_landscap_Sub_List.Count();
+
+                                                foreach (var item_Sub in item.Edit_Insp_landscap_Sub_List)
+                                                {
+                                                    @if (item_Sub.ROW_NUMBER == "1")
+                                                    {
+                                                        <tr>
+                                                            <input type="hidden" value="@item.Insp_Landscap_Mas_Id" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Id" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                            <td rowspan="@Sub_Count">
+                                                                <label>@item.ROW_NUMBER</label>
+                                                            </td>
+                                                            <td rowspan="@Sub_Count">
+                                                                <label><b>@item.Insp_Landscap_Mas_Name</b></label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Action</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Remarks</label>
+                                                            </td>
+                                                            <td>
+                                                                @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                                {
+                                                                    var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                    <a href="@item_Sub.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                        {
+                                                                            <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        S_Count++;
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <input type="hidden" value="@item.Insp_Landscap_Mas_Name" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Insp_Landscap_Sub_Mas_Name" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                            <input type="hidden" value="@item_Sub.Landscape_Qns_Id" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                            <td>
+                                                                <label>@item_Sub.ROW_NUMBER. @item_Sub.Insp_Landscap_Sub_Mas_Name</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Action</label>
+                                                            </td>
+                                                            <td>
+                                                                <label>@item_Sub.Qns_Remarks</label>
+                                                            </td>
+                                                            <td>
+                                                                @if (@item_Sub.File_Path != "" && @item_Sub.File_Path != null)
+                                                                {
+                                                                    var extn = @item_Sub.File_Path!.Split(".").Last();
+                                                                    <a href="@item_Sub.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                        {
+                                                                            <img target="_blank" src="@item_Sub.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        S_Count++;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            }
+
+            @if (Model.Insp_landscap_History_List != null && Model.Insp_landscap_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                               <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_landscap_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    }
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        minDate_valid = minDate;
+        $('.Target_Date').attr('min', minDate);
+        ApplySelect2(".Drop_Search");
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Fn_Landscape_Qns_CA_Submit() {
+        debugger
+        let valid = $("#FM_Insp_Landscape_CA_WalkIn").valid();
+        if (!valid) {
+            $(window).scrollTop(0);
+            toastr.error("Please fill all mandatory fields", "Error");
+            ApplySelect2(".Drop_Search");
+            return false;
+        }
+
+        var All_Zone_Emp_List = [];
+        var varCompany_Id = $("#Company_Id").val();
+        var var_Zone_Emp_Id = $("#All_Zone_Emp_Id").val();
+        $(var_Zone_Emp_Id).each(function (i, b) {
+            var item = {};
+            item.Value = b,
+                All_Zone_Emp_List.push(item);
+        });
+
+        var Obj = {
+            Insp_Request_Id: $("#Insp_Request_Id").val(),
+            Company_Id: varCompany_Id,
+            Insp_landscap_Zone_Emp_List: All_Zone_Emp_List,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Landscape_CA_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function ClosureQnsUploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger
+                    if (data == "[\"Invalid Format\"]") {
+                        $("#" + inputId).val("");
+                        toastr["error"]("Invalid Format");
+                    } else {
+                        $(".Div_Leader_UploadPicture").hide();
+                        $("#" + UploadPhotoId).val("");
+                        $("#" + UploadPhotoId).val(data);
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["error"]("Maximum Allowed 5 Files");
+        }
+    }
+
+
+    function FnActionClosureSubmit(id) {
+        var closue_desc = "#Closure_Description_" + id;
+        var hdn_Closure_file_paths = "#hdn_Closure_Qns_file_Value_" + id;
+        var Landscape_Qns_Id = "#Landscape_Qns_Id_" + id;
+        let valid = $("#FM_Insp_Landscape_AC_WalkIn").valid();
+        if (!valid) {
+            $(closue_desc).focus()
+            return false;
+        }
+        var hdn_Closure_file_path = $(hdn_Closure_file_paths).val();
+        var Closure_File_Path = "";
+
+        if (hdn_Closure_file_path != "" && hdn_Closure_file_path != null) {
+            var val_UploadPhotos = hdn_Closure_file_path.split(',');
+            var i;
+            for (i = 0; i < val_UploadPhotos.length; i++) {
+                var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                if (x != "/") {
+                    Closure_File_Path = x;
+                }
+            }
+        }
+
+        var Obj = {
+            Landscape_Qns_Id: $(Landscape_Qns_Id).val(),
+            Closure_Description: $(closue_desc).val(),
+            Closure_File_Path: Closure_File_Path,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Landscape_CA_Closue_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        if (data.Return_1 == 0) {
+                            window.location.reload();
+                        } else {
+                            Landscape_Edit(data.Return_1);
+                            //var url = "/Inspection/Insp_Safety_Violation_Temp?id=" + data.Return_2;
+                            //window.location.href = url;
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function L_CA_Action_Approve(id, Name, Insp_Request_Id) {
+        debugger
+        var Obj = {
+            Landscape_Qns_Id: id,
+            Remarks: Name,
+            Insp_Request_Id: Insp_Request_Id,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Landscape_CA_Approval",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approve Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        if (data.Return_1 == 0) {
+                            window.location.reload();
+                        } else {
+                            Landscape_Edit(Insp_Request_Id);
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function Fn_btn_Reject_View() {
+        $("#Approve_Submit_Div").hide();
+        $(".If_Status_Class").hide();
+        $(".If_Reject_Class").show();
+        $("#Reject_Submit_Div").show();
+        $(window).scrollTop(0);
+    }
+    function Fn_btn_Cancel_View() {
+        $("#Approve_Submit_Div").show();
+        $(".If_Status_Class").show();
+        $(".If_Reject_Class").hide();
+        $("#Reject_Submit_Div").hide();
+        $(window).scrollTop(0);
+    }
+
+    function Fn_Check_Box_Reject(id) {
+        debugger
+        if ($("#If_Check_Reject_" + id).is(':checked')) {
+            $("#Reject_Reason_Chk_" + id).removeAttr('disabled');
+        }
+        else {
+            $("#Reject_Reason_Chk_" + id).attr('disabled', 'disabled');
+            $("#Reject_Reason_Chk_" + id).val("");
+        }
+    }
+    function Multiple_Reject_CA_Add() {
+        debugger
+        var data_Arr = [];
+
+        let valid = $("#FM_Insp_Landscape_TCOE_WalkIn").valid();
+        if (!valid) {
+            $(window).scrollTop(0);
+            return false;
+        }
+
+        $('#tbl_Insp_Landscape_Qns tbody > tr').each(function () {
+            var varCheckbox_Id = $(this).closest('tr').find("input[type=checkbox]").prop('checked');
+            if (varCheckbox_Id == true) {
+                var varReject_Reason_Chk = $(this).closest('tr').find('.Reject_Reason_Chk').val();
+                var varLandscape_Qns_Id = $(this).closest('tr').find('.Landscape_Qns_Id').val();
+
+                var data = {};
+                data.Reject_Reason = varReject_Reason_Chk;
+                data.Landscape_Qns_Id = varLandscape_Qns_Id;
+                data.Remarks = "Reject";
+                data_Arr.push(data);
+            }
+        });
+        if (data_Arr.length == "0") {
+            toastr.error("Please select at least one checklist", "Error");
+            $(window).scrollTop(0);
+            return false;
+        }
+
+
+
+        var obj = {
+            Insp_Land_CA_Reject_List: data_Arr,
+        };
+
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("Insp_Landscape_CA_Multi_Reject", "Inspection"))',
+            type: "POST",
+            cache: true,
+            async: false,
+            data: JSON.stringify(obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            },
+            error: function (errormessage) {
+            }
+        });
+
+    }
+
+
+</script>
+
+

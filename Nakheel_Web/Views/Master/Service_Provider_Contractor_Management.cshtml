@@ -1,0 +1,347 @@
+﻿
+@{
+    ViewData["Title"] = "Service Provider/Contractor Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .btn-group, .btn-group-vertical {
+        position: relative;
+        display: inline-flex;
+        vertical-align: middle;
+        float: right !important;
+        margin-top: -62px !important;
+        padding: 32px !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        margin-top: -28px !important;
+    }
+
+    .btn-group, .btn-group-vertical {
+        position: relative;
+        display: inline-flex;
+        vertical-align: middle;
+    }
+
+    .red {
+        color: red
+    }
+
+    td {
+        vertical-align: middle;
+    }
+
+    tr {
+        background: #00263A;
+        color: #fff;
+    }
+
+    .card-body {
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 16px !important;
+    }
+
+    button {
+        font-family: 'Nakheel-Textregular' !important;
+    }
+
+    tr:nth-child(even) {
+        background-color: #00263A;
+    }
+</style>
+
+
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-6"> <h4 class="card-title">Service Provider/Contractor List</h4></div>
+                    <div class="col-lg-4">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btn_add_Employee"><i class="mdi mdi-plus me-1"></i> Add Contractor </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Contractor ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Contractor Type</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Contractor Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Location</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetIncidentList">
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+
+<div class="row" id="Add_Contractor_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Contractor </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+
+                <div class="row">
+                   <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Contractor Name </label>
+                            <input type="text" class="form-control" @*placeholder="Enter Business Unit Name"*@ id="AddOrder-Billing-Name">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Manager</label>
+                            <select class="form-select" data-trigger name="choices-single-default"
+                                    id="choices-single-default" placeholder="--Select Business Unit--">
+                                <option value="">--Select Manager--</option>
+                                <option value="Choice 1">Choice 1</option>
+                                <option value="Choice 2">Choice 2</option>
+                                <option value="Choice 3">Choice 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Mobile No </label>
+                            <input type="text" class="form-control" @*placeholder="Enter Business Unit Name"*@ id="AddOrder-Billing-Name">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Email ID </label>
+                            <input type="text" class="form-control" @*placeholder="Enter Business Unit Name"*@ id="AddOrder-Billing-Name">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Zone</label>
+                            <select class="form-select" data-trigger name="choices-single-default"
+                                    id="choices-single-default" placeholder="--Select Business Unit--">
+                                <option value="">--Select Zone--</option>
+                                <option value="Choice 1">Choice 1</option>
+                                <option value="Choice 2">Choice 2</option>
+                                <option value="Choice 3">Choice 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">Community</label>
+                            <select class="form-select" data-trigger name="choices-single-default"
+                                    id="choices-single-default" placeholder="--Select Business Unit--">
+                                <option value="">--Select Community--</option>
+                                <option value="Choice 1">Choice 1</option>
+                                <option value="Choice 2">Choice 2</option>
+                                <option value="Choice 3">Choice 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Building </label>
+                            <input type="text" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">PO Number </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">DMS Number </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Manager Mobile </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="" class="form-model">HSE Officer</label>
+                            <select class="form-select" data-trigger name="choices-single-default"
+                                    id="choices-single-default" placeholder="--Select Business Unit--">
+                                <option value="">--Select HSE Officer--</option>
+                                <option value="Choice 1">Choice 1</option>
+                                <option value="Choice 2">Choice 2</option>
+                                <option value="Choice 3">Choice 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">HSE Officer Email </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">HSE Officer Mobile </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">HSE Officer Mobile </label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Contract Start Date </label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label" for="AddOrder-Billing-Name">Contract End Date</label>
+                            <input type="date" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div @*class="col-12 text-end"*@ style="text-align:center;">
+
+                        <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#success-btn" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+@*/*BULK UPLOAD*/*@
+
+<div class="row" id="Add_Bulk_Upload" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Bulk Upload</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back1" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+
+                <div class="row">
+                    <div>
+                    </div>
+                    <div class="col-lg-1 ">
+                        <button type="button" style="" download onclick="SampleExcelFile('')" class="btn btn-success waves-effect waves-light">Format</button>
+
+
+                    </div>
+                    <div class="col-lg-6 ">
+                        <input type="file" class="form-control" accept=".xlsx,.xls" />
+
+                    </div>
+                    <div class="col-lg-2 ">
+                        <button type="button" class="btn btn-success waves-effect waves-light" value="Import" onclick="ExcelData()">Upload</button>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row mt-2">
+                    <div @*class="col-12 text-end"*@ style="text-align:center;">
+
+                        <button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#success-btn" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_CONTRACTOR_LIST: "#Add_Contractor_List",
+        ADD_BULK_UPLOAD: "#Add_Bulk_Upload",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        BTN_BACK1: "#btn_back1",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_BULK_UPLOAD: "#btn_Bulk_Upload",
+        BTN_ADD_EMPLOYEE: "#btn_add_Employee",
+    });
+
+    $(document).ready(function () {
+        $(UI_Fields.BTN_ADD_EMPLOYEE).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_CONTRACTOR_LIST).show(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_CONTRACTOR_LIST).hide(100);
+        });
+        $(UI_Fields.BTN_BACK1).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_BULK_UPLOAD).hide(100);
+        });
+        $(UI_Fields.BTN_BULK_UPLOAD).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_BULK_UPLOAD).show(100);
+        });
+    })
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+</script>

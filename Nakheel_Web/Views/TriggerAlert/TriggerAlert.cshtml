@@ -1,0 +1,451 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Trigger Alert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-right: 100px !important;
+        }
+
+        .multiselect-selected-text {
+            display: inline-block;
+            max-width: 100%;
+            word-break: break-all;
+            white-space: normal;
+        }
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+
+        .submit_Approval {
+            background-color: #3CB371;
+        }
+    </style>
+    <style>
+        #map-canvas_view {
+            height: 300px;
+            width: 100%;
+            border-radius: 14px;
+        }
+
+        .txtheader {
+            margin-left: 14px;
+            margin-top: 5px;
+            color: #fff;
+            font-family: 'Nakheel-Textregular';
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="List_View">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Trigger Alert List</h4></div>
+                        @if (LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                        {
+                            <div class="col-lg-2">
+                                <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".Add_Trigger_Alert"><i class="mdi mdi-plus me-1"></i> Add Trigger Alert</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-2" style="padding:13px"></div>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tbl_Trigger_Alert" class="table table-striped tblround table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Alert Id</th>
+                                    <th>Reference Id</th>                                   
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Emergency Type</th>
+                                    <th>Created By</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_Trigger_Alert">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade Add_Trigger_Alert" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add Trigger Alert</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="F_Trigger_Alert" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div style="display:none;">
+                                <div class="form-group">
+                                    <input class="form-control" name="TriggerID" id="TriggerID" value="0">
+                                    <input class="form-control" name="Createdby" id="Createdby" value="@LoginClass.Employee_Identity_Id">
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <label for="" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                                <div class="form-group">
+                                    <select class="form-select Zone_Id" name="Zone_Id" id="Zone_Id" multiple>
+                                       
+                                    </select>
+                                </div>
+                            </div>
+                           @* <div class="col-4">
+                                <label for="" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="form-group">
+                                    <select class="form-select" name="Community_Id" id="Community_Id" onchange="TR_Alert_Fn_Community(this.value);" required>
+                                        <option value="0" style="text-align:center;">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>*@
+                            <div class="col-6">
+                                <label for="" class="col-md-8 col-form-label">Emergency Type<span class="requ">*</span></label>
+                                <div class="form-group">
+                                    <select class="form-select" name="MitigationId" id="MitigationId" required>
+                                      
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <button type="submit" class="btn btn-success"> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div id="Trigger_Alert_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Add Assignee Buildingwise</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_View_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="View_Trigger_Alert_List">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Alert_Chk_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Emergency Action</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_Chk_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <table class="table tab">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Zone</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt" id="Zone_View"></td>
+
+                                    <td><b class="font-bold">Community</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt" id="Comm_View"></td>
+
+                                    <td><b class="font-bold">Mitigation </b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt" id="Mitigation_View"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="row mb-3" style="display:none;">
+                        <div class="col-md-6">
+                            <div id="map-canvas_view">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Spotted Location</label>
+                            <div class="table-responsive">
+                                <table id="Spot_Table" class="table tblround table-sm" style="width:100%">
+                                    <tr style="background-color:#00263a;color:white">
+                                        <th>Location</th>
+                                        <th>Exact Location</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    <tbody id="tbody_Spot">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="row" id="Spot_Txt_Div" style="display:none;">
+                        <label for="example-password-input" class="col-md-2 col-form-label">Spotted Location</label>
+                        <div class="col-md-4">
+                            <textarea readonly id="Spot_Name" class="form-control"></textarea>
+                        </div>
+                        <div class="col-md-2" style="display:none;">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit" id="Close">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Cancel
+                            </button>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="col-md-12" style="display:none" id="Div_Tbl_Spot">
+                        <div class="table-responsive">
+                            <table id="Tbl_Action_Spot" class="table tblround table-sm" style="width:100%">
+                                <tr style="background-color:#00263a;color:white">
+                                    <th>Checklist</th>
+                                    <th>Action Taken</th>
+                                    <th>File Upload</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tbody id="tbody_Action_Spot">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    @if(LoginClass.Role_Id == "5")
+                    {
+                        <div class="row" id="Div_App_Rej" style="display:none">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit_Approval" id="" onclick="Approval_Btn()">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                                <button class="btn btn-danger waves-effect waves-light submit" type="button" data-bs-toggle="modal" data-bs-target=".Reject_trigger">
+                                    Reject <i class="bx bx-list-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade Reject_trigger" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Emergency Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+@*                                <input class="form-control" name="COW_Reject_Id" id="COW_Reject_Id" value="0">
+*@                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Reason" name="Reject_Reason" required minlen="1"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-7">
+                            <button type="submit" class="btn btn-success" onclick="Reject_Emergency_Action()"> Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <div id="Mitigation_Report" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Rain Mitigation Report</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_Report_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="View_Mitigation_Report_List">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="~/assets/js/emergency/emergencyalertvalidation.js"></script>
+<script src="~/assets/js/emergency/serversidedatatabletriggeralert.js"></script>
+<script>
+    var login = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        LIST_VIEW: "#List_View",
+        TBL_TRIGGER_ALERT: "#tbl_Trigger_Alert",
+        TBODY_TRIGGER_ALERT: "#tbody_Trigger_Alert",
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        MIGITATION_ID: "#MitigationId",
+        BTN_CLOSE: ".btn-close",
+        TRIGGER_ALERT_VIEW: "#Trigger_Alert_View",
+        VIEW_TRIGGER_ALERT_LIST: "#View_Trigger_Alert_List",
+        BTN_VIEW_BACK: "#btn_View_back",
+        TRIGGER_CHK_VIEW: "#Alert_Chk_View",
+        VIEW_TRIGGER_CHK_LIST: "#View_Alert_Chk_List",
+        BTN_CHK_BACK: "#btn_Chk_back",
+        MITIGATION_REPORT_VIEW: "#Mitigation_Report",
+        VIEW_MITIGATION_REPORT_LIST: "#View_Mitigation_Report_List",
+        BTN_REPORT_BACK: "#btn_Report_back",
+    });
+
+    $(function () {
+        login = '@LoginClass.Employee_Identity_Id'
+        Trigger_Alert_ServerTable(login);
+        TR_ALERT_LOAD_ZONE();
+        Load_Emr_Category();
+        $(UI_Fields.BTN_CLOSE).on('click', BTN_CLOSE);
+        $(UI_Fields.BTN_VIEW_BACK).on('click', BTN_VIEW_BACK);
+        $(UI_Fields.BTN_CHK_BACK).on('click', BTN_CHK_BACK);
+        $(UI_Fields.BTN_REPORT_BACK).on('click', BTN_REPORT_BACK);
+
+       
+        ApplySelect2("#Zone_Id");
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "All",
+            theme: 'bootstrap-5',
+            //nonSelectedText: '--Select--',
+            includeSelectAllOption: true,
+        });
+    }
+
+    function BTN_CLOSE() {
+        TR_ALERT_LOAD_ZONE('0');
+        $(UI_Fields.MIGITATION_ID).val('');
+    }
+
+    function BTN_VIEW_BACK() {
+        $(UI_Fields.TRIGGER_ALERT_VIEW).hide(100);
+        $(UI_Fields.TRIGGER_CHK_VIEW).hide(100);
+        $(UI_Fields.LIST_VIEW).show(100);
+        window.location.reload();
+    }
+
+    function BTN_CHK_BACK() {
+
+        $(UI_Fields.TRIGGER_ALERT_VIEW).hide(100);
+        $(UI_Fields.TRIGGER_CHK_VIEW).hide(100);
+        $(UI_Fields.LIST_VIEW).show(100);
+        window.location.reload();
+    }
+
+    function BTN_REPORT_BACK() {
+
+        $(UI_Fields.TRIGGER_ALERT_VIEW).hide(100);
+        $(UI_Fields.TRIGGER_CHK_VIEW).hide(100);
+        $(UI_Fields.MITIGATION_REPORT_VIEW).hide(100);
+        $(UI_Fields.LIST_VIEW).show(100);
+        window.location.reload();
+    }
+
+    function TR_ALERT_LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            //TR_ALERT_FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function TR_ALERT_FnZone_Id(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+            TR_Alert_Fn_Community(Community_Id, Building_Id);
+
+        });
+
+    }
+    function TR_Alert_Fn_Community(Community_Id, Building_Id) {
+        var Zone_Id = $(UI_Fields.ZONEID).val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+
+    }
+
+    function Load_Emr_Category() {
+        $.post("@Url.Action("LoadAllEmr_Category", "TriggerAlert")", function (data) {
+            $("#MitigationId").empty();
+            $("#MitigationId").append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#MitigationId").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+</script>

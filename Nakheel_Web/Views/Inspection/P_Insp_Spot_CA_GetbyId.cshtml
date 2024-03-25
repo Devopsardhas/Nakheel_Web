@@ -1,0 +1,661 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Spot_Finding
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-results > .select2-results__options {
+        width: 252px !important;
+        background-color: white !important;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .fontsize {
+        font-size: 14px !important;
+    }
+</style>
+
+
+
+@if (Model != null)
+{
+    <input class="form-control Insp_Finding_Id" type="hidden" asp-for="Insp_Finding_Id">
+    <input class="form-control Insp_Request_Id" type="hidden" asp-for="Insp_Request_Id">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Business Unit</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                    <td><b class="font-bold">Zone</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Zone_Name</td>
+
+                    <td><b class="font-bold">Community</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Community_Name</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Building</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Building_Name</td>
+                    <td>
+                        <b class="font-bold">Category </b>
+                    </td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Insp_Category_Name</td>
+                    <td>
+                        <b class="font-bold">Inspection Date</b>
+                    </td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Inspection_Date</td>
+                </tr>
+                <tr>
+                    <td>
+                        <b class="font-bold">Description</b>
+                    </td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        @if (@Model!.Req_Description == "")
+                        {
+                            <label>NA</label>
+                        }
+                        else
+                        {
+                            @Model!.Req_Description
+                        }
+                    </td>
+
+                    <td><b class="font-bold">NCM Supervisor</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+
+                    <td><b class="font-bold">NCM Community Manager</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.NCM_Community_Manager</td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Zone Representative Attended?</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Zone_Rep_Attended</td>
+
+                    <td><b class="font-bold">Service Provider Attended ?</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Service_Provider_Attended</td>
+
+                    <td>
+                        <b class="font-bold">Raise the Safety Violation Notice ?</b>
+                    </td>
+                    <td>:</td>
+                    <td class="tdtxt">@Model!.Safety_Violation</td>
+                </tr>
+                <tr>
+                    @if (Model.Zone_Rep_Attended == "Yes")
+                    {
+                        <td>
+                            <b class="font-bold">Zone Representative</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Zone_Rep_Name</td>
+                    }
+                    @if (Model.Service_Provider_Attended == "Yes")
+                    {
+                        <td>
+                            <b class="font-bold">Name of the Service Provider</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                        <td>
+                            <b class="font-bold">Service Provider Representative Name</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.S_P_Representative_Name</td>
+                    }
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-responsive">
+                <table id="tbl_Temp_Insp_Find_CA" class="table tblround table-sm table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">S.No</th>
+                            <th scope="col" class="table-responsive fontsize">Observations</th>
+                            <th scope="col" class="table-responsive fontsize">Hazard & Risk</th>
+                            <th scope="col" class="table-responsive fontsize">Requirements</th>
+                            <th scope="col" class="table-responsive fontsize">Description of Action Required</th>
+                            <th scope="col" class="table-responsive fontsize">Risk Level</th>
+                            <th scope="col" class="table-responsive fontsize">Category</th>
+                            <th scope="col" class="table-responsive fontsize">Observation Type</th>
+                            <th scope="col" class="table-responsive fontsize">Location</th>
+                            <th scope="col" class="table-responsive fontsize">Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Insp_Spot_Sub_Finding_List != null)
+                        {
+                            var subSno = 1;
+                            var S_subSno = 1;
+                            var As_tr_subSno = 1;
+                            foreach (var item_Sub in Model.Insp_Spot_Sub_Finding_List)
+                            {
+                                if (@item_Sub.Insp_Spot_Find_Corrective_Action_List != null && @item_Sub.Insp_Spot_Find_Corrective_Action_List.Count > 0)
+                                {
+                                    <tr class="MainTR" style="background-color:#eeeded">
+                                        <td>
+                                            <input class="form-control Zone_Id" value="@item_Sub.Zone_Id" type="hidden" id="Zone_Id_@subSno">
+                                            <input class="form-control Community_Id" value="@item_Sub.Community_Id" type="hidden" id="Community_Id_@subSno">
+                                            <input class="form-control Insp_Finding_Id" value="@item_Sub.Insp_Finding_Id" type="hidden" id="Insp_Finding_Id_@subSno">
+                                            <input class="form-control Insp_Request_Id" value="@item_Sub.Insp_Request_Id" type="hidden" id="Insp_Request_Id_@subSno">
+                                            <input class="form-control Insp_Sub_Finding_Id" value="@item_Sub.Insp_Sub_Finding_Id" type="hidden" id="Insp_Sub_Finding_Id_@subSno">
+                                            <label>@subSno</label>
+                                        </td>
+                                        <td><label>@item_Sub.Observations</label></td>
+                                        <td><label>@item_Sub.Hazard_Risk</label></td>
+                                        <td><label>@item_Sub.Requirements</label></td>
+                                        <td><label>@item_Sub.Action_Required</label></td>
+                                        <td><label>@item_Sub.Risk_Level</label></td>
+                                        <td><label>@item_Sub.Insp_Category_Name</label></td>
+                                        <td>
+                                            @if (@item_Sub.Insp_Spot_Find_Sub_Category_List != null)
+                                            {
+                                                @foreach (var item_Su in @item_Sub.Insp_Spot_Find_Sub_Category_List!)
+                                                {
+                                                    <label>@item_Su.Insp_Sub_Category_Name</label> <br />
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item_Sub.Location_Address == "")
+                                            {
+                                                <label>NA</label>
+                                            }
+                                            else
+                                            {
+                                                <label><img id="MapLoad_@subSno" class="MapLoad" onclick="Fn_View_MapLoad('@item_Sub.Latitude','@item_Sub.Longitude','@item_Sub.Exact_Location_Address')" data-bs-toggle="modal" data-bs-target=".View-Loc-Map" style="height: 25px;width: 25px;margin-left: 12px;margin-top: -0px;cursor:pointer;" src="~/assets/images/viewLoc.png" /></label>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item_Sub.Insp_Spot_Find_Sub_Photo_List != null)
+                                            {
+                                                @foreach (var item_P in @item_Sub.Insp_Spot_Find_Sub_Photo_List!)
+                                                {
+                                                    var extn = @item_P.File_Path!.Split(".").Last();
+                                                    <a href="@item_P.File_Path" target="_blank">
+                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                        {
+                                                            <img target="_blank" src="@item_P.File_Path" width="35" height="35">
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                        }
+                                                    </a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <label>NA</label>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="10">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="mb-12">
+                                                        <label for="basicpill-lastname-input" class="form-label">
+                                                            Corrective Action Details <span class="requ">*</span>
+                                                        </label> <br />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (item_Sub.Insp_Spot_Find_Corrective_Action_List != null)
+                                            {
+                                                S_subSno = 1;
+                                                <div class="table-responsive">
+                                                    <table id="Sub_ActionTable_@subSno" class="Sub_ActionTable table tblround table-sm table-bordered" style="width:100%;">
+                                                        <thead style="background-color:#0b5578">
+                                                            <tr>
+                                                                <th scope="col" class="table-responsive">S.No</th>
+                                                                <th scope="col" class="table-responsive">Assign Action To</th>
+                                                                <th scope="col" class="table-responsive">Assignee</th>
+                                                                <th scope="col" class="table-responsive">Target Date</th>
+                                                                <th scope="col" class="table-responsive">Description</th>
+                                                                <th scope="col" class="table-responsive">Status</th>
+                                                                <th scope="col" class="table-responsive">Closure Description</th>
+                                                                <th scope="col" class="table-responsive">Evidence</th>
+                                                                @if (Model.Main_Status != "Completed")
+                                                                {
+                                                                    <th scope="col" class="table-responsive">Action</th>
+                                                                }
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="Sub_ActionTable_Tbody_@subSno" class="Sub_ActionTable_Tbody">
+
+
+                                                            @foreach (var item_Ca in item_Sub.Insp_Spot_Find_Corrective_Action_List)
+                                                            {
+                                                                <tr class="SubAssigntr_@As_tr_subSno">
+                                                                    <td>
+                                                                        <input class="form-control Corrective_Action_Id" value="@item_Ca.Corrective_Action_Id" type="hidden" id="Corrective_Action_Id_@As_tr_subSno">
+                                                                        <input class="form-control Assignee_Type" value="@item_Ca.Assignee_Type" type="hidden" id="Assignee_Type_@As_tr_subSno">
+                                                                        <input class="form-control Responsibility_To" value="@item_Ca.Responsibility_To" type="hidden" id="Responsibility_To_@As_tr_subSno">
+                                                                        <input class="form-control Target_Date" value="@item_Ca.Target_Date" type="hidden" id="Target_Date_@As_tr_subSno">
+                                                                        <input class="form-control Action_Description" value="@item_Ca.Action_Description" type="hidden" id="Action_Description_@As_tr_subSno">
+
+                                                                        <label>@S_subSno</label>
+                                                                    </td>
+                                                                    @*                                                                <td><label>@item_Ca.Assignee_Type</label></td>
+                                            *@
+                                                                    <td><label>@item_Ca.Company_Name</label></td>
+                                                                    <td><label>@item_Ca.Responsibility_To_Name</label></td>
+                                                                    <td><label>@item_Ca.Target_Date</label></td>
+                                                                    <td><label>@item_Ca.Action_Description</label></td>
+                                                                    <td>
+                                                                        @if (@item_Ca.Status == "Completed")
+                                                                        {
+                                                                            <label style="color:green;">@item_Ca.Status</label>
+                                                                        }
+                                                                        else if (@item_Ca.Status == "Rejected")
+                                                                        {
+                                                                            <label style="color:red;">@item_Ca.Status</label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label style="color:#17a2b8;">@item_Ca.Status</label>
+                                                                        }
+                                                                    </td>
+                                                                    <td style="width: 181px;">
+                                                                        @if (@item_Ca.Status == "Action Closure Pending" || @item_Ca.Status == "Rejected")
+                                                                        {
+                                                                            <textarea onkeypress="FnActionClosureDescValid(@As_tr_subSno)" id="Closure_Action_Description_@As_tr_subSno" asp-for="@item_Ca.Closure_Action_Description" class="form-control Closure_Action_Description" name="Closure_Action_Description_@As_tr_subSno" rows="1" style="width:170px;" required></textarea>
+                                                                            <label id="Closure_Action_Description_@As_tr_subSno-error" style="font-size: small;" class="error" for="Closure_Action_Description_@As_tr_subSno"></label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label>@item_Ca.Closure_Action_Description</label>
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (@item_Ca.Insp_Spot_CA_Photo_List != null)
+                                                                        {
+                                                                            var dd = 1;
+                                                                            <div>
+
+                                                                                @foreach (var item_Ca_P in @item_Ca.Insp_Spot_CA_Photo_List!)
+                                                                                {
+                                                                                    var extn = @item_Ca_P.File_Path!.Split(".").Last();
+                                                                                    var imagecontainer = "image-container" + @item_Ca_P.Insp_CA_Photo_Id;
+                                                                                    <div class="image-container @imagecontainer">
+                                                                                        @if (@item_Ca.Status == "Rejected")
+                                                                                        {
+                                                                                            <button onclick="Rej_CA_Photo_Del(@item_Ca_P.Insp_CA_Photo_Id,@item_Ca_P.Insp_CA_Photo_Id)" type="button" class="close-button" style="width: 17px;height: 18px;right: 122px;">&times;</button>
+                                                                                        }
+                                                                                        <a href="@item_Ca_P.File_Path" target="_blank">
+                                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                                            {
+                                                                                                <img target="_blank" src="@item_Ca_P.File_Path" width="35" height="35">
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -7px;cursor: pointer;" />
+
+                                                                                            }
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    dd++;
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                        @if (@item_Ca.Status == "Rejected" || item_Ca.Status == "Action Closure Pending")
+                                                                        {
+                                                                            <input style="width: 176px;" id="file_@As_tr_subSno" class="form-control file" onchange="uploadFiles('file_@As_tr_subSno','UploadPhotos_@As_tr_subSno')" type="file" accept=".png, .jpg, .jpeg, .pdf" multiple>
+                                                                            <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos_@As_tr_subSno" id="UploadPhotos_@As_tr_subSno">
+                                                                        }
+                                                                    </td>
+                                                                    @if (Model.Main_Status != "Completed")
+                                                                    {
+                                                                        <td>
+                                                                            @if (@item_Ca.Status == "Rejected" || item_Ca.Status == "Action Closure Pending")
+                                                                            {
+                                                                                <button onclick="FnActionClosureSubmit('@As_tr_subSno')" type="button" class="btn FnActionClosureSubmit btn-success eva-plus-circle-outline icon nav-icon" style="height: 28px;width: 67px;background: green;border: green;">
+                                                                                    Submit
+                                                                                </button>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label>--</label>
+                                                                            }
+                                                                            @if (@item_Ca.Assignee_Type == "Zone Team" && @item_Ca.Status == "Action Closure Pending")
+                                                                            {
+                                                                                <button onclick="FnReAssign('@As_tr_subSno')" data-bs-toggle="modal" data-bs-target=".Add-Reassign" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="height: 28px;margin-top: 4px;background: red;border: red;" id="btn-save-event">Re-Assign</button>
+                                                                            }
+                                                                            @if (@item_Ca.Status == "Rejected" || item_Ca.Status == "Action Closure Pending")
+                                                                            {
+                                                                                if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                {
+                                                                                    <br />
+                                                                                    <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                    <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                }
+                                                                                else if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List == null)
+                                                                                {
+                                                                                    <br />
+                                                                                    <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+
+                                                                                }
+                                                                                else if (@item_Ca.Insp_Spot_CA_Reject_List == null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                {
+                                                                                    <br />
+                                                                                    <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label>--</label>
+                                                                            }
+                                                                        </td>
+                                                                    }
+                                                                </tr>
+                                                                S_subSno++;
+                                                                As_tr_subSno++;
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                        </td>
+                                    </tr>
+                                    subSno++;
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function () {
+    });
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImagePdf", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            }else{
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+            return false;
+        }
+    }
+    function FnReAssign(Rowid) {
+        $("#Assignee_Type_ReAssign").val("");
+        $("#Responsibility_To_ReAssign").val("");
+        $("#Target_Date_ReAssign").val("");
+        $("#Action_Description_ReAssign").val("");
+        $("#Corrective_Action_Id_ReAssign").val("");
+        $("#Reason_ReAssign").val("");
+        var Zone_Id = $(".Zone_Id").val();
+        var Community_Id = $(".Community_Id").val();
+        var Role_Name = "Supervisor";
+        EMP_DRP_DWN(Role_Name, "Responsibility_To_ReAssign", Zone_Id, Community_Id);
+        var trRowid = ".SubAssigntr_" + Rowid;
+        var varAssignee_Type = $(trRowid).closest('tr').find('.Assignee_Type').val();
+        var varResponsibility_To = $(trRowid).closest('tr').find('.Responsibility_To').val();
+        var varTarget_Date = $(trRowid).closest('tr').find('.Target_Date').val();
+        var varAction_Description = $(trRowid).closest('tr').find('.Action_Description').val();
+        var varCorrective_Action_Id = $(trRowid).closest('tr').find('.Corrective_Action_Id').val();
+        $("#Assignee_Type_ReAssign").val(varAssignee_Type);
+        $("#Responsibility_To_ReAssign").val(varResponsibility_To);
+        $("#Target_Date_ReAssign").val(varTarget_Date);
+        $("#Action_Description_ReAssign").val(varAction_Description);
+        $("#Corrective_Action_Id_ReAssign").val(varCorrective_Action_Id);
+    }
+    function EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function FnCAReAssignSubmit() {
+        var varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var Responsibility_To = $("#Responsibility_To_ReAssign").val();
+        var Corrective_Action_Id = $("#Corrective_Action_Id_ReAssign").val();
+        var Reason_ReAssign = $("#Reason_ReAssign").val();
+        if (Responsibility_To == "" || Responsibility_To == "0") {
+            toastr["error"]("Please select the Re-Assign To");
+            return false;
+        }
+        if (Reason_ReAssign == "" || Responsibility_To == null) {
+            toastr["error"]("Please enter the Re-Assign Reason");
+            return false;
+        }
+
+        $.post("@Url.Action("Insp_Spot_Corrective_Action_Reassign", "Inspection")", { Corrective_Action_Id: Corrective_Action_Id, Remarks: Reason_ReAssign, Responsibility_To: Responsibility_To }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Updated Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $(".Add-Reassign").modal("toggle");
+                    $(".modal-backdrop").remove();
+                    Fn_Add_Action_Closure(varInsp_Request_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+
+    function FnActionClosureSubmit(Rowid) {
+        debugger
+        $('.FnActionClosureSubmit').prop('disabled', true);
+        var varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var Photo_List = [];
+        var trRowid = ".SubAssigntr_" + Rowid;
+        var RowDesc = "#Closure_Action_Description_" + Rowid + "-error";
+        var var_V_Main_UploadPhotos = $(trRowid).closest('tr').find('.UploadPhotos').val();
+        var varClosure_Action_Description = $(trRowid).closest('tr').find('.Closure_Action_Description').val();
+        var varCorrective_Action_Id = $(trRowid).closest('tr').find('.Corrective_Action_Id').val();
+        if (varClosure_Action_Description == "") {
+            $(RowDesc).text("This field is required");
+            $('.FnActionClosureSubmit').prop('disabled', false);
+            return false;
+        }
+
+        if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+            Photo_List = [];
+            var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+            var i;
+            for (i = 0; i < val_UploadPhotos.length; i++) {
+                var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                if (x != "/") {
+                    var Pdata = {};
+                    Pdata.File_Path = x;
+                    Pdata.Insp_CA_Photo_Id = "0";
+                    Pdata.Corrective_Action_Id = varCorrective_Action_Id;
+                    Photo_List.push(Pdata);
+                }
+
+            }
+        }
+
+        var datas = {};
+        datas.Closure_Action_Description = varClosure_Action_Description;
+        datas.Corrective_Action_Id = varCorrective_Action_Id;
+        datas.Insp_Spot_CA_Photo_List = Photo_List;
+
+        $.post("@Url.Action("Insp_Spot_Action_Closure_Add", "Inspection")", { model: datas }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.FnActionClosureSubmit').prop('disabled', false);
+                    Fn_Add_Action_Closure(varInsp_Request_Id);
+                });
+            }
+            else {
+
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            $('.FnActionClosureSubmit').prop('disabled', false);
+        });
+    }
+
+    function Rej_CA_Photo_Del(Insp_CA_Photo_Id, id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Spot_CA_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Insp_CA_Photo_Id: Insp_CA_Photo_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = ".image-container" + id;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    function FnActionClosureDescValid(Rowid) {
+        var RowDesc_valid = "#Closure_Action_Description_" + Rowid + "-error";
+        var RowDesc = "#Closure_Action_Description_" + Rowid;
+        var varClosure_Action_Description = $(RowDesc).val();
+        if (varClosure_Action_Description == "") {
+            $(RowDesc_valid).text("This field is required");
+            return false;
+        }
+        else {
+            $(RowDesc_valid).text("");
+        }
+    }
+
+
+</script>
+
+

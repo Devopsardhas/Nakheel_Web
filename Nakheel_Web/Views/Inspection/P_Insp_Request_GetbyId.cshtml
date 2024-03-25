@@ -1,0 +1,313 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Get_Insp_Request
+@if (Model != null)
+{
+    if (Model.Get_ById!.Status == "Request Rejected" || Model.Get_ById!.Status == "Request Approval Pending")
+    {
+        @if (Model.Get_ById.Insp_Request_Reject_List!.Count > 0 && Model.Get_ById.Insp_Request_Reject_List != null)
+        {
+            <div class="row">
+            <div class="row Reject_View_Div">
+                <div class="accordion" id="accordionExample_1">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_Rej" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                Reject List
+                            </button>
+                        </h2>
+                        <div id="collapseTwo_Rej" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample_1">
+                            <div class="accordion-body">
+                                <table id="RejectTable" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Reject ID</th>
+                                            <th>Reject Reason</th>
+                                            <th>Rejected By</th>
+                                            <th>Created Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Get_ById.Insp_Request_Reject_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Unique_Id</td>
+                                                <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                <td align="left" valign="middle">@item.CreatedBy</td>
+                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        }
+    }
+    <div id="ViewNotification">
+        <div class="row">
+            @if (Model!.Get_ById != null)
+            {
+                DateTime StartDate = Convert.ToDateTime(Model!.Get_ById!.Inspection_Date);
+                var ViwDate = StartDate.ToString("dd-MMM-yyyy");
+                var var_Insp_Type_Id = "Inspection";
+                var Desc = "NA";
+                if (@Model!.Get_ById!.Insp_Type_Id == "Document_Review")
+                {
+                    var_Insp_Type_Id = "Document Review";
+                }
+                if (@Model!.Get_ById!.Req_Description != "")
+                {
+                    Desc = @Model!.Get_ById!.Req_Description;
+                }
+                <div class="row">
+                    <input type="hidden" class="form-control Insp_Request_Id" name="Insp_Request_Id" id="Insp_Request_Id" value="@Model!.Get_ById!.Insp_Request_Id">
+
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-firstname-input" class="form-label">
+                                Business Unit <span class="requ">*</span>
+                            </label>
+                            <textarea id="Business_Unit_Name" disabled value="@Model!.Get_ById!.Business_Unit_Name" class="form-control form-control-sm Business_Unit_Name" rows="1">@Model!.Get_ById!.Business_Unit_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Zone <span class="requ">*</span>
+                            </label>
+                            <textarea id="Zone_Name" disabled value="@Model!.Get_ById!.Zone_Name" class="form-control form-control-sm Zone_Name" name="Zone_Name" rows="1">@Model!.Get_ById!.Zone_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Community <span class="requ">*</span>
+                            </label>
+                            <textarea id="Community_Name" disabled value="@Model!.Get_ById!.Community_Name" class="form-control form-control-sm Community_Name" name="Community_Name" rows="1">@Model!.Get_ById!.Community_Name</textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-firstname-input" class="form-label">
+                                Building <span class="requ">*</span>
+                            </label>
+                            <textarea id="Building_Name" disabled value="@Model!.Get_ById!.Building_Name" class="form-control form-control-sm Building_Name" name="Building_Name" rows="1">@Model!.Get_ById!.Building_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Request Type <span class="requ">*</span>
+                            </label>
+                            <textarea id="Insp_Type_Id" value="@var_Insp_Type_Id" disabled class="form-control form-control-sm Insp_Type_Id" name="Insp_Type_Name" rows="1">@var_Insp_Type_Id</textarea>
+                        </div>
+                    </div><!-- end col -->
+                    @if (@Model!.Get_ById!.Status == "Request Rejected")
+                    {
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Inspection Date <span class="requ">*</span>
+                                </label>
+                                <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                            </div>
+                        </div>
+
+                        <!-- end col -->
+                    }
+                    else if (@Model!.Get_ById!.Status == "Request Approval Pending")
+                    {
+                        if (@Model!.Get_ById!.Insp_Type_Id == "Inspection" && @Model!.Get_ById!.Insp_Category_Name == "Environmental")
+                        {
+                            if (LoginClass.Role_Id == "12" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "13")
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <input class=" form-control form-control-sm Inspection_Date" id="Inspection_Date" type="date" value="@Model!.Get_ById!.Inspection_Date" name="Inspection_Date">
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <input class=" form-control form-control-sm Inspection_Date" id="Inspection_Date" type="date" value="@Model!.Get_ById!.Inspection_Date" name="Inspection_Date">
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+
+
+                        <!-- end col -->
+                    }
+                    else
+                    {
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Inspection Date <span class="requ">*</span>
+                                </label>
+                                <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                            </div>
+                        </div>
+
+                        <!-- end col -->
+                    }
+
+                    @if (@Model!.Get_ById!.Category_Id != "0" && @Model!.Get_ById!.Insp_Type_Id != "Document_Review")
+                    {
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Category <span class="requ">*</span>
+                                </label>
+                                <textarea id="Req_Description" value="@Model!.Get_ById!.Insp_Category_Name" disabled class="form-control form-control-sm Req_Description" name="Req_Description" rows="1">@Model!.Get_ById!.Insp_Category_Name</textarea>
+                            </div>
+                        </div>
+
+                        <!-- end col -->
+                    }
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Description
+                            </label>
+                            <textarea id="Req_Description" value="@Desc" disabled class="form-control form-control-sm Req_Description" name="Req_Description" rows="1">@Desc</textarea>
+                        </div>
+                    </div><!-- end col -->
+
+                </div>
+
+                <!-- end row -->
+            }
+        </div>
+        @if (@Model!.Get_ById!.Insp_Type_Id == "Document_Review")
+        {
+            <div class="row">
+                <div class="col-lg-12">
+                    <table id="Doc_Table_View" class="Doc_Table tblround table-sm table-bordered" style="width:100%;">
+                        <thead style="background-color:#141b2b;height: 38px;">
+                            <tr>
+                                <th scope="col" class="table-responsive">Document Name</th>
+                                <th scope="col" class="table-responsive">Description</th>
+                                <th scope="col" class="table-responsive">Upload Evidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="Sub_ActionTable_Tbody" class="Sub_ActionTable_Tbody">
+                            @if (Model!.Get_ById!.Insp_Req_Doc_Review_List != null)
+                            {
+                                foreach (var item in Model!.Get_ById!.Insp_Req_Doc_Review_List)
+                                {
+                                    var exten = "";
+                                    if (@item.File_Path != null && @item.File_Path != "")
+                                    {
+                                        string[] authorsList = @item.File_Path!.Split(".");
+                                        exten = authorsList[1];
+                                    }
+                                    <tr>
+                                        <td style="min-width:250px;">
+                                            <label>@item.Req_Document_Name</label>
+                                        </td>
+                                        <td style="min-width:250px;">
+                                            <label>@item.Req_Document_Description</label>
+                                        </td>
+                                        <td style="min-width:70px;">
+                                            @if (@item.File_Path == "" || @item.File_Path == null)
+                                            {
+                                                <label>NA</label>
+                                            }
+                                            else
+                                            {
+                                                if (exten == "pdf")
+                                                {
+                                                    <a href="@item.File_Path" target="_blank">
+                                                        <i class="mdi mdi-file-pdf" style="color:red;font-size:23px;cursor:pointer;"></i>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@item.File_Path" target="_blank">
+                                                        <img target="_blank" src="@item.File_Path" width="35" height="35">
+                                                    </a>
+                                                }
+
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+<script>
+    $(document).ready(function () {
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+
+        $('#Inspection_Date').attr('min', minDate);
+    });
+</script>

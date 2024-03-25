@@ -1,0 +1,250 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.MAuditNCMForm.MAuditNCMForm
+<style>
+    .error {
+        color: red;
+    }
+
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .M-Vio {
+        margin-top: 25px !important;
+        position: absolute;
+        display: flex;
+    }
+    .select2-selection select2-selection--single{
+            width: 350px !important;
+    }
+</style>
+
+<div class="row">
+    <div class="table-responsive">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <input type="hidden" id="Am_Sp_NCR_Id" class="Am_Sp_NCR_Id" value="@Model.Am_Sp_NCR_Id" />
+                        <textarea disabled id="CreatedBy_Name" name="CreatedBy_Name" class="form-control CreatedBy_Name" rows="1">@LoginClass.First_Name</textarea>
+                    </td>
+
+                    <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Business_Unit_Id" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Business_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Zone_Id" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Zone_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Community_Id" asp-for="Community_Id" onchange="Fn_Community(this.value)">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Audit Date</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <input required type="date" asp-for="Audit_Date" asp-items="@Model.Audit_Date" class=" form-control Audit_Date" name="Audit_Date">
+                    </td>
+
+                    <td><b class="font-bold">Building/ Area</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <textarea id="Building_Name" name="Building_Name" class="form-control Building_Name" rows="1"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="Div_Audit_NCR_Form">
+        <div class="row col-lg-12">
+            <div class="col-lg-6">
+                <table id="tblIncidentInjuredPartsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Non-Conformity Description<span class="requ">*</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="clstr">
+                            <td align="left" valign="middle">
+                                <textarea required name="Non_Conformity_Description" id="Non_Conformity_Description" class="form-control Non_Conformity_Description" rows="5"></textarea>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-6">
+                <table id="tblIncidentInjuredPartdsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Applicable Standard/Procedure Requirements<span class="requ">*</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="clstr">
+                            <td align="left" valign="middle">
+                                <textarea required name="AS_Procedure_Requirements" id="AS_Procedure_Requirements" class="form-control AS_Procedure_Requirements" rows="5"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+            <div class="card-header" style="background-color:#032639;height: 28px;">
+                <h5 class="card-title" style="color:white;font-size: 15px;">Corrective Action</h5>
+            </div>
+        </div>
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td>
+                        <b class="font-bold">
+                            Service Provider Representative
+                        </b><span class="requ">*</span>
+                    </td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search Service_Provider_Id" name="Service_Provider_Id" id="Service_Provider_Id">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Target Date</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <input required type="date" id="Target_Date" class=" form-control Target_Date" name="Target_Date">
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="Add_Audit_NCM_Form_Div" id="Add_Audit_NCM_Form_Div">
+    <div style="text-align:center;">
+        <button type="button" class="btn btn-success Fn_Add_Audit_NCM_Form" id="btn-save-event" onclick="Fn_Add_Audit_NCM_Form()"> Submit</button>
+    </div>
+    <br />
+</div>
+
+<script>
+    $(document).ready(function () {
+        let minDate = '@DateTime.Now.ToString("yyyy-MM-dd")';
+        $('#Audit_Date').attr('min', minDate);
+        $('#Target_Date').attr('min', minDate);
+
+        ApplySelect2(".Drop_Search");
+    });
+
+    function Fn_Add_Audit_NCM_Form() {
+        $('.Fn_Add_Audit_NCM_Form').attr('disabled', 'disabled');
+        let valid = $("#Fm_Add_Audit_NCM_Form").valid();
+        if (!valid) {
+            $('.Fn_Add_Audit_NCM_Form').removeAttr('disabled');
+            ApplySelect2(".Drop_Search");
+            return false;
+        }
+
+        var Obj = {
+            Am_Sp_NCR_Id: $("#Am_Sp_NCR_Id").val(),
+            Business_Unit_Id: $("#Business_Unit_Id").val(),
+            Zone_Id: $("#Zone_Id").val(),
+            Community_Id: $("#Community_Id").val(),
+            Audit_Date: $("#Audit_Date").val(),
+            Building_Name: $("#Building_Name").val(),
+            Non_Conformity_Desc: $("#Non_Conformity_Description").val(),
+            AS_Procedure_Require: $("#AS_Procedure_Requirements").val(),
+            Service_Provider_Id: $("#Service_Provider_Id").val(),
+            Target_Date: $("#Target_Date").val(),
+        };
+
+        $.ajax({
+            url: "/AuditNCMForm/Audit_NCM_Form_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $('.Fn_Add_Audit_NCM_Form').removeAttr('disabled');
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    
+</script>
+
+
+
+

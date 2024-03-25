@@ -1,0 +1,89 @@
+﻿@{
+    Layout = null;
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.AccountsMaster.ServiceProviderSignUp>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr class="clstr">
+            <td align="left" valign="middle">@item.Company_Name</td>
+            <td align="left" valign="middle">@item.Manager_Incharge</td>
+            <td align="left" valign="middle">@item.Zone_Id</td>
+            <td align="left" valign="middle">@item.Community_Id</td>
+            <td align="left" valign="middle">@item.Contract_End_Date</td>
+            <td align="left" valign="middle">@item.W_Scope_of_work</td>
+            <td align="left" valign="middle">@item.Purchase_Order_Number</td>
+            <td align="left" valign="middle" style="width: 100px">@item.CreatedDate</td>
+            @if (DateTime.Parse(item.Contract_End_Date) < DateTime.Now.Date)
+            {
+                <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-danger">Contract Expired</span> </td>
+            }
+            else
+            {
+                <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-success">Active</span> </td>
+            }
+            @if (item.Status == "Open")
+            {
+                <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "In Progress")
+            {
+                <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "Rejected")
+            {
+                <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "Approved")
+            {
+                <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                <td align="left">
+
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                        <a onclick="Fn_SignUpPDF(@item.SignUp_Id,'@item.Unique_Id')" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="PDF" aria-label="View"><i class="mdi mdi-file-pdf font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "Required to More Information")
+            {
+                <td align="left" valign="middle"><span class="badge bg-info">@item.Status</span> </td>
+                <td align="left">
+
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.SignUp_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                        <a onclick="Fn_SignUpPDF(@item.SignUp_Id,'@item.Unique_Id')" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="PDF" aria-label="View"><i class="mdi mdi-file-pdf font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+        </tr>
+    }
+}
+
+<script>
+    $("#MainTable").DataTable({
+        "order": [[0, "desc"]],
+        "initComplete": function (settings, json) {
+            $("#MainTable").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+        },
+        dom: 'lBfrtip',
+        buttons: ['excel', 'pdf', 'print'],
+    });
+</script>

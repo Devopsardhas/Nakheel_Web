@@ -1,0 +1,785 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Health & Safety Inspection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+@*<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>*@
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+    .error
+    {
+        color: red !important;
+        font-size: 12px;
+    }
+</style>
+@model IReadOnlyCollection<Nakheel_Web.Models.HandOverInsMaster.M_Insp_HealthSafety_Model>;
+@*Grid View*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Health & Safety Inspection List</h4></div>
+                    @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_add_HealthSafety" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i>Walk-In Schedule</button>
+                        </div>
+                    }
+                    else
+                    {
+                    <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblInspHealthSafetyBuilding" class="table table-sm table-striped dt-responsive tblround nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Inspection Type</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>HSE Officer</th>
+                            <th>Date of Inspection</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetHealthSafetyBuildingList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="AddPage_HealthSafety_Building" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Health & Safety Inspection</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_HealthSafety_Building" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Insp_HealthSafety_Id" name="Insp_HealthSafety_Id">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Company Name</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="NCM" id="Company_Name" name="Company_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Inspected By<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="Inspected_By_Id" name="Inspected_By_Id">
+                                    <input class="form-control" type="text" value="@LoginClass.First_Name" id="Inspected_By_Name" name="Inspected_By_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Business_Unit" id="Business_Unit" onchange="FnBusiness_Unit()">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Community" id="Community_Id" onchange="Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Master Community</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Master_Community_Id" id="Master_Community_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Fn_Business_Unit_Type" style="display:none">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit Type</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Hs_Business_Unit_Type" name="Hs_Business_Unit_Type">
+                                        <option value="" style='text-align:center'>--Select--</option>
+                                        <option value="Party">JOP 3rd Party</option>
+                                        <option value="JOP_Common">JOP-Common Area</option>
+                                        <option value="Master_Community">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Date of Inspection<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="date" id="Date_of_Inspection" name="Date_of_Inspection" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">NCM Manager<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Manager" id="Zone_Manager">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Id" id="Zone_Id" onchange="Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Building_Id" id="Building_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style=" display:none;">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Schedule Type<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Schedule_Type" id="Schedule_Type">
+                                        <option value="" style='text-align:center'>--Select--</option>
+                                        <option value="Bimonthly">Bimonthly</option>
+                                        <option value="Quarterly">Quarterly</option>
+                                        <option value="Semiannually">Semi Annually</option>
+                                        <option value="Yearly">Yearly</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Type<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" onchange="FnCheckList_Change(this.value)" name="Health_Safety_Type" id="Health_Safety_Type">
+                                        <option value="">--Select--</option>
+                                        <option value="HealthSafetyBuilding">Building</option>
+                                        <option value="HealthSafetyCommunity">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">NCM Supervisor<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Supervisor" id="Zone_Supervisor">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style=" display:none;">
+                            <div class="mb-3 ">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Description</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Description" name="Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Questionnaires Add List -->
+                    <div class="row Qns" id="divViewHealthSafetyQns" style="display:none">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="col-lg-9">
+                                        <h4 class="d-flex align-items-center mb-3">Health & Safety Inspection Questionnaires</h4>
+                                    </div>
+                                    <hr />
+                                    <div id="GetQuestionnaireList">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Safety Violation -->
+                    <div class="row">
+                        <div class="mb-6">
+                            <label for="example-text-input" class="col-md-8 col-form-label">
+                                Raise the Safety Violation Notice ?<span class="requ">*</span>
+                                <label for="Safety_Violation_Yes" onclick="FnSafetyViolation_Yes('1')"> <input id="Safety_Violation_Yes" class="Safety_Violation" name="Safety_Violation" type="radio" value="Yes" checked>&nbsp;Yes</label>&nbsp;&nbsp;
+                                <label for="Safety_Violation_No" onclick="FnSafetyViolation_Yes('2')"> <input id="Safety_Violation_No" class="Safety_Violation" name="Safety_Violation" type="radio" value="No">&nbsp;No</label>
+                            </label>
+                        </div>
+                        <div class="mb-6" id="Safety_Description" style=" display:none;">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Remarks</label>
+                            <textarea class="form-control mb-6" id="SV_Description" name="SV_Description"></textarea>
+                            <br />
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light submitAdd" style="float: right;width: 80px;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6" style=" display:none;">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Health & Safety Building List -->
+<form id="F_Health_Safety_Ack_Qns" action="#" method="post" class="row NotValid" novalidate="novalidate">
+    <div id="divHealthSafety_Building_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">View Health & Safety Inspection</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_HealthSafety_List" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                    <div id="ViewHealthSafety_BuildingList">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Questionnaires List View -->
+    <div class="row Qns" id="divViewHealthSafetyQns_View" style=" display:none;">
+        <div class="col-md-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-lg-9">
+                        <h4 class="d-flex align-items-center mb-3">Health & Safety Inspection Questionnaires</h4>
+                    </div>
+                    <hr />
+                    <div id="GetQuestionnaireList_View">
+                    </div>
+                    <br />
+
+                    <div class="row" style=" display:none;">
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit_Findings" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</form>
+<!-- Findings Reject Health & Safety Inspection -->
+<div class="modal fade Add_HS_Insp_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Health & Safety Inspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_HS_Insp_Reject" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control hdn_Hs_Insp_Id" name="hdn_Hs_Insp_Id" id="hdn_Hs_Insp_Id">
+                                <input type="hidden" class="form-control" name="Reject_Reason_Stage" id="Reject_Reason_Stage" value="Rejected By HSE Manager">
+                                <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                <textarea class="form-control" rows="1" cols="100" style="height: 150px;" id="Reject_Reason_Description" name="Reject_Reason_Description" required minlen="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button type="button" class="btn btn-success" onclick="Fnbtn_HS_Insp_Reject()"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- CA Reject Health & Safety Inspection -->
+<div class="modal fade Add_HSCA_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Health & Safety Inspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_HSCA_Reject" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control Hdn_HsReject_Id" name="hdn_HsAssign_Action_Id" id="hdn_HsAssign_Action_Id">
+                                <input type="hidden" class="form-control" name="Reject_Reason_Stage" id="Reject_Reason_Stage" value="Rejected By HSE Staff">
+                                <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                <textarea class="form-control" rows="1" cols="100" style="height: 150px;" id="Reject_Reason_Description" name="Reject_Reason_Description" required minlen="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button type="button" class="btn btn-success" onclick="Fn_HSCA_Reject_Submit()"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/validation/inspection_validation/inspformchecklistvalidation.js"></script>
+<script src="~/assets/js/validation/inspection_validation/inspformchecklistseverside.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_HEALTHSAFETY_BUILDING: "#AddPage_HealthSafety_Building",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblInspHealthSafetyBuilding",
+        TBODY_TABLE: "#GetHealthSafetyBuildingList",
+        BTN_ADD_HEALTHSAFETY: "#btn_add_HealthSafety",
+        BTN_VIEW_HEALTHSAFETY_BACK: "#btn_HealthSafety_List",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        M_ZONE: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        BUSINESS_UNIT_TYPE: "#Fn_Business_Unit_Type",
+        DIV_ADDHEALTHSAFETY_BUILDING: "#AddPage_HealthSafety_Building",
+        DIV_VIEWHEALTHSAFETY_BUILDING: "#divHealthSafety_Building_View",
+        VIEW_HEALTHSAFETY_BUILDINGLIST: "#ViewHealthSafety_BuildingList",
+        DIV_QUESTIONNAIRE_LIST_VIEW: "#divViewHealthSafetyQns_View",
+        VIEW_HEALTHSAFETY_QNS_LIST_VIEW: "#GetQuestionnaireList_View",
+        DIV_QUESTIONNAIRE_LIST: "#divViewHealthSafetyQns",
+        VIEW_HEALTHSAFETY_QNS_LIST: "#GetQuestionnaireList",
+        //DIV_HEALTHSAFETY_CLOSURE_ACTION: "#divViewHandOverClosure",
+        //VIEW_HEALTHSAFETY_CLOSURE_LIST: "#GetClosureActionList",
+        DIV_HEALTHSAFETY_QNS_BTN: "#divViewHealthSafetyQns_btn",
+        VIEW_HEALTHSAFETY_QNS_BTN: "#GetQuestionnaireList_btn"
+    });
+
+    $(document).ready(function () {
+        //debugger;
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#Date_of_Inspection').val(today);
+
+        ApplySelect2("#Business_Unit");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Zone_Supervisor");
+        ApplySelect2("#Zone_Manager");
+
+        ServerSideTable_HealthSafetyBuilding();
+        $(UI_Fields.BTN_ADD_HEALTHSAFETY).click(function () {
+            LOAD_BUSINESS_UNIT();
+            LOAD_ZONE('@LoginClass.Zone_Id');
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_HEALTHSAFETY_BUILDING).show(100);
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST_VIEW).hide(100);
+            $(UI_Fields.DIV_HEALTHSAFETY_QNS_BTN).hide(100);
+        });
+        $(UI_Fields.BTN_VIEW_HEALTHSAFETY_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.DIV_ADDHEALTHSAFETY_BUILDING).hide(100);
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST_VIEW).hide(100);
+            $(UI_Fields.DIV_VIEWHEALTHSAFETY_BUILDING).hide(100);
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST).hide(100);
+            $(UI_Fields.DIV_HEALTHSAFETY_CLOSURE_ACTION).hide(100);
+            $(UI_Fields.DIV_HEALTHSAFETY_QNS_BTN).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.DIV_ADDHEALTHSAFETY_BUILDING).hide(100);
+            $(UI_Fields.DIV_VIEWHEALTHSAFETY_BUILDING).hide(100);
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST_VIEW).hide(100);
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST).hide(100);
+            $(UI_Fields.DIV_HEALTHSAFETY_CLOSURE_ACTION).hide(100);
+            $(UI_Fields.DIV_HEALTHSAFETY_QNS_BTN).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+    })
+</script>
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    FnSafetyViolation_Yes('1');
+    function FnSafetyViolation_Yes(val) {
+        if (val == "1") {
+            $("#Safety_Description").show();
+            $(".submitAdd").text("Next");
+        } else {
+            $("#Safety_Description").hide();
+            $(".submitAdd").text("Submit");
+        }
+    }
+    
+    $("input[name='Safety_Violation']").click(function () {
+        var test = $(this).val();
+        if (test == "Yes") {
+            $(".submitAdd").text("Next");
+        } else {
+            $(".submitAdd").text("Submit");
+        }
+    });
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE(selectedValue) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_ZONE).val(selectedValue);
+            Fn_Zone(selectedValue);
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center' disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                //alert(Zone_Id + ' ' + Community_Id);
+                ZONE_EMP_DRP_DWN('Zone_Manager', Zone_Id, Community_Id);
+                SERVICE_EMP_DRP_DWN('Supervisor', Zone_Id, Community_Id);
+            });
+        });
+    }
+    function ZONE_EMP_DRP_DWN(Role_Name, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Zone_Manager").empty();
+            $("#Zone_Manager").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Zone_Manager").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function SERVICE_EMP_DRP_DWN(Role_Name, Zone_Id, Community_Id) {
+        //debugger;
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Zone_Supervisor").empty();
+            $("#Zone_Supervisor").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Zone_Supervisor").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    //FnCheckList_Change("HealthSafetyBuilding");
+    function FnCheckList_Change(Type) {
+        if (Type == "HealthSafetyCommunity") {
+            $("#divViewHealthSafetyQns").show(100);
+            Fn_HealthSafety_CheckList_Change(Type);
+        }
+        else {
+            $("#divViewHealthSafetyQns").show(100);
+            Fn_HealthSafety_CheckList_Change(Type);
+        }
+    }
+    function Fn_HealthSafety_CheckList_Change(Type) {
+        $.post("@Url.Action("_ViewHealthSafetyQuestionnairs", "HandOverInspection")", { Health_Safety_Type: Type }, function (data) {
+            $(UI_Fields.VIEW_HEALTHSAFETY_QNS_LIST).html('');
+            $(UI_Fields.VIEW_HEALTHSAFETY_QNS_LIST).html(data);
+        }).always(function () {
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST).show(100);
+        });
+    }
+    //Redirect from Approvel to Same Page
+    function FnHS_CA_ApprovalReject(id) {
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $.post("@Url.Action("_GetHealthSafetyQnsView", "HandOverInspection")", { Insp_HealthSafety_Id: id }, function (data) {
+            $(UI_Fields.VIEW_HEALTHSAFETY_QNS_LIST_VIEW).html('');
+            $(UI_Fields.VIEW_HEALTHSAFETY_QNS_LIST_VIEW).html(data);
+        }).always(function () {
+            $(UI_Fields.DIV_QUESTIONNAIRE_LIST_VIEW).show(100);
+        });
+    }
+    function Fn_CA_Reject_HS(rowid) {
+        $("#hdn_HsAssign_Action_Id").val("");
+        $("#hdn_HsAssign_Action_Id").val(rowid);
+    }
+    function Fn_HS_Insp_Reject(rowid) {
+        $("#hdn_Hs_Insp_Id").val("");
+        $("#hdn_Hs_Insp_Id").val(rowid);
+    }
+    function Fn_HSCA_Reject_Submit() {
+        var varInsp_HealthSafety_Id = "";
+        varInsp_HealthSafety_Id = $("#Insp_HealthSafety_EId").val();
+        var Rowid = $("#hdn_HsAssign_Action_Id").val();
+        var Stage = $("#Reject_Reason_Stage").val();
+        var Description = $("#Reject_Reason_Description").val();
+        let valid = $("#Fm_HSCA_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("HealthSafety_Closure_Action_Reject", "HandOverInspection")", { Assign_Action_Id: Rowid, Reject_Reason_Stage: Stage, Reject_Reason_Description: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $("#Reject_Reason_Description").val("");
+                    $(".Add_HSCA_Reject").modal('toggle');
+                    FnHS_CA_ApprovalReject(varInsp_HealthSafety_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+</script>
+<script>
+    function Fn_HS_ScheduleFindings_Submit() {
+        var QNS_ARR = [];
+        var OBS_ARR = [];
+        var subSno = 1;
+        let valid = $("#F_HealthSafety_View").valid();
+        if (!valid) {
+            return false;
+        }
+        let validCS = $("#F_HealthSafety_ChkList_ViewCS").valid();
+        if (!validCS) {
+            return false;
+        }
+        $('#tblHealthSafetyInspQnsCS tbody > tr').each(function () {
+            var varInsp_Question_Id = $(this).closest('tr').find('.Insp_Question_IdCS').val();
+            var varQns_Action = $(this).closest('tr').find('input[name="ActionCS_' + subSno + '"]:checked').val();
+            var varPhoto_File_Path = $(this).closest('tr').find('.QnPhotoCS').val();
+            var varHazard_Risk = $(this).closest('tr').find('.Hazard_RiskCS').val();
+            var varRequirements = $(this).closest('tr').find('.RequirementsCS').val();
+            var varAction_Description = $(this).closest('tr').find('.QnDescriptionCS').val();
+            var varCategory = $(this).closest('tr').find('.Insp_CategoryCS').val();
+            var varSub_Category = $(this).closest('tr').find('.Sub_CategoryCS').val();
+            var varRisk_Level = $(this).closest('tr').find('.Insp_RiskCS').val();
+            
+            if (varPhoto_File_Path != "" && varPhoto_File_Path != null) {
+                var val_UploadPhotos = varPhoto_File_Path.split(',');
+                var varPhoto_File_Path_QnFinal;
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        varPhoto_File_Path_QnFinal = x;
+                    }
+                }
+            }
+            var data = {};
+            data.Insp_Questionnaires_Id = varInsp_Question_Id;
+            data.Qns_Action = varQns_Action;
+            data.Photo_File_Path = varPhoto_File_Path_QnFinal;
+            data.Hazard_Risk = varHazard_Risk;
+            data.Requirements = varRequirements;
+            data.Description_Action = varAction_Description;
+            data.Category = varCategory;
+            data.Sub_Category = varSub_Category;
+            data.Risk_Level = varRisk_Level;
+            QNS_ARR.push(data);
+            subSno++;
+        });
+        $('#tbl_Temp_Insp_HSCSObser tbody > tr').each(function () {
+            var varInsp_Observation_Name = $(this).closest('tr').find('.HS_ObservationsCS').val();
+            var varHazard_Risk = $(this).closest('tr').find('.HS_HazardRiskCS').val();
+            var varRequirements = $(this).closest('tr').find('.HS_RequirementsCS').val();
+            var varAction_Description = $(this).closest('tr').find('.HS_ActionRequiredCS').val();
+            var varCategory = $(this).closest('tr').find('.HS_CategoryCS').val();
+            var varSub_Category = $(this).closest('tr').find('.HS_SubCategoryCS').val();
+            var varRisk_Level = $(this).closest('tr').find('.HS_RiskLevelCS').val();
+            var varPhoto_File_Path = $(this).closest('tr').find('.UploadPhotosCS').val();
+            if (varPhoto_File_Path != "" && varPhoto_File_Path != null) {
+                var val_UploadPhotos = varPhoto_File_Path.split(',');
+                var varPhoto_File_Path_ObsFinal;
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        varPhoto_File_Path_ObsFinal = x;
+                    }
+                }
+            }
+            var data = {};
+            data.Insp_Questionnaires_Name = varInsp_Observation_Name;
+            data.Hazard_Risk = varHazard_Risk;
+            data.Requirements = varRequirements;
+            data.Description_Action = varAction_Description;
+            data.Category = varCategory;
+            data.Sub_Category = varSub_Category;
+            data.Risk_Level = varRisk_Level;
+            data.Photo_File_Path = varPhoto_File_Path_ObsFinal;
+            OBS_ARR.push(data);
+            subSno++;
+        });
+        var Safety_Violation = $('input[name="Safety_Violation_CS"]:checked').val();
+        var Obj = {
+            Insp_HealthSafety_Id: $("#Insp_HealthSafety_EId").val(),
+            Unique_Id: $("#EUnique_Id").val(),
+            Safety_Violation: $('input[name="Safety_Violation_CS"]:checked').val(),
+            Business_Unit_Id: $("#EBusiness_Unit_Id").val(),
+            Zone_Id: $("#EZone_Id").val(),
+            Community_Id: $("#ECommunity_Id").val(),
+            Building_Id: $("#EBuilding_Id").val(),
+            Zone_Manager: $("#EZone_Manager").val(),
+            Zone_Supervisor: $("#EZone_Supervisor").val(),
+            Date_of_Inspection: $("#Inspection_Date").val(),
+            Description: $("#SVCS_Description").val(),
+            L_Insp_HealthSafety_Questionnaires: QNS_ARR,
+            L_Insp_HealthSafety_Observation: OBS_ARR
+        };
+        $.ajax({
+            url: "/HandOverInspection/Insp_HealthSafety_Qn_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        if (data.Return_2 == 0) {
+                            $('.submitAdd').prop('disabled', false);
+                            window.location.reload();
+                        } else {
+                            $('.submitAdd').prop('disabled', false);
+                            var url = "/Inspection/Insp_Safety_Violation_Temp?id=" + data.Return_2;
+                            window.location.href = url;
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function Fnbtn_HS_Insp_Reject() {
+        var varInsp_HealthSafety_Id = "";
+        varInsp_HealthSafety_Id = $("#Insp_HealthSafety_EId").val();
+        var Rowid = $("#hdn_Hs_Insp_Id").val();
+        var Stage = $("#Reject_Reason_Stage").val();
+        var Description = $("#Reject_Reason_Description").val();
+        let valid = $("#Fm_HS_Insp_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("HealthSafety_Insp_Reject", "HandOverInspection")", { Insp_HealthSafety_Id: Rowid, Reject_Reason_Stage: Stage, Reject_Reason_Description: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    //$("#Reject_Reason_Description").val("");
+                    //$(".Add_HSCA_Reject").modal('toggle');
+                    //FnHS_CA_ApprovalReject(varInsp_HealthSafety_Id);
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+</script>

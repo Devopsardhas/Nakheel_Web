@@ -1,0 +1,2101 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\Nakheel_Web.bundle.scp.css",
+      "PackagePath": "staticwebassets\\Nakheel_Web.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\0a33c1d4-0b32-49b4-aed7-6fe7a33b345b.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\0a33c1d4-0b32-49b4-aed7-6fe7a33b345b.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\2e70079b-9239-4d3b-b331-6db83797f580.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\2e70079b-9239-4d3b-b331-6db83797f580.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\3e42f8c4-113d-453e-86c3-c89cfb0c7b8d.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\3e42f8c4-113d-453e-86c3-c89cfb0c7b8d.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\536d1ad7-3273-4c92-a12d-93b09df32764.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\536d1ad7-3273-4c92-a12d-93b09df32764.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\59ad293c-7564-4123-917d-ea0efae8fec2.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\59ad293c-7564-4123-917d-ea0efae8fec2.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\66a5885d-55d2-451e-927b-aeca82a8afb8.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\66a5885d-55d2-451e-927b-aeca82a8afb8.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\6d921c65-b6c1-4095-91e2-ff47f4b147fe.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\6d921c65-b6c1-4095-91e2-ff47f4b147fe.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\c19925f0-fa53-4cf0-a69b-df2408888500.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\c19925f0-fa53-4cf0-a69b-df2408888500.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\cf33f379-de40-4621-8b29-7d8253f1e2bb.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\cf33f379-de40-4621-8b29-7d8253f1e2bb.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\d17e34a1-9ca7-4749-94c3-39646ad3d908.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\d17e34a1-9ca7-4749-94c3-39646ad3d908.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\d711c428-39df-4a08-ba60-e8dc43c26d00.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\d711c428-39df-4a08-ba60-e8dc43c26d00.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Applicable_Reports\\e0504ad9-48d8-48d2-8ac6-059465d4cef9.png",
+      "PackagePath": "staticwebassets\\Applicable_Reports\\e0504ad9-48d8-48d2-8ac6-059465d4cef9.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\AuditEnvReport\\Environmental_Audit_Report.rdlc",
+      "PackagePath": "staticwebassets\\AuditEnvReport\\Environmental_Audit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\AuditRdlcReport\\Internal_Audit_Report.rdlc",
+      "PackagePath": "staticwebassets\\AuditRdlcReport\\Internal_Audit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\AuditRdlcReport\\Non_Conformance_Report.rdlc",
+      "PackagePath": "staticwebassets\\AuditRdlcReport\\Non_Conformance_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\AuditRdlcReport\\Service_Provider_Audit_Report.rdlc",
+      "PackagePath": "staticwebassets\\AuditRdlcReport\\Service_Provider_Audit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\AuditRdlcReport\\Welfare_Audit_Report.rdlc",
+      "PackagePath": "staticwebassets\\AuditRdlcReport\\Welfare_Audit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Env_Pdf\\AM-ENV-0002.pdf",
+      "PackagePath": "staticwebassets\\Audit_Env_Pdf\\AM-ENV-0002.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_NCR_Pdf\\AM-NCR-0081.pdf",
+      "PackagePath": "staticwebassets\\Audit_NCR_Pdf\\AM-NCR-0081.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_NCR_Pdf\\NCM-HSSE-FRM-0007.pdf",
+      "PackagePath": "staticwebassets\\Audit_NCR_Pdf\\NCM-HSSE-FRM-0007.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0008.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0008.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0010.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0010.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0014.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0014.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0015.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0015.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0017.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0017.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Audit_Welfare_Pdf\\AM-WLF-0018.pdf",
+      "PackagePath": "staticwebassets\\Audit_Welfare_Pdf\\AM-WLF-0018.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Confined_Renewal_Evidence_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Confined_Renewal_Evidence_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Confined_Space_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Confined_Space_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Electrical_Work_Permit_Evidence_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Electrical_Work_Permit_Evidence_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Electrical_Work_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Electrical_Work_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Fire_Safety_Work_Permit_Evidence_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Fire_Safety_Work_Permit_Evidence_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Fire_Safety_Work_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Fire_Safety_Work_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Hot_Work_Permit_Evidence_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Hot_Work_Permit_Evidence_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Hot_Work_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Hot_Work_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Work_At_Height_Permit_Evidence_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Work_At_Height_Permit_Evidence_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ControlofWork\\Work_At_Height_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\ControlofWork\\Work_At_Height_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\DrillRdlc\\DrillForms.rdlc",
+      "PackagePath": "staticwebassets\\DrillRdlc\\DrillForms.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\DrillRdlc\\FireDrill.rdlc",
+      "PackagePath": "staticwebassets\\DrillRdlc\\FireDrill.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Drill_Report_PDF\\DRILL-0001.pdf",
+      "PackagePath": "staticwebassets\\Drill_Report_PDF\\DRILL-0001.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\IncidentReportPdf\\NCM-HSSE-INR-0022.pdf",
+      "PackagePath": "staticwebassets\\IncidentReportPdf\\NCM-HSSE-INR-0022.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\IncidentReportPdf\\NCM-HSSE-INR-0023-V1.pdf",
+      "PackagePath": "staticwebassets\\IncidentReportPdf\\NCM-HSSE-INR-0023-V1.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\IncidentReportPdf\\NCM-HSSE-INR-0031.pdf",
+      "PackagePath": "staticwebassets\\IncidentReportPdf\\NCM-HSSE-INR-0031.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Incident_Investigation_ReportPdf\\NCM-HSSE-INR-0021.pdf",
+      "PackagePath": "staticwebassets\\Incident_Investigation_ReportPdf\\NCM-HSSE-INR-0021.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\Incident_Investigation_ReportPdf\\NCM-HSSE-INR-0023.pdf",
+      "PackagePath": "staticwebassets\\Incident_Investigation_ReportPdf\\NCM-HSSE-INR-0023.pdf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Joint_Pre_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Joint_Pre_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Joint_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Joint_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Land_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Land_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Leader_Pre_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Leader_Pre_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Leader_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Leader_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Safety_Violation_Pre_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Safety_Violation_Pre_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Safety_Violation_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Safety_Violation_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_SoftService_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_SoftService_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Spot_Document_Review.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Spot_Document_Review.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Spot_Pre_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Spot_Pre_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Insp_Spot_Report.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Insp_Spot_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\InspRdlcReport\\Preview_Advisory_Notice.rdlc",
+      "PackagePath": "staticwebassets\\InspRdlcReport\\Preview_Advisory_Notice.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Audit_Internal_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Audit_Internal_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Genral_Work_Permit_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Genral_Work_Permit_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Incident_Final_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Incident_Final_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Incident_Investigation_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Incident_Investigation_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Incident_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Incident_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Insp_FireLifeSafety_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Insp_FireLifeSafety_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Insp_Handover_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Insp_Handover_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Insp_HealthSafety_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Insp_HealthSafety_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Insp_ServiceProvider_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Insp_ServiceProvider_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Investigation_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Investigation_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Key_Lession_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Key_Lession_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Key_Lession_Report_1.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Key_Lession_Report_1.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Key_Lession_Report_Test.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Key_Lession_Report_Test.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\RdlcReport\\Observation_Report.rdlc",
+      "PackagePath": "staticwebassets\\RdlcReport\\Observation_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\SecurityIncRdlcReport\\SecIncidentWOA_Report.rdlc",
+      "PackagePath": "staticwebassets\\SecurityIncRdlcReport\\SecIncidentWOA_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\SecurityIncRdlcReport\\SecIncident_Report.rdlc",
+      "PackagePath": "staticwebassets\\SecurityIncRdlcReport\\SecIncident_Report.rdlc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\003d6ff5-0852-41b7-8af7-a7fadc881ed4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\003d6ff5-0852-41b7-8af7-a7fadc881ed4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0371b43f-b15b-4a6f-86e2-410fbc558a3f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0371b43f-b15b-4a6f-86e2-410fbc558a3f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\04f05c77-a2cb-4d1a-8b62-57c7b0f6b6bd.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\04f05c77-a2cb-4d1a-8b62-57c7b0f6b6bd.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\05407652-5a51-4902-8ac2-ab94f3acd88d.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\05407652-5a51-4902-8ac2-ab94f3acd88d.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0a179a5a-59f2-43db-b688-ece8fb97eaf3.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0a179a5a-59f2-43db-b688-ece8fb97eaf3.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0b044814-46ca-47f2-aac5-29779f2991e6.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0b044814-46ca-47f2-aac5-29779f2991e6.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0d0178da-848b-4497-9fd3-a5d44e25f84e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0d0178da-848b-4497-9fd3-a5d44e25f84e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0d026c7a-9171-4597-beba-35d98e3720e9.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0d026c7a-9171-4597-beba-35d98e3720e9.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\0e66ab9b-ec12-4445-8f5d-599f43cb1b75.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\0e66ab9b-ec12-4445-8f5d-599f43cb1b75.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\10642a25-13d0-4824-b47d-59e709cb0e4e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\10642a25-13d0-4824-b47d-59e709cb0e4e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\1255afef-3099-4257-a74d-0a22f4d4c9cb.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\1255afef-3099-4257-a74d-0a22f4d4c9cb.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\12dcabd4-50e5-4334-bed8-516d0e3c09ff.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\12dcabd4-50e5-4334-bed8-516d0e3c09ff.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\13ad145b-55f7-4638-82ba-6773fdb3e4a4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\13ad145b-55f7-4638-82ba-6773fdb3e4a4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\15d5079d-5d63-4ede-ab88-2fbd0ea3fc39.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\15d5079d-5d63-4ede-ab88-2fbd0ea3fc39.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\16ac1267-91dc-4ccf-b3fb-4934a84cf04e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\16ac1267-91dc-4ccf-b3fb-4934a84cf04e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\1f79ccb8-e688-4373-a2f0-abba12f4afe0.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\1f79ccb8-e688-4373-a2f0-abba12f4afe0.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\20404492-ee2f-4401-a9ee-3b08a441a2c3.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\20404492-ee2f-4401-a9ee-3b08a441a2c3.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\21d6aa93-cc06-43cc-b87c-551f3946ab25.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\21d6aa93-cc06-43cc-b87c-551f3946ab25.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\2a5ce1bf-2e47-4023-a8a6-46a1c550e4b1.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\2a5ce1bf-2e47-4023-a8a6-46a1c550e4b1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\2ccb5a23-05d7-41b3-a7bc-2b2b81a9f431.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\2ccb5a23-05d7-41b3-a7bc-2b2b81a9f431.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\2ebc237a-4489-4853-9208-4563451ac15a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\2ebc237a-4489-4853-9208-4563451ac15a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\2f09c1aa-23bd-4c68-afd7-bb34f363ef92.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\2f09c1aa-23bd-4c68-afd7-bb34f363ef92.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\368c51a8-1acd-4894-be4b-8b11bcbeca1f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\368c51a8-1acd-4894-be4b-8b11bcbeca1f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\379b8631-d3cf-417a-b166-7217b441a79f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\379b8631-d3cf-417a-b166-7217b441a79f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\39cb24c5-6749-4d37-93fc-81a095dcc808.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\39cb24c5-6749-4d37-93fc-81a095dcc808.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\3e543652-c1b8-4021-8d39-32e5f619d36c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\3e543652-c1b8-4021-8d39-32e5f619d36c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\3f0b41ec-cb27-4c2f-aef9-8a3565647103.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\3f0b41ec-cb27-4c2f-aef9-8a3565647103.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4269af87-8d36-4939-9175-eccf4e360993.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4269af87-8d36-4939-9175-eccf4e360993.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\43c0f8ea-c347-48f6-9f56-e015c5504182.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\43c0f8ea-c347-48f6-9f56-e015c5504182.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4696ce1e-a96f-4f48-89f3-c6d284012570.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4696ce1e-a96f-4f48-89f3-c6d284012570.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\47e809fe-f403-41b4-91bd-8b7557caf66f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\47e809fe-f403-41b4-91bd-8b7557caf66f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\47fe9a73-f088-4257-95d0-f2597428471c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\47fe9a73-f088-4257-95d0-f2597428471c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4a5b5db7-6b06-4bd1-94aa-56aa8c2c74a4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4a5b5db7-6b06-4bd1-94aa-56aa8c2c74a4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4d649bc4-bc2a-4f63-991e-889a43e20487.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4d649bc4-bc2a-4f63-991e-889a43e20487.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4ec58ce0-5d37-453f-b194-fa3164d43e4e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4ec58ce0-5d37-453f-b194-fa3164d43e4e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\4f23d157-3557-48b7-b8f7-4f99ade4bb55.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\4f23d157-3557-48b7-b8f7-4f99ade4bb55.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\53941416-0d14-4d2b-b81f-4f068c072d70.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\53941416-0d14-4d2b-b81f-4f068c072d70.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\547e5bb1-d69b-4058-a589-ceb86cd18121.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\547e5bb1-d69b-4058-a589-ceb86cd18121.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\57959c17-9e3b-4b35-bc18-9686148cccdb.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\57959c17-9e3b-4b35-bc18-9686148cccdb.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\57ec7f73-fbe0-4cd4-b710-a876e48be0f8.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\57ec7f73-fbe0-4cd4-b710-a876e48be0f8.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\5ae85bfc-07ed-4174-a060-0e2815de8835.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\5ae85bfc-07ed-4174-a060-0e2815de8835.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\5db9f68b-10b9-4bd2-a5b0-d5a9facf19b5.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\5db9f68b-10b9-4bd2-a5b0-d5a9facf19b5.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\5ebd9432-1761-4051-af71-63ad0137fda5.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\5ebd9432-1761-4051-af71-63ad0137fda5.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\5fd351c7-a525-44ea-a0e8-3b119c540176.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\5fd351c7-a525-44ea-a0e8-3b119c540176.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6061c279-7dcf-49d0-be9b-3ba38ad63623.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6061c279-7dcf-49d0-be9b-3ba38ad63623.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6333aac6-85d3-4ecb-8d5b-8357ca823246.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6333aac6-85d3-4ecb-8d5b-8357ca823246.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\637a1978-9e0a-4141-a17c-74dec8a8af0d.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\637a1978-9e0a-4141-a17c-74dec8a8af0d.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6533d36c-ac51-467e-b529-11cd5f41090b.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6533d36c-ac51-467e-b529-11cd5f41090b.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6868ae0b-eef9-4ca0-99a6-f1cc65d97201.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6868ae0b-eef9-4ca0-99a6-f1cc65d97201.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\69a1f67f-2d23-4fda-8ddf-593ce39807ef.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\69a1f67f-2d23-4fda-8ddf-593ce39807ef.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6d6e8d8e-883b-4435-9eb2-bd0ed92c5648.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6d6e8d8e-883b-4435-9eb2-bd0ed92c5648.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\6f6c34a1-5cec-42bc-b37f-30f41cbb52b4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\6f6c34a1-5cec-42bc-b37f-30f41cbb52b4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\70634a29-1708-4576-961c-cbf96bbfc19c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\70634a29-1708-4576-961c-cbf96bbfc19c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\74d163f1-ad2d-44c0-8fb2-59f6290d24d4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\74d163f1-ad2d-44c0-8fb2-59f6290d24d4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\7749fe28-1720-4c61-960c-6728596d459c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\7749fe28-1720-4c61-960c-6728596d459c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\7a63266e-7963-407f-9853-ed9de9f48d9c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\7a63266e-7963-407f-9853-ed9de9f48d9c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\7f3a48b8-a8dd-4dd5-a73e-46de952a1bf1.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\7f3a48b8-a8dd-4dd5-a73e-46de952a1bf1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\7f8e48d2-416f-4c42-b8bc-6bb2c5805a9e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\7f8e48d2-416f-4c42-b8bc-6bb2c5805a9e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\80331c73-dabd-4657-a936-3614c5378cba.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\80331c73-dabd-4657-a936-3614c5378cba.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\806cd5e4-473e-44dd-bcc4-4a303875cebd.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\806cd5e4-473e-44dd-bcc4-4a303875cebd.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\8cb2d89c-6068-4242-8547-f71180cc26a9.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\8cb2d89c-6068-4242-8547-f71180cc26a9.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\8d3aeb01-b238-46bb-94c4-b9b0d20602e8.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\8d3aeb01-b238-46bb-94c4-b9b0d20602e8.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\8d720f9d-ddde-4174-8030-b46f0f6b29a0.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\8d720f9d-ddde-4174-8030-b46f0f6b29a0.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\8fc48252-b034-48d3-9dd3-2176c6bf6c3a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\8fc48252-b034-48d3-9dd3-2176c6bf6c3a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\912a6fa1-081a-4203-ba2c-5d4fbe77cf1b.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\912a6fa1-081a-4203-ba2c-5d4fbe77cf1b.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\9312324c-242c-4b88-8256-88cd40ff9dbd.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\9312324c-242c-4b88-8256-88cd40ff9dbd.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\957c2ece-118e-49a2-995f-ac98f2fb487e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\957c2ece-118e-49a2-995f-ac98f2fb487e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\9add4463-1c22-48d1-ba3e-df4f0b7fb157.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\9add4463-1c22-48d1-ba3e-df4f0b7fb157.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\9aeddc27-a14d-426c-9ccf-6a7713b31f6a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\9aeddc27-a14d-426c-9ccf-6a7713b31f6a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\9fde0e8d-1121-4d7a-a65f-f992fc8df08e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\9fde0e8d-1121-4d7a-a65f-f992fc8df08e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\a1df984a-e165-4418-9d37-f7c72d1159e6.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\a1df984a-e165-4418-9d37-f7c72d1159e6.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\a43193ae-8f8b-47fb-b9ac-e485ad4bb779.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\a43193ae-8f8b-47fb-b9ac-e485ad4bb779.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\a5c8bf0d-7b04-4ef7-a0b0-b829a8fde16c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\a5c8bf0d-7b04-4ef7-a0b0-b829a8fde16c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\aaf4f8a0-3b08-4e96-8068-b35c50e7fd9b.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\aaf4f8a0-3b08-4e96-8068-b35c50e7fd9b.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\af447056-64a9-41fd-b35b-62069bf8fa3c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\af447056-64a9-41fd-b35b-62069bf8fa3c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\b0b3ab4a-8f29-442c-8bef-5195139bd637.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\b0b3ab4a-8f29-442c-8bef-5195139bd637.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\b18fd17c-166a-4ca0-bdcd-35814b9820e9.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\b18fd17c-166a-4ca0-bdcd-35814b9820e9.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\b57b3bd8-2995-4784-8cfa-4efbac39873a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\b57b3bd8-2995-4784-8cfa-4efbac39873a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\b5922998-905f-4d00-b702-acdec6f38bb0.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\b5922998-905f-4d00-b702-acdec6f38bb0.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\bbf9a408-e18b-4fba-865d-039451e5c90a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\bbf9a408-e18b-4fba-865d-039451e5c90a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\c12d4fcf-fa28-4c0a-a9c8-93ff5401782e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\c12d4fcf-fa28-4c0a-a9c8-93ff5401782e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\c17d270a-c38d-4513-bdf9-352aec5b280d.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\c17d270a-c38d-4513-bdf9-352aec5b280d.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\c1d5cb8e-90e0-4809-8794-208cfca7083a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\c1d5cb8e-90e0-4809-8794-208cfca7083a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\c3f1a72d-6451-4425-84ac-fc298dcb8dca.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\c3f1a72d-6451-4425-84ac-fc298dcb8dca.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\cd3b228a-8ab3-4be6-92e1-1fc21eeb3007.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\cd3b228a-8ab3-4be6-92e1-1fc21eeb3007.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\cf8ab7df-cff6-4635-a008-43ff29bd7585.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\cf8ab7df-cff6-4635-a008-43ff29bd7585.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\cff6460c-53bb-439c-be59-1d1ed4dcab7f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\cff6460c-53bb-439c-be59-1d1ed4dcab7f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\cff790cf-2b73-4599-b749-5c9e37e0083e.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\cff790cf-2b73-4599-b749-5c9e37e0083e.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\d0d85c30-ecac-4f2c-918c-a55bd2f0a22b.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\d0d85c30-ecac-4f2c-918c-a55bd2f0a22b.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\d86a93c3-2ea6-4280-b727-6496e36a32aa.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\d86a93c3-2ea6-4280-b727-6496e36a32aa.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\d9abdc26-c39f-4689-848a-748033a99268.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\d9abdc26-c39f-4689-848a-748033a99268.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\e0dacf10-f8ba-43c5-9f82-ffada5a27633.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\e0dacf10-f8ba-43c5-9f82-ffada5a27633.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\e16d77f3-769c-45ba-8a83-961f1f95cfac.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\e16d77f3-769c-45ba-8a83-961f1f95cfac.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\e6d30adb-edd4-486b-b9ae-a5ff0c35eff1.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\e6d30adb-edd4-486b-b9ae-a5ff0c35eff1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\e7ddeb66-1591-4b54-8ba8-f388f3d6ce3a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\e7ddeb66-1591-4b54-8ba8-f388f3d6ce3a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\e8aaab90-ded9-4dfa-bf58-7bb3add0bfaa.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\e8aaab90-ded9-4dfa-bf58-7bb3add0bfaa.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f07d6fd5-4aeb-479b-b526-677a64d226bb.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f07d6fd5-4aeb-479b-b526-677a64d226bb.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f09cd8da-e21e-4bdd-9761-4871e9da273c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f09cd8da-e21e-4bdd-9761-4871e9da273c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f4ac297f-2e74-422e-b617-b904eafca43f.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f4ac297f-2e74-422e-b617-b904eafca43f.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f5cb333d-c5a6-4724-99fe-0d41cfd9930a.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f5cb333d-c5a6-4724-99fe-0d41cfd9930a.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f6d32f7f-00ab-4b9b-a166-253136b646fa.doc",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f6d32f7f-00ab-4b9b-a166-253136b646fa.doc"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\f761e012-c0e0-400d-85c5-bd4788a62d2c.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\f761e012-c0e0-400d-85c5-bd4788a62d2c.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\fbf85d97-edcc-45dc-9cfe-86b436bb16f4.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\fbf85d97-edcc-45dc-9cfe-86b436bb16f4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\fbfccdd4-6ef2-414d-8527-339f35efedbc.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\fbfccdd4-6ef2-414d-8527-339f35efedbc.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\ServiceProvidersFiles\\fcd8fa0f-928a-44f6-b69f-969d8d82d1af.png",
+      "PackagePath": "staticwebassets\\ServiceProvidersFiles\\fcd8fa0f-928a-44f6-b69f-969d8d82d1af.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\Login\\css\\app.min.css",
+      "PackagePath": "staticwebassets\\assets\\Login\\css\\app.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\Login\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\assets\\Login\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\Login\\css\\icons.min.css",
+      "PackagePath": "staticwebassets\\assets\\Login\\css\\icons.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\Login\\images\\PJA-18-09-2023-1920x1080-18sec.webm",
+      "PackagePath": "staticwebassets\\assets\\Login\\images\\PJA-18-09-2023-1920x1080-18sec.webm"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\app.min.css",
+      "PackagePath": "staticwebassets\\assets\\css\\app.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\assets\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\datatablebutt.css",
+      "PackagePath": "staticwebassets\\assets\\css\\datatablebutt.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\font-awesome.css",
+      "PackagePath": "staticwebassets\\assets\\css\\font-awesome.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\frmwiz.css",
+      "PackagePath": "staticwebassets\\assets\\css\\frmwiz.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\icons.min.css",
+      "PackagePath": "staticwebassets\\assets\\css\\icons.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\layout.css",
+      "PackagePath": "staticwebassets\\assets\\css\\layout.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\css\\translateelement.css",
+      "PackagePath": "staticwebassets\\assets\\css\\translateelement.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\datatable\\dataTables.bootstrap5.min.css",
+      "PackagePath": "staticwebassets\\assets\\datatable\\dataTables.bootstrap5.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\datatable\\dataTables.bootstrap5.min.js",
+      "PackagePath": "staticwebassets\\assets\\datatable\\dataTables.bootstrap5.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\datatable\\jquery.dataTables.min.js",
+      "PackagePath": "staticwebassets\\assets\\datatable\\jquery.dataTables.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\Nakheel-HeadlineBold.otf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\Nakheel-HeadlineBold.otf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\Nakheel-HeadlineRegular.otf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\Nakheel-HeadlineRegular.otf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\Nakheel-TextBold.otf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\Nakheel-TextBold.otf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\Nakheel-TextRegular.otf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\Nakheel-TextRegular.otf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\boxicons.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\boxicons.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\boxicons.html",
+      "PackagePath": "staticwebassets\\assets\\fonts\\boxicons.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\boxicons.ttf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\boxicons.ttf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\boxicons.woff",
+      "PackagePath": "staticwebassets\\assets\\fonts\\boxicons.woff"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\boxiconsd41d.svg",
+      "PackagePath": "staticwebassets\\assets\\fonts\\boxiconsd41d.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400.html",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400.svg",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400.ttf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400.ttf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400.woff",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400.woff"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-brands-400d41d.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-brands-400d41d.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400.html",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400.svg",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400.ttf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400.ttf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400.woff",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400.woff"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-regular-400d41d.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-regular-400d41d.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900.html",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900.svg",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900.ttf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900.ttf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900.woff",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900.woff"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\fa-solid-900d41d.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\fa-solid-900d41d.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\materialdesignicons-webfont2d61.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\materialdesignicons-webfont2d61.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\materialdesignicons-webfont2d61.html",
+      "PackagePath": "staticwebassets\\assets\\fonts\\materialdesignicons-webfont2d61.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\materialdesignicons-webfont2d61.ttf",
+      "PackagePath": "staticwebassets\\assets\\fonts\\materialdesignicons-webfont2d61.ttf"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\materialdesignicons-webfont2d61.woff",
+      "PackagePath": "staticwebassets\\assets\\fonts\\materialdesignicons-webfont2d61.woff"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\materialdesignicons-webfontd41d.eot",
+      "PackagePath": "staticwebassets\\assets\\fonts\\materialdesignicons-webfontd41d.eot"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\fonts\\nakheelfont.css",
+      "PackagePath": "staticwebassets\\assets\\fonts\\nakheelfont.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\241_F_Video_PlayButton.JPG",
+      "PackagePath": "staticwebassets\\assets\\images\\241_F_Video_PlayButton.JPG"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Human.svg",
+      "PackagePath": "staticwebassets\\assets\\images\\Human.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\LOader.Gif",
+      "PackagePath": "staticwebassets\\assets\\images\\LOader.Gif"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\LOader_1.Gif",
+      "PackagePath": "staticwebassets\\assets\\images\\LOader_1.Gif"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\LOader_2.Gif",
+      "PackagePath": "staticwebassets\\assets\\images\\LOader_2.Gif"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Loader_new.Gif",
+      "PackagePath": "staticwebassets\\assets\\images\\Loader_new.Gif"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Logo.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Logo.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Logo_1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Logo_1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Logo_22.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Logo_22.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\2.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\2.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\22.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\22.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\3.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\3.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\33.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\33.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\4.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\44.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\44.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\5.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\5.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\6.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\6.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\66.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\66.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\E.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\E.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\F.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\F.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\H.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\H.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Mapicons\\V.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Mapicons\\V.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\10.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\10.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\2.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\2.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\3.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\3.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\4.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\4.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\5.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\5.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\6.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\6.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\7.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\7.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\8.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\8.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\9.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\9.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern\\pattern_nakheeel.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern\\pattern_nakheeel.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Nakheel_Pattern_1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Nakheel_Pattern_1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\New_Ctrl.png",
+      "PackagePath": "staticwebassets\\assets\\images\\New_Ctrl.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\Screenshot_256.png",
+      "PackagePath": "staticwebassets\\assets\\images\\Screenshot_256.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\arr1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\arr1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\arr1.svg",
+      "PackagePath": "staticwebassets\\assets\\images\\arr1.svg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\body11.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\body11.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\cal.png",
+      "PackagePath": "staticwebassets\\assets\\images\\cal.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\docs.png",
+      "PackagePath": "staticwebassets\\assets\\images\\docs.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\excel.png",
+      "PackagePath": "staticwebassets\\assets\\images\\excel.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\hsebull.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\hsebull.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\hsebullimg.png",
+      "PackagePath": "staticwebassets\\assets\\images\\hsebullimg.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\image-.png",
+      "PackagePath": "staticwebassets\\assets\\images\\image-.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\ins.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\ins.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\location.png",
+      "PackagePath": "staticwebassets\\assets\\images\\location.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\login_logo - Copy.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\login_logo - Copy.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\login_logo.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\login_logo.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\login_logo.png",
+      "PackagePath": "staticwebassets\\assets\\images\\login_logo.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\login_logo_1.png",
+      "PackagePath": "staticwebassets\\assets\\images\\login_logo_1.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\maillogo.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\maillogo.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\mappin.png",
+      "PackagePath": "staticwebassets\\assets\\images\\mappin.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\pdf.png",
+      "PackagePath": "staticwebassets\\assets\\images\\pdf.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\sidelogo.png",
+      "PackagePath": "staticwebassets\\assets\\images\\sidelogo.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\slide1.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\slide1.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\slide2.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\slide2.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\slide3.jpg",
+      "PackagePath": "staticwebassets\\assets\\images\\slide3.jpg"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\usericon.png",
+      "PackagePath": "staticwebassets\\assets\\images\\usericon.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\images\\viewLoc.png",
+      "PackagePath": "staticwebassets\\assets\\images\\viewLoc.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\Confinedspacepermitofwork.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\Confinedspacepermitofwork.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\MajorhseworkValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\MajorhseworkValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\serversidedatatableConfined.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\serversidedatatableConfined.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\serversidedatatableElectrical.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\serversidedatatableElectrical.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\serversidedatatableFireSafety.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\serversidedatatableFireSafety.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\serversidedatatableHotWork.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\serversidedatatableHotWork.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\ControlofWorkValidation\\serversidedatatableWorkHeight.js",
+      "PackagePath": "staticwebassets\\assets\\js\\ControlofWorkValidation\\serversidedatatableWorkHeight.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\EmerMitigationValidate.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\EmerMitigationValidate.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\EmergencyAlertValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\EmergencyAlertValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\EmergencyAlertValidationtest.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\EmergencyAlertValidationtest.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\ServersidedatatableEmerMiti.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\ServersidedatatableEmerMiti.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\ServersidedatatableEmr_Alert.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\ServersidedatatableEmr_Alert.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\ServersidedatatableMitigationAction.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\ServersidedatatableMitigationAction.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emergency\\ServersidedatatableTriggerAlert.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emergency\\ServersidedatatableTriggerAlert.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\Common.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\Common.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\EMR_Drill.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\EMR_Drill.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\Emr_Drill_Action.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\Emr_Drill_Action.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\Emr_Schedule.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\Emr_Schedule.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\Sch_Main.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\Sch_Main.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Emr_Common\\masters-form-validation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Emr_Common\\masters-form-validation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\SELECT_2.CSS",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\SELECT_2.CSS"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\SELECT_2.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\SELECT_2.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\SELECT_2_B.css",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\SELECT_2_B.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\demo-styles.css",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\demo-styles.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\dselect.min.css",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\dselect.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\dselect.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\dselect.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\example-styles.css",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\example-styles.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\jquery-2.2.4.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\jquery-2.2.4.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\jquery.multi-select.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\jquery.multi-select.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\jquery.multi-select.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\jquery.multi-select.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\virtual-select.min.css",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\virtual-select.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Multiselect\\virtual-select.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Multiselect\\virtual-select.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\SecIncidentValidation\\secincidentValidate.js",
+      "PackagePath": "staticwebassets\\assets\\js\\SecIncidentValidation\\secincidentValidate.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\SecIncidentValidation\\serversidedatatable_securityincident.js",
+      "PackagePath": "staticwebassets\\assets\\js\\SecIncidentValidation\\serversidedatatable_securityincident.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\AdvisoryNotice_Validation\\AdvisoryNoticeFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\AdvisoryNotice_Validation\\AdvisoryNoticeFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\AdvisoryNotice_Validation\\AdvisoryNoticeSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\AdvisoryNotice_Validation\\AdvisoryNoticeSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Environment\\serversidedatatableAudEnv.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Environment\\serversidedatatableAudEnv.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Insp_Sch_Validation\\Audit_Insp_Sch.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Insp_Sch_Validation\\Audit_Insp_Sch.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Internal\\AuditInternalSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Internal\\AuditInternalSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Internal\\AuditInternalValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Internal\\AuditInternalValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_NCM_Form\\AuditNCMSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_NCM_Form\\AuditNCMSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_NCM_Form\\AuditNCMValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_NCM_Form\\AuditNCMValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Sp\\AuditSpSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Sp\\AuditSpSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Sp\\AuditSpValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Sp\\AuditSpValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Validation\\AuditMasterValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Validation\\AuditMasterValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Validation\\Audit_ServerDataTable.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Validation\\Audit_ServerDataTable.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Welfare\\AuditWelfareSeverside.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Welfare\\AuditWelfareSeverside.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Audit_Welfare\\AuditWelfareValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Audit_Welfare\\AuditWelfareValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Hse_Bulletin_Validation\\HSE_Bulletin.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Hse_Bulletin_Validation\\HSE_Bulletin.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\EmployeeManagementValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\EmployeeManagementValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\IncidentObservationValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\IncidentObservationValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\IncidentReportValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\IncidentReportValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_IncidentDashboard.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_IncidentDashboard.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_ObservationDashboard.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_ObservationDashboard.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_ObservationReport.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Incident_Validation\\serversidedatatable_ObservationReport.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Dashboard\\Insp_Dash_Serverside.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Dashboard\\Insp_Dash_Serverside.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspSafetyViolationCASeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspSafetyViolationCASeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspSafetyViolationSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspSafetyViolationSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionCAFormSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionCAFormSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionFormSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionFormSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jInspectionFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Joint_Validation\\jSafetyViolationFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Joint_Validation\\jSafetyViolationFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspCAFormSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspCAFormSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Insp_Leader_Validation\\LeaderInspSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspFormCheckListSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspFormCheckListSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspFormCheckListValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspFormCheckListValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspSafetyViolationCASeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspSafetyViolationCASeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspSafetyViolationSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspSafetyViolationSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionCAFormSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionCAFormSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionFormSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionFormSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionHandOverSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionHandOverSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionHealthSafetySeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionHealthSafetySeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\InspectionMasterValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\InspectionMasterValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Inspection_Validation\\SafetyViolationFormValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Inspection_Validation\\SafetyViolationFormValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Investigation_Validation\\Investigationformvalidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Investigation_Validation\\Investigationformvalidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Investigation_Validation\\frmWizard.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Investigation_Validation\\frmWizard.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Landscape_Inspection\\LandscapeInspCASeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Landscape_Inspection\\LandscapeInspCASeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Landscape_Inspection\\LandscapeInspSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Landscape_Inspection\\LandscapeInspSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Landscape_Inspection\\SoftServicescapeInspCASeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Landscape_Inspection\\SoftServicescapeInspCASeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Landscape_Inspection\\SoftServicescapeInspSeverSide.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Landscape_Inspection\\SoftServicescapeInspSeverSide.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Master_Management_Dashboard\\serversideDatatable_Master_Dashboard.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Master_Management_Dashboard\\serversideDatatable_Master_Dashboard.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Service_Monthly\\ServiceMontlyValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Service_Monthly\\ServiceMontlyValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Service_Prov_Signup_Dashboard\\Serversidedata_SP_Dashboard.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Service_Prov_Signup_Dashboard\\Serversidedata_SP_Dashboard.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\Service_SignUp\\SignUpValidation.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\Service_SignUp\\SignUpValidation.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\jquery.validate.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\Validation\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\Validation\\jquery.validate.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\apexcharts.js",
+      "PackagePath": "staticwebassets\\assets\\js\\apexcharts.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\app.js",
+      "PackagePath": "staticwebassets\\assets\\js\\app.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-area.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-area.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-bar.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-bar.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-boxplot.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-boxplot.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-bubble.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-bubble.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-candlestick.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-candlestick.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-column.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-column.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-heatmap.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-heatmap.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-line.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-line.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-mixed.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-mixed.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-pie.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-pie.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-polararea.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-polararea.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-radar.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-radar.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-radialbar.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-radialbar.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-scatter.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-scatter.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-timeline.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-timeline.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts-treemap.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts-treemap.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\apexcharts.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\apexcharts.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\calendar.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\calendar.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\chartjs.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\chartjs.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\chartjs.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\chartjs.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\coming-soon.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\coming-soon.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\dashboard-crypto.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\dashboard-crypto.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\dashboard-saas.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\dashboard-saas.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\dashboard.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\dashboard.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\echarts.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\echarts.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\ecommerce-choices.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\ecommerce-choices.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\ecommerce-customers.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\ecommerce-customers.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\ecommerce-orders.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\ecommerce-orders.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\ecommerce-product-detail.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\ecommerce-product-detail.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\ecommerce-shops.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\ecommerce-shops.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\email-editor.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\email-editor.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\eva-icon.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\eva-icon.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\file-manager.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\file-manager.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\fontawesome.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\fontawesome.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\form-advanced.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\form-advanced.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\form-editor.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\form-editor.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\form-mask.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\form-mask.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\form-validation.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\form-validation.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\form-wizard.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\form-wizard.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\gmaps.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\gmaps.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\gridjs.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\gridjs.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\invoice-list.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\invoice-list.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\leaflet-map.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\leaflet-map.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\leaflet-us-states.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\leaflet-us-states.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\lightbox.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\lightbox.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\materialdesign.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\materialdesign.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\notification.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\notification.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\pass-addon.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\pass-addon.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\product-filter-range.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\product-filter-range.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\range-sliders.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\range-sliders.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\rating.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\rating.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\stock-prices.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\stock-prices.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\sweet-alerts.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\sweet-alerts.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\task-creat.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\task-creat.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\timeline.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\timeline.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\tui-charts.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\tui-charts.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\two-step-verification.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\two-step-verification.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\vector-maps.init.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\vector-maps.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\vue-apexcharts.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\vue-apexcharts.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\pages\\vue.min.js",
+      "PackagePath": "staticwebassets\\assets\\js\\pages\\vue.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\js\\vue.js",
+      "PackagePath": "staticwebassets\\assets\\js\\vue.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@ckeditor\\ckeditor5-build-classic\\build\\ckeditor.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\@ckeditor\\ckeditor5-build-classic\\build\\ckeditor.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@simonwep\\pickr\\pickr.es5.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\@simonwep\\pickr\\pickr.es5.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@simonwep\\pickr\\pickr.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\@simonwep\\pickr\\pickr.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@simonwep\\pickr\\themes\\classic.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\@simonwep\\pickr\\themes\\classic.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@simonwep\\pickr\\themes\\monolith.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\@simonwep\\pickr\\themes\\monolith.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\@simonwep\\pickr\\themes\\nano.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\@simonwep\\pickr\\themes\\nano.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\FileUpload\\Excel.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\FileUpload\\Excel.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\FileUpload\\fileinput.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\FileUpload\\fileinput.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\FileUpload\\fileinput.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\FileUpload\\fileinput.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\alertifyjs\\build\\alertify.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\alertifyjs\\build\\alertify.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\alertifyjs\\build\\css\\alertify.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\alertifyjs\\build\\css\\alertify.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\alertifyjs\\build\\css\\themes\\default.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\alertifyjs\\build\\css\\themes\\default.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\apexcharts\\apexcharts.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\apexcharts\\apexcharts.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\bootstrap\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\bootstrap\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\chart.js\\chart.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\chart.js\\chart.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\choices.js\\public\\assets\\scripts\\choices.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\choices.js\\public\\assets\\scripts\\choices.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\choices.js\\public\\assets\\styles\\choices.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\choices.js\\public\\assets\\styles\\choices.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\dropzone\\min\\dropzone.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\dropzone\\min\\dropzone.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\dropzone\\min\\dropzone.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\dropzone\\min\\dropzone.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\echarts\\echarts.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\echarts\\echarts.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\eva-icons\\eva.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\eva-icons\\eva.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\flatpickr\\flatpickr.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\flatpickr\\flatpickr.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\flatpickr\\flatpickr.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\flatpickr\\flatpickr.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\fullcalendar\\main.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\fullcalendar\\main.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\fullcalendar\\main.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\fullcalendar\\main.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\glightbox\\css\\glightbox.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\glightbox\\css\\glightbox.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\glightbox\\js\\glightbox.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\glightbox\\js\\glightbox.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\gmaps\\gmaps.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\gmaps\\gmaps.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\gridjs\\gridjs.umd.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\gridjs\\gridjs.umd.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\gridjs\\theme\\mermaid.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\gridjs\\theme\\mermaid.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\imask\\imask.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\imask\\imask.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\jsvectormap\\css\\jsvectormap.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\jsvectormap\\css\\jsvectormap.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\jsvectormap\\js\\jsvectormap.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\jsvectormap\\js\\jsvectormap.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\jsvectormap\\maps\\canada.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\jsvectormap\\maps\\canada.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\jsvectormap\\maps\\us-merc-en.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\jsvectormap\\maps\\us-merc-en.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\jsvectormap\\maps\\world-merc.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\jsvectormap\\maps\\world-merc.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\leaflet\\images\\layers-2x.png",
+      "PackagePath": "staticwebassets\\assets\\libs\\leaflet\\images\\layers-2x.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\leaflet\\images\\layers.png",
+      "PackagePath": "staticwebassets\\assets\\libs\\leaflet\\images\\layers.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\leaflet\\images\\marker-icon.png",
+      "PackagePath": "staticwebassets\\assets\\libs\\leaflet\\images\\marker-icon.png"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\leaflet\\leaflet.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\leaflet\\leaflet.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\leaflet\\leaflet.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\leaflet\\leaflet.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\masonry-layout\\masonry.pkgd.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\masonry-layout\\masonry.pkgd.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\metismenujs\\metismenujs.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\metismenujs\\metismenujs.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\moment\\min\\moment.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\moment\\min\\moment.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\nouislider\\nouislider.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\nouislider\\nouislider.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\nouislider\\nouislider.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\nouislider\\nouislider.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\parsleyjs\\parsley.min.html",
+      "PackagePath": "staticwebassets\\assets\\libs\\parsleyjs\\parsley.min.html"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\quill\\quill.bubble.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\quill\\quill.bubble.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\quill\\quill.core.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\quill\\quill.core.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\quill\\quill.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\quill\\quill.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\quill\\quill.snow.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\quill\\quill.snow.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\rater-js\\index.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\rater-js\\index.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\signalr\\dist\\browser\\signalr.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\signalr\\dist\\browser\\signalr.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\signalr\\dist\\browser\\signalr.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\signalr\\dist\\browser\\signalr.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\simplebar\\simplebar.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\simplebar\\simplebar.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\sweetalert2\\sweetalert2.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\sweetalert2\\sweetalert2.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\sweetalert2\\sweetalert2.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\sweetalert2\\sweetalert2.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\swiper\\swiper-bundle.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\swiper\\swiper-bundle.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\swiper\\swiper-bundle.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\swiper\\swiper-bundle.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\toastr\\build\\toastr.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\toastr\\build\\toastr.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\toastr\\build\\toastr.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\toastr\\build\\toastr.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\tui-chart\\maps\\usa.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\tui-chart\\maps\\usa.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\tui-chart\\tui-chart-all.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\tui-chart\\tui-chart-all.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\tui-chart\\tui-chart.min.css",
+      "PackagePath": "staticwebassets\\assets\\libs\\tui-chart\\tui-chart.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\libs\\wnumb\\wNumb.min.js",
+      "PackagePath": "staticwebassets\\assets\\libs\\wnumb\\wNumb.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\css\\dataTables.bootstrap4.css",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\css\\dataTables.bootstrap4.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\css\\dataTables.bootstrap5.min.css",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\css\\dataTables.bootstrap5.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\css\\select.dataTables.min.css",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\css\\select.dataTables.min.css"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\jquery.min.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\jquery.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\jquery.min.map",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\jquery.min.map"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\js\\dataTables.bootstrap4.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\js\\dataTables.bootstrap4.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\js\\dataTables.bootstrap5.min.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\js\\dataTables.bootstrap5.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\js\\dataTables.select.min.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\js\\dataTables.select.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\js\\jquery.dataTables.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\js\\jquery.dataTables.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\datatables\\js\\jquery.dataTables.min.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\datatables\\js\\jquery.dataTables.min.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\assets\\pages\\ecommerce-orders.init.js",
+      "PackagePath": "staticwebassets\\assets\\pages\\ecommerce-orders.init.js"
+    },
+    {
+      "Id": "D:\\Gobi_Files\\Nakheel\\WEB\\Nakheel_Web\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.Nakheel_Web.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.build.Nakheel_Web.props",
+      "PackagePath": "build\\Nakheel_Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.Nakheel_Web.props",
+      "PackagePath": "buildMultiTargeting\\Nakheel_Web.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildTransitive.Nakheel_Web.props",
+      "PackagePath": "buildTransitive\\Nakheel_Web.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

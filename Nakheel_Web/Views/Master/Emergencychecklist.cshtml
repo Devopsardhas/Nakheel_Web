@@ -1,0 +1,294 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.EMR_Alert_CHK>;
+@{
+    ViewData["Title"] = "Emergency Checklist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10 mb-3"> <h4 class="card-title">Emergency Checklist Master</h4></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="div_table">
+
+
+                    <table id="tblEmergencychecklistmaster" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                        <thead>
+                            <tr class="TR_Color">
+                                <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Emergency Checklist ID</th>
+                                <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Emergency Category Name</th>
+                                <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Avaliable Checklist</th>
+                                <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                                <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Unique_ID</td>
+                                        <td>@item.Mitigation_Name</td>
+                                        <td>@item.Remarks</td>
+                                        <td>@item.Created_Date</td>
+
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Edit(@item.Mitigation_Type,'@item.Mitigation_Name')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="EmergencychecklistEdit" style="display:none ">
+
+
+                    <div class="row nowrap">
+
+                        <div class="col-lg-9">
+                            <h5 class="d-flex align-items-center mb-3">Emergency Type</h5>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <input type="text" class="form-control Mitigation_Type_Name" placeholder="Category Name" id="CATEGORY_NAME" name="CATEGORY_NAME" readonly autocomplete="off">
+                                <div style="display:none">
+                                    <input type="text" class="form-control Mitigation_Type">
+                                    <input type="text" class="form-control Mitigation_Type_new" id="Mitigation_Type_new">
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-lg-12 mb-3">
+
+                            <button class="btn btn-success waves-effect waves-light" type="button" id="AddMore" onclick="AddRow()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button>
+                        </div>
+
+
+
+                        <div class="col-lg-12">
+                            <table class="table table-striped dt-responsive nowrap tblround" id="CategorySubTable">
+                                <thead>
+                                    <tr class="TR_Color">
+                                        <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Checklist</th>
+                                        <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="CategorySubTbody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-12" id="divsubmitbtn" style="display:none">
+                            <div style="text-align:center; ">
+                                <button type="submit" class="btn btn-success" id="btnsubmit"> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MAIN_TABLE: "#tblEmergencychecklistmaster",
+        DIV_TABLE: "#div_table",
+        EMERGENCYCHECKLISTEDIT: "#EmergencychecklistEdit",
+        CATEGORYSUBTBODY: "#CategorySubTbody",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        CATEGORYSUBTABLE: "#CategorySubTable",
+        DIVSUBMITBTN: "#divsubmitbtn",
+        TBLEDITBUTTON: ".TblEditButton",
+        MITIGATION_TYPE: "#Mitigation_Type_new"
+
+    })
+    $(document).ready(function () {
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+
+    $(UI_Fields.CATEGORYSUBTABLE).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+
+        let varAudSubCategoryID = $(this).closest('tr').find('.Alert_Checklist_Id').val();
+        if (varAudSubCategoryID == '0') {
+            $(this).closest("tr").remove();
+
+        }
+        else {
+            Delete(varAudSubCategoryID, this);
+
+        }
+    });
+    $(UI_Fields.CATEGORYSUBTABLE).on("click", UI_Fields.TBLEDITBUTTON, function () {
+
+        $(this).closest('tr').find('.Check_List').prop('readonly', false);
+        $(this).closest('tr').addClass('Modified');
+        $(UI_Fields.DIVSUBMITBTN).show(100);
+
+    });
+
+    function Edit(id, Mitigation_Name) {
+        debugger;
+        $(UI_Fields.DIV_TABLE).hide();
+        $(UI_Fields.EMERGENCYCHECKLISTEDIT).show(100);
+        $(".Mitigation_Type_Name").val(Mitigation_Name);
+        $(UI_Fields.CATEGORYSUBTBODY).empty();
+        $.post("@Url.Action("GetByID_EmergencySubcategory", "Master")", { ID: id }, function (data) {
+            if (data.Status == "true") {
+                $(UI_Fields.CATEGORYSUBTBODY).empty();
+
+                $(data.Data).each(function (i, e) {
+                    debugger;
+                    $(UI_Fields.MITIGATION_TYPE).val(e.Mitigation_Type);
+                    let html = '';
+                    html += '<tr>';
+                    html += '<td><input type="hidden" class="Mitigation_Type"  value="' + e.Mitigation_Type + '"/><input type="hidden" class="Alert_Checklist_Id" value="' + e.Alert_Checklist_Id + '"/><input type="hidden" class="Alert_Checklist_Id" value="' + e.Alert_Checklist_Id + '"/>';
+                    html += '<input type="text" readonly class="form-control Check_List required AlphaNum "  value="' + e.Check_List + '"/></td>';
+                    html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button></td>';
+                    html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td>';
+                    html += '</tr>';
+                    $(UI_Fields.CATEGORYSUBTBODY).append(html);
+                    i++;
+
+                });
+                $(UI_Fields.DIVSUBMITBTN).hide();
+            }
+            else {
+                let html = '';
+                html += '<tr>';
+                html += '<td><input type="hidden" class="Mitigation_Type"  value="0"/><input type="hidden" class="Alert_Checklist_Id " value="0"/> <input type="text"  class="form-control CH_valid required AlphaNum CATEGORY_SUB Modified Check_List"  name="SUB_CATEGORYs0"/></td>';
+                html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td>';
+                html += '</tr>';
+                $(UI_Fields.CATEGORYSUBTBODY).append(html);
+                $(UI_Fields.SUBMIT_DIV).show(100);
+                $(UI_Fields.DIVSUBMITBTN).show(100);
+                $(UI_Fields.MITIGATION_TYPE).val(id);
+            }
+
+        });
+    }
+
+    function AddRow() {
+        let html = '';
+        html += '<tr>';
+        html += '<td><input type="hidden" class="Mitigation_Type"  value="0"/><input type="hidden" class="Alert_Checklist_Id " value="0"/> <input type="text"  class="form-control CH_valid required AlphaNum CATEGORY_SUB Modified Check_List"  name="SUB_CATEGORYs0"/></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td>';
+        html += '</tr>';
+        $(UI_Fields.CATEGORYSUBTBODY).append(html);
+        $(UI_Fields.DIVSUBMITBTN).show(100);
+
+    }
+    function Delete(ID, ele) {
+
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be Remove checklist",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+
+                if (t.isConfirmed) {
+                    var Mitigation_Type_s = $("#Mitigation_Type_new").val();
+                    var Mitigation_Type_N = $(".Mitigation_Type_Name").val();
+                    $.ajax({
+                        url: '/Master/DeleteEmg_Checklist',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: ID },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                $(ele).closest("tr").remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                Edit(Mitigation_Type_s, Mitigation_Type_N);
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+
+
+                }
+            });
+
+    }
+
+    $("#btnsubmit").on("click", function () {
+        debugger;
+        var len = $("#CategorySubTable tr").length;
+        var Mitigation_Type_s = $("#Mitigation_Type_new").val();
+        var Mitigation_Type_N = $(".Mitigation_Type_Name").val();
+        if (len > 0) {
+
+            var Matrin_A1 = [];
+            $('.Modified').each(function () {
+                debugger;
+                var txtCheck_List = $(this).closest('tr').find('.Check_List').val();
+                if (txtCheck_List == "" || txtCheck_List == null) {
+                    toastr["info"]("Please Enter checklist");
+                    $(this).closest('tr').find('.Check_List').focus();
+                    return false;
+                }
+                //Mitigation_Type
+                var Mitigation_Type = $(this).closest('tr').find('.Mitigation_Type').val();
+                Mitigation_Type = $("#Mitigation_Type_new").val();
+                var Alert_Checklist_Id = parseInt($(this).closest('tr').find('.Alert_Checklist_Id').val(), 10);
+                if (Alert_Checklist_Id == "" || Alert_Checklist_Id == null) {
+                    Alert_Checklist_Id = "0";
+                }
+                let data = {};
+                data.Alert_Checklist_Id = Alert_Checklist_Id;
+                data.Mitigation_Type = Mitigation_Type;
+                data.Check_List = txtCheck_List;
+                Matrin_A1.push(data);
+
+
+            })
+            if (Matrin_A1.length > 0) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/Master/Submit_Checklist",
+                    dataType: 'json',
+                    data: { TNI: Matrin_A1 },
+                    success: function (data) {
+
+                        if (data == true) {
+                            toastr["info"]("Added Successfully");
+                            Edit(Mitigation_Type_s, Mitigation_Type_N);
+                        }
+                        else {
+                            toastr["error"]("Please Enter valid Input!");
+
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                    }
+                });
+            }
+        }
+    })
+</script>

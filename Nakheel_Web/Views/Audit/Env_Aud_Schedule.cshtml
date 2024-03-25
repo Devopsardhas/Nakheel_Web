@@ -1,0 +1,363 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Env_Aud_Schedule Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="Internal_List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"><h4 class="card-title">Environmental  Audit</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Int_Audit_btn_Add" onclick="Internal_AddNew();"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="Main_Table_Internal" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Audit Id</th>
+                            <th>Zone</th>
+                            <th>Community & Location</th>
+                            <th>Audit Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="Int_View_Schd" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"><h4>Environmental  Audit</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Int_Audit_btn_back" onclick="Int_Audit_back();"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i> Back </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <form id="Environmental_Audit_Schd" action="#" method="post" style="padding: 0.25rem 1.25rem !important;">
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Name</label>
+                                <input type="text" class="form-control" disabled name="Name" value="@LoginClass.First_Name" placeholder="Name" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Designation</label>
+                                <input type="text" class="form-control" disabled name="designation" value="@LoginClass.Designation_Name" placeholder="Designation" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Date & Time</label>
+                                <input class="form-control" type="datetime-local" id="Int_Audit_Date" />
+                            </div>
+                        </div>
+                        <br />
+                        <lable style="color: #b5abab;font-size: 13px;margin-top: 1%;">Location Details</lable>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Business Unit</label>
+                                <select class="form-control SelBusiness_Unit" id="BusinessUnit_Int" name="BusinessUnit" onchange="Inter_BusinessUnit();"></select>
+                                @* <div style="display:none;">
+                                <input type="text" class="form-control" name="Business_Unit" id="Business_Unit" />
+                                </div>*@
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Zone</label>
+                                <select class="form-control" id="Audit_Zone_Int" name="Zone" onchange="LoadCommuntiy(this.value)"></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Community</label>
+                                <select class="form-control" id="Community_ID_Int" name="Audit_Community" onchange="Int_Lead_Auditor(this.value);"></select>
+                            </div>
+                        </div>
+                        <br />
+                        <lable style="color: #b5abab;font-size: 13px;margin-top: 1%;">Auditor Details</lable>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Lead Auditor</label>
+                                <select class="form-control" id="Int_Lead_Auditor_ID" name="Lead_Auditor_ID"><option selected style="text-align:center;" value="">--Select LeadAuditor--</option></select>
+                            </div>
+
+                            <div class="col-md-6" style="display:none" id="IntAudit_Business_Unit_Type">
+                                <label>Business Unit Type</label>
+                                <div>
+                                    <select class="form-control" id="Int_Business_Unit_Type" name="Int_Business_Unit_Type">
+                                        <option value="0">--Select--</option>
+                                        <option value="Party">JOP 3rd Party</option>
+                                        <option value="JOP_Common">JOP- Common Area</option>
+                                        <option value="Master_Community">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div>
+                                <button type="button" class="btn btn-success waves-effect waves-light" style="float:right;" id="Int_Audit_TeamAdd" onclick="Int_AuditTeam_AddMore();"><i class="mdi mdi-plus me-1"></i>Add More</button>
+                            </div>
+                        </div>
+                        <br />
+                        <table id="tbl_Audit_Team" class="table table-striped dt-responsive nowrap tblround" style="width:70%;">
+                            <thead>
+                                <tr><th>Audit Team</th></tr>
+                            </thead>
+                            <tbody id="Internal_Audit_Team_Emp">
+                                <tr>
+                                    <td>
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="Int_Audit_Team" name="Int_Audit_Team"><option selected value="" style="text-align:center;">--Select Audit Team--</option></select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+                        <div class="row">
+                            <div>
+                                <button type="button" class="btn btn-success waves-effect waves-light" style="float:right;" id="Int_Service_Prov" onclick="Int_ServiceProv_AddMore();"><i class="mdi mdi-plus"></i>Add More</button>
+                            </div>
+                        </div>
+                        <br />
+                        <table id="tbl_Service_Provider" class="table table-striped dt-responsive nowrap tblround" style="width:70%;">
+                            <thead>
+                                <tr>
+                                    <th>Service Provider Representative</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Internal_Service_Provider_Emp">
+                                <tr>
+                                    <td>
+                                        <div class="col-md-12">
+                                            <select class="form-control" id="Service_Pro_Emp" name="Service_Provider_Rep"><option value="" style="text-align:center;">--Select Service Provider--</option></select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <label style="color: #b5abab;font-size: 13px;margin-top: 1%;">Audit Details</label>
+                        <table id="clause_Audit" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Sno</th>
+                                    <th>Description</th>
+                                    <th>Audit Findings</th>
+                                    <th>Objective Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="INT_Audit_Verify_details">
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    "Use strict";
+    const UI_FIELDS1 = Object.freeze({
+        MAIN_TABLE_INTERNAL: "#Main_Table_Internal",
+        INT_AUDIT_BTN_ADD: "#Int_Audit_btn_Add",
+        INTERNAL_LIST_VIEW: "#Internal_List_View",
+        INT_VIEW_SCHD: "#Int_View_Schd",
+        BUSINESS_UNIT_INT: "#BusinessUnit_Int",
+        AUDIT_ZONE_INT: "#Audit_Zone_Int",
+        COMMUNITY_ID_INT: "#Community_ID_Int",
+        INT_LEAD_AUDITOR: "#Int_Lead_Auditor_ID",
+        INT_AUDIT_TEAM_ADDMORE: "#Int_Audit_TeamAdd",
+        INT_SERVICE_PROVIDER: "#Int_Service_Prov",
+        INTERNAL_AUDIT_TEAM_EMP: "#Internal_Audit_Team_Emp",
+        TBL_AUDIT_TEAM: "#tbl_Audit_Team",
+        INTERNAL_SERVICE_PROVIDER: "#Internal_Service_Provider_Emp",
+        INT_AUDIT_DELTEBUTTON: ".Int_Audit_tblDeleteButton",
+        TBL_SERVICE_PROVIDER: "#tbl_Service_Provider",
+        INT_AUDIT_SERVICE_PROV: ".Int_Audit_Service_Prov",
+        INT_AUDIT_VERIFY_DETAILS: "#INT_Audit_Verify_details",
+        INT_AUDIT_TEAM: "#Int_Audit_Team",
+        SERVICE_PRO_EMP: "#Service_Pro_Emp"
+    });
+    $(document).ready(function () {
+        $(UI_FIELDS1.MAIN_TABLE_INTERNAL).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_FIELDS1.MAIN_TABLE_INTERNAL).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+        $(UI_FIELDS1.TBL_AUDIT_TEAM).on("click", UI_FIELDS1.INT_AUDIT_DELTEBUTTON, function () {
+            $(this).closest('tr').remove();
+        });
+        $(UI_FIELDS1.TBL_SERVICE_PROVIDER).on("click", UI_FIELDS1.INT_AUDIT_SERVICE_PROV, function () {
+            $(this).closest('tr').remove();
+        });
+    });
+    function Internal_AddNew() {
+        $(UI_FIELDS1.INTERNAL_LIST_VIEW).hide(100);
+        $(UI_FIELDS1.INT_VIEW_SCHD).show(100);
+        LOAD_BUSINESS_UNIT();
+        LoadZone();
+        LoadClause();
+    }
+    function Int_Audit_back() {
+        $(Int_FI_FIELDS.INT_LIST_VIEW).show(100);
+        $(Int_FI_FIELDS.INT_VIEW_SCHD).hide(100);
+    }
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_FIELDS1.BUSINESS_UNIT_INT).empty();
+            $(UI_FIELDS1.BUSINESS_UNIT_INT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_FIELDS1.BUSINESS_UNIT_INT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            //if (selectedValue != null)
+            //    $(UI_Fields.M_BUSINESS_UNIT).val(selectedValue);
+        });
+    }
+    function LoadZone() {
+        $.post("@Url.Action("LoadAllZone","CommonMaster")", function (data) {
+            $(UI_FIELDS1.AUDIT_ZONE_INT).empty();
+            $(UI_FIELDS1.AUDIT_ZONE_INT).append("<option selected value='0' style='text-align:center' disabled>--Select Zone--</option>")
+            $(data).each(function (x, y) {
+                $(UI_FIELDS1.AUDIT_ZONE_INT).append("<option value=" + y.Zone_Id + ">" + y.Zone_Name + "</option>")
+            });
+        });
+    }
+    function LoadCommuntiy(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone","CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_FIELDS1.COMMUNITY_ID_INT).empty();
+            $(UI_FIELDS1.COMMUNITY_ID_INT).append("<option selected value='0' style='text-align:center'disabled>--Select Community--</option");
+            $(data).each(function (a, b) {
+                $(UI_FIELDS1.COMMUNITY_ID_INT).append("<option value=" + b.Community_Master_Id + ">" + b.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Inter_BusinessUnit() {
+        var Int_BusinessUnit = $("#BusinessUnit_Int option:selected").text();
+        if (Int_BusinessUnit == "NCM") {
+            $("#IntAudit_Business_Unit_Type").show();
+        }
+        else {
+            $("#IntAudit_Business_Unit_Type").hide();
+        }
+    }
+    var count = 1;
+    function Int_AuditTeam_AddMore() {
+        var html = "";
+        var varInternal_AuditTeam = "Int_Audit_Team" + count;
+        html += '<tr><td><input type="hidden" class="Audit_Schd_Id" value="0"><select class="form-control" id="' + varInternal_AuditTeam + '" name="Int_Audit_Team"><option value="" style="text-align:center;" selected>--Select Audit Team--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Int_Audit_tblDeleteButton">Remove</button></td></tr>'
+        Int_Load_Audit_Team("#" + varInternal_AuditTeam);
+        $(UI_FIELDS1.INTERNAL_AUDIT_TEAM_EMP).append(html);
+        count++;
+    }
+    var index = 1;
+    function Int_ServiceProv_AddMore() {
+        var html = "";
+        var varService_Provider = "Int_Service_Provider" + index;
+        html += '<tr><td><input type="hidden" class="Aud_Schd_Id" value="0"><select class="form-control" id="' + varService_Provider + '" name="Int_Service_Provider"><option value="" selected style="text-align:center;"selected>--Select Service Provider--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Int_Audit_Service_Prov">Remove</button></td>< /tr>'
+        Int_Load_Audit_Team("#" + varService_Provider);
+        $(UI_FIELDS1.INTERNAL_SERVICE_PROVIDER).append(html);
+        index++;
+    }
+    function LoadClause() {
+        debugger;
+        var subSno = 1;
+        var index = 0;
+        var markup = "";
+        var Questionnaire = 0;
+        $.post("@Url.Action("Load_Sub_Topics_Quest","CommonMaster")", function (data) {
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS).empty();
+            $(data).each(function (i, e) {
+                if (e.Audit_Sub_Topics_Name == "") {
+                }
+                else {
+                    markup += '<tr><td>' + subSno + '</td><td  colspan=5><label>' + e.Audit_Sub_Topics_Name + '</label></td></tr>';
+                    subSno++;
+                }
+                $(data[index].Load_All_Quest).each(function (a, s) {
+                    markup += '<tr><td></td><td><br/><input type=checkbox name=Verify_detail value=' + s.Audit_Questionnaires_Name + '>' + s.Audit_Questionnaires_Name + '<br/></td>';
+                    markup += '<td>'
+                    $(data[index].Aud_Ins_Details).each(function (p, q) {
+                        markup += '<input type=radio class="Clause_Find" name=Clause_Findings_' + Questionnaire + ' id="' + q.Site_Inspection_Name + Questionnaire + '" value="' + q.Site_Inspection_Name + '" onchange="Evidence_Upl();">' + q.Site_Inspection_Name + '<br>';
+
+                    });
+                    markup += '</td>'
+                    markup += '<td><input type=file name=File_upload id=File_Upl_' + Questionnaire + ' class=form-control ></td></tr>'
+                    Questionnaire++;
+                });
+                index++;
+            });
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS).append(markup);
+        });
+    }
+    function Int_Lead_Auditor(Emp_Community_Id) {
+        Zone_Id = $(UI_FIELDS1.AUDIT_ZONE_INT).val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Zone_Id: Zone_Id, Emp_Community_Id: Emp_Community_Id }, function (data) {
+            $(UI_FIELDS1.INT_LEAD_AUDITOR).empty();
+            $(UI_FIELDS1.INT_LEAD_AUDITOR).append("<option selected value='0'style='text-align:center'  disabled>--Select Lead Auditor--</option>");
+            $(data).each(function (i, e) {
+                $(UI_FIELDS1.INT_LEAD_AUDITOR).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $(UI_FIELDS1.INT_AUDIT_TEAM).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $(UI_FIELDS1.SERVICE_PRO_EMP).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+
+            });
+        });
+    }
+    function Int_Load_Audit_Team(Audit_Id) {
+        Zone_Id = $(UI_FIELDS1.AUDIT_ZONE_INT).val();
+        Emp_Community_Id = $(UI_FIELDS1.COMMUNITY_ID_INT).val();
+
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Zone_Id: Zone_Id, Emp_Community_Id: Emp_Community_Id }, function (data) {
+
+            $(Audit_Id).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (a, b) {
+                $(Audit_Id).append("<option value=" + b.Employee_Identity_Id + ">" + b.First_Name + "</option>");
+            });
+        });
+    }
+</script>

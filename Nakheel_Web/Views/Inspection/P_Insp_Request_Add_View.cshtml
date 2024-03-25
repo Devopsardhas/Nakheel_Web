@@ -1,0 +1,420 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Request
+
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .form-control {
+        width: 100% !importent;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+</style>
+
+@if (Model.Insp_Request_Reject_List!.Count > 0 && Model.Insp_Request_Reject_List != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="row Reject_View_Div">
+                <div class="accordion" id="accordionExample_1">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_Rej" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                Reject List
+                            </button>
+                        </h2>
+                        <div id="collapseTwo_Rej" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample_1">
+                            <div class="accordion-body">
+                                <table id="RejectTable" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Reject ID</th>
+                                            <th>Reject Reason</th>
+                                            <th>Rejected By</th>
+                                            <th>Created Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Insp_Request_Reject_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Unique_Id</td>
+                                                <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                <td align="left" valign="middle">@item.CreatedBy</td>
+                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <input type="hidden" class="form-control" asp-for="Insp_Request_Id" asp-items="@(new SelectList(Model.Insp_Request_Id))">
+    @if (Model.Walk_In_Insp_Name == "Walk_In_Insp")
+    {
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Business_Unit_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Community_Id" class="text-danger"></span>
+
+                </div>
+            </div>
+            <div class="mb-3 row Insp_Type_Id_Div">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Request Type<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select onchange="Fn_RequestType(this.value)" class="form-control" asp-for="Insp_Type_Id">
+                        <option value="" style="text-align:left;">--Select--</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Document_Review">Document Review</option>
+                    </select>
+                    <span asp-validation-for="Insp_Type_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row Req_Category_Div" style="display:none;">
+                <label for="example-text-input" class="col-md-4 col-form-label">Category<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control" asp-for="Category_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Insp_Category_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:left;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Category_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Description</label>
+                <div class="col-md-8">
+                    <textarea id="Req_Description" asp-for="Req_Description" class="form-control Req_Description" placeholder="Enter Description" rows="1"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Zone_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Building_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Inspection Date<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" type="date" name="Inspection_Date" required>
+                    <span asp-validation-for="Inspection_Date" class="text-danger"></span>
+                </div>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Business_Unit_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Community_Id" class="text-danger"></span>
+
+                </div>
+            </div>
+            <div class="mb-3 row Insp_Type_Id_Div">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Request Type<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select onchange="Fn_RequestType(this.value)" class="form-control" asp-for="Insp_Type_Id">
+                        <option value="" style="text-align:left;">--Select--</option>
+                        <option value="Inspection">Inspection</option>
+                        <option value="Document_Review">Document Review</option>
+                    </select>
+                    <span asp-validation-for="Insp_Type_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Description</label>
+                <div class="col-md-8">
+                    <textarea id="Req_Description" asp-for="Req_Description" class="form-control Req_Description" placeholder="Enter Description" rows="1"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Zone_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:center;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Building_Id" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Inspection Date<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <input asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" type="date" name="Inspection_Date" required>
+                    <span asp-validation-for="Inspection_Date" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3 row Req_Category_Div" style="@(Model.Insp_Type_Id == "Inspection"?"":"display:none;")">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Category<span class="requ">*</span></label>
+                <div class="col-md-8">
+                    <select class="form-control" asp-for="Category_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Insp_Category_Master_List,"Value","Text"))">
+                        <option value="" style="text-align:left;">--Select--</option>
+                    </select>
+                    <span asp-validation-for="Category_Id" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+@if (Model.Status == "NA" || Model.Status == "0")
+{
+    <div class="row Req_Category_Doc_Div" style="display:none;">
+        <div class="col-lg-12">
+            <div class="mb-6">
+                <label for="basicpill-lastname-input" class="form-label">
+                </label> <br />
+            </div>
+            <div class="mb-6">
+                <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -38px;" class="btn btn" value="Add" onclick="Fn_Add_More_Document()">+Add More</button>
+            </div>
+
+            <table id="Doc_Table" class="Doc_Table table-bordered" style="width:100%;">
+                <thead style="background-color:#0b5578">
+                    <tr>
+                        <th scope="col" class="table-responsive">Document Name</th>
+                        <th scope="col" class="table-responsive">Description</th>
+                        <th scope="col" class="table-responsive">Upload Evidence</th>
+                    </tr>
+                </thead>
+                <tbody id="Sub_ActionTable_Tbody" class="Sub_ActionTable_Tbody">
+                    <tr>
+                        <td style="min-width:150px;">
+                            <input class="form-control Req_Document_Review_Id" value="0" type="hidden" id="Req_Document_Review_Id">
+                            <textarea id="Req_Document_Name" name="Req_Document_Name" required class="form-control Req_Document_Name" placeholder="Enter Document Name" rows="1"></textarea>
+                            <label id="Req_Document_Name-error" style="font-size: small;" class="error" for="Req_Document_Name"></label>
+                        </td>
+                        <td style="min-width:200px;">
+                            <textarea id="Req_Document_Description" name="Req_Document_Description" required class="form-control Req_Document_Description" placeholder="Enter Description" rows="1"></textarea>
+                            <label id="Req_Document_Description-error" style="font-size: small;" class="error" for="Req_Document_Description"></label>
+                        </td>
+                        <td style="min-width:200px;">
+                            <input id="file" class="form-control file" onchange="uploadFiles('file','UploadPhotos')" type="file" accept=".png, .jpg, .jpeg">
+                            <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@if (Model.Status == "Request Rejected")
+{
+    <div class="row Req_Category_Doc_Div" style="@(Model.Insp_Type_Id == "Document_Review"?"display:block;":"display:none;")">
+        <div class="col-lg-12">
+            <div class="mb-6">
+                <label for="basicpill-lastname-input" class="form-label">
+                </label> <br />
+            </div>
+            <div class="mb-6">
+                <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -38px;" class="btn btn" value="Add" onclick="Fn_Add_More_Document()">+Add More</button>
+            </div>
+
+            <table id="Doc_Table" class="Doc_Table table-bordered" style="width:100%;">
+                <thead style="background-color:#0b5578">
+                    <tr>
+                        <th scope="col" class="table-responsive">Document Name</th>
+                        <th scope="col" class="table-responsive">Description</th>
+                        <th scope="col" class="table-responsive">Upload Evidence</th>
+                    </tr>
+                </thead>
+                <tbody id="Sub_ActionTable_Tbody" class="Sub_ActionTable_Tbody">
+                    @if (Model.Insp_Req_Doc_Review_List != null)
+                    {
+                        var ss = 5000;
+
+                        @foreach (var item in Model.Insp_Req_Doc_Review_List)
+                        {
+                            var imagecontainer = "image-container" + @item.Req_Document_Review_Id;
+                            var exten = "";
+                            if (@item.File_Path != "")
+                            {
+                                string[] authorsList = @item.File_Path!.Split(".");
+                                exten = authorsList[1];
+                            }
+
+                            <tr>
+                                <td style="min-width:150px;">
+                                    <input class="form-control Req_Document_Review_Id" value="@item.Req_Document_Review_Id" type="hidden" id="Req_Document_Review_Id_@ss">
+                                    <textarea id="Req_Document_Name_@ss" name="Req_Document_Name" required class="form-control Req_Document_Name" placeholder="Enter Document Name" rows="1">@item.Req_Document_Name</textarea>
+                                    <label id="Req_Document_Name'@ss'-error" style="font-size: small;" class="error" for="Req_Document_Name"></label>
+                                </td>
+                                <td style="min-width:200px;">
+                                    <textarea id="Req_Document_Description_@ss" name="Req_Document_Description" required class="form-control Req_Document_Description" placeholder="Enter Description" rows="1">@item.Req_Document_Description</textarea>
+                                    <label id="Req_Document_Description_@ss-error" style="font-size: small;" class="error" for="Req_Document_Description"></label>
+                                </td>
+                                <td style="min-width:200px;">
+                                    <div class="col-lg-12">
+                                        <input id="file_@ss" class="form-control file" onchange="uploadFiles('file_@ss','UploadPhotos_@ss')" type="file" accept=".png, .jpg, .jpeg">
+                                        <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos_@ss">
+                                        <br>
+                                        <div class="image-container image-container_@item.Req_Document_Review_Id">
+                                            @if (@item.File_Path != "")
+                                            {
+                                            @if (exten == "pdf")
+                                            {
+                                                <button onclick="Rej_CA_Photo_Del(@item.Req_Document_Review_Id,@item.Req_Document_Review_Id)" type="button" class="close-button" style="width: 20px;height: 21px;right: 376px;">&times;</button>
+                                                <a href="@item.File_Path" target="_blank">
+                                                    <i class="mdi mdi-file-pdf" style="color:red;font-size:30px;cursor:pointer"></i>
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <button onclick="Rej_CA_Photo_Del(@item.Req_Document_Review_Id,@item.Req_Document_Review_Id)" type="button" class="close-button" style="width: 20px;height: 21px;right: 369px;">&times;</button>
+                                                <a href="@item.File_Path" target="_blank">
+                                                    <img target="_blank" src="@item.File_Path" width="35" height="35">
+                                                </a>
+                                            }
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="min-width:100px;text-align: center;">
+                                    <a>
+                                        <i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            ss++;
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}
+<script>
+    $(document).ready(function () {
+        ApplySelect2(".Drop_Search");
+        $("#Doc_Table").on("click", ".btn_Action_Delete_Button", function () {
+            $(this).closest("tr").remove();
+        });
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+
+        $('#Inspection_Date').attr('min', minDate);
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Rej_CA_Photo_Del(Req_Document_Review_Id, id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Req_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Req_Document_Review_Id: Req_Document_Review_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = ".image-container_" + id;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+</script>
+
+
+

@@ -1,0 +1,309 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.Location_Master>;
+
+@{
+    ViewData["Title"] = "Location Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Location Master List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new-order"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>
+                </div>
+                @* <div class="col-md-6">
+                <h2>Business Unit</h2>
+                </div>*@
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Location ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Building Name</th>
+
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left" valign="middle">@item.Building_Id</td>
+
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Location_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="LocationDelete(@item.Location_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            <a onclick="View(@item.Location_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@*/*ADD PAGE*/*@
+
+<div class="modal fade add-new-order" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="F_AddLocation" action="#" method="post" class="" novalidate="novalidate">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Location_Id" id="Location_Id" value="0">
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" style="color:black;" class="form-model">Zone</label>
+                            <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" style="color:black;" class="form-model">Community</label>
+                            <select class="form-select" placeholder="--Select Community--" id="Community_Id" name="Community_Id" onchange="Fn_Community(this.value)">
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" style="color:black;" class="form-model">Building</label>
+                            <select class="form-select" placeholder="--Select Building--" id="Building_Id" name="Building_Id">
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="" style="color:black;" class="form-model">Location</label>
+                            <input type="text" class="form-control" name="Location_name" id="Location_name" value="0">
+
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button type="button" id="btn_add_location" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddLocationList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                        </div>
+                    </div>
+                    <br />
+                    <table id="tbllocationNameList" class="table table-striped dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Location Name</th>
+                                <th>Description</th>
+                                <th id="ActionHead">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="GetLocationList">
+                            @*<tr>
+                            <td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control BuildingName" id="Building_Name" name="Building_Name" /></td>
+                            <td><input type="text" class="form-control BuildingDescription" name=Building_Description id="Building_Description" /></td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/validation/incident_validation/incidentreportvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        MODULE_ID: "#Location_Id",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_ADD_LOC: "#btn_add_location",
+        ADDMORE_LOCATION_LIST: "#GetLocationList",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        LOCATION_NAME: "#Location_name",
+        LOCATION_DESCRIPTION: "#Description",
+        SUB_LOCATION: "#Sub_Location_Name",
+        BUILDING_ID:"#Building_Id",
+        
+    });
+    $(document).ready(function () {
+        LOAD_ALL_ZONE_IS_COMMUNITY();
+        $(UI_Fields.BTN_ADD_LOC).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+        });
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+        $("#btnAdd").click(function () {
+            $(UI_Fields.MODULE_ID).val('0');
+            $(UI_Fields.ZONEID).val('0');
+            $(UI_Fields.COMMUNITY_ID).val('');
+            $(UI_Fields.BUILDING_ID).val('');
+            $(UI_Fields.ZONEID).prop("disabled", false);
+            $(UI_Fields.COMMUNITY_ID).prop("disabled", false);
+            $(UI_Fields.BUILDING_ID).prop("disabled", false);
+            $(UI_Fields.LOCATION_NAME).val('');
+            $(UI_Fields.ADDMORE_LOCATION_LIST).html('');
+            AddLocationList();
+        });
+    });
+    
+</script>
+<script>
+    $(function () {
+        //LOAD_GRID();
+
+        $(UI_Fields.ADDMORE_LOCATION_LIST).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+            debugger
+            let varSubLocID = $(this).closest('tr').find('.SubLocationId').val();
+            //alert(varSubLocID);
+            if (varSubLocID == '0' || varSubLocID == null) {
+                $(this).closest("tr").remove();
+                $(UI_Fields.ADDMORE_LOCATION_LIST).show(100);
+            }
+            else {
+                Delete(varSubLocID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+        $(UI_Fields.ADDMORE_LOCATION_LIST).on("click", UI_Fields.TBL_EDIT_BUTTON, function () {
+            let varSubName = $(this).closest('tr').find('.SubLocationName').prop('readonly', false);
+            let varSubDesc = $(this).closest('tr').find('.LocationDescription').prop('readonly', false);
+            let varIsedit = $(this).closest('tr').find('.IsEdit').val('1');
+            $(UI_Fields.SUB_LOCATION).show(100);
+            $(UI_Fields.LOCATION_DESCRIPTION).show(100);
+        });
+        //ValidationRules(UI_Fields.CH_VALID);
+    });
+    function AddLocationList() {
+
+        var html = "";
+        html += '<tr><td><input type="hidden" class="LocationId" value="0"/><input type="text" class="form-control SubLocationName" name="Sub_Location_Name" onchange="dup_value(this.value)" /></td>';
+        html += '<td><input type="text" class="form-control LocationDescription" name="Location_Description"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields.ADDMORE_LOCATION_LIST).append(html);
+    }
+    function LOAD_ALL_ZONE_IS_COMMUNITY() {
+        $.post("@Url.Action("LoadAllZoneIsCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' disabled>--Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function FnZone_Id(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.c).empty();
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        debugger;
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+           
+        });
+    }
+    function Edit(id) {
+        debugger
+        $("#GetLocationList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Location_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Building_Id);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(UI_Fields.LOCATION_NAME).val(data.Location_Name);
+            $(data.L_M_Location).each(function (i, e) {
+                debugger
+                
+                var html = "";
+                html += '<tr><td><input type="hidden" class="LocationId" name="Location_Id" value="' + e.Location_Id + '"/><input type="hidden" class="SubLocationId" name="Sub_Location_Id" value="' + e.Sub_Location_Id + '"/><input type="text" class="form-control SubLocationName" name="Sub_Location_Name" value="' + e.Sub_Location_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control LocationDescription" id="LocationDescription" name=Location_Description value="' + e.Description + '" readonly/></td>';
+                html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.ADDMORE_LOCATION_LIST).append(html);
+              
+
+            });
+          
+        });
+    }
+    function View(id) {
+        //alert(id);
+        debugger
+        $("#GetLocationList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Location_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Building_Id);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(UI_Fields.LOCATION_NAME).val(data.Location_Name);
+            $(data.L_M_Location).each(function (i, e) {
+                debugger
+
+                var html = "";
+                html += '<tr><td><input type="hidden" class="LocationId" name="Location_Id" value="' + e.Location_Id + '"/><input type="hidden" class="SubLocationId" name="Sub_Location_Id" value="' + e.Sub_Location_Id + '"/><input type="text" class="form-control SubLocationName" name="Sub_Location_Name" value="' + e.Sub_Location_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control LocationDescription" id="LocationDescription" name=Location_Description value="' + e.Description + '" readonly/></td>';
+                html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.ADDMORE_LOCATION_LIST).append(html);
+                $("#Zone_Id").prop("disabled", true);
+                $("#Community_Id").prop("disabled", true);
+                $("#Location_name").prop("disabled", true);
+                $("#btn_add_incident").hide(100);
+                $("#btn-save-event").hide(100);
+                $("#ActionHead").hide(100);
+            });
+
+        });
+    }
+</script>
+

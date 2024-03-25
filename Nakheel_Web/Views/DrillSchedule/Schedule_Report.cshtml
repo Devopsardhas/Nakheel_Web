@@ -1,0 +1,372 @@
+﻿@model Nakheel_Web.Models.EMR_Drill.Get_All_DrillSCH
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+    string DrillType = "";
+    TempData["HSE"] = false;
+    TempData["ZS"] = false;
+}
+<head>
+    <link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+    <style>
+        .textHeight {
+            height: 90px;
+        }
+    </style>
+</head>
+@if (Model != null && Model.Schedule != null)
+{
+    DrillType = Model.Schedule.Drill_Type_ID!;
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="modal fade" id="RejectPop" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reject Report</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="#" method="post" id="Frm_RejectZM">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body">
+                                    <div class="table-responsive col-lg-12">
+                                        <table class="table table-sm">
+                                            <tbody id="">
+                                                <tr>
+                                                    @if (DrillType == "4")
+                                                    {
+                                                        <td class="lblwidth"><b class="font-bold">Reject For</b><span class="requ">*</span></td>
+                                                        <td>:</td>
+                                                        <td>
+                                                            <div>
+                                                                <label for="D_Yes"> <input id="D_Yes" name="RR" type="radio" value="1" required>&nbsp;Service Provider</label>&nbsp;&nbsp;
+                                                                <label for="D_No"> <input id="D_No" name="RR" type="radio" value="2" required>&nbsp;Observer</label>
+                                                            </div>
+                                                            <label id="" style="font-size:small;" class="error text-danger" for="RR"></label>
+                                                        </td>
+                                                    }
+
+                                                    <td class="lblwidth"><b class="font-bold">Reason</b><span class="requ">*</span></td>
+                                                    <td>:</td>
+                                                    <td>
+                                                        <textarea class="form-control" style="resize:vertical;" id="TxtRej" name="TxtRej" required></textarea>
+                                                        <label id="" style="font-size:small;" class="error text-danger" for="TxtRej"></label>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="">
+                                <div style="text-align:center;">
+                                    <button type="submit" class="btn btn-success" id="Btn_RejectZM"> Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Drill Management</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" onclick="BackBtn()" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <table class="table table-sm tab">
+                            <tbody id="tblIncidentDetailsViewPage">
+
+                                <tr>
+                                    <td><input type="hidden" value="@Model.Schedule.Drill_Schedule_ID" id="Main_Drill_ID" /><b class="font-bold">Drill ID </b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Unique_ID</td>
+
+                                    <td><b class="font-bold">Drill Type</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Drill_Type</td>
+
+                                    <td><b class="font-bold">Date and Time</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Created_Date</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Zone</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Zone</td>
+
+                                    <td><b class="font-bold">Community</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Community</td>
+
+
+                                    <td><b class="font-bold">Building</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Building_Name</td>
+
+                                </tr>
+                                <tr>
+
+                                    <td><b class="font-bold">HSE Officer</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Created_By</td>
+
+                                    <td><b class="font-bold">Service Provider</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Service_Provider</td>
+
+                                    <td><b class="font-bold">Commander</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Schedule.Commander</td>
+
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (Model.Rej != null && Model.Rej.Count > 0)
+                    {
+                        <div class="row col-lg-12 mb-2">
+                            <div class="accordion" id="accordion1">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingOne">
+                                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="background: #00263a;color: white;height: 30px;">
+                                            Reject Reasons
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordion1" style="">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-striped mt-1 tblround col-lg-12" style="width:100%;font-size:13px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Rejected By</th>
+                                                            <th>Date</th>
+                                                            <th>Reason</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in Model.Rej)
+                                                        {
+                                                            <tr>
+                                                                <td align="left" valign="middle">@item.Reject_By</td>
+                                                                <td align="left" valign="middle">@item.Date</td>
+                                                                <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @{
+                        bool SP = false;
+                        bool CMD = false;
+                        bool ZM = false;
+                        bool CRE = false;
+                        bool ZS = false;
+                        string ST = Model.Schedule!.Status!;
+                        var access = Model.Access?.FirstOrDefault(x => x.Value == LoginClass.Employee_Identity_Id);
+                        if (access != null)
+                        {
+                            switch (access.Text)
+                            {
+                                case "ZS":
+                                    ZS = true;
+                                    break;
+                                case "SP":
+                                    SP = true;
+                                    break;
+                                case "CMD":
+                                    CMD = true;
+                                    break;
+                                case "ZM":
+                                    ZM = true;
+                                    break;
+                                case "CRE":
+                                    CRE = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if (ST == "2" || ST == "3")
+                        {
+                            if (SP)
+                            {
+                                if (DrillType == "4")
+                                {
+                                    @await Html.PartialAsync("FireDrill",Model._Fire)
+                                }
+                                else
+                                {
+
+                                    @await Html.PartialAsync("DrillForms",Model.Drill_Common)
+                                }
+                            }
+                            else if (CMD && DrillType == "4")
+                            {
+                                @await Html.PartialAsync("FireDrillObsr",Model.Drill_Obsr)
+                            }
+                        }
+                        else
+                        {
+                            if (ST == "5" && (CRE || CMD))
+                            {
+                                TempData["HSE"] = true;
+                            }
+                            if (ST == "7" && ZS)
+                            {
+                                TempData["ZS"] = true;
+                            }
+                            if (DrillType == "4")
+                            {
+                                @await Html.PartialAsync("FireDrill",Model._Fire)
+                                @await Html.PartialAsync("FireDrillObsr",Model.Drill_Obsr)
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("DrillForms",Model.Drill_Common)
+                            }
+                            @await Html.PartialAsync("IMP_Actions")
+                            if (ZM && ST == "4")
+                            {
+                                <div class="row mb-2" style="text-align: center;">
+                                    <div class="d-grid gap-2 d-md-block">
+                                        <button type="button" class="btn btn-success waves-effect waves-light Btn_App" value="1">
+                                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                        </button>
+                                        <button type="reset" class="btn btn-danger waves-effect waves-light Btn_App" value="2">
+                                            <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                            else if (ST == "9" && (CRE || CMD))
+                            {
+                                <div class="row mb-2" style="text-align: center;">
+                                    <div class="d-grid gap-2 d-md-block">
+                                        <button type="button" class="btn btn-success waves-effect waves-light Btn_App" value="4">
+                                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Verify
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        if (Model.Histories != null && Model.Histories.Count > 0)
+                        {
+                            <div class="row col-lg-12 mb-2">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                                History of Approval
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample" style="">
+                                            <div class="accordion-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-striped mt-1 tblround col-lg-12" style="width:100%;font-size:13px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Employee Name</th>
+                                                                <th>Role</th>
+                                                                <th>Assigned/ Created Date</th>
+                                                                <th>Action Taken Date</th>
+                                                                <th>Pre.Status</th>
+                                                                <th>Cur.Status</th>
+                                                                <th>Next Action By</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var item in Model.Histories)
+                                                            {
+                                                                <tr>
+                                                                    <td align="left" valign="middle">@item.Action_Done_By</td>
+                                                                    <td align="left" valign="middle">@item.Role</td>
+                                                                    <td align="left" valign="middle">@item.Nxt_Action_Date</td>
+                                                                    <td align="left" valign="middle">@item.Action_Date </td>
+                                                                    <td align="left" valign="middle">@item.Action_Des</td>
+                                                                    <td align="left" valign="middle">@item.Status</td>
+                                                                    <td align="left" valign="middle">@item.Nxt_Action_Done_By</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+    <script src="~/assets/js/Validation/jquery.validate.min.js"></script>
+    <script src="~/assets/js/Validation/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/assets/js/emr_common/Sch_Main.js"></script>
+    <script>
+        var todaydate = '@DateTime.Now.ToString("yyyy-MM-dd")';
+        $(function () {
+            $(".Btn_App").on('click', function () {
+                let btn = $(this);
+                Approve(btn);
+            });
+            $(UI_Fields.BTN_REJECT_ZM).on('click', function () {
+                let result = $(UI_Fields.FRM_REJECT_ZM).valid();
+                if (result) {
+                    SubmitREJ();
+                }
+            });
+        });
+
+        function SubmitREJ() {
+            let RR = $('input[name="RR"]:checked').val();
+            let Drill_ID = $(UI_Fields.MAIN_DRILL_ID).val();
+            let Txt = $(UI_Fields.TXT_REJ).val();
+            let token = GetformToken(UI_Fields.FRM_REJECT_ZM);
+            let model = {
+                Drill_Schedule_ID: Drill_ID,
+                Reject_Reason: Txt,
+                Drill_CRR_ID: RR
+            };
+            AjaxAsynT('/DrillSchedule/Drill_Add_REJ', { _REJ: model }, token, function (resp) {
+                if (resp.STATUS_CODE == "200") {
+                    LOAD_GRID();
+                }
+                else {
+                    ToastrMessage("error", "Error While processing your request.");
+                }
+            });
+        }
+    </script>
+
+}

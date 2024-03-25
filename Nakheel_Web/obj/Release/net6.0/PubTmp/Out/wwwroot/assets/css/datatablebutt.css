@@ -1,0 +1,45 @@
+﻿.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    float: right !important;
+    margin-top: -62px !important;
+    padding: 32px !important;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: right;
+    margin-top: -28px !important;
+}
+
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.red {
+    color: red
+}
+
+td {
+    vertical-align: middle;
+}
+
+.card-body {
+    font-family: 'Nakheel-Textregular' !important; 
+ /*   font-size: 16px !important;*/
+}
+
+button {
+    font-family: 'Nakheel-Textregular' !important;
+}
+
+thead {
+    background: #00263a;
+    color: white;
+}
+
+.requ{
+    color:red;
+}

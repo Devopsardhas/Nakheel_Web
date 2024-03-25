@@ -1,0 +1,207 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.IncidentMaster.PERSONAL_FACTOR>;
+
+@{
+    ViewData["Title"] = "Personal factor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Personal Factor List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd" data-bs-toggle="modal" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Personal Factor ID </th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Personal Factor</th>
+                     @*       <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>*@
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Personal_Factor_Name</td>
+                                   @* <td align="left" valign="middle">@item.CreatedDate</td>*@
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Personal_Factor_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Personal_Factor_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            @*<a onclick="View(@item.Designation_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>*@
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+
+<form id="AddModule_div" asp-controller="Incident" asp-action="AddPersonalFactor" method="post">
+
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Personal_Factor_Id" id="Personal_Factor_Id" value="0">
+                            </div>
+                        </div>
+                    <div class="col-md-6">
+                        <div class="mb-4 ">
+                            <label for="example-search-input" class="form-model" style="color:black;">Personal Factor</label>
+                                <input class="form-control" type="text" required minlen="1" name="Personal_Factor_Name" id="Personal_Factor_Name" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-model" style="color:black;" for="AddOrder-Billing-Name">Description</label>
+                                <textarea class="form-control" rows="1" cols="40" name="Description" id="Description" required minlen="1" autocomplete="off"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div  style="text-align:center;">
+                        <button type="submit" class="btn btn-success"  id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+</form>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Personal_Factor_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        PERSONAL_FACTOR_NAME: "#Personal_Factor_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+    });
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $("#btnadd").click(function () {
+            $(UI_Fields.MODULE_ID).val('0');
+            $(UI_Fields.PERSONAL_FACTOR_NAME).val('');
+            $(UI_Fields.DESCRIPTION).val('');
+        });
+
+    });
+
+    function Edit(id) {
+        $(".add-new").modal('show');
+        $.post("@Url.Action("PersonalFactor_GetByID", "Incident")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Personal_Factor_Id);
+            $(UI_Fields.PERSONAL_FACTOR_NAME).val(data.Personal_Factor_Name);
+            $(UI_Fields.DESCRIPTION).val(data.Description);
+        });
+    }
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("PersonalFactor_Delete", "Incident"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+
+
+                }
+            });
+
+    }
+
+</script>

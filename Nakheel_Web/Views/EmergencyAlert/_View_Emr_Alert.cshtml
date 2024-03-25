@@ -1,0 +1,481 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.Emergency.EMR_Alert;
+<head>
+    <style>
+        .form-label, .form-control {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 13px;
+        }
+
+        label {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular' !important;
+            font-size: 13px;
+        }
+
+        table {
+            font-family: 'Nakheel-Textregular';
+        }
+
+        span {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        .tdtxt {
+            color: #00617F;
+        }
+
+        .font-bold {
+            color: #00263a !important;
+        }
+
+        .table > :not(caption) > * > * {
+            padding: 0.35rem 0.35rem !important;
+            background-color: var(--bs-table-bg);
+            border-bottom-width: 1px;
+            -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+            box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        }
+
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+    </style>
+    <style>
+        #map-canvas_view {
+            height: 300px;
+            width: 100%;
+            border-radius: 14px;
+        }
+
+    </style>
+</head>
+<div id="View_Emr_Alert_List">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                @if (Model != null)
+                {
+                    @if (LoginClass.Role_Id == "5")
+                    {
+                        <div>
+                            <table class="table tab">
+                                <tbody>
+                                    <tr>
+                                        <td><b class="font-bold">Zone</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Zone_Id</td>
+
+                                        <td><b class="font-bold">Community</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Community_Id</td>
+
+                                        <td><b class="font-bold">Building</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Sub_Building_Id</td>
+
+                                        <td><b class="font-bold">Emergency Type </b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Mitigation_Type</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        @if (Model.Reject != null && Model.Reject.Count > 0)
+                        {
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="mt-xl-0 mt-4">
+                                        <div class="accordion" id="AccordionRenewal">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRenewal" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height:30px">
+                                                        Reason List
+                                                    </button>
+                                                </h2>
+                                                <div id="collapseRenewal" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#AccordionRenewal">
+                                                    <div class="accordion-body">
+                                                        <table id="tblConfineHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Rejected By</th>
+                                                                    <th>Reason</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="GettblConfineHistory">
+                                                                @foreach (var item in Model.Reject)
+                                                                {
+
+                                                                    <tr class="clstr">
+                                                                        <td align="left" valign="middle">@item.Rejected_By</td>
+                                                                        <td align="left" valign="middle">@item.Reason</td>                                                                       
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                         
+                        }
+                        <br />
+                        <div class="row">
+                            <div class="col-md-6"> <div id="map-canvas_view"></div></div>
+                            <div class="col-md-6">
+                                <label>Spotted Location</label>
+
+                                <div class="table-responsive">
+                                    <table id="tbl_Spot" class="tblround table-sm" style="width:100%">
+                                        <tr style="background-color:#00263a;color:white">
+                                            <th>Location</th>
+                                            <th>Exact Location</th>
+                                            <th>Description</th>
+                                            <th>Service Provider</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        <tbody>
+                                            @if (Model._Spots != null && Model._Spots.Count > 0)
+                                            {
+                                                foreach (var item in Model._Spots)
+                                                {
+                                                    <tr>
+                                                        <td style="display:none;"><input type="hidden" class="Al_Task_Id" value="@item.Alert_Task_Id" /></td>
+                                                        <td style="display:none;"><input type="hidden" class="Alert_ID" value="@item.EMR_Alert_ID" /></td>
+                                                        <td style="display:none;"><input type="hidden" class="HotSpotId" value="@item.Hot_Spot_Id" /></td>
+                                                        <td>@item.Address</td>
+                                                        <td>@item.Exact_Loc</td>
+                                                        <td>@item.Reason</td>
+                                                        <td>@item.Service_Provider</td>
+                                                        <td>
+                                                            @if (item.Status == "3")
+                                                            {
+                                                                <label style="color:green">Approved</label>
+                                                            }
+                                                            else if (item.Status == "2")
+                                                            {
+                                                                <label style="color:red">Rejected</label>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i class="fa fa-thumbs-up" style="font-size:15px;color:darkgreen;cursor:pointer" onclick="Alert_Approve('@item.EMR_Alert_ID','@item.Hot_Spot_Id')"></i>
+                                                                <i class="fa fa-thumbs-down" style="font-size:15px;color:red;cursor:pointer" onclick="Toggle_open('@item.EMR_Alert_ID','@item.Hot_Spot_Id')"></i>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr class="Placeholder">
+                                                    <td colspan="3" style="text-align: center;">No Hot-spot Available</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade Alert_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Hot-Spot Identification</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div style="display:none;">
+                                                <div class="form-group">
+                                                    <input class="form-control" name="COW_Reject_Id" id="COW_Reject_Id" value="0">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                                    <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Txt" name="Reject_Txt" required minlen="1"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="">
+                                            <div style="text-align:center;">
+                                                <button type="submit" class="btn btn-success" onclick="Alert_Reject()"> Submit</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            <table class="table tab">
+                                <tbody>
+                                    <tr>
+                                        <td><b class="font-bold">Zone</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Zone_Id</td>
+
+                                        <td><b class="font-bold">Community</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Community_Id</td>
+
+                                        <td><b class="font-bold">Building</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Sub_Building_Id</td>
+
+                                        <td><b class="font-bold">Emergency Type </b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Mitigation_Type</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6"> <div id="map-canvas_view"></div></div>
+                            <div class="col-md-6">
+                                <label>Spotted Location</label>
+
+                                <div class="table-responsive">
+                                    <table class="tblround table-sm" style="width:100%">
+                                        <tr style="background-color:#00263a;color:white">
+                                            <th>Location</th>
+                                            <th>Exact Location</th>
+                                            <th>Description</th>
+                                            <th>Service Provider</th>
+                                        </tr>
+                                        <tbody>
+                                            @if (Model._Spots != null && Model._Spots.Count > 0)
+                                            {
+                                                foreach (var item in Model._Spots)
+                                                {
+                                                    <tr>
+                                                        <td style="display:none;"><input type="hidden" class="Al_Task_Id" value="@item.Alert_Task_Id" /></td>
+                                                        <td>@item.Address</td>
+                                                        <td>@item.Exact_Loc</td>
+                                                        <td>@item.Reason</td>
+                                                        <td>@item.Service_Provider</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr class="Placeholder">
+                                                    <td colspan="3" style="text-align: center;">No Hot-spot Available</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var gl_Alert_id = "";
+    var gl_Hot_Spot_id = "";
+    $(function () {
+        debugger;
+        let MapSpots = JSON.parse('@Html.Raw(Json.Serialize(Model!._Spots!))');
+        if (MapSpots != null) {
+            debugger;
+            Load_Spotted_Map(MapSpots);
+        }
+    });
+
+
+    function Load_Spotted_Map(Spots) {
+        debugger
+        if (Spots != null) {
+            debugger
+            if (Spots.length != 0) {
+                debugger
+                var map = new google.maps.Map(document.getElementById('map-canvas_view'), {
+                    zoom: 10,
+                    center: new google.maps.LatLng(Spots[0].Latitude, Spots[0].Longitude),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                let infowindow = new google.maps.InfoWindow();
+                let marker, i;
+                //let image = '../assets/images/mapicons/F.png';
+                let image = '';
+                $.each(Spots, function (i, e) {
+                    debugger;
+                    if (e.Status == "1") {
+                        image = '../assets/images/mapicons/F.png'
+                    }
+                    else if (e.Status == "3") {
+                        image = '../assets/images/mapicons/E.png'
+                    }
+                    else {
+                        image = '../assets/images/mapicons/F.png'
+                    }
+
+
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(e.Latitude, e.Longitude),
+                        map: map,
+                        animation: google.maps.Animation.DROP,
+                        //animation: google.maps.Animation.BOUNCE,
+                        icon: image
+                    });
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            infowindow.setContent(e.Reason);
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
+
+                });
+    @* $.each(Spots, function (i, e) {
+
+                    marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(e.Latitude, e.Longitude),
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    //animation: google.maps.Animation.BOUNCE,
+                    icon: image
+                    });
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                    infowindow.setContent(e.Reason);
+                    infowindow.open(map, marker);
+                    }
+                    })(marker, i));
+
+                    });*@
+
+                    }
+        }
+
+    }
+
+    function Alert_Approve(EMRAlertID, HotSpotId) {
+
+        var obj = {
+            EMR_Alert_ID: EMRAlertID,
+            Hot_Spot_Id: HotSpotId,
+            Status: "3",
+            Rejected_By: '@LoginClass.Employee_Identity_Id',
+        };
+        $.ajax({
+            url: "/EmergencyAlert/Emr_Approve",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        })
+    }
+
+    function Toggle_open(EMRAlertID, HotSpotId) {
+        gl_Alert_id = EMRAlertID;
+        gl_Hot_Spot_id = HotSpotId;
+        $('.Alert_Reject').modal('show')
+    }
+
+    function Alert_Reject() {
+        var varalertid = gl_Alert_id;
+        var varspotid = gl_Hot_Spot_id;
+
+        var text_reject = $("#Reject_Txt").val();
+
+        if(text_reject == null || text_reject == ""){
+            toastr.error("Please Enter Reject Reason!", "Error");
+            $("#Ewp_Req_Zone_Comm").focus();
+            return false;
+        }
+      
+        var obj = {
+            Alert_Rej_Id: "0",
+            Reason: text_reject,
+            EMR_Alert_ID: varalertid,
+            Hot_Spot_Id: varspotid,
+            Status: "3",
+            Rejected_By: '@LoginClass.Employee_Identity_Id',
+        };
+        $.ajax({
+            url: "/EmergencyAlert/Emr_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        })
+    }
+
+</script>

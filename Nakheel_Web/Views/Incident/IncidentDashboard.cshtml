@@ -1,0 +1,877 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/assets/js/validation/incident_validation/serversidedatatable_incidentdashboard.js"></script>
+
+<style>
+    .tbl_card{
+        width: 100%;
+        display: flow;
+        min-height: 236px;
+        overflow-y: scroll !important;
+        height: 100px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 0px;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #e1e1e1;
+        border-radius: 9px;
+    }
+
+    .dashboardtopdiv {
+        background-color: #1b334a !important;
+    }
+
+    .FilterHead {
+        color: whitesmoke;
+    }
+
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        overflow-anchor: none;
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 500px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .txtheader{
+        margin-left: 14px;
+        margin-top: 5px;
+        color: #fff;
+        font-family: 'Nakheel-Textregular';
+    }
+</style>
+<body>
+    <div class="container-fluid">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="HD1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                        <h5 class="FilterHead">Filter Option</h5>
+                    </button>
+                </h1>
+                <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                    <div class="accordion-body">
+                        @*<div class="row mb-2">
+                        <div class="col-lg-6">
+                        <div class="btn-group-horizontal" role="group">
+                        <input type="radio" class="btn-check" value="1" name="CTRL_TYPE" id="vbtn-radio1" onchange="ControlTypeFilter(this.value)" checked="">
+                        <label class="btn btn-outline-info" for="vbtn-radio1">Controlled</label>
+                        <input type="radio" class="btn-check" value="2" name="CTRL_TYPE" onchange="ControlTypeFilter(this.value)" id="vbtn-radio2">
+                        <label class="btn btn-outline-info" for="vbtn-radio2">Non-Controlled</label>
+                        @* <input type="radio" class="btn-check" value="3" name="CTRL_TYPE" onchange="ControlTypeFilter(this.value)" id="vbtn-radio3">
+                        <label class="btn btn-outline-info" for="vbtn-radio3">Controlled (Contractor)</label>
+                        </div>
+                        </div>
+                        </div>
+                        <hr />*@
+                        <div class="row align-items-center">
+                            <div class="col-lg-3">
+                                <label>Year</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Year" @*onchange="Fn_Community(this.value)"*@>
+                                    <option value="2023" style="text-align:center">2022-2023</option>
+                                    <option value="2022" style="text-align:center">2021-2022</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Zone</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Zone" onchange="Fn_Zone(this.value)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Community" onchange="Fn_Community(this.value)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label class="col-md-4 col-form-label">Building</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Building" onchange="Filter(2)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3" style="display:none">
+                                <label>Master Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Master_Community" onchange="Filter(1)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Filter By Date</label><br />
+                                <div class="form-group">
+                                    <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="FilterDate()" />
+                                    <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                                </div>
+                            </div>
+                            <div id="Frm_ToDiv" class="col-lg-3" style="display:none;">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label class="form-check-label" for="inlineRadio2">From</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="DateFilter()" />
+                                        <label class="form-check-label" for="inlineRadio2">To</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="DateFilter()" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*<div class="row mt-4">
+                        <div class="col-lg-3 mb-3">
+                        <label>Last Three Month Data</label>
+                        <div class="form-group">
+                        <input type="checkbox" switch="info" id="LastThree" name="LastThree" onchange="LastThreeMonths()" />
+                        <label for="LastThree" data-on-label="Yes" data-off-label="No"></label>
+                        </div>
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                        <label>Show Last Six Month Data</label>
+                        <div class="form-group">
+                        <input type="checkbox" switch="info" id="LastSix" name="LastSix" onchange="LastSixMonths()" />
+                        <label for="LastSix" data-on-label="Yes" data-off-label="No"></label>
+                        </div>
+                        </div>*@
+                        @*<div class="col-lg-2 mb-3">
+                        <label>Filter By Date</label><br />
+                        <div class="form-group">
+                        <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="FilterDate()" />
+                        <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                        </div>
+                        </div>
+                        <div id="Frm_ToDiv" class="row col-lg-3" style="display:none;">
+                        <div class="mb-3">
+                        <div class="form-group">
+                        <label class="form-check-label" for="inlineRadio2">From</label>
+                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="DateFilter()" />
+
+                        </div>
+                        </div>
+                        <div class="mb-3">
+                        <div class="form-group">
+                        <label class="form-check-label" for="inlineRadio2">To</label>
+                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="DateFilter()" />
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        <hr />*@
+                    </div>
+                    <hr />
+                </div>
+            </div>
+
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card overflow-hidden">
+                    <div class="bg-primary bg-soft dashboardtopdiv">
+                        <div class="row">
+                            <div class="col-7">
+                                <label class="txtheader">Incident Management</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 7px 16px !important;">
+                        <div class="row">
+                            <ul class="list-group list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Total Man Days Lost<a href="#" onclick="event.preventDefault();INCCardToggle('9','#Total_Man_Days_Lost')"> <span class="badge rounded-pill align-items-end bg-info" id="Total_Man_Days_Lost"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Injured Employees <a href="#" onclick="event.preventDefault();INCCardToggle('10','#Total_Injured_Emp')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Injured_Emp"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Injured Contractor<a href="#" onclick="event.preventDefault();INCCardToggle('11','#Total_Injured_Contractor')"><span class="badge bg-info rounded-pill align-items-end" id="Total_Injured_Contractor"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">High Potential Incidents<a href="#" onclick="event.preventDefault();INCCardToggle('12','#Total_High_Potential')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_High_Potential"></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card overflow-hidden">
+                    <div class="bg-primary bg-soft dashboardtopdiv">
+                        <div class="row">
+                            <div class="col-7">
+                                <label class="txtheader">Incident Management</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 7px 16px !important;">
+                        <div class="row">
+                            <ul class="list-group list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center" id="mapclick_popup">Total Incidents<a href="#"> <span class="badge rounded-pill align-items-end bg-info" id="Total_INC"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Closed <a href="#" onclick="event.preventDefault();INCCardToggle('1','#Total_Completed_INC')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Completed_INC"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Open<a href="#" onclick="event.preventDefault();INCCardToggle('2','#Total_Pending_INC')"><span class="badge bg-info rounded-pill align-items-end" id="Total_Pending_INC"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Pending Approval<a href="#" onclick="event.preventDefault();INCCardToggle('4','#Total_Inves_Approval_Pending')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Inves_Approval_Pending"></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card overflow-hidden">
+                    <div class="bg-primary bg-soft dashboardtopdiv">
+                        <div class="row">
+                            <div class="col-7">
+                                <label class="txtheader">Incident Management</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding: 7px 16px !important;">
+                        <div class="row">
+                            <ul class="list-group list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Total Actions<a href="#" onclick="event.preventDefault();INCCardToggle('5','#Total_Action')"> <span class="badge rounded-pill align-items-end bg-info" id="Total_Action"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Closed <a href="#" onclick="event.preventDefault();INCCardToggle('7','#Total_Action_Completed')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Action_Completed"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Open<a href="#" onclick="event.preventDefault();INCCardToggle('6','#Total_Action_Pending')"><span class="badge bg-info rounded-pill align-items-end" id="Total_Action_Pending"></span></a></li>
+                                <li class="list-group-item  d-flex justify-content-between align-items-center">Overdue Action<a href="#" onclick="event.preventDefault();INCCardToggle('8','#Total_Action_Closure_Pending')"><span class="badge bg-warning rounded-pill align-items-end" id="Total_Action_Closure_Pending"></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+       
+        <!-- Modal Pop Up -->
+        <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myExtraLargeModalLabel">Incident Mapping</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-6"> <div id="map-canvas_view"></div></div>
+
+                            <div class="col-6">
+                                <div class="col-md-12">
+                                    <div class="">
+                                        <h5>Based on Building</h5>
+                                        <table id="Based_Building" class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 100%;">Building Name</th>
+                                                    <th>Time</th>
+                                                    <th>Report by</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="MappingBuildTBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div><br />
+                                <div class="col-md-12">
+                                    <div class="">
+                                        <h5>Incident Category</h5>
+                                        <table class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                            <thead>
+                                                @*style="background: #60605f;">*@
+                                                <tr>
+                                                    <th style="width:100%;">Type of Incident</th>
+                                                    <th style="width:100%;">Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="IncidentTypeTBody">
+                                                @*<tr>
+                                                <td>Palm Jumeriah</td>
+                                                <td>10.30AM</td>
+                                                </tr>
+                                                <tr>
+                                                <td>Al Furjan</td>
+                                                <td>11.30AM</td>
+                                                </tr>
+                                                <tr>
+                                                <td>Logo Islands</td>
+                                                <td>12.45PM</td>
+                                                </tr>*@
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!-- Modal Grid Pop Up -->
+        <div id="ImpactPop" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Reported Hazard</b> </h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;">
+                            <table id="ImapactDivTable" class="table table-striped">
+                                <thead>
+                                    <tr class="TR_Color">
+                                        <th style="text-align:left;">Incident ID</th>
+                                        @*<th style="text-align:left;" id="TH_5">Notified By</th>*@
+                                        <th style="text-align:left;">Business Unit</th>
+                                        @*<th style="text-align:left;">Project/ Building/ Mall</th>*@
+                                        <th style="text-align:left;">Incident Category</th>
+                                        <th style="text-align:left;">Incident Type</th>
+                                        <th style="text-align:left;" id="TH_2">Description</th>
+                                        <th style="text-align:left;" id="TH_1">Date</th>
+                                        <th style="text-align:left;" id="TH_3">Time</th>
+                                        <th style="text-align:left;">Zone</th>
+                                        <th style="text-align:left;">Community</th>
+                                        <th style="text-align:left;">Building</th>
+                                        @*<th style="text-align:left;">Is Injury Illness?</th>
+                                        <th style="text-align:left;">Business Unit Name</th>
+                                        <th style="text-align:left;">Master_Community_Name</th>
+                                        <th style="text-align:left;">Root Causes Category</th>
+                                        <th style="text-align:left;" id="TH_4">Status</th>
+                                        <th style="text-align:left;">Created Date</th>*@
+                                    </tr>
+                                </thead>
+                                <tbody id="ImapactDiv_TBODY">
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                        @*  <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>*@
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        @if (LoginClass.Role_Id == "18" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12"
+        || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "14" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "2" || LoginClass.Role_Id == "4"
+        || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "1" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" || LoginClass.Role_Id == "9")
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="" style="background-color: #1b334a !important;border-top-right-radius: 13px;
+    border-top-left-radius: 13px;">
+                            <label class="txtheader">Incident Category </label>
+                        </div>
+                        <div class="" >
+                            <div id="Incident_Category_charts" data-colors='["#E8594F", "#00B0A6", "#36563D", "#FAB54F", "#00B0A6"]' class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class=""  style="background-color: #1b334a !important;border-top-right-radius: 13px;
+    border-top-left-radius: 13px;">
+                            <label class="txtheader">Incident Type</label>
+                        </div>
+                        <div class="">
+                            <div id="column_charts" data-colors='["#E8594F", "#36563D", "#00B0A6", "#00617F", "#FAB54F"]' class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="" style="background-color: #1b334a !important;border-top-right-radius: 13px;border-top-left-radius: 13px;">
+                            <label class="txtheader">Nature Of Injury/Illness </label>
+                        </div>
+                        <div class="">
+                            <div id="Nature_charts" data-colors='["#FAB54F", "#00617F", "#59595C", "#E8594F"]' class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ACTIONS: "#Total_Action",
+            ACTIONS_COMPLETED: "#Total_Action_Completed",
+            ACTION_PENDING: "#Total_Action_Pending",
+            BUSINESS_UNIT_ID: "#Business_Unit_Id",
+            PROJ_BUILD_ID: "#Project_Building_Id",
+            DRP_YEAR: "#Drp_Year",
+            LAST_SIX: "#LastSix",
+            LAST_THREE: "#LastThree",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            PB_DIV: "#PB_Div",
+            DRP_CAT: "#Drp_Cat",
+            MAN_DAYS_LOST: "#Total_Man_Days_Lost",
+            INJURED_EMP: "#Total_Injured_Emp",
+            INJURED_CONTRACTOR: "#Total_Injured_Contractor",
+            HIGH_POTENTIAL: "#Total_High_Potential",
+            MOST_INJURED: "#MostInjured",
+            CARD_MODEL: "#ImpactPop",
+            IMAPACT_DIV_TBODY: "#ImapactDiv_TBODY",
+            POP_UP_TABLE: "#ImapactDivTable",
+            M_ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community",
+            BUILDINGTBODY: "#MappingBuildTBody",
+            INCIDENTTYPETBODY: "#IncidentTypeTBody"
+        });
+    </script>
+
+    <script>
+        //"use strict";
+        //const UI_Fields = Object.freeze({
+        //    GOOGLE_MAP_API: "#GoogleMapApi"
+        //});
+
+        IncidentType();
+        Nature_Charts();
+        Incident_Category();
+        Dashboard_Counts();
+
+
+        $("#mapclick_popup").click(function () {
+            debugger;
+            $(".add-new").modal('show');
+            Mapping_Locations();
+            BuildingTBody();
+            IncidentTypeTBody();
+            //Load_GoogleMaps();
+        });
+
+        function Dashboard_Counts() {
+            debugger
+            var Chartdata = [];
+
+            CreatedBy = '1';
+            Category_Name = '';
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.G_Cards_Inc_Counts).each(function (i, l) {
+                        var violation = {};
+                        var monthdata = [];
+                        //alert(l.Total_Inc_Count)
+                        var Man_Day = document.createTextNode(l.Inc_Man_Day_Lost);
+                        document.getElementById('Total_Man_Days_Lost').appendChild(Man_Day);
+
+                        var Injured_Employee = document.createTextNode(l.Inc_Injured_Employee);
+                        document.getElementById('Total_Injured_Emp').appendChild(Injured_Employee);
+
+                        var Injured_Contractor = document.createTextNode(l.Inc_Injured_Contractor);
+                        document.getElementById('Total_Injured_Contractor').appendChild(Injured_Contractor);
+
+                        var High_Potential = document.createTextNode(l.Inc_High_Potential);
+                        document.getElementById('Total_High_Potential').appendChild(High_Potential);
+
+                        var Total_Count = document.createTextNode(l.Total_Inc_Count);
+                        document.getElementById('Total_INC').appendChild(Total_Count);
+
+                        var Closed_Count = document.createTextNode(l.Inc_Closed_Count);
+                        document.getElementById('Total_Completed_INC').appendChild(Closed_Count);
+
+                        var Open_Count = document.createTextNode(l.Inc_Open_Count);
+                        document.getElementById('Total_Pending_INC').appendChild(Open_Count);
+
+                        //var Today_Count = document.createTextNode(l.Today_Inc_Count);//Missing - OverDue Action
+                        //document.getElementById('Total_Verification_Pending').appendChild(Today_Count);
+
+                        var Approval_Pending = document.createTextNode(l.Inc_Approval_Pending);
+                        document.getElementById('Total_Inves_Approval_Pending').appendChild(Approval_Pending);
+
+                        var Total_Action = document.createTextNode(l.Inc_Total_Action);
+                        document.getElementById('Total_Action').appendChild(Total_Action);
+
+                        var Open_Action = document.createTextNode(l.Inc_Open_Action);
+                        document.getElementById('Total_Action_Pending').appendChild(Open_Action);
+
+                        var Closed_Action = document.createTextNode(l.Inc_Closed_Action);
+                        document.getElementById('Total_Action_Completed').appendChild(Closed_Action);
+
+                        var OverDue_Action = document.createTextNode(l.Inc_OverDue_Action);
+                        document.getElementById('Total_Action_Closure_Pending').appendChild(OverDue_Action);
+                    });
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function BuildingTBody() {
+
+            var html = "";
+            CreatedBy = '1';
+            Category_Name = '';
+            $("#MappingBuildTBody").html('');
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.G_List_Building).each(function (i, l) {
+                        //alert(l.Employee_Name) G_List_Inc_Type
+                        html += '<tr><td>' + l.Name + '</td>';
+                        html += '<td>' + l.Incident_Time + '</td>';
+                        html += '<td>' + l.Employee_Name + '</td></tr>';
+                    });
+                    $("#MappingBuildTBody").append(html);
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+        function IncidentTypeTBody() {
+
+            var html = "";
+            CreatedBy = '1';
+            Category_Name = '';
+            $(UI_Fields.INCIDENTTYPETBODY).html('');
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.G_List_Inc_Type).each(function (i, l) {
+                        //alert(l.Employee_Name)
+                        html += '<tr><td align="left" valign="middle">' + l.Name + '</td>';
+                        //html += '<td align="left" valign="middle">' + l.Incident_Time + '</td>';
+                        html += '<td align="left" valign="middle">' + l.Incident_Time + '</td><</tr >';
+                    });
+                    $(UI_Fields.INCIDENTTYPETBODY).append(html);
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+
+        function FilterDate() {
+
+            //alert('Filter Date')
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                $(".InputField").attr("disabled", true);
+                $(UI_Fields.LAST_SIX).attr("disabled", true);
+                $(UI_Fields.FROM_DATE).attr("disabled", false);
+                $(UI_Fields.TO_DATE).attr("disabled", false);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).show(100);
+            }
+            else {
+                $(".InputField").attr("disabled", false);
+                $(UI_Fields.LAST_SIX).attr("disabled", false);
+                $(UI_Fields.FROM_DATE).attr("disabled", true);
+                $(UI_Fields.TO_DATE).attr("disabled", true);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).hide(100);
+                $(UI_Fields.FROM_DATE).val('');
+                $(UI_Fields.TO_DATE).val('');
+            }
+        }
+        function IncidentType() {
+
+            var Chartdata = [];
+
+            CreatedBy = '1';
+            Category_Name = '';
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.Graph_Inc_Type).each(function (i, l) {
+                        var violation = {};
+                        var monthdata = [];
+                        //alert(l.Name)
+                        violation["name"] = l.Name;
+
+                        monthdata.push(l.January);
+                        monthdata.push(l.February);
+                        monthdata.push(l.March);
+                        monthdata.push(l.April);
+                        monthdata.push(l.May);
+                        monthdata.push(l.June);
+                        monthdata.push(l.July);
+                        monthdata.push(l.August);
+                        monthdata.push(l.September);
+                        monthdata.push(l.October);
+                        monthdata.push(l.November);
+                        monthdata.push(l.December);
+                        violation["data"] = monthdata;
+                        Chartdata.push(violation);
+                    });
+                    DrawGraphIncidentType(Chartdata, 'Incident Type');
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+
+        function DrawGraphIncidentType(arr, name) {
+            var options = {
+                chart: { height: 350, type: "bar", toolbar: { show: !1 } },
+                plotOptions: { bar: { horizontal: !1, columnWidth: "45%", endingShape: "rounded" } },
+                dataLabels: { enabled: !1 }, stroke: { show: !0, width: 3, colors: ["transparent"] },
+                series: arr,
+                colors: barchartColors = getChartColorsArray("column_charts"),
+                xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+                yaxis: { title: { text: "" } }, grid: { borderColor: "#f1f1f1" }, fill: { opacity: 1 },
+                tooltip: { y: { formatter: function (t) { return "#" + t + " Count" } } }
+            },
+                chart = new ApexCharts(document.querySelector("#column_charts"), options); chart.render();
+            chart.addEventListener("updated", function (t) { updateQuarterChart(t, "barQuarter") });
+        }//Incident Type End
+
+        function Nature_Charts() {
+
+            var Chartdata = [];
+
+            CreatedBy = '1';
+            Category_Name = '';
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.Graph_Nature_Injury).each(function (i, l) {
+                        var violation = {};
+                        var monthdata = [];
+                        //alert(l.Name)
+                        violation["name"] = l.Name;
+
+                        monthdata.push(l.January);
+                        monthdata.push(l.February);
+                        monthdata.push(l.March);
+                        monthdata.push(l.April);
+                        monthdata.push(l.May);
+                        monthdata.push(l.June);
+                        monthdata.push(l.July);
+                        monthdata.push(l.August);
+                        monthdata.push(l.September);
+                        monthdata.push(l.October);
+                        monthdata.push(l.November);
+                        monthdata.push(l.December);
+                        violation["data"] = monthdata;
+                        Chartdata.push(violation);
+                    });
+                    DrawGraphNatureCharts(Chartdata, 'Nature Charts');
+                }
+                else {
+                    //toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+
+        function DrawGraphNatureCharts(arr, name) {
+            //alert(name)
+            var options = {
+                chart: { height: 350, type: "bar", toolbar: { show: !1 } },
+                plotOptions: { bar: { horizontal: !1, columnWidth: "45%", endingShape: "rounded" } },
+                dataLabels: { enabled: !1 }, stroke: { show: !0, width: 3, colors: ["transparent"] },
+                series: arr,
+                colors: barchartColors = getChartColorsArray("Nature_charts"),
+                xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+                yaxis: { title: { text: "" } }, grid: { borderColor: "#f1f1f1" }, fill: { opacity: 1 },
+                tooltip: { y: { formatter: function (t) { return "#" + t + " Count" } } }
+            },
+                chart = new ApexCharts(document.querySelector("#Nature_charts"), options); chart.render();
+            chart.addEventListener("updated", function (t) { updateQuarterChart(t, "barQuarter") });
+        }//Nature Charts End
+
+        function Incident_Category() {
+
+            var Chartdata = [];
+
+            var CreatedBy = '1';
+            var Category_Name = 'OHS';
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.Graph_Inc_Category).each(function (i, l) {
+                        var violation = {};
+                        var monthdata = [];
+                        //alert(l.Name)
+                        violation["name"] = l.Name;
+
+                        monthdata.push(l.January);
+                        monthdata.push(l.February);
+                        monthdata.push(l.March);
+                        monthdata.push(l.April);
+                        monthdata.push(l.May);
+                        monthdata.push(l.June);
+                        monthdata.push(l.July);
+                        monthdata.push(l.August);
+                        monthdata.push(l.September);
+                        monthdata.push(l.October);
+                        monthdata.push(l.November);
+                        monthdata.push(l.December);
+                        violation["data"] = monthdata;
+                        Chartdata.push(violation);
+                    });
+                    DrawGraphIncidentCategory(Chartdata, 'Incident Type');
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+
+        function DrawGraphIncidentCategory(arr, name) {
+            var options = {
+                chart: { height: 350, type: "bar", toolbar: { show: !1 } },
+                plotOptions: { bar: { horizontal: !1, columnWidth: "45%", endingShape: "rounded" } },
+                dataLabels: { enabled: !1 }, stroke: { show: !0, width: 3, colors: ["transparent"] },
+                series: arr,
+                colors: barchartColors = getChartColorsArray("Incident_Category_charts"),
+                xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] },
+                yaxis: { title: { text: "" } }, grid: { borderColor: "#f1f1f1" }, fill: { opacity: 1 },
+                tooltip: { y: { formatter: function (t) { return "#" + t + " Count" } } }
+            },
+                chart = new ApexCharts(document.querySelector("#Incident_Category_charts"), options); chart.render();
+            chart.addEventListener("updated", function (t) { updateQuarterChart(t, "barQuarter") });
+        }//Incident Category End
+    </script>
+    <script type="text/javascript">
+        LOAD_ZONE();
+        function LOAD_ZONE() {
+            $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+                $(UI_Fields.M_ZONE).empty();
+                $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                });
+            });
+        }
+
+        function Fn_Zone(Zone_Id) {
+            $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+                $(UI_Fields.COMMUNITY_ID).empty();
+                $(UI_Fields.BUILDING_ID).empty();
+                $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+                $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                });
+            });
+
+        }
+
+        function Fn_Community(Community_Id) {
+            var Zone_Id = $("#Drp_Zone").val();
+            $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.BUILDING_ID).empty();
+                $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                });
+            });
+
+            $.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+                });
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        function Mapping_Locations() {
+            debugger
+            var Chartdata = [];
+            var CreatedBy = '1';
+            var Category_Name = '';
+            $.post("@Url.Action("GetIncidentTypeGraph", "Incident")", { CreatedBy: CreatedBy, Category_Name: Category_Name }, function (data) {
+
+                if (data != null) {
+                    $(data.G_List_Location).each(function (i, l) {
+                        var violation = [l.Name, l.Total_Inc_Count, l.Today_Inc_Count, l.Inc_Total_Action];
+                        Chartdata.push(violation);
+                    });
+                    var locations = Chartdata;
+
+                    debugger
+                    var map = new google.maps.Map(document.getElementById('map-canvas_view'), {
+                        zoom: 10,
+                        center: new google.maps.LatLng(25.114491, 55.139020),
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+
+                    var infowindow = new google.maps.InfoWindow();
+
+                    var marker, i;
+                    var image = '';
+
+
+                    for (i = 0; i < locations.length; i++) {
+                        //alert(locations.length)
+                        if (locations[i][3] == "Fire") {
+                            image = '../assets/images/mapicons/1.png'
+                        }
+                       else if (locations[i][3] == "Health & Safety") {
+                            image = '../assets/images/mapicons/2.png'
+                        }
+                        else if (locations[i][3] == "Vehicle Accident") {
+                            image = '../assets/images/mapicons/6.png'
+                        }
+                        else if (locations[i][3] == "Environment") {
+                            image = '../assets/images/mapicons/4.png'
+                        }
+                        else if (locations[i][3] == "Security") {
+                            image = '../assets/images/mapicons/3.png'
+                        }
+                        marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                            map: map,
+                            animation: google.maps.Animation.DROP,
+                            animation: google.maps.Animation.BOUNCE,
+                            icon: image
+                        });
+
+                        google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                            return function () {
+                                infowindow.setContent(locations[i][0]);
+                                infowindow.open(map, marker);
+                            }
+                        })(marker, i));
+                    }
+                }
+                else {
+                    toastr.error(data.MESSAGE, "Error");
+                }
+            });
+        }
+    </script>
+</body>
+

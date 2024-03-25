@@ -1,0 +1,514 @@
+﻿@model Nakheel_Web.Models.EMR_Drill.Drill_CommonFRM
+@{
+    string DrillLbl = "";
+    string DrillType = "";
+    string ST = "";
+    int len = 0;
+}
+<head>
+    <link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+    <style>
+        .textHeight {
+            height: 90px;
+        }
+    </style>
+</head>
+@if (Model != null)
+{
+
+    ST = Model.Status!;
+    <div class="row">
+        @{
+            DrillType = Model.Drill_Type_ID!;
+            switch (DrillType)
+            {
+                case "1":
+                    DrillLbl = "Is Emergency Equipment’s Available?";
+                    break;
+                case "2":
+                    DrillLbl = "Is Elevator Keys Available On Site?";
+                    break;
+
+                case "3":
+                    DrillLbl = "Is Spill Kit Available ?";
+                    break;
+                default:
+                    break;
+
+            }
+            @if (Model != null && (ST == "1" || ST == "2"))
+            {
+                <form id="F_EMR_Team" asp-controller="DrillSchedule" asp-action="Schedule_Add_DrillFRM" enctype="multipart/form-data" method="post" class="row">
+                    <input class="form-control" type="hidden" asp-for="Drill_Schedule_ID!">
+                    <input class="form-control" type="hidden" asp-for="Drill_Type_ID">
+                    <input class="form-control" type="hidden" asp-for="Common_ID">
+                    <div class="row mb-1">
+
+                        <table class="table table-striped col-lg-12">
+                            <tr>
+
+                                <td><b class="font-bold">Drill Location</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input type="text" class="form-control" asp-for="Dril_Loc" />
+                                    <span asp-validation-for="Dril_Loc" class="text-danger"></span>
+                                </td>
+
+                                <td><b class="font-bold">@DrillLbl</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td>
+                                    <div class="form-group">
+                                        <label><input type="radio" class="SpotRd" asp-for="Common_Ques" value="Yes">Yes</label>
+                                        <label><input type="radio" class="SpotRd" asp-for="Common_Ques" value="No" checked>No</label>
+                                    </div>
+                                    <span asp-validation-for="Common_Ques" class="text-danger"></span>
+                                </td>
+                                <td><b class="font-bold">Overall Standard Of Drill</b><span class="requ">*</span></td>
+                                <td>:</td>
+                                <td>
+                                    <select class="form-select" asp-for="Rating">
+                                        <option value="">--Select--</option>
+                                        <option value="Very good">Very good</option>
+                                        <option value="Good">Good</option>
+                                        <option value="Satisfactory">Satisfactory</option>
+                                        <option value="Unsatisfactory">Unsatisfactory</option>
+                                    </select>
+                                    <span asp-validation-for="Rating" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            @if (DrillType == "2")
+                            {
+
+                                <tr>
+                                    <td>
+                                        <b class="font-bold">Were security able to manage the rescue with keys?</b><span class="requ">*</span>
+                                    </td>
+                                    <td>:</td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label><input type="radio" class="SpotRd" asp-for="Security_Res " value="Yes">Yes</label>
+                                            <label><input type="radio" class="SpotRd" asp-for="Security_Res" value="No" checked>No</label>
+                                        </div>
+                                        <span asp-validation-for="Security_Res" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                        <b class="font-bold">Elevator Service provider response time</b><span class="requ">*</span>
+                                    </td>
+                                    <td>:</td>
+                                    <td class="tdtxt">
+                                        <input type="time" class="form-control" asp-for="ERT" />
+                                        <span asp-validation-for="ERT" class="text-danger"></span>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <input type="hidden" asp-for="ERT" value="NA" />
+                                    <input type="hidden" asp-for="Security_Res" value="NA" />
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <b class="font-bold"> Comments on Drill</b><span class="requ">*</span>
+                                </td>
+                                <td>:</td>
+                                <td colspan="7">
+                                    <textarea class="form-control textHeight" asp-for="Drill_Comments"></textarea>
+                                    <span asp-validation-for="Drill_Comments" class="text-danger"></span>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    @*  <div class="row mb-4">
+        <div class="col-md-6">
+        <label for="" class="col-md-4 col-form-label">Comments on Drill<span class="requ">*</span></label>
+        </div>*@
+
+                    <div class="col-md-12">
+                        <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreTM" onclick="AddTM()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+                        <table id="tbl_TeamMem" class="table-sm table table-striped" style="width:98%;overflow:auto">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="text-align:left;">Improvement Action</th>
+                                    <th style="text-align:left;">Is Closed On spot?</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                    <th style="text-align:left;">Action Taken</th>
+                                    <th style="text-align:left;">Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_TeamMem">
+                                @if (ST == "1")
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="hidden" class="Drill_CRR_ID" asp-for="_Acts[0]!.Drill_CRR_ID!" value="0" />
+                                                <textarea class="form-control Imp_Action" id="ActDes1" asp-for="_Acts[0]!.Action_Des!" style="resize:vertical;height:17px"></textarea>
+                                                <span asp-validation-for="_Acts[0]!.Action_Des!" class="text-danger"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <label><input type="radio" class="SpotRd" asp-for="_Acts[0]!.Close_On_Spot!" value="Yes">Yes</label>
+                                                <label><input type="radio" class="SpotRd" asp-for="_Acts[0]!.Close_On_Spot!" value="No" checked>No</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <input type="date" class="form-control TargetDate" asp-for="_Acts[0]!.Target_Date!" readonly min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                                <span asp-validation-for="_Acts[0]!.Target_Date!" class="text-danger"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <textarea class="form-control ActionTaken" asp-for="_Acts[0]!.Corrective_Action!" readonly style="resize:vertical;height:17px"></textarea>
+                                                <span asp-validation-for="_Acts[0]!.Corrective_Action!" class="text-danger"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="form-group">
+                                                <label class="file-placeholder">
+                                                    <img src="~/assets/images/image-.png" class="Imgtag" height="50px" width="50px" />
+                                                    <input type="hidden" class="Photo_Path" asp-for="_Acts[0]!.Photo_Path!" />
+                                                    <input type="file" class="form-control Evidance" disabled accept=".jpg,.png,.jpeg" style="display: none;" />
+                                                </label>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @if (Model._Acts != null && Model._Acts.Count > 0)
+                                    {
+                                        len = Model._Acts.Count();
+                                        int i = 0;
+                                        @foreach (var item in Model._Acts)
+                                        {
+                                            var readOnlyAttr = Model._Acts[i]!.Close_On_Spot == "No" ? "readonly" : "";
+                                            var reaDis = Model._Acts[i]!.Close_On_Spot == "No" ? "disabled" : "";
+                                            <tr>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="hidden" class="Drill_CRR_ID" asp-for="_Acts[i]!.Drill_CRR_ID!" />
+                                                        <textarea class="form-control Imp_Action" id="ActDes1" asp-for="_Acts[i]!.Action_Des!" style="resize:vertical;height:17px"></textarea>
+                                                        <span asp-validation-for="_Acts[i]!.Action_Des!" class="text-danger"></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <label><input type="radio" class="SpotRd" asp-for="_Acts[i]!.Close_On_Spot!" value="Yes">Yes</label>
+                                                        <label><input type="radio" class="SpotRd" asp-for="_Acts[i]!.Close_On_Spot!" value="No">No</label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="date" class="form-control TargetDate" name="_Acts[i]!.Target_Date!" value="@item.Target_Date" min="@DateTime.Now.ToString("yyyy-MM-dd")" @readOnlyAttr />
+                                                        <span asp-validation-for="_Acts[i]!.Target_Date!" class="text-danger"></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <textarea class="form-control ActionTaken" name="_Acts[i]!.Corrective_Action!" style="resize:vertical;height:17px" @readOnlyAttr>@item.Corrective_Action</textarea>
+                                                        <span asp-validation-for="_Acts[i]!.Corrective_Action!" class="text-danger"></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <label class="file-placeholder">
+                                                            <img src="~/assets/images/image-.png" class="Imgtag" height="50px" width="50px" />
+                                                            <input type="hidden" class="Photo_Path" asp-for="_Acts[i]!.Photo_Path!" />
+                                                            <input type="file" class="form-control Evidance" accept=".jpg,.png,.jpeg" style="display: none;" @reaDis />
+                                                        </label>
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            i++;
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr />
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Photo Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input asp-for="Photos!" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                                    <div class="">
+                                        <input asp-for="Videos!" type="file" accept="video/*" multiple>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+
+                    <div class="row mb-2" style="text-align: center;">
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" id="Sub_BTN_DF">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                int mainST = 0;
+                <h4>Service Provider Report</h4>
+                <hr />
+
+                <div class="row mb-1">
+                    <table class="table table-sm tab table-responsive">
+                        <tbody id="tblIncidentDetailsViewPage">
+                            @if (Model != null)
+                            {
+                                mainST = Convert.ToInt32(Model.Remarks);
+                                <tr>
+                                    <td><b class="font-bold">Drill Location</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Dril_Loc</td>
+                                    <td><b class="font-bold">@DrillLbl</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Common_Ques</td>
+
+                                    <td><b class="font-bold">Overall standard of Fire Drill</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Rating</td>
+
+                                </tr>
+                                @if (DrillType == "2")
+                                {
+                                    <tr>
+                                        <td><b class="font-bold">Were security able to manage the rescue with keys?</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.Security_Res</td>
+
+                                        <td><b class="font-bold">Elevator Service provider response time</b></td>
+                                        <td>:</td>
+                                        <td class="tdtxt">@Model.ERT</td>
+
+                                    </tr>
+                                }
+                                <tr>
+                                    <td><b class="font-bold">Comments on Drill</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt" colspan="7">@Model.Drill_Comments</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                if (Model != null && Model._Acts != null && Model._Acts.Count > 0 && mainST == 2)
+                {
+                    <div class="row">
+                        <table class="table table-sm table-striped table-responsive" style="width:98%;overflow:auto">
+                            <thead>
+                                <tr class="TR_Color">
+                                    <th style="text-align:left;">Improvement Action</th>
+                                    <th style="text-align:left;">Is Closed On spot?</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                    <th style="text-align:left;">Action Taken</th>
+                                    <th style="text-align:left;">Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model._Acts)
+                                {
+                                    <tr>
+                                        <td><label class="tdtxt">@item.Action_Des</label></td>
+                                        <td><label class="tdtxt">@item.Close_On_Spot</label></td>
+                                        @if (item.Close_On_Spot == "Yes")
+                                        {
+                                            <td><label class="tdtxt">@item.Target_Date</label></td>
+                                            <td><label class="tdtxt">@item.Corrective_Action</label></td>
+                                            if (item.Photo_Path != null)
+                                            {
+                                                <td><a href="@item.Photo_Path" target="_blank"><img src="@item.Photo_Path" style="height:50px;width:50px" /></a></td>
+                                            }
+                                            else
+                                            {
+                                                <td><label class="tdtxt">No files</label></td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td colspan="3"><label class="tdtxt">Subject to Supervisor</label></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @if (Model!.Drill_Photos != null && Model.Drill_Photos.Count > 0)
+                {
+                    <h4>Drill Photos</h4>
+                    <hr />
+
+                    <div class="row mb-2">
+
+                        @foreach (var item in Model.Drill_Photos)
+                        {
+                            <div class="col-md-1">
+
+                                <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:50px;width:50px" /></a>
+
+                            </div>
+                        }
+                    </div>
+
+                }
+                @if (Model.Drill_Vedios != null && Model.Drill_Vedios.Count > 0)
+                {
+                    <h4>Drill Videos</h4>
+                    <hr />
+                    <div class="row mb-2">
+
+                        @foreach (var item in Model.Drill_Vedios)
+                        {
+                            <div class="col-md-4">
+
+                                <a href="@item.Video_File_Path" target="_blank"> <iframe src='@item.Video_File_Path' style="width:200px;height:200px"></iframe></a>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+            }
+        }
+
+    </div>
+
+    <script>
+        var Count = 1;
+        $(function () {
+            let sh = '@ST';
+            //let AllowImg = ['jpg', 'png', 'jpeg', 'bmp'];
+            //let VideoImg = ['mp4', 'avi'];
+            let $el1 = $(UI_Fields.INPUT_PHOTO);
+            let $el2 = $(UI_Fields.INPUT_VIDEO);
+            //ApplyFileUpload($el1, AllowImg);
+            //ApplyFileUpload($el2, VideoImg);
+
+
+            if (sh == 2) {
+                Count = @len;
+                let PhotoList = JSON.parse('@Html.Raw(Json.Serialize(Model.Drill_Photos))');
+                let VedioList = JSON.parse('@Html.Raw(Json.Serialize(Model.Drill_Vedios))');
+                if (PhotoList != null) {
+                    $(PhotoList).each(function (i, e) {
+                        let indx = (i + 1);
+                        NM_Prev.push(e.Photo_File_Path);
+                        NM_Config.push({
+                            caption: "Image " + indx,
+                            filetype: "image/png",
+                            url: e.Photo_File_Path,
+                            width: "120px",
+                            downloadUrl: false,
+                            type: "image",
+                            key: e.Drill_Photo_Id + "," + i
+                        });
+                    });
+                    if (VedioList != null) {
+                        $(VedioList).each(function (i, e) {
+                            NM_Prev1.push(e.Video_File_Path);
+                            NM_Config1.push({
+                                caption: "Image " + (i + 1),
+                                filetype: "mp4/avi",
+                                url: e.Video_File_Path,
+                                width: "120px",
+                                downloadUrl: false,
+                                type: "video",
+                                key: parseInt(e.Drill_Photo_Id)
+                            });
+                        });
+
+                    }
+                }
+
+            }
+
+            $(UI_Fields.TBL_TEAM_MEM).on('change', UI_Fields.SPOT_RD, function () {
+                let Val = $(this).closest('tr').find('.SpotRd:checked').val();
+                let ActionTaken = $(this).closest('tr').find('.ActionTaken');
+                let Evidance = $(this).closest('tr').find('.Evidance');
+                let TargetDate = $(this).closest('tr').find('.TargetDate');
+                if (Val == "Yes") {
+                    Evidance.prop("disabled", false);
+                    ActionTaken.prop("readonly", false).val("");
+                    ActionTaken.addClass("required");
+                    TargetDate.prop("readonly", false);
+                    TargetDate.addClass("required");
+                }
+                else {
+                    Evidance.prop("disabled", true).val('');
+                    ActionTaken.prop("readonly", true).val('NA');
+                    TargetDate.prop("readonly", true).val('NA');
+                    ActionTaken.removeClass("required");
+                    TargetDate.removeClass("required");
+                }
+
+            });
+
+            $(UI_Fields.TBL_TEAM_MEM).on('change', ".Evidance", function () {
+                let Photo_Path = $(this).closest('tr').find('.Photo_Path');
+                let Imgtag = $(this).closest('tr').find('.Imgtag');
+                let Evidance = $(this).closest('tr').find('.Evidance');
+
+                // Corrected way to create FormData
+                let fileName = Evidance[0].files[0].name;
+                let fileExtension = fileName.split('.').pop().toLowerCase();
+                if (!(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension))) {
+                    ToastrMessage("error", "Please select a valid image file.");
+                    return false;
+                }
+
+                let formData = new FormData();
+                formData.append('file', Evidance[0].files[0]);
+                let token = "";
+                AjaxAsynFile('/DrillSchedule/Upload_Evid_File', formData, token, function (data) {
+                    if (data == "Failed") {
+                        Photo_Path.val("NA");
+                        ToastrMessage("error", "Error While processing your request.");
+                    }
+                    else {
+                        ToastrMessage("info", "Uploaded Successfully.");
+                        Imgtag.attr("src", data);
+                        Photo_Path.val(data);
+                    }
+                });
+            });
+            $(UI_Fields.TBL_TEAM_MEM).on('click', UI_Fields.DEL_BTN, function () {
+                $(this).closest('tr').remove();
+                Count--;
+                ResetValues();
+            });
+            ApplyFileUploadConfig($el1, NM_Prev, NM_Config, '/DrillSchedule/DeletePhoto', AllowImg);
+            ApplyFileUploadConfig($el2, NM_Prev1, NM_Config1, '/DrillSchedule/DeleteVideo', VideoImg);
+            if (sh == 1 || sh == 2) {
+                DisAbleSubmitbtn("#Sub_BTN_DF", "#F_EMR_Team");
+            }
+        });
+
+
+    </script>
+}

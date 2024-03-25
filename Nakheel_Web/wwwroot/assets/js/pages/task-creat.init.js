@@ -1,0 +1,1 @@
+flatpickr("#datepicker-basic"),flatpickr("#datepicker-datetime",{enableTime:!0,dateFormat:"m-d-Y H:i"});

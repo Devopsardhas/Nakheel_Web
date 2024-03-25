@@ -1,0 +1,234 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.COMMUNITY_MANAGEMNT>;
+@{
+    ViewData["Title"] = "Community Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Community Management List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new-order"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>
+                </div>
+                @* <div class="col-md-6">
+                <h2>Business Unit</h2>
+                </div>*@
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Community ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community Name</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Master_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Community_Master_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Community_Master_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+<form id="AddModule_div" asp-controller="Master" asp-action="AddCommunity" method="post">
+<div class="modal fade add-new-order" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Community_Master_Id" id="Community_Master_Id" value="0">
+                            </div>
+                        </div>
+                    <div class="col-md-6">
+                        <label for="" style="color:black;" class="form-model">Zone</label>
+                            <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" required minlen="1">
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-model" style="color:black;" for="AddOrder-Billing-Name">Community Name</label>
+                                <input class="form-control" type="text" name="Community_Master_Name" id="Community_Name" required autocomplete="off" minlen="1">
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div  style="text-align:center;">
+                        <button type="submit" class="btn btn-success"  id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+</form>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Community_Master_Id",
+        //Zone_Id
+        COMMUNITY_NAME: "#Community_Name",
+        DESCRIPTION: "#Description",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_ADD_INC: "#btn_add_incident",
+        DIV_BUILDING: "#div_Building",
+        DIV_MASTER_COMMUNITY: "#div_Master_Community",
+        ZONEID: "#Zone_Id",
+    });
+
+    $(document).ready(function () {
+      
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        LOAD_ALL_ZONE_IS_COMMUNITY();
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+
+    function LOAD_ALL_ZONE_IS_COMMUNITY()
+    {
+        $.post("@Url.Action("LoadAllZoneIsCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='' selected = 'selected' disabled>--Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+
+    $("#btnAdd").click(function () {
+        $(UI_Fields.MODULE_ID).val('0');
+        $(UI_Fields.ZONEID).val('0');
+        $(UI_Fields.COMMUNITY_NAME).val('');
+    });
+
+    function Edit(id) {
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Community_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            //alert(data.Is_Master_Community);
+            $(UI_Fields.MODULE_ID).val(data.Community_Master_Id);
+            $(UI_Fields.COMMUNITY_NAME).val(data.Community_Master_Name);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+        });
+    }
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Community_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    
+</script>

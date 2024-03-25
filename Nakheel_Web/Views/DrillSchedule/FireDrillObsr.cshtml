@@ -1,0 +1,332 @@
+﻿@model Nakheel_Web.Models.EMR_Drill.Drill_Fire_Obsr
+@{
+    string ST = "";
+    int len = 0;
+}
+@if (Model != null)
+{
+    ST = Model.Status!;
+    @if (Model != null && (ST == "1" || ST == "2"))
+    {
+
+        <form id="F_EMR_Team" asp-controller="DrillSchedule" asp-action="Schedule_Add_Fire_Obsr" enctype="multipart/form-data" method="post" class="row">
+            <input class="form-control" type="hidden" asp-for="Drill_Schedule_ID" />
+            <input class="form-control" type="hidden" asp-for="Fire_Drill_OBS_ID" />
+            <div class="row mb-1">
+
+                <table class="table table-striped col-lg-12">
+                    <tr>
+
+                        <td><b class="font-bold">Time Of First Sound Of Fire Alarm/ Signal </b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <input type="time" class="form-control" asp-for="First_Sound" />
+                            <span asp-validation-for="First_Sound" class="text-danger"></span>
+                        </td>
+
+                        <td><b class="font-bold">Time Of First Occupant Reporting To Assembly Point</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <input type="time" class="form-control Occupant" asp-for="First_Occupant!" />
+                            <span asp-validation-for="First_Occupant" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Time Of Last Occupant Reporting At Assembly Point </b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <input type="time" class="form-control Occupant" asp-for="Last_Occupant" />
+                            <span asp-validation-for="Last_Occupant" class="text-danger"></span>
+                        </td>
+
+                    </tr>
+
+                </table>
+            </div>
+            <div class="row mb-1">
+
+
+                <div class="col-md-6 mb-1">
+                    <label for="" class="col-md-12 col-form-label">Nature Of Occupants<span class="requ">*</span></label>
+                    <textarea class="form-control textHeight" asp-for="Ocuupant_Nature"></textarea>
+                    <span asp-validation-for="Ocuupant_Nature" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-1">
+                    <label for="" class="col-md-12 col-form-label">Performance Of Life Safety Equipment <span class="requ">*</span></label>
+                    <textarea class="form-control textHeight" asp-for="Life_Safety_Equip"></textarea>
+                    <span asp-validation-for="Life_Safety_Equip" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="" class="col-md-12 col-form-label">Status Of Lifts During Evacuation  <span class="requ">*</span></label>
+                    <textarea class="form-control textHeight" asp-for="Lift_Status"></textarea>
+                    <span asp-validation-for="Lift_Status" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label for="" class="col-md-12 col-form-label">Status Of Pantry After Evacuation <span class="requ">*</span></label>
+                    <textarea class="form-control textHeight" asp-for="Pantry_Status"></textarea>
+                    <span asp-validation-for="Pantry_Status" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label for="" class="col-md-4 col-form-label">Evacuation Process <span class="requ">*</span></label>
+                    <textarea class="form-control textHeight" asp-for="Evac_Process"></textarea>
+                    <span asp-validation-for="Evac_Process" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="col-lg-12"> <button class="btn btn-primary mb-1" type="button" id="AddMoreTM" onclick="AddObsrTM()" style="float:right;"><i class="mdi mdi-plus me-1"></i> Add More</button> </div>
+                    <table id="tbl_Task_Obsr" class="table table-sm  table-striped" style="width:98%;overflow:auto">
+                        <thead>
+                            <tr class="TR_Color">
+                                <th style="text-align:left;">Improvement Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_Task_Obsr">
+                            @if (ST == "1")
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <input type="hidden" class="Drill_CRR_ID" asp-for="_Acts[0]!.Drill_CRR_ID!" value="0" />
+                                            <textarea class="form-control Imp_Action" id="ActDes1" asp-for="_Acts[0]!.Action_Des!" style="resize:vertical;height:17px"></textarea>
+                                            <span asp-validation-for="_Acts[0]!.Action_Des!" class="text-danger"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else{
+                                @if (Model._Acts != null && Model._Acts.Count > 0)
+                                {
+                                    len = Model._Acts.Count();
+                                    int i = 0;
+                                    @foreach (var item in Model._Acts)
+                                    {
+                                        var readOnlyAttr = Model._Acts[i]!.Close_On_Spot == "No" ? "readonly" : "";
+                                        var reaDis = Model._Acts[i]!.Close_On_Spot == "No" ? "disabled" : "";
+                                        <tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type="hidden" class="Drill_CRR_ID" asp-for="_Acts[i]!.Drill_CRR_ID!" />
+                                                    <textarea class="form-control Imp_Action" id="ActDes1" asp-for="_Acts[i]!.Action_Des!" style="resize:vertical;height:17px"></textarea>
+                                                    <span asp-validation-for="_Acts[i]!.Action_Des!" class="text-danger"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr />
+            <div class="row mb-2">
+                <div class="">
+                    <label for="example-number-input" class="col-md-2 col-form-label">Photo Upload</label>
+                    <div class="row mb-3" id="MediaDiv">
+                        <div class="form-group col-md-6">
+                            <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                            <div class="file-loading">
+                                <input asp-for="Photos!" type="file" accept="image/*" multiple>
+                            </div>&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                            <div class="">
+                                <input asp-for="Videos!" type="file" accept="video/*" multiple>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Submit Button -->
+
+            <div class="row mb-2" style="text-align: center;">
+                <div class="d-grid gap-2 d-md-block">
+                    <button type="submit" class="btn btn-success waves-effect waves-light" id="SubBTN_DO">
+                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                    </button>
+                    <button type="reset" class="btn btn-danger waves-effect waves-light">
+                        <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </form>
+    }
+    else
+    {
+        int mainST = 0;
+        <h4>Observer Report</h4>
+        <hr />
+
+        <div class="row mb-1">
+            <table class="table table-sm tab table-responsive">
+                <tbody id="tblIncidentDetailsViewPage">
+                    @if (Model != null)
+                    {
+                        mainST = Convert.ToInt32(Model.Remarks);
+                        <tr>
+                            <td><b class="font-bold">Time Of Fist Sound Of Fire Alarm / Signal</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.First_Sound</td>
+
+                            <td><b class="font-bold">Time Of First Occupant Reporting To Assembly Point</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.First_Occupant</td>
+
+                            <td><b class="font-bold">Time Of Last Occupant Reporting At Assembly Point</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Last_Occupant</td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Nature Of Occupants</b></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="7">@Model.Ocuupant_Nature</td>
+
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Performance Of Life Safety Equipment</b></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="7">@Model.Life_Safety_Equip</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Status Of Lifts During Evacuation</b></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="7">@Model.Lift_Status</td>
+
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Evacuation Process</b></td>
+                            <td>:</td>
+                            <td class="tdtxt" colspan="7">@Model.Evac_Process</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        if (Model != null && Model._Acts != null && Model._Acts.Count > 0 && mainST == 2)
+        {
+            <div class="row">
+                <table class="table table-sm table-striped table-responsive" style="width:98%;overflow:auto">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;">Improvement Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model._Acts)
+                        {
+                            <tr>
+                                <td><label class="tdtxt">@item.Action_Des</label></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        if (Model!.Drill_Photos != null && Model.Drill_Photos.Count > 0)
+        {
+            <h4>Drill Photos</h4>
+            <hr />
+
+            <div class="row mb-2">
+
+                @foreach (var item in Model.Drill_Photos)
+                {
+                    <div class="col-md-1 mb-5">
+
+                        <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:50px;width:50px" /></a>
+
+                    </div>
+                }
+            </div>
+        }
+        if (Model.Drill_Vedios != null && Model.Drill_Vedios.Count > 0)
+        {
+            <h4>Drill Videos</h4>
+            <hr />
+            <div class="row mb-2">
+
+                @foreach (var item in Model.Drill_Vedios)
+                {
+                    <div class="col-md-4 mb-5">
+
+                        <a href="@item.Video_File_Path" target="_blank"> <iframe src='@item.Video_File_Path' style="width:200px;height:200px"></iframe></a>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    }
+    <script>
+        var ObsrCount = 1;
+        $(function () {
+            let sh = '@ST';
+            let $el1 = $(UI_Fields.INPUT_PHOTO);
+            let $el2 = $(UI_Fields.INPUT_VIDEO);
+            //let AllowImg = ['jpg', 'png', 'jpeg', 'bmp'];
+            //let VideoImg = ['mp4', 'avi'];
+            if (sh == 2) {
+                ObsrCount = @len;
+                let PhotoList = JSON.parse('@Html.Raw(Json.Serialize(Model.Drill_Photos))');
+                let VedioList = JSON.parse('@Html.Raw(Json.Serialize(Model.Drill_Vedios))');
+                if (PhotoList != null) {
+                    $(PhotoList).each(function (i, e) {
+                        let indx = (i + 1);
+                        NM_Prev.push(e.Photo_File_Path);
+                        NM_Config.push({
+                            caption: "Image " + indx,
+                            filetype: "image/png",
+                            url: e.Photo_File_Path,
+                            width: "120px",
+                            downloadUrl: false,
+                            type: "image",
+                            key: e.Drill_Photo_Id + "," + i
+                        });
+                    });
+                    if (VedioList != null) {
+                        $(VedioList).each(function (i, e) {
+                            NM_Prev1.push(e.Video_File_Path);
+                            NM_Config1.push({
+                                caption: "Image " + (i + 1),
+                                filetype: "mp4/avi",
+                                url: e.Video_File_Path,
+                                width: "120px",
+                                downloadUrl: false,
+                                type: "video",
+                                key: parseInt(e.Drill_Photo_Id)
+                            });
+                        });
+
+                    }
+                }
+
+            }
+          
+            $(UI_Fields.TBL_TASK_OBSR).on('click', UI_Fields.DEL_BTN, function () {
+                $(this).closest('tr').remove();
+                ObsrCount--;
+                ResetObsrValues();
+            });
+            $(UI_Fields.OCCUPANT).on('change', function () {
+                Compare(UI_Fields.FIRST_OCCUPANT, UI_Fields.LAST_OCCUPANT);
+            });
+
+            ApplyFileUploadConfig($el1, NM_Prev, NM_Config, '/DrillSchedule/DeletePhoto', AllowImg);
+            ApplyFileUploadConfig($el2, NM_Prev1, NM_Config1, '/DrillSchedule/DeleteVideo', VideoImg);
+            if (sh == 1||sh == 2) {
+                DisAbleSubmitbtn("#SubBTN_DO", "#F_EMR_Team");
+            }
+        });
+
+    </script>
+}

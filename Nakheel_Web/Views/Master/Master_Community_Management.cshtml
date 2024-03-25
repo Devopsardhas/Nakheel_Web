@@ -1,0 +1,360 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.MASTER_COMMUNITY_MANAGEMNT>;
+@{
+    ViewData["Title"] = "Master Community Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Master Community Management List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new-order"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Master Community ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    @*<tbody id="GetIncidentList">
+                    </tbody>*@
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.MasterCommunity_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="MasterDelete(@item.MasterCommunity_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            <a onclick="View(@item.MasterCommunity_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+
+<div class="modal fade add-new-order" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="F_AddMasterCommunity" action="#" method="post" class="" novalidate="novalidate">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="MasterCommunity_Id" id="MasterCommunity_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="" style="color:black;" class="form-model">Zone</label>
+                                <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="" style="color:black;" class="form-model">Community</label>
+                                <select class="form-select" id="Community_Id" name="Community_Id">
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddMasterCommList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br /> <br />
+                        <table id="tblMasterCommNameList" class="table table-striped dt-responsive nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Master Community Name</th>
+                                    <th>Description</th>
+                                    <th id="ActionHead">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetMasterCommList">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script src="~/assets/js/validation/incident_validation/incidentreportvalidation.js"></script>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#MasterCommunity_Id",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_ADD_INC: "#btn_add_incident",
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        ASSIGN_TABLE: "#tblMasterCommNameList",
+        ADDMORE_BUILDING_LIST: "#GetMasterCommList",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        MASTER_COMMUNITY_NAME: "#MasterCommunity_Name",
+        MASTER_COMMUNITY_DESCRIPTION: "#MasterCommunity_Description"
+    });
+
+    $(document).ready(function () {
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+            
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+        });
+
+        $("#btnAdd").click(function(){
+            $(UI_Fields.ZONEID).val('0');
+            $(UI_Fields.COMMUNITY_ID).val('');
+            $(UI_Fields.ZONEID).prop("disabled", false);
+            $(UI_Fields.COMMUNITY_ID).prop("disabled", false);
+            $("#GetMasterCommList").html('');
+            AddMasterCommList();
+        });
+    })
+</script>
+
+<script>
+    $(function () {
+        //LOAD_GRID();
+        $(UI_Fields.ADDMORE_BUILDING_LIST).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+            debugger
+            let varSubComID = $(this).closest('tr').find('.Sub_MasterCommunity_Id').val();
+            //alert(varSubComID);
+            if (varSubComID == '0' || varSubComID == null) {
+                $(this).closest("tr").remove();
+            }
+            else {
+                Delete(varSubComID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+        $(UI_Fields.ADDMORE_BUILDING_LIST).on("click", UI_Fields.TBL_EDIT_BUTTON, function () {
+            let varSubName = $(this).closest('tr').find('.Master_Community_Name').prop('readonly', false);
+            let varSubDesc = $(this).closest('tr').find('.Master_Community_Name_Description').prop('readonly', false);
+            //let varIsedit = $(this).closest('tr').find('.IsEdit').val('1');
+            //$(UI_Fields.BUILDING_NAME).show(100);
+            //$(UI_Fields.BUILDING_DESCRIPTION).show(100);
+        });
+        //ValidationRules(UI_Fields.CH_VALID);
+    });
+    $(document).ready(function () {
+        LOAD_ALL_ZONE_IS_MASTERCOMMUNITY()
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+
+    function AddMasterCommList() {
+        var html = "";
+        html += '<tr><td><input type="hidden" class="Master_Community_Id" value="0"/><input type="text" class="form-control Master_Community_Name" name="Master_Community_Name" onchange="duplicate_Community(this.value);"/></td>';
+        html += '<td><input type="text" class="form-control Master_Community_Name_Description" name=Master_Community_Name_Description></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+    }
+
+    function LOAD_ALL_ZONE_IS_MASTERCOMMUNITY() {
+        $.post("@Url.Action("LoadAllZoneIsMasterCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function FnZone_Id(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' disabled> --Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Edit(id) {
+        $("#GetMasterCommList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Master_Community_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.MasterCommunity_Id);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(data.L_M_MasterCommunity_List).each(function (i, e) {
+                debugger
+                var html = "";
+                html += '<tr><td><input type="hidden" class="form-control MasterCommunity_Id" name="MasterCommunity_Id" value="' + e.MasterCommunity_Id + '"/><input type="hidden" class="form-control Sub_MasterCommunity_Id" name="Sub_MasterCommunity_Id" value="' + e.Sub_MasterCommunity_Id + '"/><input type="text" class="form-control Master_Community_Name" name="Master_Community_Name" value="' + e.MasterCommunity_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control Master_Community_Name_Description" name=Master_Community_Name_Description value="' + e.MasterCommunity_Description + '" readonly/></td>';
+                html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+            });
+        });
+    }
+    function MasterDelete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Master_Community_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    function View(id) {
+        //alert(id);
+        $("#GetMasterCommList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Master_Community_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.MasterCommunity_Id);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(data.L_M_MasterCommunity_List).each(function (i, e) {
+                debugger
+                var html = "";
+                html += '<tr><td><input type="hidden" class="form-control MasterCommunity_Id" name="MasterCommunity_Id" value="' + e.MasterCommunity_Id + '"/><input type="hidden" class="form-control Sub_MasterCommunity_Id" name="Sub_MasterCommunity_Id" value="' + e.Sub_MasterCommunity_Id + '"/><input type="text" class="form-control Master_Community_Name" name="Master_Community_Name" value="' + e.MasterCommunity_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control Master_Community_Name_Description" name=Master_Community_Name_Description value="' + e.MasterCommunity_Description + '" readonly/></td></tr>';
+                //html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td>';
+                $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+                $("#Zone_Id").prop("disabled", true);
+                $("#Community_Id").prop("disabled", true);
+                $("#btn_add_incident").hide(100);
+                $("#btn-save-event").hide(100);
+                $("#ActionHead").hide(100);
+            });
+        });
+    }
+    function Delete(id, ele) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Sub_Master_Community_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                //window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    function duplicate_Community(MasterCommunity_Name) {
+        debugger;
+        $.post("@Url.Action("CheckCommunity_Name", "CommonMaster")", { MasterCommunity_Name: MasterCommunity_Name }, function (data) {
+            if (data == "Already Exists") {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Already Exists',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(function () {
+                    window.location.reload();
+                });
+            }
+        });
+    }
+</script>
+

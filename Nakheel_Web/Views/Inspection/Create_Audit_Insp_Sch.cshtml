@@ -1,0 +1,1591 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Create Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .error {
+        color: red !important;
+    }
+</style>
+<div class="row" id="Create_Sch_Page">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row" style="height:30px;">
+                    <div class="col-lg-10"> <h4 class="card-title">Create Schedule</h4></div>
+                    <div class="col-lg-2">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="Audit_Insp_Form" action="" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row">
+                        <input type="hidden" id="InspRequestId" value="0" />
+                        <div class="col-2">
+                            <div class="">
+                                <label for="" class="col-md-7 col-form-label">Business Unit<span class="requ">*</span> </label>
+                                <div class="">
+                                    <select required class="form-control" placeholder="--Select Business Unit--" name="Sch_Business_Unit_Id" id="Sch_Business_Unit_Id">
+                                    </select>
+                                    <span id="Sch_Business_Unit_Id" class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Zone<span class="requ">*</span> </label>
+                                <div class="">
+                                    <select class="form-control required" name="Sch_Zone_Id" id="Sch_Zone_Id" onchange="Sch_Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="">
+                                <label for="" class="col-md-6 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-control" name="Sch_Community_Id" id="Sch_Community_Id" onchange="Sch_Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-control" name="Sch_Building_Id" id="Sch_Building_Id" onchange="Sch_Fn_Building(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Type<span class="requ">*</span></label>
+                                <div class="">
+                                    <select required class="form-control" name="Sch_type_Id" id="Sch_type_Id" onchange="Func_Type(this.value)">
+                                        <option value="">--Select Type--</option>
+                                        <option value="SpotInspection">Spot Inspection</option>
+                                        <option value="JointInspection">Joint Inspection</option>
+                                        <option value="LeadershipTour">Leadership Tour</option>
+                                        <option value="HealthSafetyBuilding">Health & Safety Building</option>
+                                        <option value="HealthSafetyCommunity">Health & Safety Master Community</option>
+                                        <option value="ServiceProviderMaster">Service Provider Master Community</option>
+                                        <option value="ServiceProviderBuilding">Service Provider Building</option>
+                                        <option value="FireSafety">Fire & Safety Inspection</option>
+                                        <option value="InternalAudit">Internal Audit</option>
+                                        <option value="WelfareAudit">Welfare Audit</option>
+                                        <option value="EnvironmentalAudit">Environmental Audit</option>
+                                        <option value="ServiceProviderAudit">Service Provider Audit</option>
+                                    </select>
+                                    <span id="Sch_type_Id" class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2" id="div_Ser_Prov" style="display:none">
+                            <div class="">
+                                <label for="" class="col-md-8 col-form-label">Service Provider<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-control required" name="Sch_Ser_Pro" id="Sch_Ser_Pro">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2" id="div_Scope" style="display:none">
+                            <div class="">
+                                <label for="" class="col-md-8 col-form-label">Scope of Work<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-control required" name="Scope_Work" id="Scope_Work">
+                                    </select>
+                                    <span id="Scope_Work" class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2" id="div_Category" style="display:none">
+                            <div class="">
+                                <label for="" class="col-md-8 col-form-label">Category<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-control required" name="Category_Drp" id="Category_Drp">
+                                    </select>
+                                    <span id="Category_Drp" class="error"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="card-body">
+                        <div id="DivSpAuditChecklist_Find" class="table-responsive" style="height:500px; overflow-y: scroll;">
+
+                            <table id="Create_Sch_table" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%;display:none;">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2"></th>
+                                        <th rowspan="2">Building Name</th>
+                                        <th colspan="4" style="text-align:center">Scheduled Details</th>
+                                        <th rowspan="2">Initial Date</th>
+                                        <th rowspan="2">Frequency</th>
+                                        <th rowspan="2">HSE Officer</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Due Date</th>
+                                        <th>Frequency</th>
+                                        <th>HSE Officer</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="Create_Sch_Tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row" style="display:none;" id="Div_Submit">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit" id="Table_Submit">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var SP_Drp = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        SCH_BUSINESS_ID: "#Sch_Business_Unit_Id",
+        SCH_ZONE_ID: "#Sch_Zone_Id",
+        SCH_COMMUNITY_ID: "#Sch_Community_Id",
+        SCH_BUILDIND_ID: "#Sch_Building_Id",
+    });
+
+    $(document).ready(function () {
+        LOAD_BUSINESS();
+        LOAD_ZONE();
+        Load_Scope_Work();
+        Load_Category();
+        var x = 5; //or whatever offset
+        var CurrentDate = new Date('2023-12-10');
+        var curr = new Date(CurrentDate.setMonth(CurrentDate.getMonth() + x));
+
+        //$("#Table_Submit").click(function () {
+        //    let valid = $("#Audit_Insp_Form").valid();
+        //    if (!valid) {
+        //        return false;
+        //    }
+        //    var data_Arr = [];
+        //    var varInspRequestId = $("#Insp_Request_Id").val();
+        //    if (varInspRequestId == "" || varInspRequestId == null || varInspRequestId == undefined) {
+        //        var RequestId = '0';
+        //    }
+        //    var var_Business = $("#Sch_Business_Unit_Id").val();
+        //    var var_zone = $("#Sch_Zone_Id").val();
+        //    var var_community = $("#Sch_Community_Id").val();
+        //    var var_type = $("#Sch_type_Id").val();
+        //    var var_Service = $("#Sch_Ser_Pro").val();
+        //    var var_Scope = $("#Scope_Work").val();
+        //    var var_Category = $("#Category_Drp").val();
+        //    var rowCount = $('#Create_Sch_table .cls_check:checked').length;
+        //    if (rowCount == "0") {
+        //        toastr.error("Please select the checkbox!", "Error");
+        //    }
+        //    else {
+        //        $('#Create_Sch_table tbody > tr').each(function () {
+        //            var varCheckbox_Id = $(this).closest('tr').find("input[type=checkbox]").prop('checked');
+
+        //            if (varCheckbox_Id == true) {
+        //                var varBuilding_Id = $(this).closest('tr').find('.ClsBuildingId').val();
+        //                var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");
+        //                var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+        //                var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+
+        //                if (varFrequency_Id == "Monthly") {
+        //                    for (var i = 1; i < 13; i = i + 1) {
+        //                        var x = i - 1;
+        //                        var Sch_date = new Date(varIntial_date);
+        //                        var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //                        var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //                        var data = {};
+        //                        data.Insp_Request_Id = RequestId;
+        //                        data.Business_Unit_Id = var_Business;
+        //                        data.Zone_Id = var_zone;
+        //                        data.Community_Id = var_community;
+        //                        data.Building_Id = varBuilding_Id;
+        //                        data.Type_Id = var_type;
+        //                        data.Inspection_Date = test;
+        //                        data.Schedule_Type = varFrequency_Id;
+        //                        data.Access_Schedule = varSch_Emp_Id;
+        //                        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                        data.Scope_Of_Work = var_Scope;
+        //                        data.Service_Provider_Id = var_Service;
+        //                        data.Category_Id = var_Category;
+        //                        data_Arr.push(data);
+        //                    }
+        //                }
+
+        //                if (varFrequency_Id == "Bimonthly") {
+        //                    for (var i = 2; i < 13; i = i + 2) {
+        //                        var x = i - 2;
+        //                        var Sch_date = new Date(varIntial_date);
+        //                        var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //                        var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //                        var data = {};
+        //                        data.Insp_Request_Id = RequestId;
+        //                        data.Business_Unit_Id = var_Business;
+        //                        data.Zone_Id = var_zone;
+        //                        data.Community_Id = var_community;
+        //                        data.Building_Id = varBuilding_Id;
+        //                        data.Type_Id = var_type;
+        //                        data.Inspection_Date = test;
+        //                        data.Schedule_Type = varFrequency_Id;
+        //                        data.Access_Schedule = varSch_Emp_Id;
+        //                        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                        data.Scope_Of_Work = var_Scope;
+        //                        data.Service_Provider_Id = var_Service;
+        //                        data.Category_Id = var_Category;
+        //                        data_Arr.push(data);
+        //                    }
+        //                }
+
+        //                if (varFrequency_Id == "Quarterly") {
+        //                    for (var i = 3; i < 13; i = i + 3) {
+        //                        var x = i - 3;
+        //                        var Sch_date = new Date(varIntial_date);
+        //                        var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //                        var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //                        var data = {};
+        //                        data.Insp_Request_Id = RequestId;
+        //                        data.Business_Unit_Id = var_Business;
+        //                        data.Zone_Id = var_zone;
+        //                        data.Community_Id = var_community;
+        //                        data.Building_Id = varBuilding_Id;
+        //                        data.Type_Id = var_type;
+        //                        data.Inspection_Date = test;
+        //                        data.Schedule_Type = varFrequency_Id;
+        //                        data.Access_Schedule = varSch_Emp_Id;
+        //                        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                        data.Scope_Of_Work = var_Scope;
+        //                        data.Service_Provider_Id = var_Service;
+        //                        data.Category_Id = var_Category;
+        //                        data_Arr.push(data);
+        //                    }
+        //                }
+
+        //                if (varFrequency_Id == "SemiAnnually") {
+        //                    for (var i = 6; i < 13; i = i + 6) {
+        //                        var x = i - 6;
+        //                        var Sch_date = new Date(varIntial_date);
+        //                        var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //                        var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //                        var data = {};
+        //                        data.Insp_Request_Id = RequestId;
+        //                        data.Business_Unit_Id = var_Business;
+        //                        data.Zone_Id = var_zone;
+        //                        data.Community_Id = var_community;
+        //                        data.Building_Id = varBuilding_Id;
+        //                        data.Type_Id = var_type;
+        //                        data.Inspection_Date = test;
+        //                        data.Schedule_Type = varFrequency_Id;
+        //                        data.Access_Schedule = varSch_Emp_Id;
+        //                        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                        data.Scope_Of_Work = var_Scope;
+        //                        data.Service_Provider_Id = var_Service;
+        //                        data.Category_Id = var_Category;
+        //                        data_Arr.push(data);
+        //                    }
+        //                }
+
+        //                if (varFrequency_Id == "Yearly") {
+        //                    var data = {};
+        //                    data.Insp_Request_Id = RequestId;
+        //                    data.Business_Unit_Id = var_Business;
+        //                    data.Zone_Id = var_zone;
+        //                    data.Community_Id = var_community;
+        //                    data.Building_Id = varBuilding_Id;
+        //                    data.Type_Id = var_type;
+        //                    data.Inspection_Date = varIntial_date;
+        //                    data.Schedule_Type = varFrequency_Id;
+        //                    data.Access_Schedule = varSch_Emp_Id;
+        //                    data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                    data.Scope_Of_Work = var_Scope;
+        //                    data.Service_Provider_Id = var_Service;
+        //                    data.Category_Id = var_Category;
+        //                    data_Arr.push(data);
+        //                }
+
+        //                if (var_type == "EnvironmentalAudit" || var_type == "ServiceProviderAudit" || var_type == "WelfareAudit" || var_type == "InternalAudit") {
+        //                      var data = {};
+        //                    data.Insp_Request_Id = RequestId;
+        //                    data.Business_Unit_Id = var_Business;
+        //                    data.Zone_Id = var_zone;
+        //                    data.Community_Id = var_community;
+        //                    data.Building_Id = varBuilding_Id;
+        //                    data.Type_Id = var_type;
+        //                    data.Inspection_Date = varIntial_date;
+        //                    data.Schedule_Type = varFrequency_Id;
+        //                    data.Access_Schedule = varSch_Emp_Id;
+        //                    data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //                    data.Scope_Of_Work = var_Scope;
+        //                    data.Service_Provider_Id = var_Service;
+        //                    data.Category_Id = var_Category;
+        //                    data_Arr.push(data);
+        //                }
+        //            }
+
+        //        });
+        //        var obj = {
+        //            _Sch_List: data_Arr,
+        //        };
+
+        //        $.ajax({
+        //            url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Table_Submit", "Inspection"))',
+        //            type: "POST",
+        //            cache: true,
+        //            async: false,
+        //            data: JSON.stringify(obj),
+        //            contentType: "application/json; charset=utf-8",
+        //            dataType: "json",
+        //            success: function (data) {
+        //                if (data != null) {
+        //                    Swal.fire({
+        //                        position: 'top-end',
+        //                        icon: 'success',
+        //                        title: 'Added Successfully',
+        //                        showConfirmButton: false,
+        //                        timer: 2000
+        //                    }).then(function () {
+        //                        window.location.reload();
+        //                    });
+        //                }
+        //                else {
+        //                    Swal.fire({
+        //                        position: 'top-end',
+        //                        icon: 'Error',
+        //                        title: 'Error',
+        //                        showConfirmButton: false,
+        //                        timer: 2000
+        //                    });
+        //                }
+        //            },
+        //            error: function (errormessage) {
+        //            }
+        //        });
+        //    }
+
+
+        //});
+
+        //Demo Table Submit
+
+        //Demo
+
+        $("#Table_Submit").click(function () {
+            let valid = $("#Audit_Insp_Form").valid();
+            if (!valid) {
+                return false;
+            }
+            var data_Arr = [];
+            var varInspRequestId = $("#Insp_Request_Id").val();
+            if (varInspRequestId == "" || varInspRequestId == null || varInspRequestId == undefined) {
+                var RequestId = '0';
+            }
+            var var_Business = $("#Sch_Business_Unit_Id").val();
+            var var_zone = $("#Sch_Zone_Id").val();
+            var var_community = $("#Sch_Community_Id").val();
+            var var_type = $("#Sch_type_Id").val();
+            var var_Service = $("#Sch_Ser_Pro").val();
+            var var_Scope = $("#Scope_Work").val();
+            var var_Category = $("#Category_Drp").val();
+            var rowCount = $('#Create_Sch_table .cls_check:checked').length;
+            if (rowCount == "0") {
+                toastr.error("Please select the checkbox!", "Error");
+            } else {
+                $('#Create_Sch_table tbody > tr').each(function () {
+                    var varCheckbox_Id = $(this).closest('tr').find("input[type=checkbox]").prop('checked');
+                    if (varCheckbox_Id == true) {
+                        var varBuilding_Id = $(this).closest('tr').find('.ClsBuildingId').val();
+                        var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");
+                        var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+                        var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+
+                        var data = {};
+                        data.Insp_Sch_Calendar_Id = RequestId;
+                        data.Business_Unit_Id = var_Business;
+                        data.Zone_Id = var_zone;
+                        data.Community_Id = var_community;
+                        data.Building_Id = varBuilding_Id;
+                        data.Insp_Type = var_type;
+                        data.Initial_Date = varIntial_date;
+                        data.Frequency = varFrequency_Id;
+                        data.Access_Schedule = varSch_Emp_Id;
+                        data.Created_by = '@LoginClass.Employee_Identity_Id';
+                        data.Scope_Work_Id = var_Scope;
+                        data.Service_Provider_Id = var_Service;
+                        data.Category_Id = var_Category;
+                        data_Arr.push(data);
+                    }
+                });
+                var obj = {
+                    _Sch_Calendar_List: data_Arr,
+                };
+
+                $.ajax({
+                    url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Table_Submit_Demo", "Inspection"))',
+                    type: "POST",
+                    cache: true,
+                    async: false,
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data != null) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Added Successfully',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                    }
+                });
+            }
+        });
+
+
+        //$("#Create_Sch_table").on("click", "#DataSubmit", function () {
+        //    var data_Arr_Row = [];
+        //    let valid = $("#Audit_Insp_Form").valid();
+        //    if (!valid) {
+        //        return false;
+        //    }
+        //    var varInspRequestId = $("#Insp_Request_Id").val();
+        //    var var_Business = $("#Sch_Business_Unit_Id").val();
+        //    var var_zone = $("#Sch_Zone_Id").val();
+        //    var var_community = $("#Sch_Community_Id").val();
+        //    var var_building = $("#Sch_Building_Id").val();
+        //    var var_type = $("#Sch_type_Id").val();
+        //    var var_Scope = $("#Scope_Work").val();
+        //    var var_Service = $("#Sch_Ser_Pro").val();
+        //    var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");;
+        //    var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+        //    var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+        //    var var_Category = $("#Category_Drp").val();
+
+        //    if (varFrequency_Id == "Monthly") {
+        //        for (var i = 1; i < 13; i = i + 1) {
+        //            var x = i - 1;
+        //            var Sch_date = new Date(varIntial_date);
+        //            var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //            var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //            var data = {};
+        //            data.Insp_Request_Id = varInspRequestId;
+        //            data.Business_Unit_Id = var_Business;
+        //            data.Zone_Id = var_zone;
+        //            data.Community_Id = var_community;
+        //            data.Building_Id = var_building;
+        //            data.Type_Id = var_type;
+        //            data.Inspection_Date = test;
+        //            data.Schedule_Type = varFrequency_Id;
+        //            data.Access_Schedule = varSch_Emp_Id;
+        //            data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //            data.Scope_Of_Work = var_Scope;
+        //            data.Service_Provider_Id = var_Service;
+        //            data.Category_Id = var_Category;
+        //            data_Arr_Row.push(data);
+        //        }
+        //    }
+
+        //    if (varFrequency_Id == "Bimonthly") {
+        //        for (var i = 2; i < 13; i = i + 2) {
+        //            var x = i - 2;
+        //            var Sch_date = new Date(varIntial_date);
+        //            var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //            var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //            var data = {};
+        //            data.Insp_Request_Id = varInspRequestId;
+        //            data.Business_Unit_Id = var_Business;
+        //            data.Zone_Id = var_zone;
+        //            data.Community_Id = var_community;
+        //            data.Building_Id = var_building;
+        //            data.Type_Id = var_type;
+        //            data.Inspection_Date = test;
+        //            data.Schedule_Type = varFrequency_Id;
+        //            data.Access_Schedule = varSch_Emp_Id;
+        //            data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //            data.Scope_Of_Work = var_Scope;
+        //            data.Service_Provider_Id = var_Service;
+        //            data.Category_Id = var_Category;
+        //            data_Arr_Row.push(data);
+        //        }
+        //    }
+
+        //    if (varFrequency_Id == "Quarterly") {
+        //        for (var i = 3; i < 13; i = i + 3) {
+        //            var x = i - 3;
+        //            var Sch_date = new Date(varIntial_date);
+        //            var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //            var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //            var data = {};
+        //            data.Insp_Request_Id = varInspRequestId;
+        //            data.Business_Unit_Id = var_Business;
+        //            data.Zone_Id = var_zone;
+        //            data.Community_Id = var_community;
+        //            data.Building_Id = var_building;
+        //            data.Type_Id = var_type;
+        //            data.Inspection_Date = test;
+        //            data.Schedule_Type = varFrequency_Id;
+        //            data.Access_Schedule = varSch_Emp_Id;
+        //            data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //            data.Scope_Of_Work = var_Scope;
+        //            data.Service_Provider_Id = var_Service;
+        //            data.Category_Id = var_Category;
+        //            data_Arr_Row.push(data);
+        //        }
+        //    }
+
+        //    if (varFrequency_Id == "SemiAnnually") {
+        //        for (var i = 6; i < 13; i = i + 6) {
+        //            var x = i - 6;
+        //            var Sch_date = new Date(varIntial_date);
+        //            var curr = new Date(Sch_date.setMonth(Sch_date.getMonth() + x));
+        //            var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+
+        //            var data = {};
+        //            data.Insp_Request_Id = varInspRequestId;
+        //            data.Business_Unit_Id = var_Business;
+        //            data.Zone_Id = var_zone;
+        //            data.Community_Id = var_community;
+        //            data.Building_Id = var_building;
+        //            data.Type_Id = var_type;
+        //            data.Inspection_Date = test;
+        //            data.Schedule_Type = varFrequency_Id;
+        //            data.Access_Schedule = varSch_Emp_Id;
+        //            data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //            data.Scope_Of_Work = var_Scope;
+        //            data.Service_Provider_Id = var_Service;
+        //            data.Category_Id = var_Category;
+        //            data_Arr_Row.push(data);
+        //        }
+        //    }
+
+        //    if (varFrequency_Id == "Yearly") {
+        //        var data = {};
+        //        data.Insp_Request_Id = varInspRequestId;
+        //        data.Business_Unit_Id = var_Business;
+        //        data.Zone_Id = var_zone;
+        //        data.Community_Id = var_community;
+        //        data.Building_Id = var_building;
+        //        data.Type_Id = var_type;
+        //        data.Inspection_Date = varIntial_date;
+        //        data.Schedule_Type = varFrequency_Id;
+        //        data.Access_Schedule = varSch_Emp_Id;
+        //        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //        data.Scope_Of_Work = var_Scope;
+        //        data.Service_Provider_Id = var_Service;
+        //        data.Category_Id = var_Category;
+        //        data_Arr_Row.push(data);
+        //    }
+
+        //    if (var_type == "EnvironmentalAudit" || var_type == "ServiceProviderAudit" || var_type == "WelfareAudit") {
+        //        var data = {};
+        //        data.Insp_Request_Id = varInspRequestId;
+        //        data.Business_Unit_Id = var_Business;
+        //        data.Zone_Id = var_zone;
+        //        data.Community_Id = var_community;
+        //        data.Building_Id = var_building;
+        //        data.Type_Id = var_type;
+        //        data.Inspection_Date = varIntial_date;
+        //        data.Schedule_Type = varFrequency_Id;
+        //        data.Access_Schedule = varSch_Emp_Id;
+        //        data.CreatedBy = '@LoginClass.Employee_Identity_Id';
+        //        data.Scope_Of_Work = var_Scope;
+        //        data.Service_Provider_Id = var_Service;
+        //        data.Category_Id = var_Category;
+        //        data_Arr_Row.push(data);
+        //    }
+
+
+        //    var Obj = {
+        //        _Sch_List: data_Arr_Row,
+        //        //Insp_Request_Id: varInspRequestId,
+        //        //Business_Unit_Id: var_Business,
+        //        //Zone_Id: var_zone,
+        //        //Community_Id: var_community,
+        //        //Building_Id: var_building,
+        //        //Type_Id: var_type,
+        //        //Inspection_Date: varIntial_date,
+        //        //Schedule_Type: varFrequency_Id,
+        //        //Access_Schedule: varSch_Emp_Id,
+        //        //CreatedBy: '@LoginClass.Employee_Identity_Id',
+        //        //Scope_Of_Work: var_Scope,
+        //        //Service_Provider_Id: var_Service,
+        //        //Category_Id: var_Category
+        //    };
+
+
+        //    $.ajax({
+        //        url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Row_Submit", "Inspection"))',
+        //        type: "POST",
+        //        cache: true,
+        //        async: false,
+        //        data: JSON.stringify(Obj),
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (data) {
+        //            if (data != null) {
+        //                Swal.fire({
+        //                    position: 'top-end',
+        //                    icon: 'success',
+        //                    title: 'Added Successfully',
+        //                    showConfirmButton: false,
+        //                    timer: 2000
+        //                }).then(function () {
+        //                    window.location.reload();
+        //                });
+        //            }
+        //            else {
+        //                Swal.fire({
+        //                    position: 'top-end',
+        //                    icon: 'Error',
+        //                    title: 'Error',
+        //                    showConfirmButton: false,
+        //                    timer: 2000
+        //                });
+        //            }
+        //        },
+        //        error: function (errormessage) {
+        //        }
+        //    });
+        //});
+
+        //Demo Row Submit
+        $("#Create_Sch_table").on("click", "#DataSubmit", function () {
+            var data_Arr_Row = [];
+            let valid = $("#Audit_Insp_Form").valid();
+            if (!valid) {
+                return false;
+            }
+
+            var varInspRequestId = $("#Insp_Request_Id").val();
+            var var_Business = $("#Sch_Business_Unit_Id").val();
+            var var_zone = $("#Sch_Zone_Id").val();
+            var var_community = $("#Sch_Community_Id").val();
+            var var_building = $("#Sch_Building_Id").val();
+            var var_type = $("#Sch_type_Id").val();
+            var var_Scope = $("#Scope_Work").val();
+            var var_Service = $("#Sch_Ser_Pro").val();
+            var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");;
+            var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+            var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+            var var_Category = $("#Category_Drp").val();
+
+            var data = {};
+            data.Insp_Sch_Calendar_Id = varInspRequestId;
+            data.Business_Unit_Id = var_Business;
+            data.Zone_Id = var_zone;
+            data.Community_Id = var_community;
+            data.Building_Id = var_building;
+            data.Insp_Type = var_type;
+            data.Initial_Date = varIntial_date;
+            data.Frequency = varFrequency_Id;
+            data.Access_Schedule = varSch_Emp_Id;
+            data.Created_by = '@LoginClass.Employee_Identity_Id';
+            data.Scope_Work_Id = var_Scope;
+            data.Service_Provider_Id = var_Service;
+            data.Category_Id = var_Category;
+            data_Arr_Row.push(data);
+
+            var Obj = {
+                _Sch_Calendar_List: data_Arr_Row,
+            };
+
+            $.ajax({
+                url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Row_Submit", "Inspection"))',
+                type: "POST",
+                cache: true,
+                async: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Added Successfully',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                }
+            });
+
+        });
+
+
+        //$("#Create_Sch_table").on("click", "#DataSubmitRow", function () {
+        //    var varInspRequestId = $("#Insp_Request_Id").val();
+        //    var var_Business = $("#Sch_Business_Unit_Id").val();
+        //    var var_zone = $("#Sch_Zone_Id").val();
+        //    var var_community = $("#Sch_Community_Id").val();
+        //    //var var_building = $("#Sch_Building_Id").val();
+        //    var var_type = $("#Sch_type_Id").val();
+        //    var varBuilding_Id = $(this).closest('tr').find('.ClsBuildingId').val();
+        //    var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");;
+        //    var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+        //    var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+
+        //    if (varInspRequestId == "" || varInspRequestId == null || varInspRequestId == undefined) {
+        //        var RequestId = '0';
+        //    }
+
+        //    var Obj = {
+        //        Insp_Request_Id: RequestId,
+        //        Business_Unit_Id: var_Business,
+        //        Zone_Id: var_zone,
+        //        Community_Id: var_community,
+        //        Building_Id: varBuilding_Id,
+        //        Type_Id: var_type,
+        //        Inspection_Date: varIntial_date,
+        //        Schedule_Type: varFrequency_Id,
+        //        Access_Schedule: varSch_Emp_Id,
+        //        CreatedBy: '@LoginClass.Employee_Identity_Id'
+        //    };
+
+        //    $.ajax({
+        //        url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Row_Submit", "Inspection"))',
+        //        type: "POST",
+        //        cache: true,
+        //        async: false,
+        //        data: JSON.stringify(Obj),
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (data) {
+        //            if (data != null) {
+        //                Swal.fire({
+        //                    position: 'top-end',
+        //                    icon: 'success',
+        //                    title: 'Added Successfully',
+        //                    showConfirmButton: false,
+        //                    timer: 2000
+        //                }).then(function () {
+        //                    window.location.reload();
+        //                });
+        //            }
+        //            else {
+        //                Swal.fire({
+        //                    position: 'top-end',
+        //                    icon: 'Error',
+        //                    title: 'Error',
+        //                    showConfirmButton: false,
+        //                    timer: 2000
+        //                });
+        //            }
+        //        },
+        //        error: function (errormessage) {
+        //        }
+        //    });
+        //});
+
+        $("#Create_Sch_table").on('click', "#Edit_Btn", function () {
+            document.getElementsByClassName("cls_submit")[0].style.display = "none";
+            document.getElementsByClassName("cls_update_submit")[0].style.display = "block";
+            var varrequestId = $(this).closest('tr').find('.ClsRequestId').val();
+            var varCalendar = $(this).closest('tr').find('.Cls_Calendar_Id').val();
+            var vartypeid = $(this).closest('tr').find('.ClstypeId').text();
+
+            var vardate = $(this).closest('tr').find('.Cls_From_Date');
+            var varfreq = $(this).closest('tr').find('.Cls_Frequency_Id');
+            var varEmp = $(this).closest('tr').find('.Cls_Emp_Id');
+
+            $("#Sch_Business_Unit_Id").prop("disabled", true);
+            $("#Sch_Zone_Id").prop("disabled", true);
+            $("#Sch_Community_Id").prop("disabled", true);
+            $("#Sch_type_Id").prop("disabled", true);
+
+
+            $.post("@Url.Action("Insp_Audit_Edit_Row", "Inspection")", { Insp_Request_Id: varrequestId, TypeId: vartypeid }, function (data) {
+                document.getElementsByClassName("Cls_From_Date")[0].value = data.Date_of_Inspection;
+                document.getElementsByClassName("Cls_Frequency_Id")[0].value = data.Schedule_Type;
+                document.getElementsByClassName("Cls_Emp_Id")[0].value = data.Access_Schedule;
+
+                document.getElementsByClassName("Upd_ClsRequestId")[0].value = data.Insp_Request_Id;
+                document.getElementsByClassName("Upd_Cls_Calendar_Id")[0].value = data.Insp_Sch_Calendar_Id;
+                document.getElementsByClassName("Upd_ClstypeId")[0].textContent = data.Type_Id;
+
+                var hidetype = document.getElementsByClassName("Upd_ClstypeId")[0].textContent;
+
+                var varfreqdisable = document.getElementsByClassName("Cls_Frequency_Id")[0].disabled = true;
+                var vardatedisable = document.getElementsByClassName("Cls_From_Date")[0].disabled = true;
+
+                if (hidetype == "ServiceProviderMaster" || hidetype == "ServiceProviderBuilding") {
+                    var var_Emp_disable = document.getElementsByClassName("Cls_Emp_Id")[0].disabled = true;
+                    $("#div_Ser_Prov").show();
+                    $("#div_Scope").hide();
+                    $("#div_Category").hide();
+                    var ZoneidGet = $("#Sch_Zone_Id").val();
+                    Get_Edit_Service_provider("#Sch_Ser_Pro", data.Service_Provider_Id, ZoneidGet);
+
+                }
+                else if (hidetype == "WelfareAudit" || hidetype == "EnvironmentalAudit" || hidetype == "Service Provider Audit") {
+                    $("#div_Ser_Prov").show();
+                    $("#div_Scope").hide();
+                    $("#div_Category").hide();
+                    var ZoneidGet = $("#Sch_Zone_Id").val();
+                    Get_Edit_Service_provider("#Sch_Ser_Pro", data.Service_Provider_Id, ZoneidGet);
+                }
+
+                else if (hidetype == "SpotInspection") {
+                    $("#div_Category").show();
+                    $("#div_Scope").hide();
+                    $("#div_Ser_Prov").hide();
+                    Get_Edit_Category("#Category_Drp", data.Category_Id);
+                }
+                else if (hidetype == "JointInspection") {
+                    $("#div_Scope").show();
+                    $("#div_Category").hide();
+                    $("#div_Ser_Prov").hide();
+                    Get_Edit_Scope_Work("#Scope_Work", data.Scope_Of_Work);
+                }
+
+                else {
+                    var var_Emp_disable = document.getElementsByClassName("Cls_Emp_Id")[0].disabled = false;
+                    $("#div_Ser_Prov").hide();
+                    $("#div_Scope").hide();
+                    $("#div_Category").hide();
+                }
+
+                vardate.val(data.Date_of_Inspection);
+                varfreq.val(data.Schedule_Type);
+                varEmp.val(data.Access_Schedule);
+            });
+        })
+
+        $("#Create_Sch_table").on('click', "#Update_Btn", function () {
+            var varInspRequestId = $(this).closest('tr').find('.Upd_ClsRequestId').val();
+            var varCalendarId = $(this).closest('tr').find('.Upd_Cls_Calendar_Id').val();
+            var varInsp_type = $(this).closest('tr').find('.Upd_ClstypeId').text();
+            var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");
+            var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+            var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+            var varServiceid = $("#Sch_Ser_Pro").val();
+            var varScopeid = $("#Scope_Work").val();
+            var varCategoryid = $("#Category_Drp").val();
+
+            var obj = {
+                Insp_Request_Id: varInspRequestId,
+                Inspection_Date: varIntial_date,
+                Schedule_Type: varFrequency_Id,
+                Access_Schedule: varSch_Emp_Id,
+                Type_Id: varInsp_type,
+                Insp_Sch_Calendar_Id: varCalendarId,
+                Service_Provider_Id: varServiceid,
+                Scope_Work_Id: varScopeid,
+                Category_Id: varCategoryid,
+            };
+
+            $.ajax({
+                url: '@Html.Raw(@Url.Action("Update_Insp_Sch_Row_Submit", "Inspection"))',
+                type: "POST",
+                cache: true,
+                async: false,
+                data: JSON.stringify(obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data != null) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Updated Successfully',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                }
+            });
+        });
+
+        $("#Create_Sch_table").on('click', "#Close_Btn", function () {
+
+            document.getElementsByClassName("cls_submit")[0].style.display = "block";
+            document.getElementsByClassName("cls_update_submit")[0].style.display = "none";
+
+             $("#Sch_Business_Unit_Id").removeAttr('disabled');
+             $("#Sch_Zone_Id").removeAttr('disabled');
+             $("#Sch_Community_Id").removeAttr('disabled');
+             $("#Sch_type_Id").removeAttr('disabled');          
+
+              document.getElementsByClassName("Cls_From_Date")[0].value  = "";
+              document.getElementsByClassName("Cls_Frequency_Id")[0].value = "";
+              document.getElementsByClassName("Cls_Emp_Id")[0].value = '';
+
+             var varfreqdisable = document.getElementsByClassName("Cls_Frequency_Id")[0].disabled = false;
+             var vardatedisable = document.getElementsByClassName("Cls_From_Date")[0].disabled = false;
+
+             var vartypeid = $(this).closest('tr').find('.ClstypeId').text();
+             //alert(vartypeid);
+        
+             if(vartypeid == "Joint Inspection"){
+               
+                 $("#div_Scope").hide();
+                 $("#Scope_Work").val('');
+             }             
+             else if(vartypeid == "Spot Inspection"){
+                 $("#div_Category").hide();
+                 $("#Category_Drp").val('0');            
+             }
+            else if (vartypeid == "ServiceProviderMaster" || vartypeid == "ServiceProviderBuilding" || vartypeid == "Environmental Audit" || vartypeid == "Service Provider Audit" || vartypeid == "Welfare Audit") {
+                 $("#div_Ser_Prov").hide();
+                 $("#Sch_Ser_Pro").val('0');  
+             }
+             //else if (vartypeid == "LeadershipTour" || vartypeid == "HealthSafetyBuilding" || vartypeid == "HealthSafetyCommunity") {
+               
+
+             //}
+             
+        });
+
+    });
+
+    function Func_Type(type) {
+        if (type == "JointInspection") {
+            var removeable = $("#Sch_Building_Id").removeAttr("disabled");
+            $("#div_Scope").show();
+            $("#div_Ser_Prov").hide();
+            $("#div_Category").hide();
+        }
+        else if (type == "ServiceProviderMaster" || type == "ServiceProviderBuilding") {
+            var removeable = $("#Sch_Building_Id").removeAttr("disabled");
+            $("#div_Ser_Prov").show();
+            $("#div_Scope").hide();
+            $("#div_Category").hide();
+            var fn_Sub_Building = $("#Sch_Building_Id").val();
+            if (fn_Sub_Building != "" || fn_Sub_Building != null) {
+                var fn_Community = $("#Sch_Community_Id").val();
+                Sch_Fn_Community(fn_Community);
+            }
+
+
+        }
+        else if (type == "SpotInspection") {
+            var removeable = $("#Sch_Building_Id").removeAttr("disabled");
+            $("#div_Ser_Prov").hide();
+            $("#div_Scope").hide();
+            $("#div_Category").show();
+        }
+        else if (type == "ServiceProviderAudit" || type == "EnvironmentalAudit" || type == "WelfareAudit") {
+            var fn_Sub_Building = $("#Sch_Building_Id").val();
+            var disable = $("#Sch_Building_Id").attr("disabled", "disabled");
+            if (fn_Sub_Building != "" || fn_Sub_Building != null) {
+                var fn_Community = $("#Sch_Community_Id").val();
+                Sch_Fn_Community(fn_Community);
+            }
+            $("#div_Ser_Prov").show();
+            $("#div_Scope").hide();
+            $("#div_Category").hide();
+        }
+        else if (type == "InternalAudit") {
+            var fn_Sub_Building = $("#Sch_Building_Id").val();
+            var disable = $("#Sch_Building_Id").attr("disabled", "disabled");
+            if (fn_Sub_Building != "" || fn_Sub_Building != null) {
+                var fn_Community = $("#Sch_Community_Id").val();
+                Sch_Fn_Community(fn_Community);
+            }
+            $("#div_Ser_Prov").hide();
+            $("#div_Scope").hide();
+            $("#div_Category").hide();
+        }
+        else {
+            var removeable = $("#Sch_Building_Id").removeAttr("disabled");
+            $("#div_Ser_Prov").hide();
+            $("#div_Scope").hide();
+            $("#div_Category").hide();
+        }
+
+
+
+    }
+
+    function LOAD_schedule_Dates(date_sch, nomonths) {
+        var x = nomonths; //or whatever offset
+        var CurrentDate = new Date(date_sch);
+        //alert(CurrentDate);
+        var curr = new Date(CurrentDate.setMonth(CurrentDate.getMonth() + x));
+        var test = curr.getFullYear().toString() + "-" + (curr.getMonth() + 1).toString() + "-" + curr.getDate().toString();
+        return test;
+    }
+
+    var data_count = 1;
+    function Sch_Fn_Building(Sub_Building_Id) {
+        $("#Create_Sch_table").show();
+        $("#Div_Submit").hide();
+                    
+        $.post("@Url.Action("Get_Building_Base_Sch_Load", "Inspection")", { Sub_Building_Id: Sub_Building_Id }, function (data) {
+            $("#Create_Sch_Tbody").empty();
+            SP_Drp = $("#Sch_type_Id").val();
+            $(data).each(function (i, b) {
+                var varbuildingId = "BuildingId" + count;
+                var varDatepicker = "Datepicker" + data_count;
+                var varEmployee = "Employee" + data_count;
+                var varFrequency = "Frequency_Id" + data_count;
+                var varRequestId = "Request_Id" + data_count;
+                var vartypeId = "type_Id" + data_count;
+                var varCalendarId = "Insp_Sch_Calendar_Id" + data_count;
+                var markup = "";
+
+                if (b._Scheduled_List.length > 0) {
+                    markup += '<tr class="">';
+                    markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"></td>'
+                    markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><input type="hidden" class="ClsBuildingId" id="' + varbuildingId + '" value="' + b.Sub_Building_Id + '"/><label class="form-control" value="' + b.Sub_Building_Id + '">' + b.Building_Name + '</label></td>'
+                    $(b._Scheduled_List).each(function (c, d) {
+                        var inc = c + 1;
+                        if (c == 0) {
+                            markup += '<td style="display:none;"><input type="hidden" class="ClsRequestId" id="' + varRequestId + '" value="' + d.Insp_Request_Id + '"/></td>'
+                            markup += '<td style="display:none;"><input type="hidden" class="Cls_Calendar_Id" id="' + varCalendarId + '" value="' + d.Insp_Sch_Calendar_Id + '"/></td>'
+                            markup += '<td style="display:none;"><label style="color:green;font-weight:bold;" class="ClstypeId" id="' + vartypeId + '" >' + d.Type_Id + '</label></td>'
+
+                            //Getting and Appending values for update
+                            markup += '<td style="display:none;"><input type="hidden" class="Upd_ClsRequestId" id="' + varRequestId + '" value="' + d.Insp_Request_Id + '"/></td>'
+                            markup += '<td style="display:none;"><label style="color:green;font-weight:bold;" class="Upd_ClstypeId" id="' + vartypeId + '" >' + d.Type_Id + '</label></td>'
+                            markup += '<td style="display:none;"><label style="color:green;font-weight:bold;" class="Upd_Cls_Calendar_Id" id="' + varCalendarId + '" >' + d.Insp_Sch_Calendar_Id + '</label></td>'
+
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + inc + '. ' + d.Type_Id + '</label>' + '<br>'
+                            markup += '</td>'
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + d.Due_Date + '</label>' + '<br>'
+                            if (d.Schedule_Type != null) {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.Schedule_Type + '</label>' + '<br>'
+                                markup += '</td>'
+                            }
+                            else {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No Frequency</label>' + '<br>'
+                                markup += '</td>'
+                            }
+
+                            if (d.First_Name != null) {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.First_Name + '</label>' + '<br>'
+                                markup += '<a id="Edit_Btn" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-pencil font-size-18"></i></a>'
+                                markup += '<a id="Close_Btn" href="javascript:void(0);" title="Cancel" class="text-danger" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-close-circle font-size-18"></i></a>'
+                                markup += '</td>'
+                            } else {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No HSE Officer</label>' + '<br>'
+                                markup += '<a id="Edit_Btn" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-pencil font-size-18"></i></a>'
+                                markup += '<a id="Close_Btn" href="javascript:void(0);" title="Cancel" class="text-danger" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-close-circle font-size-18"></i></a>'
+                                markup += '</td>'
+                            }
+
+
+
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><input type="date" class="form-control Cls_From_Date required" name="C_From_Date" id="' + varDatepicker + '" placeholder=""><span id=' + varDatepicker + ' class="error"></span></td>'
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><select class="form-control Cls_Frequency_Id required" name="Frequency_Id" id="' + varFrequency + '"><option value="">--Select--</option><option value="Monthly">Monthly</option><option value="Bimonthly">Bimonthly</option><option value="Quarterly">Quarterly</option><option value="Semiannually">Semi Annually</option><option value="Yearly">Yearly</option></select><span id=' + varFrequency + ' class="error"></span></td>'
+                            if (SP_Drp == "ServiceProviderMaster" || SP_Drp == "ServiceProviderBuilding") {
+                                markup += '<td></td>'
+                            } else {
+                                markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><select class="form-control Cls_Emp_Id required" name="Employee" id="' + varEmployee + '"></select><label id=' + varEmployee + ' class="error"></label></td>'
+                            }
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><button type="button" class="btn btn-primary cls_submit" id="DataSubmit" value="Submit">Submit</button></td>'
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><button type="button" class="btn btn-primary cls_update_submit" id="Update_Btn" value="Submit" style="display:none;">Update</button></td>'
+                            markup += '</tr>';
+                        }
+                        else {
+                            //markup += '<td style="display:none;"></td>'
+                            //markup += '<td style="display:none;"><label style="color:green;font-weight:bold;" class="ClstypeId" id="' + vartypeId + '" >' + d.Type_Id + '</label></td>'
+                            markup += '<tr><td style="vertical-align: top;">'
+                            markup += '<input type="hidden" class="ClsRequestId" id="' + varRequestId + '" value="' + d.Insp_Request_Id + '"/><input type="hidden" class="Cls_Calendar_Id" id="' + varCalendarId + '" value="' + d.Insp_Sch_Calendar_Id + '"/><label style="color:green;font-weight:bold;display:none;" class="ClstypeId" id="' + vartypeId + '" >' + d.Type_Id + '</label><label style="color:green;font-weight:bold;">' + inc + '. ' + d.Type_Id + '</label>' + '<br>'
+                            markup += '</td>'
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + d.Due_Date + '</label>' + '<br>'
+                            if (d.Schedule_Type != null) {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.Schedule_Type + '</label>' + '<br>'
+                                markup += '</td>'
+                            }
+                            else {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No Frequency</label>' + '<br>'
+                                markup += '</td>'
+                            }
+
+                            if (d.First_Name != null) {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.First_Name + '</label>' + '<br>'
+                                markup += '<a id="Edit_Btn" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-pencil font-size-18"></i></a>'
+                                markup += '<a id="Close_Btn" href="javascript:void(0);" title="Cancel" class="text-danger" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-close-circle font-size-18"></i></a>'
+                                markup += '</td></tr>'
+                            }
+                            else {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No HSE Officer</label>' + '<br>'
+                                markup += '<a id="Edit_Btn" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-pencil font-size-18"></i></a>'
+                                markup += '<a id="Close_Btn" href="javascript:void(0);" title="Cancel" class="text-danger" data-bs-original-title="View" aria-label="Review">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-close-circle font-size-18"></i></a>'
+                                markup += '</td></tr>'
+                            }
+                        }
+
+                    });
+                } else {
+                    markup += '<tr class="">';
+                    markup += '<td ></td>'
+                    markup += '<td ><input type="hidden" class="ClsBuildingId" id="' + varbuildingId + '" value="' + b.Sub_Building_Id + '"/><label class="form-control" value="' + b.Sub_Building_Id + '">' + b.Building_Name + '</label></td>'
+                    markup += '<td colspan=4>---</td>'
+                    markup += '<td><input type="date" class="form-control Cls_From_Date required" name="C_From_Date" id="' + varDatepicker + '" placeholder=""><span id=' + varDatepicker + ' class="error"></span></td>'
+                    markup += '<td><select class="form-control Cls_Frequency_Id required" name="Frequency_Id" id="' + varFrequency + '"><option value="">--Select--</option><option value="Monthly">Monthly</option><option value="Bimonthly">Bimonthly</option><option value="Quarterly">Quarterly</option><option value="Semiannually">Semi Annually</option><option value="Yearly">Yearly</option></select><span id=' + varFrequency + ' class="error"></span></td>'
+                    if (SP_Drp == "ServiceProviderMaster" || SP_Drp == "ServiceProviderBuilding") {
+                        markup += '<td></td>'
+                    } else {
+                        markup += '<td><select class="form-control Cls_Emp_Id required" name="Employee" id="' + varEmployee + '"></select><label id=' + varEmployee + ' class="error"></label></td>'
+                    }
+                    markup += '<td><button type="button" class="btn btn-primary" id="DataSubmit" value="Submit">Submit</button></td>'
+
+                    markup += '</tr>';
+
+                }
+
+                $("#Create_Sch_Tbody").append(markup);
+                Func_Datetime("#" + varDatepicker);
+                Func_Emp_Load("#" + varEmployee);
+                data_count++;
+
+
+            });
+        });
+    }
+
+
+    function LOAD_BUSINESS() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.SCH_BUSINESS_ID).empty();
+            $(UI_Fields.SCH_BUSINESS_ID).append("<option selected value='' style='text-align:center'> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SCH_BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.SCH_ZONE_ID).empty();
+            $(UI_Fields.SCH_ZONE_ID).append("<option selected value='0' style='text-align:center'> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SCH_ZONE_ID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+
+    function Sch_Fn_Zone(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.SCH_COMMUNITY_ID).empty();
+            $(UI_Fields.SCH_BUILDIND_ID).empty();
+            $(UI_Fields.SCH_COMMUNITY_ID).append("<option selected value='0' style='text-align:center'>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SCH_COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+
+    function Sch_Fn_Community(Community_Id) {
+        var Zone_Id = $("#Sch_Zone_Id").val();
+
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.SCH_BUILDIND_ID).empty();
+            $(UI_Fields.SCH_BUILDIND_ID).append("<option selected value='0'style='text-align:center'>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SCH_BUILDIND_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+
+        });
+        LoadBuilding(Community_Id, Zone_Id);
+        Load_Service_Provider(Zone_Id);
+    }
+
+    var count = 1;
+    function LoadBuilding(Community_Id, Zone_Id) {
+        $("#Create_Sch_table").show();
+        $("#Div_Submit").show();
+        $.post("@Url.Action("Get_All_Building_Load", "Inspection")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Create_Sch_Tbody").empty();
+            $(data).each(function (i, b) {
+                var varbuildingId = "BuildingId" + count;
+                var varDatepicker = "Datepicker" + count;
+                var varFrequency = "Frequecyid" + count;
+                var varEmployee = "Employee" + count;
+                var varcheckid = "Checkid" + count;
+                var varsubmitid = "Submit_Btn_Id" + count;
+                var markup = "";
+
+                if (b._Scheduled_List.length > 0) {
+                    markup += '<tr class="">';
+                    markup += '<td style="vertical-align: top;" rowspan=' + b._Scheduled_List.length + '><input type="checkbox" class="cls_check" value="1" name="' + varcheckid + '" id="' + varcheckid + '" onclick="Fn_Checkbox(' + "'" + varcheckid + "'" + ',' + "'" + varDatepicker + "'" + ',' + "'" + varFrequency + "'" + ',' + "'" + varEmployee + "'" + ',' + "'" + varsubmitid + "'" + ')"/></td>'
+                    markup += '<td style="vertical-align: top;" rowspan=' + b._Scheduled_List.length + '><input type="hidden" class="ClsBuildingId" id="' + varbuildingId + '" value="' + b.Sub_Building_Id + '"/><label class="form-control"  value="' + b.Sub_Building_Id + '">' + b.Building_Name + '</label></td>'
+
+
+                    $(b._Scheduled_List).each(function (c, d) {
+                        var inc = c + 1;
+                        if (c == 0) {
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + inc + '. ' + d.Type_Id + '</label>' + '<br>'
+                            markup += '</td>'
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + d.Due_Date + '</label>' + '<br>'
+
+                            if (d.Schedule_Type != null) {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.Schedule_Type + '</label>' + '<br>'
+                                markup += '</td>'
+                            } else {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No Frequency</label>' + '<br>'
+                                markup += '</td>'
+                            }
+
+                            if (d.First_Name != null) {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.First_Name + '</label>' + '<br>'
+                                markup += '</td>'
+                            }
+                            else {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No HSE Officer</label>' + '<br>'
+                                markup += '</td>'
+                            }
+
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><input type="date" class="form-control Cls_From_Date required" disabled name="' + varDatepicker + '" id="' + varDatepicker + '" placeholder=""><span id="' + varDatepicker + '" class="error"></span></td>'
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><select class="form-control Cls_Frequency_Id required" name="' + varFrequency + '" disabled id="' + varFrequency + '"><option value="">--Select--</option><option value="Monthly">Monthly</option><option value="Bimonthly">Bimonthly</option><option value="Quarterly">Quarterly</option><option value="SemiAnnually">Semi Annually</option><option value="Yearly">Yearly</option><span id="' + varFrequency + '" class="error"></span></td>'
+                            markup += '<td  rowspan=' + b._Scheduled_List.length + ' style="vertical-align: top;"><select class="form-control Cls_Emp_Id required" name="' + varEmployee + '" disabled id="' + varEmployee + '"></select><span id="' + varEmployee + '" class="error"></span></td>'
+                            //markup += '<td><button class="form-control btn btn-primary" disabled id="DataSubmitRow" name="' + varsubmitid + '" value="" onclick="Fn_submit_row(' + "'" + varsubmitid + "'" + ')">Submit</button></td>'
+                            markup += '</tr>';
+                        }
+                        else {
+                            markup += '<tr><td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + inc + '. ' + d.Type_Id + '</label>' + '<br>'
+                            markup += '</td>'
+                            markup += '<td style="vertical-align: top;">'
+                            markup += '<label style="color:green;font-weight:bold;">' + d.Due_Date + '</label>' + '<br>'
+
+                            if (d.Schedule_Type != null) {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.Schedule_Type + '</label>' + '<br>'
+                                markup += '</td>'
+                            }
+                            else {
+                                markup += '</td>'
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No Frequency</label>' + '<br>'
+                                markup += '</td>'
+                            }
+
+
+                            if (d.First_Name != null) {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">' + d.First_Name + '</label>' + '<br>'
+                                markup += '</td></tr>'
+                            } else {
+                                markup += '<td style="vertical-align: top;">'
+                                markup += '<label style="color:green;font-weight:bold;">No HSE Officer</label>' + '<br>'
+                                markup += '</td></tr>'
+                            }
+
+                        }
+
+                    });
+                }
+                else {
+                    markup += '<tr class="">';
+                    markup += '<td style="text-align:top;" ><input type="checkbox" class="cls_check" value="1" name="' + varcheckid + '" id="' + varcheckid + '" onclick="Fn_Checkbox(' + "'" + varcheckid + "'" + ',' + "'" + varDatepicker + "'" + ',' + "'" + varFrequency + "'" + ',' + "'" + varEmployee + "'" + ',' + "'" + varsubmitid + "'" + ')"/></td>'
+                    markup += '<td style="text-align:top;" ><input type="hidden" class="ClsBuildingId" id="' + varbuildingId + '" value="' + b.Sub_Building_Id + '"/><label class="form-control"  value="' + b.Sub_Building_Id + '">' + b.Building_Name + '</label></td>'
+                    markup += '<td colspan=4 style="text-align:top;">---</td>'
+                    markup += '<td style="text-align:top;"><input type="date" class="form-control Cls_From_Date required" disabled name="' + varDatepicker + '" id="' + varDatepicker + '" placeholder=""><span id="' + varDatepicker + '" class="error"></span></td>'
+                    markup += '<td style="text-align:top;"><select class="form-control Cls_Frequency_Id required" name="' + varFrequency + '" disabled id="' + varFrequency + '"><option value="">--Select--</option><option value="Monthly">Monthly</option><option value="Bimonthly">Bimonthly</option><option value="Quarterly">Quarterly</option><option value="SemiAnnually">Semi Annually</option><option value="Yearly">Yearly</option><span id="' + varFrequency + '" class="error"></span></td>'
+                    markup += '<td style="text-align:top;"><select class="form-control Cls_Emp_Id required" name="' + varEmployee + '" disabled id="' + varEmployee + '"></select><span id="' + varEmployee + '" class="error"></span></td>'
+                    //markup += '<td><button class="form-control btn btn-primary" disabled id="DataSubmitRow" name="' + varsubmitid + '" value="" onclick="Fn_submit_row(' + "'" + varsubmitid + "'" + ')">Submit</button></td>'
+                    markup += '</tr>';
+                }
+
+                $("#Create_Sch_Tbody").append(markup);
+                Func_Datetime("#" + varDatepicker);
+                Func_Emp_Load("#" + varEmployee);
+                count++;
+
+
+            });
+        });
+    }
+
+    function Fn_submit_row(id) {
+        var varInspRequestId = $("#Insp_Request_Id").val();
+        var var_zone = $("#Sch_Zone_Id").val();
+        var var_community = $("#Sch_Community_Id").val();
+        //var var_building = $("#Sch_Building_Id").val();
+        var var_type = $("#Sch_type_Id").val();
+        var varBuilding_Id = $(this).closest('tr').find('.ClsBuildingId').val();
+        var varIntial_date = $(this).closest('tr').find('.Cls_From_Date').val().replace("T", " ");;
+        var varFrequency_Id = $(this).closest('tr').find('.Cls_Frequency_Id').val();
+        var varSch_Emp_Id = $(this).closest('tr').find('.Cls_Emp_Id').val();
+
+        if (varInspRequestId == "" || varInspRequestId == null || varInspRequestId == undefined) {
+            var RequestId = '0';
+        }
+
+        var Obj = {
+            Insp_Request_Id: RequestId,
+            Zone_Id: var_zone,
+            Community_Id: var_community,
+            Building_Id: varBuilding_Id,
+            Type_Id: var_type,
+            Inspection_Date: varIntial_date,
+            Schedule_Type: varFrequency_Id,
+            Access_Schedule: varSch_Emp_Id,
+        };
+
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("Add_Audit_Insp_Sch_Row_Submit", "Inspection"))',
+            type: "POST",
+            cache: true,
+            async: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data != null) {
+
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function () {
+                        //window.location.reload();
+
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            },
+            error: function (errormessage) {
+            }
+        });
+
+    }
+
+    function Fn_Checkbox(id, datepickerid, FequencyId, Empid, btn_Id) {
+        if ($("#" + id).is(':checked')) {
+            $("input[name=" + datepickerid + "]").removeAttr('disabled');
+            $("select[name=" + FequencyId + "]").removeAttr('disabled');
+            $("select[name=" + Empid + "]").removeAttr('disabled');
+            $("button[name=" + btn_Id + "]").removeAttr('disabled');
+            SP_Drp = $("#Sch_type_Id").val();
+            if (SP_Drp == "ServiceProviderMaster" || SP_Drp == "ServiceProviderBuilding") {
+                $("select[name=" + Empid + "]").hide();
+            } else {
+                $("select[name=" + Empid + "]").show();
+            }
+            if (SP_Drp == "EnvironmentalAudit" || SP_Drp == "ServiceProviderAudit" || SP_Drp == "WelfareAudit" || SP_Drp == "InternalAudit") {
+                $("select[name=" + FequencyId + "]").attr("disabled", "disabled");
+            } else {
+                $("select[name=" + FequencyId + "]").removeAttr("disabled");
+            }
+        }
+        else {
+            $("input[name=" + datepickerid + "]").attr('disabled', 'disabled');
+            $("select[name=" + FequencyId + "]").attr('disabled', 'disabled');
+            $("select[name=" + Empid + "]").attr('disabled', 'disabled');
+            var SP_Drp = $("#Sch_type_Id").val();
+            if (SP_Drp == "ServiceProviderMaster" || SP_Drp == "ServiceProviderBuilding") {
+                $("select[name=" + Empid + "]").show();
+            } else {
+                $("select[name=" + Empid + "]").show();
+            }
+            //if (SP_Drp == "EnvironmentalAudit" || SP_Drp == "ServiceProviderAudit") {
+            //    $("select[name=" + FequencyId + "]").attr('disabled', 'disabled');
+            //} else {
+            //    $("select[name=" + FequencyId + "]").attr('disabled', 'disabled');
+            //}
+            $("button[name=" + btn_Id + "]").attr('disabled', 'disabled');
+        }
+    }
+
+    function Func_Datetime(id) {
+        //let minDate = '@DateTime.Now.AddDays(10).ToString("yyyy-MM-dd")';
+        let minDate = '@DateTime.Now.ToString("yyyy-MM-dd")';
+        $(id).attr('min', minDate);
+    }
+
+    function Func_Emp_Load(id) {
+        $.post("@Url.Action("Get_All_Audit_Insp_Emp", "Inspection")", function (data) {
+            $(id).empty();
+            $(id).append("<option selected value='' style='text-align:center'>--Select--</option>");
+            $(id).append("<option value='All' style='text-align:center'>All</option>");
+            $(data).each(function (i, e) {
+                $(id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function Load_Service_Provider(CommunityId) {
+        $.post("@Url.Action("LoadAll_Service_Provider", "Inspection")", { Community_Id: CommunityId }, function (data) {
+            $("#Sch_Ser_Pro").empty();
+            $("#Sch_Ser_Pro").append("<option selected value='' style='text-align:center'> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Sch_Ser_Pro").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function Load_Scope_Work() {
+        $.post("@Url.Action("LoadAllScope", "Inspection")", function (data) {
+            $("#Scope_Work").empty();
+            $("#Scope_Work").append("<option selected value='' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Scope_Work").append("<option value=" + e.Scope_of_Work_Id + ">" + e.Scope_of_Work + "</option>");
+            });
+        });
+    }
+
+    function Load_Category() {
+        $.post("@Url.Action("LoadAllCategory", "Inspection")", function (data) {
+            $("#Category_Drp").empty();
+            $("#Category_Drp").append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Category_Drp").append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+
+    function Get_Edit_Service_provider(controlid, selectedValue, ZoneValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAll_Service_Provider", "Inspection")", { Community_Id: ZoneValue }, function (data) {
+            if (data != null) {
+                $(controlid).empty();
+                $(controlid).append("<option selected value='0' style='text-align:center'> --Select--</option>");
+                $.each(data, function (i, e) {
+                    $(controlid).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function Get_Edit_Scope_Work(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllScope", "Inspection")", function (data) {
+            if (data != null) {
+                $(controlid).empty();
+                $(controlid).append("<option selected value='0' style='text-align:center'> --Select--</option>");
+                $.each(data, function (i, e) {
+                    $(controlid).append("<option value=" + e.Scope_of_Work_Id + ">" + e.Scope_of_Work + "</option>");
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function Get_Edit_Category(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllCategory", "Inspection")", function (data) {
+            if (data != null) {
+                $(controlid).empty();
+                $(controlid).append("<option selected value='0' style='text-align:center'> --Select--</option>");
+                $.each(data, function (i, e) {
+                    $(controlid).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+</script>

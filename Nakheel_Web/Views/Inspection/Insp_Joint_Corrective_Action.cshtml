@@ -1,0 +1,464 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Joint Inspection Corrective Action";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Find_width {
+        width: 200px;
+    }
+
+    .error {
+        color: red !important;
+    }
+
+    .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-results > .select2-results__options {
+        width: 252px !important;
+        background-color: white !important;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<style>
+
+    #map {
+        height: 100%;
+    }
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        .controls:focus {
+            border-color: #4d90fe;
+        }
+
+    .title {
+        font-weight: bold;
+    }
+
+    #infowindow-content {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+</style>
+
+<style>
+    #map-canvas {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #search_input_edit {
+        font-size: 18px;
+        width: 430px;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-HeadlineBold';
+    }
+
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="List_View_CA_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Corrective Action List</h4></div>
+                    <div class="col-lg-2" style="padding:13px">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTableCA" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Type</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllCAList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row Add_Insp_Finding_Closure_Div" id="Add_Insp_Finding_Closure_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Joint Inspection Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row Load_Add_Insp_Finding_Closure_Div">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade View_CA_Rej_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Unique_Id" disabled class="form-control CA_View_Unique_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Reject_Reason" disabled class="form-control CA_View_Reject_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Rejected <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedDate" disabled class="form-control CA_View_CreatedDate" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedBy" disabled class="form-control CA_View_CreatedBy" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade View_CA_Re_Asign_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Id" disabled class="form-control CA_View_Re_Assig_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_By" disabled class="form-control CA_View_Re_Assig_By" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned To <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_To" disabled class="form-control CA_View_Re_Assig_To" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Re-Assigned <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Date" disabled class="form-control CA_View_Re_Assig_Date" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-12">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Reason" disabled class="form-control CA_View_Re_Assig_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade Add-Reassign" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="Fm_Add_CA_Re_Assign">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Assign Action To
+                                </label>
+                                <input type="hidden" id="Corrective_Action_Id_ReAssign" class="Corrective_Action_Id_ReAssign" />
+                                <label class="Counts"></label>
+                                <textarea id="Assignee_Type_ReAssign" disabled class="form-control Assignee_Type_ReAssign" name="Assignee_Type_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Re-Assign To<span class="requ">*</span>
+                                </label>
+                                <select class="form-control Responsibility_To_ReAssign" required name="Responsibility_To_ReAssign" id="Responsibility_To_ReAssign">
+                                </select>
+                                <label id="Responsibility_To_ReAssign-error" style="font-size: small;" class="error" for="Responsibility_To_ReAssign"></label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Target Date
+                                </label>
+                                <textarea id="Target_Date_ReAssign" disabled class="form-control Target_Date_ReAssign" name="Target_Date_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Description
+                                </label>
+                                <textarea id="Action_Description_ReAssign" disabled class="form-control Action_Description_ReAssign" name="Action_Description_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-12">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Re-Assign Reason<span class="requ">*</span>
+                                </label>
+                                <textarea id="Reason_ReAssign" required class="form-control Reason_ReAssign" name="Reason_ReAssign" rows="5"></textarea>
+                                <label id="Reason_ReAssign-error" style="font-size: small;" class="error" for="Reason_ReAssign_ReAssign"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="FnCAReAssignSubmit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade bd-example-modal-lg View-Loc-Map" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Pin Location in the Map</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="GoogleMapViewApi" class="GoogleMapViewApi"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/insp_joint_validation/jinspectioncaformseverside.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        TBODY_TABLE_CA: "#GetAllCAList",
+        MainTableCA: "#MainTableCA",
+        List_View_CA_Div: "#List_View_CA_Div",
+        Add_Insp_Finding_Closure_Div: "#Add_Insp_Finding_Closure_Div",
+        Load_Add_Insp_Finding_Closure_Div: ".Load_Add_Insp_Finding_Closure_Div",
+        btn_back_View: ".btn_back_View",
+    });
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        ServerSideTable_Joint_CA();
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        }); btn_back_View
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+    });
+    function Fn_Add_Action_Closure(id) {
+        $(UI_Fields.List_View_CA_Div).hide(100);
+        $(UI_Fields.Add_Insp_Finding_Closure_Div).show(100);
+        $.post("@Url.Action("P_Insp_Joint_CA_GetbyId", "Inspection")", { ID: id }, function (data) {
+            $(UI_Fields.Load_Add_Insp_Finding_Closure_Div).html('');
+            $(UI_Fields.Load_Add_Insp_Finding_Closure_Div).html(data);
+        }).always(function () {
+            $(UI_Fields.Add_Insp_Finding_Closure_Div).show(100);
+        });
+    }
+    function FnViewRejectDetails(Unique_Id, Reject_Reason, CreatedDate, CreatedBy) {
+        $("#CA_View_Unique_Id").val("");
+        $("#CA_View_Reject_Reason").val("");
+        $("#CA_View_CreatedDate").val("");
+        $("#CA_View_CreatedBy").val("");
+        $("#CA_View_Unique_Id").val(Unique_Id);
+        $("#CA_View_Reject_Reason").val(Reject_Reason);
+        $("#CA_View_CreatedDate").val(CreatedDate);
+        $("#CA_View_CreatedBy").val(CreatedBy);
+    }
+    function FnViewReAssignDetails(Unique_Id, Responsibility_To, Re_Assign_To, CreatedDate, Remarks) {
+        $("#CA_View_Re_Assig_Id").val("");
+        $("#CA_View_Re_Assig_By").val("");
+        $("#CA_View_Re_Assig_To").val("");
+        $("#CA_View_Re_Assig_Date").val("");
+        $("#CA_View_Re_Assig_Reason").val("");
+        $("#CA_View_Re_Assig_Id").val(Unique_Id);
+        $("#CA_View_Re_Assig_By").val(Responsibility_To);
+        $("#CA_View_Re_Assig_To").val(Re_Assign_To);
+        $("#CA_View_Re_Assig_Date").val(CreatedDate);
+        $("#CA_View_Re_Assig_Reason").val(Remarks);
+    }
+
+    function Fn_View_MapLoad(lat, longt, Exact) {
+        debugger
+        var Obj = {
+            STATUS_CODE: lat,
+            UNIQUE_ID: longt,
+            MESSAGE: Exact,
+        };
+        $.ajax({
+            url: "/CommonMaster/_Load_View_GoogleMap",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (data) {
+                if (data) {
+                    $("#GoogleMapViewApi").html('');
+                    $("#GoogleMapViewApi").html(data);
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>

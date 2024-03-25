@@ -1,0 +1,369 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.BUILDING_MANAGMENT>;
+@{
+    ViewData["Title"] = "Building Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Building Management List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new-order"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                    <div id="table-ecommerce-orders"></div>
+                </div>
+                @* <div class="col-md-6">
+                <h2>Business Unit</h2>
+                </div>*@
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Building ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community Name</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Building_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="BuildingDelete(@item.Building_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            <a onclick="View(@item.Building_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+
+<div class="modal fade add-new-order" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="F_AddBuilding" action="#" method="post" class="" novalidate="novalidate">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Building_Id" id="Building_Id" value="0">
+                               
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="" style="color:black;" class="form-model">Zone</label>
+                            <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="" style="color:black;" class="form-model">Community</label>
+                            <select class="form-select" placeholder="--Select Community--" id="Community_Id" name="Community_Id">
+                            </select>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddBuildingList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                        </div>
+                    </div>
+                    <br />
+                    <table id="tblBuildingNameList" class="table table-striped dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Building Name</th>
+                                <th>Description</th>
+                                <th id="ActionHead">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="GetBuildingList">
+                            @*<tr>
+                                <td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control BuildingName" id="Building_Name" name="Building_Name" /></td>
+                                <td><input type="text" class="form-control BuildingDescription" name=Building_Description id="Building_Description" /></td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/incident_validation/incidentreportvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Building_Id",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_ADD_INC: "#btn_add_incident",
+        ASSIGN_TABLE: "#tblBuildingNameList",
+        ADDMORE_BUILDING_LIST: "#GetBuildingList",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_NAME: "#Building_Name",
+        BUILDING_DESCRIPTION: "#Building_Description"
+    });
+
+    $(document).ready(function () {
+        LOAD_ALL_ZONE_IS_COMMUNITY();
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+        });
+        //$(UI_Fields.ASSIGN_TABLE).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+        //    $(this).closest("tr").remove();
+        //});
+
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+        $("#btnAdd").click(function(){
+            $(UI_Fields.MODULE_ID).val('0');
+            $(UI_Fields.ZONEID).val('0');
+            $(UI_Fields.COMMUNITY_ID).val('');
+            $(UI_Fields.ZONEID).prop("disabled", false);
+            $(UI_Fields.COMMUNITY_ID).prop("disabled", false);
+            $(UI_Fields.ADDMORE_BUILDING_LIST).html('');
+            AddBuildingList();
+        });
+    })
+</script>
+
+<script>
+    $(function () {
+        //LOAD_GRID();
+
+        $(UI_Fields.ADDMORE_BUILDING_LIST).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+            debugger
+            let varSubLocID = $(this).closest('tr').find('.SubBuildingId').val();
+            //alert(varSubLocID);
+            if (varSubLocID == '0' || varSubLocID == null) {
+                $(this).closest("tr").remove();
+                $(UI_Fields.ADDMORE_BUILDING_LIST).show(100);
+            }
+            else {
+                Delete(varSubLocID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+        $(UI_Fields.ADDMORE_BUILDING_LIST).on("click", UI_Fields.TBL_EDIT_BUTTON, function () {
+            let varSubName = $(this).closest('tr').find('.BuildingName').prop('readonly', false);
+            let varSubDesc = $(this).closest('tr').find('.BuildingDescription').prop('readonly', false);
+            let varIsedit = $(this).closest('tr').find('.IsEdit').val('1');
+            $(UI_Fields.BUILDING_NAME).show(100);
+            $(UI_Fields.BUILDING_DESCRIPTION).show(100);
+        });
+        //ValidationRules(UI_Fields.CH_VALID);
+    });
+    function AddBuildingList() {
+
+        var html = "";
+        html += '<tr><td><input type="hidden" class="BuildingID" value="0"/><input type="text" class="form-control BuildingName" name="Building_Name" onchange="dup_val(this.value)" /></td>';
+        html += '<td><input type="text" class="form-control BuildingDescription" name="Building_Description"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+    }
+    function LOAD_ALL_ZONE_IS_COMMUNITY() {
+        $.post("@Url.Action("LoadAllZoneIsCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' disabled>--Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function FnZone_Id(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Edit(id) {
+        $("#GetBuildingList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Building_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            //alert(data.Community_Master_Name);
+            $(UI_Fields.MODULE_ID).val(data.Building_Id);
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(data.L_M_Building).each(function (i, e) {
+                debugger
+                //$(UI_Fields.BUILDING_NAME).val(e.Building_Name);
+                //$(UI_Fields.BUILDING_DESCRIPTION).val(e.Building_Description);
+                var html = "";
+                html += '<tr><td><input type="hidden" class="BuildingId" name="Building_Id" value="' + e.Building_Id + '"/><input type="hidden" class="SubBuildingId" name="Sub_Building_Id" value="' + e.Sub_Building_Id + '"/><input type="text" class="form-control BuildingName SubBuilding" name="Building_Name" value="' + e.Building_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control BuildingDescription" id="BuildingDescription" name=Building_Description value="' + e.Building_Description + '" readonly/></td>';
+                html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+                //$(UI_Fields.LIST_VIEW).show(100);
+                
+            });
+            //window.location.reload();
+        });
+    }
+    function BuildingDelete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Building_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    function View(id) {
+        //alert(id);
+        $("#GetBuildingList").html('');
+        $(".add-new-order").modal('show');
+        $.post("@Url.Action("Building_Master_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.ZONEID).val(data.Zone_Id);
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(data.L_M_Building).each(function (i, e) {
+                var html = "";
+                html += '<tr><td><input type="hidden" class="BuildingId" name="Building_Id" value="' + e.Building_Id + '"/><input type="hidden" class="SubBuildingId" name="Sub_Building_Id" value="' + e.Sub_Building_Id + '"/><input type="text" class="form-control BuildingName SubBuilding" name="Building_Name" value="' + e.Building_Name + '" readonly/></td > ';
+                html += '<td><input type="text" class="form-control BuildingDescription" id="BuildingDescription" name=Building_Description value="' + e.Building_Description + '" readonly/></td></tr>';
+                $(UI_Fields.ADDMORE_BUILDING_LIST).append(html);
+                $("#Zone_Id").prop("disabled", true);
+                $("#Community_Id").prop("disabled", true);
+                $("#btn_add_incident").hide(100);
+                $("#btn-save-event").hide(100);
+                $("#ActionHead").hide(100);
+            });
+            
+        });
+    }
+    function Delete(id, ele) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Sub_Building_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                $('#GetBuildingList').load();
+                                //$("#GetBuildingList").html('html');
+                                //window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    function dup_val(Building_Name) {
+        $.post("@Url.Action("CheckBuilding_Name", "CommonMaster")", { Building_Name: Building_Name }, function (data) {
+            if (data == "Already Exists") {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'warning',
+                    title: 'Already Exists',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(function () {
+                    window.location.reload();
+                });
+            }
+        });
+
+
+      
+    }
+</script>

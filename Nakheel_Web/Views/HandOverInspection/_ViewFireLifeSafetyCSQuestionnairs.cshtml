@@ -1,0 +1,565 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+<style>
+    .error {
+        color: red !important;
+        font-size: 12px;
+    }
+</style>
+@model Nakheel_Web.Models.HandOverInsMaster.M_Insp_FireLifeSafety_Model;
+@if (Model != null)
+{
+    <form id="F_FireLifeSafetyCS_View" action="#" method="post" class="row NotValid" novalidate="novalidate">
+        <div class="row">
+            <div class="col-12">
+                <!-- Contact Detail -->
+                <div class="col-xxl-12 mb-5 mb-xxl-0">
+                    <div class="table-responsive" style="height:500px; overflow-y: scroll;">
+                        <br />
+                        <table id="tblFireLifeSafetyInspQnsCS" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:130%">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style="width:20%;">Questionnaire</th>
+                                    <th>Action</th>
+                                    <th style="width:10%;">Photo</th>
+                                    <th>Details of Evidence</th>
+                                    <th>Risk Level</th>
+                                    <th>Risk Description</th>
+                                    <th>Description of Action/Observation</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblFireLifeSafetyQns">
+                                @if (Model != null)
+                                {
+                                    var subSno = 1;
+                                    foreach (var Question in Model!.L_Insp_FireLifeSafety_Qns!)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_IdCS" />
+                                                <input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_IdCS" />
+                                                <b>@subSno</b>
+                                            </td>
+                                            <td>
+                                                <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                            </td>
+                                            <td>
+                                                <input type="radio" name="ActionCS_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="Yes" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','Yes')" />&nbsp;Yes<br />
+                                                <input type="radio" name="ActionCS_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="No" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','No')" />&nbsp;No<br />
+                                                <input type="radio" name="ActionCS_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="NA" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','NA')" checked />&nbsp;NA
+                                            </td>
+                                            <td>
+                                                <input id="QnfileCS_@subSno" class="form-control file InputPhoto" onchange="uploadFiles('QnfileCS_@subSno','QnPhotoCS_@subSno')" type="file" accept=".png, .jpg, .jpeg">
+                                                <input type="hidden" value="" class="QnPhotoCS" name="QnPhotoCS" id="QnPhotoCS_@subSno">
+                                            </td>
+                                            <td>
+                                                <textarea type="file" required name="Details_of_EvidenceCS_@subSno" id="Details_of_EvidenceCS_@subSno" class="form-control Details_of_EvidenceCS" style="overflow-y:scroll;"></textarea>
+                                            </td>
+                                            <td>
+                                                <select class="form-control Insp_RiskCS" required id="Insp_RiskCS_@subSno" name="Insp_RiskCS_@subSno" style='text-align:center;'>
+                                                    <option value="">--Select--</option>
+                                                    <option value="Low">Low</option>
+                                                    <option value="Medium">Medium</option>
+                                                    <option value="High">High</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <textarea type="file" required name="Risk_DescriptionCS_@subSno" id="Risk_DescriptionCS_@subSno" class="form-control Risk_DescriptionCS" style="overflow-y:scroll;"></textarea>
+                                            </td>
+                                            <td>
+                                                <textarea type="file" name="QnDescriptionCS_@subSno" id="QnDescriptionCS_@subSno" class="form-control QnDescriptionCS" required style="overflow-y:scroll;"></textarea>
+                                            </td>
+                                            <td>
+                                                <select onchange="SubCategoryListCS(this.value, @subSno)" class="form-select Insp_CategoryCS" required id="Insp_CategoryCS_@subSno" >
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                    <option value="1">Health & Safety</option>
+                                                    <option value="2">Fire & Life Safety</option>
+                                                    <option value="3">Environmental</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select class="form-select Sub_CategoryCS" required name="Sub_CategoryCS" id="Sub_CategoryCS_@subSno" >
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="col-lg-9">
+                            <h4 class="d-flex align-items-center mb-3">Other Observations</h4>
+                        </div>
+                        <div class="mb-6">
+                            <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -34px;" class="btn" value="Add" onclick="Fn_Add_More_FindingCS()">+Add More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tbl_Temp_Insp_Obser_FLCS" class="table tblround table-sm table-striped" style="width:200%">
+                        <thead>
+                            <tr>
+                                <th>Observations</th>
+                                <th>Hazard & Risk</th>
+                                <th>Requirements</th>
+                                <th>Description of Action Required</th>
+                                <th>Category</th>
+                                <th>Observation Type</th>
+                                <th>Risk Level</th>
+                                <th>Evidence</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input class="form-control Insp_FLObs_Id" value="0" type="hidden" id="Insp_FLObs_Id">
+                                    <textarea id="FL_ObservationsCS" name="FL_ObservationsCS" class="form-control FL_ObservationsCS" placeholder="Enter Observations" rows="1"></textarea>
+                                </td>
+                                <td>
+                                    <textarea id="FL_HazardRiskCS" name="FL_HazardRiskCS" class="form-control FL_HazardRiskCS" placeholder="Enter Hazard & Risk" rows="1"></textarea>
+                                </td>
+                                <td>
+                                    <textarea id="FL_RequirementsCS" name="FL_RequirementsCS" class="form-control FL_RequirementsCS" placeholder="Enter Requirements" rows="1"></textarea>
+                                </td>
+                                <td>
+                                    <textarea id="FL_ActionRequiredCS" name="FL_ActionRequiredCS" class="form-control FL_ActionRequiredCS" placeholder="Enter Action Required" rows="1"></textarea>
+                                </td>
+                                <td style="width: 150px;">
+                                    <select onchange="SuCatCS(this.value)" class="form-select FL_CategoryCS" id="FL_CategoryCS">
+                                        <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                    </select>
+                                </td>
+                                <td style="width: 200px;">
+                                    <select class="form-select FL_SubCategoryCS" name="FL_SubCategoryCS" id="FL_SubCategoryCS">
+                                        <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select FL_RiskLevelCS" name="FL_RiskLevelCS" id="FL_RiskLevelCS">
+                                        <option value="" disabled selected="selected">--Select--</option>
+                                        <option value="High">High</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Low">Low</option>
+                                    </select>
+                                </td>
+                                <td style="width: 180px;">
+                                    <input id="fileFLCS" class="form-control file InputPhoto" onchange="uploadFiles('fileFLCS','UploadPhotosFLCS')" type="file" accept=".png, .jpg, .jpeg" multiple>
+                                    <input type="hidden" value="" class="UploadPhotosFLCS" name="UploadPhotosFLCS" id="UploadPhotosFLCS">
+                                </td>
+                                <td>
+                                    <label>
+                                        <i class="mdi mdi-delete FLCSTblDeleteButton font-size-18" style="color:red;">
+                                        </i>
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (Model!.Status == "15")
+        {
+            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+            {
+                <div>
+                    <br />
+                    <!-- Safety Violation -->
+                    <div class="row">
+                        <div class="mb-6">
+                            <label for="example-text-input" class="col-md-8 col-form-label">
+                                Raise the Safety Violation Notice ?<span class="requ">*</span>
+                                <label for="Safety_Violation_Yes" onclick="FnSafetyViolation_YesCS('1')"> <input id="Safety_Violation_Yes" class="Safety_Violation_CS" name="Safety_Violation_CS" type="radio" value="Yes" checked>&nbsp;Yes</label>&nbsp;&nbsp;
+                                <label for="Safety_Violation_No" onclick="FnSafetyViolation_YesCS('2')"> <input id="Safety_Violation_No" class="Safety_Violation_CS" name="Safety_Violation_CS" type="radio" value="No">&nbsp;No</label>
+                            </label>
+                        </div>
+                        <div class="mb-6" id="Safety_DescriptionCS" style=" display:none;">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Remarks</label>
+                            <textarea class="form-control mb-6" id="FLCSSV_Description" name="FLCSSV_Description"></textarea>
+                            <br />
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit_FindingsFLCS" onclick="Fn_FindingsFLCS_Submitbtn()" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6" style=" display:none;">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </form>
+}
+<script>
+    ApplySelect2("#Insp_Category");
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    var Qns_Action_Check = $(".Qns_Action").val();
+    if (Qns_Action_Check == "Yes" || Qns_Action_Check == "NA") {
+        $(".Details_of_EvidenceCS").attr('disabled', 'disabled');
+        $(".Insp_RiskCS").attr('disabled', 'disabled');
+        $(".Risk_DescriptionCS").attr('disabled', 'disabled');
+        //$(".QnDescriptionCS").attr('disabled', 'disabled');
+        $(".Insp_CategoryCS").attr('disabled', 'disabled');
+        $(".Sub_CategoryCS").attr('disabled', 'disabled');
+    }
+    function Fn_ActionCheck(rowval, status) {
+    if (status == "Yes" || status == "NA") {
+            $("#Details_of_EvidenceCS_" + rowval).val('');
+            $("#Insp_RiskCS_" + rowval).prop('selectedIndex', 0);
+            $("#Risk_DescriptionCS_" + rowval).val('');
+            $("#QnDescriptionCS_" + rowval).val('');
+            $("#Insp_CategoryCS_" + rowval).prop('selectedIndex', 0);
+            $("#Sub_CategoryCS_" + rowval).prop('selectedIndex', 0);
+            $("#Details_of_EvidenceCS_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_RiskCS_" + rowval).attr('disabled', 'disabled');
+            $("#Risk_DescriptionCS_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_CategoryCS_" + rowval).attr('disabled', 'disabled');
+            $("#Sub_CategoryCS_" + rowval).attr('disabled', 'disabled');
+            $("#QnDescriptionCS_" + rowval).removeAttr('disabled');
+        }
+    @*else if (status == "NA") {
+            $("#Details_of_EvidenceCS_" + rowval).val('');
+            $("#Insp_RiskCS_" + rowval).prop('selectedIndex', 0);
+            $("#Risk_DescriptionCS_" + rowval).val('');
+            $("#QnDescriptionCS_" + rowval).val('');
+            $("#Insp_CategoryCS_" + rowval).prop('selectedIndex', 0);
+            $("#Sub_CategoryCS_" + rowval).prop('selectedIndex', 0);
+            $("#Details_of_EvidenceCS_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_RiskCS_" + rowval).attr('disabled', 'disabled');
+            $("#Risk_DescriptionCS_" + rowval).attr('disabled', 'disabled');
+            $("#QnDescriptionCS_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_CategoryCS_" + rowval).attr('disabled', 'disabled');
+            $("#Sub_CategoryCS_" + rowval).attr('disabled', 'disabled');
+        }*@
+        else {
+            $("#Details_of_EvidenceCS_" + rowval).removeAttr('disabled');
+            $("#Insp_RiskCS_" + rowval).removeAttr('disabled');
+            $("#Risk_DescriptionCS_" + rowval).removeAttr('disabled');
+            $("#QnDescriptionCS_" + rowval).removeAttr('disabled');
+            $("#Insp_CategoryCS_" + rowval).removeAttr('disabled');
+            $("#Sub_CategoryCS_" + rowval).removeAttr('disabled');
+        }
+    }
+    function SubCategoryListCS(Value, rowval) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#Sub_CategoryCS_" + rowval).empty();
+            $(data).each(function (i, e) {
+                $("#Sub_CategoryCS_" + rowval).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function Qns_Category_Master(HtmlFind) {
+        //debugger;
+        var Main_Category = "#Main_Category_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(Main_Category).empty();
+            $(Main_Category).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(Main_Category).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Qns_Sub_Category(Value, HtmlFind) {
+        //debugger;
+        var Main_SubCategory = "#Main_SubCategory_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(Main_SubCategory).empty();
+            $(data).each(function (i, e) {
+                $(Main_SubCategory).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+</script>
+<script>
+    @*function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }*@
+    Cat_Master();
+    function Cat_Master() {
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $("#FL_CategoryCS").empty();
+            $("#FL_CategoryCS").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#FL_CategoryCS").append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function SuCatCS(Value) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#FL_SubCategoryCS").empty();
+            $(data).each(function (i, e) {
+                $("#FL_SubCategoryCS").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    var HtmlFind = 1;
+    function Fn_Add_More_FindingCS() {
+        var Datamarkups = "";
+        var file = "file_" + HtmlFind;
+        var UploadPhotos = "UploadPhotos_" + HtmlFind;
+        Add_More_Cat_Master(HtmlFind);
+            Datamarkups = '<tr><td><input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id_' + HtmlFind + '"><textarea id="HS_Observations_' + HtmlFind + '" name="HS_Observations_' + HtmlFind + '" class="form-control HS_Observations" placeholder="Enter Observations" rows="1" ></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_HazardRisk_' + HtmlFind + '" name="HS_HazardRisk_' + HtmlFind + '" class="form-control HS_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_Requirements_' + HtmlFind + '" name="HS_Requirements_' + HtmlFind + '"  class="form-control HS_Requirements" placeholder="Enter Requirements" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_ActionRequired_' + HtmlFind + '" name="HS_ActionRequired_' + HtmlFind + '"  class="form-control HS_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea></td>',
+            Datamarkups += '<td><select onchange="Add_More_SuCat(this.value,' + HtmlFind + ')" name="HS_Category_' + HtmlFind + '" class="form-select HS_Category" id="HS_Category_' + HtmlFind + '" ><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select HS_SubCategory" name="HS_SubCategory_' + HtmlFind + '" id="HS_SubCategory_' + HtmlFind + '" ><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select HS_RiskLevel" required name="HS_RiskLevel_' + HtmlFind + '" id="HS_RiskLevel_' + HtmlFind + '"><option value="" disabled selected="selected">--Select--</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></td>',
+            Datamarkups += '<td><input id="file_' + HtmlFind + '" class="form-control file" onchange="uploadFilesAddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg" multiple><input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos_' + HtmlFind + '"></td>',
+            Datamarkups += '<td><label><i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;"></i></label></td>',
+            Datamarkups += '</tr>'
+        $('#tbl_Temp_Insp_Obser_FLCS').append(Datamarkups);
+        HtmlFind++;
+    }
+    function Add_More_Cat_Master(HtmlFind) {
+        //debugger;
+        var FL_CategoryCS = "#FL_CategoryCS_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(FL_CategoryCS).empty();
+            $(FL_CategoryCS).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(FL_CategoryCS).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Add_More_SuCat(Value, HtmlFind) {
+        //debugger;
+        var FL_SubCategoryCS = "#FL_SubCategoryCS_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(FL_SubCategoryCS).empty();
+            $(data).each(function (i, e) {
+                $(FL_SubCategoryCS).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    $("#tbl_Temp_Insp_Obser_FLCS").on("click", ".TblDeleteButton", function () {
+        $(this).closest("tr").remove();
+    });
+    FnSafetyViolation_YesCS('1');
+    function FnSafetyViolation_YesCS(val) {
+        if (val == "1") {
+            $("#Safety_DescriptionCS").show();
+            $(".submit_FindingsFLCS").text("Next");
+        } else {
+            $("#Safety_DescriptionCS").hide();
+            $(".submit_FindingsFLCS").text("Submit");
+        }
+    }
+    $("input[name='Safety_Violation_CS']").click(function () {
+        var test = $(this).val();
+        if (test == "Yes") {
+            $(".submit_FindingsFLCS").text("Next");
+        } else {
+            $(".submit_FindingsFLCS").text("Submit");
+        }
+    });
+    
+</script>
+<script>
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Upload_Picture", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function uploadFilesAddMore(inputId, UploadPhotoId) {
+        //debugger;
+        var input_test = inputId.id;
+        var Upload_test = UploadPhotoId.id;
+        inputId = input_test;
+        UploadPhotoId = Upload_test;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Upload_Picture", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>
+@*<script>
+    function uploadFiles(inputId, UploadPhotoId) {
+        //debugger;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function uploadFilesAddMore(inputId, UploadPhotoId) {
+        //debugger;
+        var test = inputId.id;
+        var test1 = UploadPhotoId.id;
+        inputId = test;
+        UploadPhotoId = test1;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>*@

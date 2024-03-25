@@ -1,0 +1,137 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.Crisis_Team_Master>;
+@{
+    ViewData["Title"] = "Crisis Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .btn-success-Crisis {
+        color: #fff;
+        background-color: #01a3f9;
+        border-color: #04a5f9;
+        cursor: pointer;
+        border-radius: 11px;
+    }
+</style>
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Crisis Master List</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Fn_View(@item.Crisis_Master_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="Delete"><i class="mdi mdi-eye font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Inc_Crisis" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Crisis </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewCrisisList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_MODULE_DIV: "#AddModule_div",
+        BUSINESS_ID: "#Business_Unit_Id",
+        ZONE_ID: "#Zone_Id",
+        LEVELM_ID: "#LevelM_Id",
+        ZONE_NAME: "#Zone_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#Listview",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        EMP_ID: "#Emp_Id",
+        INC_CRISIS: "#Inc_Crisis",
+        VIEW_CRISIS_LIST: "#ViewCrisisList",
+        BTN_VIEWINVES_BACK: "#btn_ViewIncback",
+        COMMUNITY_ID: "#Community_Id",
+    });
+
+    $(document).ready(function () {
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $(UI_Fields.BTN_VIEWINVES_BACK).click(function () {
+            //$(UI_Fields.LIST_VIEW).show(100);
+            window.location.reload();
+        });
+    });
+   
+
+    function Fn_View(id) {
+        debugger;
+        $("#Crisis_id").css("dispaly","none");
+        $(UI_Fields.LIST_VIEW).hide();
+        var Hzurl = "";
+        $(UI_Fields.INC_CRISIS).show(100);
+        Hzurl = '/Master/_View_Crisis_Master_list';
+        Hzurl += '/?Crisis_Master_Id=' + id;
+        $(UI_Fields.VIEW_CRISIS_LIST).load(Hzurl);
+    }
+</script>

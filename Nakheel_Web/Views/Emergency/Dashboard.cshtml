@@ -1,0 +1,1077 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<script src="~/assets/js/validation/incident_validation/serversidedatatable_incidentdashboard.js"></script>*@
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > > {
+        padding: 0.35rem 0.35rem !important;
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<style>
+    .tbl_card {
+        width: 100%;
+        display: flow;
+        min-height: 236px;
+        overflow-y: scroll !important;
+        height: 120px;
+    }
+
+    .card-body {
+        padding: 0.05rem 1.25rem !important;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+        margin-top: -24px !important;
+    }
+
+    .btn-group, .btn-group-vertical {
+        margin-top: -60px !important;
+        padding: 32px !important;
+    }
+
+    .scroll {
+        max-height: 327px;
+        overflow-y: auto;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 0px;
+        height: 37px;
+    }
+
+    .Space_Adj {
+        padding: 0.45rem 1.25rem !important;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #e1e1e1;
+        border-radius: 9px;
+    }
+
+    .dashboardtopdiv {
+        background-color: #1b334a !important;
+    }
+
+    .FilterHead {
+        color: #fff;
+        margin-top: 9px;
+    }
+
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        overflow-anchor: none;
+    }
+
+
+    .card-header {
+        padding: 6px !important;
+        margin-bottom: 0;
+        background-color: #fff;
+        border-bottom: 1px solid #eff0f2;
+        background: #1b334a;
+        color: #fff;
+        text-align: center !important;
+        font-family: 'Nakheel-Textregular';
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    label {
+        font-weight: 500;
+        margin-bottom: 0px !important;
+    }
+
+    .liwidth {
+        width: 39% !important;
+    }
+
+    .txtcolor {
+        color: #fff;
+    }
+
+    .RoundCor {
+        padding-bottom: 20px;
+        border-radius: 10px;
+    }
+
+    .color1 {
+        background: #00263A;
+    }
+
+    .color2 {
+        background: #00617F;
+    }
+
+    .color3 {
+        background: #0D87AC;
+    }
+
+    .color4 {
+        background: #30ACD2;
+    }
+
+    .color5 {
+        background: #48C7EE;
+    }
+
+    .color6 {
+        background: #3CD1FF;
+    }
+
+    .color7 {
+        background: #30ACD2;
+    }
+
+    .widget-chat-list {
+        height: 325px !important;
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 500px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .txtheader {
+        margin-left: 14px;
+        margin-top: 5px;
+        color: #fff;
+        font-family: 'Nakheel-Textregular';
+    }
+</style>
+<body>
+    <div class="container-fluid mb-3">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="HD1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                        <h5 class="FilterHead">Filter Option</h5>
+                    </button>
+                </h1>
+                <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                    <div class="accordion-body">
+                        <div>
+                            <input type="hidden" id="Zone_Name" />
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-lg-3">
+                                <label>Year</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Year" onchange="Filter();">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Zone</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Zone" onchange="Fn_Zone(this.value)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Community" onchange="Fn_Community(this.value);Get_SCH_List(1)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Building</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Building">
+                                </select>
+                            </div>
+                            <div class="col-lg-3" style="display:none">
+                                <label>Master Community</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Master_Community" onchange="Filter(1)">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Filter By Date</label><br />
+                                <div class="form-group">
+                                    <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="FilterDate()" />
+                                    <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                                </div>
+                            </div>
+                            <div id="Frm_ToDiv" class="col-lg-3" style="display:none;">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label class="form-check-label" for="inlineRadio2">From</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="DateFilter()" />
+                                        <label class="form-check-label" for="inlineRadio2">To</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="DateFilter()" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <label class="txt_label">Drill Management</label>
+                </div>
+                <div class="card-body">
+                    <div class="chat-message-list widget-chat-list mx-n4" data-simplebar="init">
+                        <div class="simplebar-wrapper" style="margin: 0px;">
+                            <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask">
+                                <div class="simplebar-offset" style="right: -17px; bottom: 0px;">
+                                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content" style="padding: 0px;">
+                                            <div class="px-3">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1">
+                                                        <h6 class="liwidth txtcolor">Type</h6>
+                                                        <h6 class="align-middle txtcolor">Planned</h6>
+                                                        <h6 class="align-middle txtcolor">Completed</h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2">
+                                                        <h6 class="liwidth txtcolor">Fire</h6>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="Fire_Planned"></span></a>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="Fire_Completed"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Drowning</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="Drowning_Planned"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="Drowning_Completed"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color4">
+                                                        <h6 class="liwidth txtcolor">Elevator Rescue</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Elevator_Rescue_Plan"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Elevator_Rescue_Compl"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color5">
+                                                        <h6 class="liwidth txtcolor">Spill Control</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Spill_Control_Planned"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Spill_Control_Completed"></span></a>
+                                                    </li>
+                                                    @*<li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color6">
+                                                    <h6 class="liwidth txtcolor">Property Damage</h6>
+                                                    <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill">25</span></a>
+                                                    <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill">25</span></a>
+                                                    </li>*@
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color7 mb-2">
+                                                        <h6 class="liwidth txtcolor">Total</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill  bg-warning" id="Total_Planned"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill bg-success" id="Total_Completed"></span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="simplebar-placeholder" style="width: auto; height: 554px;"></div>
+                        </div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 288px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+                    </div>
+                </div>
+                <!-- end card body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <label class="txt_label">Drill Improvement Actions</label>
+                </div>
+                <div class="card-body">
+                    <div class="chat-message-list widget-chat-list mx-n4" data-simplebar="init">
+                        <div class="simplebar-wrapper" style="margin: 0px;">
+                            <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask">
+                                <div class="simplebar-offset" style="right: -17px; bottom: 0px;">
+                                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content" style="padding: 0px;">
+                                            <div class="px-3">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1">
+                                                        <h6 class="liwidth txtcolor">Type</h6>
+                                                        <h6 class="align-middle txtcolor">Pending</h6>
+                                                        <h6 class="align-middle txtcolor">Completed</h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2">
+                                                        <h6 class="liwidth txtcolor">Fire</h6>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="Fire_Pending"></span></a>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="Fire_Comp"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Drowning</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="Drowning_Pending"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="Drowning_Comp"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color4">
+                                                        <h6 class="liwidth txtcolor">Elevator Rescue</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Elevator_Rescue_Pending"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Elevator_Rescue_Comp"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color5">
+                                                        <h6 class="liwidth txtcolor">Spill Control</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Spill_Control_Pending"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill" id="Spill_Control_Comp"></span></a>
+                                                    </li>
+                                                    @*<li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color6">
+                                                    <h6 class="liwidth txtcolor">Property Damage</h6>
+                                                    <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill">25</span></a>
+                                                    <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill">25</span></a>
+                                                    </li>*@
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color7 mb-2">
+                                                        <h6 class="liwidth txtcolor">Total</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill  bg-warning" id="Total_Pending"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill bg-success" id="total_comp"></span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="simplebar-placeholder" style="width: auto; height: 554px;"></div>
+                        </div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 288px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+                    </div>
+                </div>
+                <!-- end card body -->
+            </div>
+            <!-- end card -->
+        </div>
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <label class="txt_label">Emergency Mitigation</label>
+                </div>
+                <div class="card-body">
+                    <div class="chat-message-list widget-chat-list mx-n4" data-simplebar="init">
+                        <div class="simplebar-wrapper" style="margin: 0px;">
+                            <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask">
+                                <div class="simplebar-offset" style="right: -17px; bottom: 0px;">
+                                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content" style="padding: 0px;">
+                                            <div class="px-3 ">
+                                                <ul class="list-group list-group-flush Emergency_Mitigation">
+                                                    @*  <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1">
+                                                    <h6 class="liwidth txtcolor">Type</h6>
+                                                    <h6 class="align-middle txtcolor">Trigged</h6>
+                                                    <h6 class="align-middle txtcolor">Completed</h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2">
+                                                    <h6 class="liwidth txtcolor">Rain</h6>
+                                                    <a href="#"><span class="badge rounded-pill align-middle">50</span></a>
+                                                    <a href="#"><span class="badge rounded-pill align-middle">50</span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                    <h6 class="liwidth txtcolor">Sand storm/ Wind</h6>
+                                                    <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle">25</span></a>
+                                                    <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle">25</span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                    <h6 class="liwidth txtcolor">Fog</h6>
+                                                    <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle">25</span></a>
+                                                    <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle">25</span></a>
+                                                    </li>*@
+
+
+                                                    @*<li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color7 mb-2">
+                                                    <h6 class="liwidth txtcolor">Total</h6>
+                                                    <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill  bg-warning">25</span></a>
+                                                    <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill bg-success">25</span></a>
+                                                    </li>*@
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="simplebar-placeholder" style="width: auto; height: 554px;"></div>
+                        </div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 288px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+                    </div>
+                </div>
+                <!-- end card body -->
+            </div>
+            <!-- end card -->
+        </div>
+
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <label class="txt_label">Emergency Escalation</label>
+                </div>
+                <div class="card-body">
+                    <div class="chat-message-list widget-chat-list mx-n4" data-simplebar="init">
+                        <div class="simplebar-wrapper" style="margin: 0px;">
+                            <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask">
+                                <div class="simplebar-offset" style="right: -17px; bottom: 0px;">
+                                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content" style="padding: 0px;">
+                                            <div class="px-3">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1">
+                                                        <h6 class="liwidth txtcolor">Escalation Level</h6>
+                                                        <h6 class="align-middle txtcolor">Escalations</h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2">
+                                                        <h6 class="liwidth txtcolor">Bronze</h6>
+                                                        <h6 class="align-middle txtcolor" id="Bronze_Count"></h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Silver</h6>
+                                                        <h6 class="align-middle txtcolor" id="SilverCount"></h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Gold</h6>
+                                                        <h6 class="align-middle txtcolor" id="GoldCount"></h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Completed</h6>
+                                                        <h6 class="align-middle txtcolor" id="CompletedCount"></h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Escalate to Bronze/Silver</h6>
+                                                        <h6 class="align-middle txtcolor" id="Esc_Bro_SilCount"></h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color4 mb-2">
+                                                        <h6 class="liwidth txtcolor">Total</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill  bg-warning" id="Total_Count"></span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="simplebar-placeholder" style="width: auto; height: 554px;"></div>
+                        </div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 288px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+                    </div>
+                </div>
+                <!-- end card body -->
+            </div>
+            <!-- end card -->
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col-xl-3">
+            <div class="card">
+                <div class="card-header">
+                    <label class="txt_label">ERT</label>
+                </div>
+                <div class="card-body">
+                    <div class="chat-message-list widget-chat-list mx-n4" data-simplebar="init">
+                        <div class="simplebar-wrapper" style="margin: 0px;">
+                            <div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask">
+                                <div class="simplebar-offset" style="right: -17px; bottom: 0px;">
+                                    <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
+                                        <div class="simplebar-content" style="padding: 0px;">
+                                            <div class="px-3">
+                                                <ul class="list-group list-group-flush">
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1">
+                                                        <h6 class="liwidth txtcolor">Type</h6>
+                                                        <h6 class="align-middle txtcolor">Valid</h6>
+                                                        <h6 class="align-middle txtcolor">Invalid</h6>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2">
+                                                        <h6 class="liwidth txtcolor">Fire Warden</h6>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="FireWarden_Planned"></span></a>
+                                                        <a href="#"><span class="badge rounded-pill align-middle" id="FireWarden_Completed"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color3">
+                                                        <h6 class="liwidth txtcolor">Fire Aider</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="FireAider_Planned"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill align-middle" id="FireAider_Completed"></span></a>
+                                                    </li>
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color7 mb-2">
+                                                        <h6 class="liwidth txtcolor">Total</h6>
+                                                        <a href="#" class="" onclick="event.preventDefault();"><span class="badge rounded-pill  bg-warning" id="Fire_Total_Planned"></span></a>
+                                                        <a href="#" onclick="event.preventDefault();"><span class="badge rounded-pill bg-success" id="Fire_Total_Completed"></span></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="simplebar-placeholder" style="width: auto; height: 554px;"></div>
+                        </div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 288px; transform: translate3d(0px, 0px, 0px); display: block;"></div></div>
+                    </div>
+                </div>
+                <!-- end card body -->
+            </div>
+        </div>
+        <div class="col-xl-9">
+            <div class="card" style="height: 94%;">
+                <div class="card-header">
+                    <lable class="txt_lable">Zone-Wise Drill Planned vs Completed Trends</lable>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div id="Graph2" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div><!--end card-->
+        </div>
+    </div>
+    @*<div class="row mb-3">
+    <div class="col-sm-12">
+    <div class="card" style="height: 96%;">
+    <div class="card-header">
+    <lable class="txt_lable">Month-Wise Drill Planned vs Completed Trends</lable>
+    </div><!-- end card header -->
+    <div class="card-body">
+    <div id="Graph1" class="apex-charts" dir="ltr"></div>
+    </div>
+    </div><!--end card-->
+    </div>
+
+    </div>*@
+
+    <!-- Modal Pop Up -->
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Incident Mapping</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6"> <div id="map-canvas_view"></div></div>
+
+                        <div class="col-6">
+                            <div class="col-md-12">
+                                <div class="">
+                                    <h5>Based on Building</h5>
+                                    <table id="Based_Building" class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 100%;">Building Name</th>
+                                                <th>Time</th>
+                                                <th>Report by</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="MappingBuildTBody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div><br />
+                            <div class="col-md-12">
+                                <div class="">
+                                    <h5>Incident Type</h5>
+                                    <table class="table table-striped dt-responsive nowrap tblround dataTable no-footer dtr-inline tbl_card">
+                                        <thead>
+                                            @*style="background: #60605f;">*@
+                                            <tr>
+                                                <th style="width:100%;">Type of Incident</th>
+                                                <th style="width:100%;">Count</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="IncidentTypeTBody">
+                                            @*<tr>
+                                            <td>Palm Jumeriah</td>
+                                            <td>10.30AM</td>
+                                            </tr>
+                                            <tr>
+                                            <td>Al Furjan</td>
+                                            <td>11.30AM</td>
+                                            </tr>
+                                            <tr>
+                                            <td>Logo Islands</td>
+                                            <td>12.45PM</td>
+                                            </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <script src="~/assets/js/apexcharts.js"></script>
+    <script src="~/assets/js/emr_common/common.js"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ACTIONS: "#Total_Action",
+            ACTIONS_COMPLETED: "#Total_Action_Completed",
+            ACTION_PENDING: "#Total_Action_Pending",
+            BUSINESS_UNIT_ID: "#Business_Unit_Id",
+            PROJ_BUILD_ID: "#Project_Building_Id",
+            DRP_YEAR: "#Drp_Year",
+            LAST_SIX: "#LastSix",
+            LAST_THREE: "#LastThree",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            PB_DIV: "#PB_Div",
+            DRP_CAT: "#Drp_Cat",
+            MOST_INJURED: "#MostInjured",
+            CARD_MODEL: "#ImpactPop",
+            IMAPACT_DIV_TBODY: "#ImapactDiv_TBODY",
+            POP_UP_TABLE: "#ImapactDivTable",
+            ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community"
+        });
+        $(function () {
+            let currentYear = new Date().getFullYear();
+            LOAD_ZONE();
+            LoadYear(currentYear);
+            EMR_Load();
+            //DrawColumnGraph();
+            //DrawMixedGraph();
+        });
+
+        function EMR_Load() {
+            var sh = true;
+            let yr = "All";
+            let Zone = "All";
+            let Community_Id = "";
+            let Building_Id = "";
+            let From_Date = "";
+            let To_date = "";
+
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: ''
+            };
+            let Dash_data = EMR_GetDB_data(model, '/Emergency/GetEmergencyDashGraph');
+            EMR_Dash_Data(Dash_data);
+        }
+        function EMR_GetDB_data(model, url) {
+            let H_data;
+            $.ajax({
+                url: url,
+                type: "POST",
+                cache: false,
+                async: false,
+                data: { entity: model },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        H_data = data;
+                    }
+                    else {
+                        H_data = null;
+                    }
+                },
+                error: function (error) {
+                }
+            });
+            return H_data;
+        }
+
+        function EMR_Dash_Data(data) {
+            $(data.Total_Emer_List).each(function (i, e) {
+                $("#Fire_Planned").text(0);
+                $("#Fire_Completed").text(0);
+                $("#Drowning_Planned").text(0);
+                $("#Drowning_Completed").text(0);
+                $("#Elevator_Rescue_Plan").text(0);
+                $("#Elevator_Rescue_Compl").text(0);
+                $("#Spill_Control_Planned").text(0);
+                $("#Spill_Control_Completed").text(0);
+                $("#Total_Planned").text(0);
+                $("#Total_Completed").text(0);
+
+                $("#Fire_Planned").text(e.Fire_Planned);
+                $("#Fire_Completed").text(e.Fire_Completed);
+                $("#Drowning_Planned").text(e.Drowning_Planned);
+                $("#Drowning_Completed").text(e.Drowning_Completed);
+                $("#Elevator_Rescue_Plan").text(e.Elevator_Rescue_Planned);
+                $("#Elevator_Rescue_Compl").text(e.Elevator_Rescue_Completed);
+                $("#Spill_Control_Planned").text(e.Spill_Control_Planned);
+                $("#Spill_Control_Completed").text(e.Spill_Control_Completed);
+                $("#Total_Planned").text(e.Total_Planned);
+                $("#Total_Completed").text(e.Total_Completed);
+            });
+            $(data.Total_Emer_Drill_Improve_List).each(function (i, e) {
+                $("#Fire_Pending").text(0);
+                $("#Fire_Comp").text(0);
+                $("#Drowning_Pending").text(0);
+                $("#Drowning_Comp").text(0);
+                $("#Elevator_Rescue_Pending").text(0);
+                $("#Elevator_Rescue_Comp").text(0);
+                $("#Spill_Control_Pending").text(0);
+                $("#Spill_Control_Comp").text(0);
+                $("#Total_Pending").text(0);
+                $("#total_comp").text(0);
+
+                $("#Fire_Pending").text(e.Fire_Pending);
+                $("#Fire_Comp").text(e.Fire_Completed);
+                $("#Drowning_Pending").text(e.Drowning_Pending);
+                $("#Drowning_Comp").text(e.Drowning_Completed);
+                $("#Elevator_Rescue_Pending").text(e.Elevator_Rescue_Pending);
+                $("#Elevator_Rescue_Comp").text(e.Elevator_Rescue_Completed);
+                $("#Spill_Control_Pending").text(e.Spill_Control_Pending);
+                $("#Spill_Control_Comp").text(e.Spill_Control_Completed);
+                $("#Total_Pending").text(e.Total_Pending);
+                $("#total_comp").text(e.Total_Completed);
+            });
+
+            $(".Emergency_Mitigation").append('<li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color1"><h6 class="liwidth txtcolor">Type</h6><h6 class="align-middle txtcolor">Trigged</h6><h6 class="align-middle txtcolor">Completed </h6></li>');
+            $(data.Total_Emer_Mitigation_List).each(function (i, e) {
+                $(".Emergency_Mitigation").append('<li class="list-group-item d-flex justify-content-between align-items-center RoundCor Space_Adj color2"><h6 class="liwidth txtcolor">' + e.Name + '</h6><a href="#"><span class="badge rounded-pill align-middle">' + e.Counts_Triggered + '</span></a><a href="#"><span class="badge rounded-pill align-middle">' + e.Counts_completed + '</span></a></li>')
+            });
+
+            $(data.Total_Emer_Escalation_List).each(function (i, e) {
+                $("#Bronze_Count").text(0);
+                $("#SilverCount").text(0);
+                $("#GoldCount").text(0);
+                $("#CompletedCount").text(0);
+                $("#Esc_Bro_SilCount").text(0);
+                $("#Total_Count").text(0);
+
+                $("#Bronze_Count").text(e.Bronze);
+                $("#SilverCount").text(e.Silver);
+                $("#GoldCount").text(e.Gold);
+                $("#CompletedCount").text(e.Completed);
+                $("#Esc_Bro_SilCount").text(e.Escalate_Bronze_Silver);
+                $("#Total_Count").text(e.Total);
+
+            });
+            $(data.Total_ERT_List).each(function (i, e) {
+                $("#FireWarden_Planned").text(0);
+                $("#FireWarden_Completed").text(0);
+                $("#FireAider_Planned").text(0);
+                $("#FireAider_Completed").text(0);
+                $("#Fire_Total_Planned").text(0);
+                $("#Fire_Total_Completed").text(0);
+
+                $("#FireWarden_Planned").text(e.Valid_Fire_Warden);
+                $("#FireWarden_Completed").text(e.NotValid_Fire_Warden);
+                $("#FireAider_Planned").text(e.Valid_Fire_Aider);
+                $("#FireAider_Completed").text(e.NotValid_Fire_Aider);
+                $("#Fire_Total_Planned").text(e.Total_Valid);
+                $("#Fire_Total_Completed").text(e.Total_Invalid);
+            });
+            Drill_Comp_Plan_ZoneWise(data);
+        }
+        function LoadYear(val) {
+            $(UI_Fields.DRP_YEAR).empty();
+            $(UI_Fields.DRP_YEAR).append("<option selected value='All' style='text-align:center'>All</option>");
+            for (let i = val; i >= 2022; i--) {
+                $(UI_Fields.DRP_YEAR).append("<option class='center' value=" + i + ">" + i + "</option>");
+            }
+        }
+        function Drill_Comp_Plan_ZoneWise(data) {
+            var CompletedData = [];
+            var Planned_Data = [];
+            var Completed_Data = [];
+            var Monthdata = [];
+            if (data != null) {
+                $(data.Total_Zone_Comp_Count).each(function (i, a) {
+                    Monthdata.push(a.Name);
+                    CompletedData.push(a.Completed_Count);
+                    Planned_Data.push(a.Planned_Count);
+
+                });
+                DrawCompletedZoneWise(Monthdata, CompletedData, Planned_Data, 'Permit Type data');
+            }
+            else {
+                toastr.error(data.MESSAGE, "Error");
+            }
+        }
+        function DrawCompletedZoneWise(arr, arr1, arr2, Name) {
+           var options = {
+                series: [
+                    {
+                        name: "Completed",
+                        data: arr1
+                    },
+                    {
+                        name: "Planned",
+                        data: arr2
+                }],
+                chart: {
+                    type: "bar",
+                    height: 290,
+
+                    toolbar: {
+                        show: true,
+                        download: true,
+                    }
+                },
+                noData: {
+                    text: "No data Available",
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    offsetX: 0,
+                    offsetY: 0,
+                    style: {
+                        color: "#000",
+                        fontSize: '14px',
+                    }
+                },
+                responsive: [{
+                    breakpoint: 4,
+                    options: {
+                        legend: {
+                            position: "bottom",
+                            offsetX: -10,
+                            offsetY: 0
+                        }
+                    }
+                }],
+                xaxis: {
+                    categories: arr
+                },
+                yaxis: {
+
+                },
+                grid: {
+                    borderColor: "#f1f1f1"
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (t) {
+                            return t
+                        }
+                    }
+                },
+                colors: ["#00263A", "#00617F"],
+            };
+            var Value = new ApexCharts(document.querySelector("#Graph2"), options).render();
+        }
+                //function DrawColumnGraph(arr) {
+                //    var options = {
+                //        series: [{
+                //            name: "Planned",
+                //            data: [74, 83, 102, 97, 86, 106, 93, 114, 94, 11, 11, 11]
+                //        }, {
+                //            name: "Completed",
+                //            data: [46, 57, 59, 54, 62, 58, 64, 60, 66, 11, 3, 3]
+                //        }],
+                //        chart: {
+                //            type: 'bar',
+                //            height: 230
+                //        },
+                //        plotOptions: {
+                //            bar: {
+                //                horizontal: false,
+                //                columnWidth: '55%',
+                //                endingShape: 'rounded'
+                //            },
+                //        },
+                //        dataLabels: {
+                //            enabled: true,
+                //            textAnchor: 'middle',
+                //            style: {
+                //                colors: ['#fff']
+                //            },
+                //            formatter: function (val, opts) {
+                //                return val
+                //            },
+                //            offsetX: 0,
+                //            dropShadow: {
+                //                enabled: true
+                //            }
+                //        },
+                //        stroke: {
+                //            show: true,
+                //            width: 2,
+                //            colors: ['transparent']
+                //        },
+                //        colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                //        xaxis: {
+                //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                //        },
+                //        fill: {
+                //            opacity: 1
+                //        },
+                //        tooltip: {
+                //            y: {
+                //                formatter: function (val) {
+                //                    return val
+                //                }
+                //            }
+                //        }
+                //    };
+
+                //    var chart = new ApexCharts(document.querySelector("#Graph1"), options);
+                //    chart.render();
+                //}
+                //function DrawMixedGraph() {
+                //    let options = {
+                //        series: [{
+                //            name: 'Planned',
+                //            type: 'column',
+                //            data: [74, 83, 102, 97, 86, 106, 93, 114, 94, 11, 11, 11]
+
+                //        }, {
+                //            name: 'Completed',
+                //            type: 'column',
+                //            data: [46, 60, 100, 90, 80, 97, 90, 100, 80, 11, 10, 10]
+                //        }],
+                //        chart: {
+                //            height: 350,
+                //            type: 'line',
+                //            stacked: false
+                //        },
+                //        dataLabels: {
+                //            enabled: true,
+                //            enabledOnSeries: [2],
+                //            formatter: function (val) {
+                //                return val + '%';
+                //            }
+                //        },
+                //        stroke: {
+                //            width: [1, 1, 4]
+                //        },
+                //        colors: ["#00263A", "#00617F", "#62aa7b"],
+                //        xaxis: {
+                //            categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                //        },
+                //        yaxis: [
+                //            {
+                //                axisTicks: {
+                //                    show: true,
+                //                },
+                //                axisBorder: {
+                //                    show: true,
+                //                    color: '#00263A'
+                //                },
+                //                labels: {
+                //                    style: {
+                //                        colors: '#00263A',
+                //                    }
+                //                },
+                //                title: {
+                //                    text: "Planned",
+                //                    style: {
+                //                        color: '#00263A',
+                //                    }
+                //                },
+                //                tooltip: {
+                //                    enabled: true
+                //                },
+                //                //tickAmount: 10,
+                //            },
+                //            {
+                //                seriesName: 'Completed',
+                //                opposite: true,
+                //                axisTicks: {
+                //                    show: true,
+                //                },
+                //                axisBorder: {
+                //                    show: true,
+                //                    color: '#00617F'
+                //                },
+                //                labels: {
+                //                    style: {
+                //                        colors: '#00617F',
+                //                    }
+                //                },
+                //                title: {
+                //                    text: "Completed",
+                //                    style: {
+                //                        color: '#00617F',
+                //                    }
+                //                },
+                //                // tickAmount: 10
+                //            },
+                //            {
+                //                seriesName: 'Percentage',
+                //                opposite: true,
+                //                axisTicks: {
+                //                    show: false,
+                //                },
+                //                axisBorder: {
+                //                    show: true,
+                //                    color: '#0D87AC'
+                //                },
+                //                labels: {
+                //                    style: {
+                //                        colors: '#0D87AC',
+                //                    },
+                //                },
+                //                title: {
+                //                    text: "Percentage",
+                //                    style: {
+                //                        color: '#0D87AC',
+                //                    }
+                //                },
+                //                tickAmount: 10
+                //            },
+                //        ],
+                //        tooltip: {
+                //            fixed: {
+                //                enabled: true,
+                //                position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
+                //                offsetY: 30,
+                //                offsetX: 60
+                //            },
+                //        },
+                //        noData: {
+                //            text: "No data Available",
+                //            align: 'center',
+                //            verticalAlign: 'middle',
+                //            offsetX: 0,
+                //            offsetY: 0,
+                //            style: {
+                //                color: "#000",
+                //                fontSize: '14px',
+                //            }
+                //        },
+                //        legend: {
+                //            horizontalAlign: 'left',
+                //            offsetX: 40
+                //        }
+
+                //    };
+                //    let chart = new ApexCharts(document.querySelector("#Graph2"), options);//(chart = new ApexCharts(document.querySelector("#clustered"), options)).render();
+                //    chart.render();
+                //}
+    </script>
+</body>
+

@@ -1,0 +1,508 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Action Closure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+
+@model IReadOnlyCollection<Nakheel_Web.Models.IncidentReport.Corrective_Assign_Action>;
+
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="">Action Closure List</h4></div>
+                    <div class="col-lg-2">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblActionClosure" class="table table-striped dt-responsive nowrap tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Description Actions</th>
+                            <th>Priority</th>
+                            <th>Target Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">NCM-HSSE-@item.Inc_Id</td>
+                                    <td align="left" valign="middle">@item.Description_Actions</td>
+                                    <td align="left" valign="middle">@item.Priority</td>
+                                    <td align="left" valign="middle">@item.Target_Date</td>
+                                    @if (item.Status == "Action Closure Pending")
+                                    {
+                                        <td align="left" valign="middle" style="width: 360px;white-space: pre-wrap;"><span class="badge bg-warning">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_Edit(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                @if (LoginClass.Role_Id == "5")
+                                                {
+                                                    <a onclick="Closure_ReAssign(@item.Created_By,@item.Corrective_Action_Id,@item.Zone,@item.Community_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Re-Assign " aria-label="View"> <i class="mdi mdi-sync font-size-20"></i></a>
+                                                }
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (item.Status == "Closure Verification Pending")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                                {
+                                                    <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                }
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (item.Status == "Action Closure Approved")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (item.Status == "Action Closure Rejected")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_Edit_Rej(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="Inc_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Incident </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewIncidentList">
+                </div>
+                <div id="Edit_Closure_Action">
+                </div>
+                <div id="ActionClosre_Eviden">
+                    <div class="row">
+                        <input type="hidden" id="Corrective_Action_Id" />
+                        <label for="example-number-input" class="col-md-4 col-form-label">Action Taken</label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Action_Taken_Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-12">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ReassingEmployee" style="display:none">
+                    <input type="hidden" id="corr_id" />
+                    <div class="col-md-6">
+                        <label class="form-label">Re-Assign Employee <span class="requ">*</span></label>
+                        <select class="form-control EmpListName" name="Involved_Department_Contractor" id="Involved_Department_Contractor"></select>
+                        <label id="txtvalidemailaction_remarks" style="color:red"> </label>
+                    </div><br />
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_ReAssign()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Inc_View_Evidence_Photos" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    
+                    <div class="col-lg-10"> <h4 class="card-title">View Incident </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback_Ev" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div id="ViewIncidentList_Ev">
+                </div>
+                <div id="ViewIncidentList_Ev_Photos">
+                </div>
+
+                @if (LoginClass.Role_Id == "55")
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Ev()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Ev()" class="btn btn-danger waves-effect waves-light submit" style="cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MAIN_TABLE: "#tblActionClosure",
+        TBODY_TABLE: "#GetIncidentList",
+    });
+
+    $(document).ready(function () {
+
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    })
+</script>
+
+<script>
+    $(document).ready(function () {
+        ApplySelect2CC("#Involved_Department_Contractor");
+
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Incident/UploadPhotoEvidence',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        $('select[name=Involved_Department_Contractor]').change(function () {
+            $('#txtvalidemailaction_remarks').text('');
+        });
+    });
+
+    function Closure_Edit(val, Corrective_Action_Id) {
+        $("#Corrective_Action_Id").val(Corrective_Action_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View").show(100);
+        $("#ActionClosre_Eviden").show(100);
+        $("#ReassingEmployee").hide(100);
+        Hzurl = '/Incident/_ViewIncidentReport';
+        Hzurl += '/?Inc_Id=' + val;
+        $("#ViewIncidentList").load(Hzurl);
+    }
+
+    function Closure_Edit_Rej(val, Corrective_Action_Id) {
+        debugger;
+        $("#Corrective_Action_Id").val(Corrective_Action_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View").show(100);
+        $("#ActionClosre_Eviden").hide();
+        $("#Edit_Closure_Action").show();
+        $("#ReassingEmployee").hide(100);
+        Hzurl = '/Incident/_ViewIncidentReport';
+        Hzurl += '/?Inc_Id=' + val;
+        $("#ViewIncidentList").load(Hzurl);
+       
+        Hzurl = '/Incident/_ViewIncidentClosureEv_edit';
+        Hzurl += '/?Corrective_Action_Id=' + Corrective_Action_Id;
+        $("#Edit_Closure_Action").load(Hzurl);
+
+    }
+
+    function Closure_ReAssign(val, Corrective_Action_Id, Zone, Community_Id) {
+        $("#corr_id").val(Corrective_Action_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View").show(100);
+        $("#ActionClosre_Eviden").hide(100);
+        $("#ReassingEmployee").show(100);
+        Hzurl = '/Incident/_ViewIncidentReport';
+        Hzurl += '/?Inc_Id=' + val;
+        $("#ViewIncidentList").load(Hzurl);
+        Load_Emp_List("Supervisor", Zone, Community_Id);
+    }
+
+    function Closure_View(val, Corrective_Action_Id) {
+        $("#Corrective_Action_Id").val(Corrective_Action_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View_Evidence_Photos").show(100);
+        Hzurl = '/Incident/_ViewIncidentReport';
+        Hzurl += '/?Inc_Id=' + val;
+        $("#ViewIncidentList_Ev").load(Hzurl);
+        Hzurl = '/Incident/_ViewIncidentClosureEv';
+        Hzurl += '/?Corrective_Action_Id=' + Corrective_Action_Id;
+        $("#ViewIncidentList_Ev_Photos").load(Hzurl);
+    }
+
+    $("#btn_ViewIncback").on('click', function () {
+        $("#List_View").show(100);
+        $("#Inc_View").hide(100);
+    });
+
+    $("#btn_ViewIncback_Ev").on('click', function () {
+        $("#List_View").show(100);
+        $("#Inc_View_Evidence_Photos").hide(100);
+    });
+
+    function btn_Submit_Action_Closure() {
+        debugger;
+        let sts = "0";
+        if (@LoginClass.Role_Id == "5") {
+            sts = "7";
+        }
+        else {
+            sts = "4";
+        }
+
+        var Obj = {
+           
+            Inc_Id: $("#Inv_Inc_Id").val(),
+            Corrective_Action_Id: $("#Corrective_Action_Id").val(),
+            Action_Taken_Description: $("#Action_Taken_Description").val(),
+            Status: sts
+        };
+        $.ajax({
+            url: "/Incident/Add_Corrective_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function btn_Submit_Action_Closure_Ev() {
+        var Obj = {
+            Corrective_Action_Id: $("#hdn_Corrective_Action_Id").val(),
+            Inc_Id: $("#hdn_Inc_Id").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Corrective_Assign_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Load_Emp_List(Role_Name, Zone_Id, Community_Id) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $("#Involved_Department_Contractor").empty();
+                $("#Involved_Department_Contractor").append("<option selected value='0' disabled>--Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $("#Involved_Department_Contractor").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+
+    function btn_Submit_Action_ReAssign() {
+        debugger
+        if ($("#Involved_Department_Contractor").val() == "0" || $("#Involved_Department_Contractor").val() == null) {
+            $('#txtvalidemailaction_remarks').text("Please Select Re-Assign Employee");
+            return false;
+        }
+        else {
+            var Obj = {
+                Corrective_Action_Id: $("#corr_id").val(),
+                Person_Responsible_Id: $("#Involved_Department_Contractor").val(),
+                Inc_Id: $("#Inv_Inc_Id").val(),
+            };
+            $.ajax({
+                url: "/Incident/Re_Assign_Corrective_Assign_Action",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    }
+</script>

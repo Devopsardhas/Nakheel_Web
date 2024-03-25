@@ -1,0 +1,914 @@
+﻿@{
+    Layout = null;
+}
+<link href="@Url.Content("~/assets/css/bootstrap.min.css")" id="bootstrap-style" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/css/icons.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/css/app.min.css")" id="app-style" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/pages/datatables/css/datatables.bootstrap5.min.css")" rel="stylesheet">
+<link href="@Url.Content("~/assets/libs/choices.js/public/assets/styles/choices.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/libs/flatpickr/flatpickr.min.css")" rel="stylesheet">
+<link href="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/libs/toastr/build/toastr.min.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/css/datatablebutt.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/fonts/nakheelfont.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/css/layout.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/js/multiselect/select_2.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/js/multiselect/select_2_b.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/pages/datatables/jquery.min.js")"></script>
+
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<style>
+    #page-topbar {
+        position: inherit;
+        top: 0;
+        right: 0;
+        left: 255px;
+        z-index: 1005;
+        background-color: #fff;
+        -webkit-transition: all .2s;
+        transition: all .2s;
+    }
+
+    #page-topbar {
+        border: 0px solid #f1f3f7;
+        border-top: 0px solid #f1f3f7;
+        border-bottom: 0px solid #f1f3f7;
+        border-radius: 0px;
+    }
+
+    .page-content {
+        padding: calc(-13px + 24px) calc(24px / 2) 0 calc(24px / 2);
+    }
+
+    .tblround {
+        border-collapse: collapse !important;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .file-preview {
+        display: none !important;
+    }
+</style>
+
+<body data-sidebar="dark">
+    <div id="layout-wrapper">
+        <header id="page-topbar" class="isvertical-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item user text-start d-flex align-items-center" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="" src="~/assets/images/login_logo.jpg" alt="NAKHEEL" height="30px">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <div class="row" id="Add_Provider_SignUp">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <br />
+                                        <div class="col-lg-10"> <h4 class="card-title">Service Provider Document Submission </h4></div>
+                                        <div class="col-lg-2">
+                                        </div>
+                                    </div>
+                                </div><!-- end card header -->
+                                <div class="card-body">
+                                    <div class="row" id="Service_Provider_Company">
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="Email_Id">Company Name (As Per Contract)<span class="requ">*</span></label>
+                                                <input type="text" class="form-control" id="Company_Name" name="Company1_Name" autocomplete="off" onchange="FnCompany_NameDulicheck(this.value)">
+                                                <label id="txtCompanyname" style="color:red"> </label>
+                                                <input type="hidden" id="Company_Id" value="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="Email_Id">Company Mobile No </label>
+                                                <input type="text" class="form-control numbersonly" id="Company_MobileNo" name="Company_MobileNo" autocomplete="off" maxlength="10">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="Email_Id">Company Email </label>
+                                                <input type="email" class="form-control" id="Company_Email" name="Company_Email" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3" id="btnComSubmit">
+                                            <button type="button" class="btn btn-success waves-effect waves-light" onclick="Fn_SubmitCompany()" id="Sign_Submit" style="margin-top: 7%;">
+                                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                            </button>
+                                        </div>
+
+                                        <div class="col-md-3" style="display:none" id="btnConfirm">
+                                            <button type="button" class="btn btn-success waves-effect waves-light" onclick="Fn_ConfirmCompany()" id="Sign_Submit" style="margin-top: 7%;">
+                                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Confirm
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="" style="display:none" id="Service_Provider_Contract">
+                                        <form id="SignUpForm" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                                            <div style="display:none;">
+                                                <div class="form-group">
+                                                    <input class="form-control" name="Contractor_Id" id="SignUp_Id" value="0">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="row">
+                                                    <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-top: 33px">
+                                                    <div class="mb-3">
+                                                        <br />
+                                                        <label class="form-label" for="AddOrder-Billing-Name">Company<span class="requ">*</span></label>
+                                                        <select class="form-control" name="Company_Details" id="Company_Details" disabled>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-top: 33px">
+                                                    <div class="mb-3">
+                                                        <br />
+                                                        <label class="form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                                                        <select class="form-control" name="Business_Unit" id="Business_Unit_Id">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-top: 33px">
+                                                    <div class="mb-3">
+                                                        <br />
+                                                        <label for="" class="form-model">Zone<span class="requ">*</span></label>
+                                                        <select class="form-control" id="Zone_Id" name="Zone" onchange="Fn_Zone(this.value)">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2" style="margin-top: 33px">
+                                                    <br />
+                                                    <label for="" class="form-model">Community<span class="requ">*</span></label>
+                                                    <select class="form-control" id="Community_Id" name="Community" onchange="Fn_Community(this.value)">
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2" style="margin-top: 33px">
+                                                    <br />
+                                                    <label for="example-tel-input" class="form-label">Building<span class="requ">*</span></label>
+                                                    <select class="form-control" placeholder="--Select Building--" name="Building" id="Building_Id" multiple>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <br />
+                                                    <label class="form-label" for="AddOrder-Billing-Name" style="font-size: 12px !important;">Email ID (Will be the user name and login credentials will be sent to this email ID to access the application)<span class="requ">*</span></label>
+                                                    <input type="email" class="form-control" id="Official_Email_Id" name="OfficialEmail_ID" onchange="FnEmailDulicheck(this.value)" autocomplete="off" @*placeholder="Enter Business Unit Name"*@>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="Email_Id">Manager Incharge <span class="requ">*</span></label>
+                                                        <input type="text" class="form-control" id="Manager_Incharge" name="Manager_Inc" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="">Designation<span class="requ">*</span></label>
+                                                        <input type="text" class="form-control" id="Designation" name="Designation" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="AddOrder-Billing-Name">Mobile No<span class="requ">*</span></label>
+                                                        <input type="text" class="form-control numbersonly" id="Mobile_No" name="Manager_Num" maxlength="10" autocomplete="off" @*placeholder="Enter Business Unit Name"*@>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="mb-3 ">
+                                                        <label for="" class="form-model">Contract Start Date<span class="requ">*</span></label>
+                                                        <input type="date" class="form-control" name="Con_Start_Date" id="Contract_Start_Date" placeholder="" onchange="Func_DatetimeValida('#W_Permit_Validity')">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">Contract End Date<span class="requ">*</span></label>
+                                                        <input type="date" class="form-control" name="Con_End_Date" id="Contract_End_Date" placeholder="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">HSE Officer<span class="requ">*</span></label>
+                                                        <input type="text" class="form-control" id="HSE_Officer" name="HSE_Office" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">HSE Officer Email<span class="requ">*</span></label>
+                                                        <input type="email" class="form-control" id="HSE_Officer_Email" name="Hse_Officer_Mail" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3 ">
+                                                        <label for="" class="form-model">HSE Officer Mobile Number<span class="requ">*</span></label>
+                                                        <input type="text" class="form-control numbersonly" id="HSE_Officer_Mobile_Number" name="Hse_Mob_Num" maxlength="10" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">Permit Validity(One Year)<span class="requ">*</span></label>
+                                                        <input type="date" class="form-control" name="G_Valid_Date" id="W_Permit_Validity" placeholder="" onclick="Func_DatetimeValida('#W_Permit_Validity')">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">Scope of Work<span class="requ">*</span></label>
+                                                        <select class="form-control" placeholder="--Select Scope of Work--" name="Scope_of_work" id="Scope_of_work">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="Country">Purchase Order Number / DMS Number <span class="requ">*</span></label>
+                                                        <input type="text" class="form-control" id="Purchase_Order_Number" name="Po_Num" autocomplete="off" onchange="FnPurchaseOrderDulicheck(this.value)">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="Country">Project Title<span class="requ">*</span></label>
+                                                        <input type="text" class="form-control" id="Project_Title" name="Project_Title" autocomplete="off">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label for="" class="form-model">Permit Type<span class="requ">*</span></label>
+                                                        <select class="form-control" placeholder="--Select Permit Type--" name="Contract_Type" id="Contract_Type">
+                                                            <option selected="selected" disabled>--Select--</option>
+                                                            <option value="Long Term">Long Term</option>
+                                                            <option value="Short Term">Short Term</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-10"> <h4 class="card-title">Competency Person</h4></div><br><br>
+                                                <table id="tbl_Corrective_Action" class="table table-striped dt-responsive nowrap tblround">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name & Position</th>
+                                                            <th>Contact</th>
+                                                            <th>Email Id </th>
+                                                            <th>Action</th>
+                                                            <th>
+                                                                <button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Service_Prov" onclick="Work_SuperviosorCP_AddMore();">
+                                                                    <i class="mdi mdi-plus"></i>Add More
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbody_Corrective_Action_Emp">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="col-md-12">
+                                                                    <input type="text" class="form-control Name_Position" id="Name_Position" name="Name_Position" autocomplete="off" required>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="col-md-12">
+                                                                    <input type="text" class="form-control Contact numbersonly" id="Contact" name="Contact" autocomplete="off" maxlength="10" required>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="col-md-12">
+                                                                    <input type="email" class="form-control Email_Id" id="Email_Id" name="Email_Id" autocomplete="off" required>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <label for="example-number-input" class="col-md-4 col-form-label">Work Description</label>
+                                                            <div class="col-md-12">
+                                                                <textarea class="form-control" id="W_Work_Description" name="G_Work_Description" style="height: 171px;resize: none;"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <label for="example-number-input" class="col-md-4 col-form-label">Specific Requirements</label>
+                                                            <div class="col-md-12">
+                                                                <textarea class="form-control" id="W_Specific_Requirements" name="G_Specific_Requirements" style="height: 151px;resize: none;"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <label for="" class="col-form-label">Major HSE Risk <span class="requ">*</span></label>
+                                                    <div class="row" style="margin-left: 0%;">
+                                                        <div id="Major_HSE_Work_List" style="display: contents;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="col-lg-12">
+                                                    <div class="col-lg-10"> <h4 class="card-title">Required Documents<span class="requ">*</span></h4></div>
+                                                    <br>
+                                                    <br>
+                                                    <table id="tblRequiredAttachments" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Document Type</th>
+                                                                <th>Upload Documents (each document should not be more than 3MB)</th>
+                                                                <th>Description</th>
+                                                                <th>Expiry Date</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="Document_upload">
+                                                            <tr class="clstr">
+                                                                <td>Workmen’s Compensation Insurance<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="WitnessReport1"><input type="hidden" value="Workmen’s Compensation Insurance" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Insurance_Details_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="WitnessReport2"><input type="file" class="form-control file" placeholder="" id="file_Insurance_Details_1" onchange="uploadFiles('file_Insurance_Details_1','hdncls_Insurance_Details_Documents_File')" name="StudImage4" accept=".pdf" multiple></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                                <td><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date4" onclick="Func_Datetime('#Doc_Date4')" /></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>Third Party Liability Insurance<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="WitnessReport1"><input type="hidden" value="Third Party Liability Insurance" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Third_partyInsurance_Details_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="WitnessReport2"><input type="file" class="form-control" placeholder="" id="liability_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Third_partyInsurance_Details_Documents_File')" name="StudImage6" accept=".pdf"></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                                <td><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date6" onclick="Func_Datetime('#Doc_Date6')" /></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>HSE Plan<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="HSE Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_HSE_Plan_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id=""><input type="file" class="form-control" placeholder="" id="example_HSE_Plan" onchange="Applicalbe_Documents_File(this,'hdncls_HSE_Plan_Documents_File')" name="StudImage" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" class="form-control ExpiryDate" name="Doc_Date" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>Risk Assessments<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="Risk Assessments" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Risk_Assessments_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="MedicalReport2"><input type="file" class="form-control" placeholder="" id="example_MedicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Risk_Assessments_Documents_File')" name="StudImage1" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" id="Max_Date" value="" class="form-control ExpiryDate" name="Doc_Date1" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>Method Statement<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="TechnicalReport1"><input type="hidden" value="Method Statement" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Method_Statement_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="TechnicalReport2"><input type="file" class="form-control" placeholder="" id="example_TechnicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Method_Statement_Documents_File')" name="StudImage2" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date2" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>Emergency Plan <span class="requ">*</span></td>
+                                                                <td style="display:none;" id="DCDReport1"><input type="hidden" value="Emergency Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Emergency_Plan_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="DCDReport2"><input type="file" class="form-control" placeholder="" id="example_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Emergency_Plan_Documents_File')" name="StudImage3" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date3" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            @*  <tr class="clstr" style="display:none">
+                                                            <td>Welfare Plan <span class="requ">*</span></td>
+                                                            <td style="display:none;" id="DCDReport1"><input type="hidden" value="Welfare Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Welfare_Plan_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                            <td id="DCDReport2"><input type="file" class="form-control" placeholder="" id="Welfare_Plan_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Welfare_Plan_Documents_File')" name="StudImage7" accept=".jpg,.png,.jpeg,.pdf,.doc,.docx"></td>
+                                                            <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date3" /></td>
+                                                            </tr>*@
+                                                            <tr class="clstr">
+                                                                <td>Worker Welfare Plan <span class="requ">*</span></td>
+                                                                <td style="display:none;" id="DCDReport1"><input type="hidden" value="Worker Welfare Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Worker_Welfare_Plan_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="DCDReport2"><input type="file" class="form-control" placeholder="" id="Worker_Welfare_Plan_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Worker_Welfare_Plan_Documents_File')" name="StudImage8" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date3" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td>HSE Officer CV<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="DCDReport1"><input type="hidden" value="HSE Officer CV" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_HSE_Officer_CV_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="DCDReport2"><input type="file" class="form-control" placeholder="" id="HSE_Officer_CV_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_HSE_Officer_CV_Documents_File')" name="StudImage10" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date3" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                            <tr class="clstr">
+                                                                <td><input class="form-check-input OtherDocument" style="vertical-align: sub;" type="checkbox" id="Check_other_Doc" /> Other Document</td>
+                                                            </tr>
+                                                            <tr class="clstr" id="Other_Document" style="display:none">
+                                                                <td><input type="text" class="form-control clsTitle" id="OtherDoc" name="OtherDoc"><span class=""></span></td>
+                                                                <td style="display:none;" id="WitnessReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Another_Doc_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                                <td id="WitnessReport1"><input type="file" class="form-control" placeholder="" id="example_Witness1" onchange="Applicalbe_Documents_File(this,'hdncls_Another_Doc_Documents_File')" name="StudImage5" accept=".pdf"></td>
+                                                                <td style="display:none"><input type="date" value="" class="form-control ExpiryDate" name="Doc_Date5" /></td>
+                                                                <td><textarea class="form-control clsDesc"></textarea></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12" align="center">
+                                                    <button type="submit" class="btn btn-success waves-effect waves-light" id="Sign_Submit">
+                                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Add
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="row" id="View_ServiceProvider_list" style="display:none">
+                                        </div>
+                                    </div>
+                                </div><!-- End Card Boby -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/js/validation/Service_SignUp/SignUpValidation.js"></script>
+
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ADD_INCIDENT_LIST: "#Add_Incident_List",
+            LIST_VIEW: "#List_View",
+            BTN_BACK: "#btn_back",
+            MAIN_TABLE: "#tblIncident",
+            TBODY_TABLE: "#GetIncidentList",
+            BTN_ADD_INC: "#btn_add_incident",
+            INJURED_PERSON_LIST: "#GetInjuredPersonList",
+            TBL_DELETE_BUTTON: ".TblDeleteButton",
+            ASSIGN_TABLE: "#tblIncidentInjuredPerson",
+            INJURY_TYPES_LIST: "#InjuryTypesList",
+            NATURE_INJURY_TYPES_LIST: "#NatureInjuryTypesList",
+            VECHICLE_ACCIDENT_LIST: "#Vechicle_Accident_List",
+            INCIDENT_CATEGORY: ".SelIncident_Category",
+            INCIDENT_TYPE: ".SelIncident_Type",
+            INC_DETAILS_VIEW: "#Inc_View",
+            BTN_VIEW_INC_BACK: "#btn_ViewIncback",
+            VIEW_INCIDENT_LIST: "#ViewIncidentList",
+            M_BUSINESS_UNIT: "#Business_Unit_Id",
+            M_ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            MASTER_COMMUNITY_ID: "#Master_Community_Id",
+            VIEW_BODY_PARTS: "#viewbodyparts",
+            VIEW_EMPLOYEE: "#Employee_Id",
+            MAP_LAT: "#Lat",
+            MAP_LONG: "#Long",
+            GOOGLE_MAP_API: "#GoogleMapApi",
+            VIEW_INVESTIGATION_LIST_APPR: "#ViewInvestigationListAppr",
+            DATEPICKER: ".datepicker",
+            MAJOR_HSE_WORK_LIST: "#Major_HSE_Work_List",
+            TBL_CORRECTIVE_ACTION_EMP: "#tbody_Corrective_Action_Emp",
+            COMPANY_DETAILS: "#Company_Details",
+            VIEW_SERVICEPROVIDER_LIST: "#View_ServiceProvider_list",
+            SCOPE_OF_WORK: "#Scope_of_work"
+
+        });
+
+        $(document).ready(function () {
+            LOAD_BUSINESS_UNIT();
+            LOAD_ZONE();
+            LOAD_SCOPE_OF_WORK();
+            ApplySelect2("#Business_Unit_Id");
+            ApplySelect2("#Zone_Id");
+            ApplySelect2("#Community_Id");
+            ApplySelect2("#Building_Id");
+            ApplySelect2("#Scope_of_work");
+            LoadMajorRisk();
+
+
+            $("#tbl_Corrective_Action").on("click", '.Int_Corrective_Action_DelProv', function () {
+                $(this).closest("tr").remove();
+            });
+
+            $(".numbersonly").keypress(function (e) {
+                if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 9 && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 30 || e.which > 39)) {
+                    //$(this).tooltip('show');
+                    return false;
+                }
+                else {
+                    //$(this).tooltip('hide');
+                    return true;
+                }
+            });
+
+            $('input[name=Company1_Name]').change(function () {
+                $("#txtCompanyname").text('');
+            });
+
+            $("#Check_other_Doc").click(function () {
+                var other = $("#Check_other_Doc").is(":checked");
+                if (other == true) {
+                    $("#Other_Document").show();
+                }
+                else {
+                    $("#Other_Document").hide();
+                }
+            });
+        });
+
+        function ApplySelect2(id) {
+            $(id).select2({
+                placeholder: "--Select--",
+                theme: 'bootstrap-5',
+            });
+        }
+
+        function LOAD_BUSINESS_UNIT() {
+            $.post("@Url.Action("LoadAllBusinessUnit", "Account")", function (data) {
+                $(UI_Fields.M_BUSINESS_UNIT).empty();
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+                });
+            });
+        }
+        function LOAD_ZONE() {
+            $.post("@Url.Action("LoadAllZone", "Account")", function (data) {
+                $(UI_Fields.M_ZONE).empty();
+                $(UI_Fields.M_ZONE).append("<option selected value='' style='text-align:center' disabled> --Select Zone--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                });
+            });
+        }
+
+        function LOAD_SCOPE_OF_WORK() {
+            $.post("@Url.Action("LoadAllScope_of_Work", "Account")", function (data) {
+                $(UI_Fields.SCOPE_OF_WORK).empty();
+                $(UI_Fields.SCOPE_OF_WORK).append("<option selected value='' style='text-align:center' disabled> --Select Zone--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.SCOPE_OF_WORK).append("<option value=" + e.Scope_of_Work_Id + ">" + e.Scope_of_Work + "</option>");
+                });
+            });
+        }
+
+        function Fn_Zone(Zone_Id) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            //$(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $.post("@Url.Action("LoadAllCommunitybyZone", "Account")", { Zone_Id: Zone_Id }, function (data) {
+                $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                });
+            });
+
+            $.post("@Url.Action("LoadAllMasterCommunitybyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+                });
+            });
+            $("#Zone_Id-error").text('');
+        }
+
+        function Fn_Community(Community_Id) {
+            var Zone_Id = $("#Zone_Id").val();
+            $.post("@Url.Action("LoadAllBuildingbyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.BUILDING_ID).empty();
+                $(data).each(function (i, e) {
+                    $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                });
+            });
+            $("#Community_Id-error").text('');
+        }
+
+        function LoadMajorRisk() {
+            $.post("@Url.Action("Load_Master_Major_HSE_Risk","Account")", function (data) {
+                if (data != null) {
+                    var html = "";
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).empty();
+                    $.each(data, function (key, value) {
+                        html += '<div class="col-md-3">';
+                        html += '<div class="form-check mb-3">';
+                        html += '<input class="form-check-input clsMajor_HSE_Work" type="checkbox" name="Risk_Major_List" value="' + value.Major_HSE_Work_Id + '" id="HST_' + value.Major_HSE_Work_Id + '">';
+                        html += '<label class="form-check-label" for="HST_' + value.Major_HSE_Work_Id + '">' + value.Major_HSE_Work_Name + '</label>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+                }
+                else {
+                    var html = "";
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+                }
+            });
+        }
+        var index = 1;
+
+        function Work_SuperviosorCP_AddMore() {
+            var html = "";
+            var var_namepostion = "Name_Position" + index;
+            var var_contact = "Contact" + index;
+            var var_emailId = "Email_Id" + index;
+            var var_Int_Corrective_Actionid = "#Int_Corrective_Action" + index;
+            html += '<tr><td><div class="col-md-12"><input type="text" class="form-control Name_Position" id="' + var_namepostion + '" name="' + var_namepostion + '" autocomplete="off" required></div></td> <td><div class="col-md-12"><input type="text" class="form-control Contact numbersonly" id="' + var_contact + '" name="' + var_contact + '" autocomplete="off" required  maxlength="10"></div></td><td><div class="col-md-12"><input type="email" class="form-control Email_Id" id="' + var_emailId + '" name="' + var_emailId + '" autocomplete="off" required></div></td>'
+            html += '<td><button type="button" class="btn btn-danger Int_Corrective_Action_DelProv">Remove</button></td>< /tr>'
+            $(UI_Fields.TBL_CORRECTIVE_ACTION_EMP).append(html);
+            index++;
+        }
+
+        function Fn_SubmitCompany() {
+            if ($("#Company_Name").val() == "") {
+                $('#txtCompanyname').text("Enter Company Name");
+                return false;
+            }
+
+            var ObjC = {
+                Company_Id: $("#Company_Id").val(),
+                Company_Name: $("#Company_Name").val(),
+                Company_MobileNo: $("#Company_MobileNo").val(),
+                Company_Email: $("#Company_Email").val(),
+            };
+            $.ajax({
+                url: "/Account/Add_Company_Details",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(ObjC),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data.STATUS == true) {
+                        $("#Company_Id").val('');
+                        $("#Company_Name").val('');
+                        $("#Company_MobileNo").val('');
+                        $("#Company_Email").val('');
+                        $("#Service_Provider_Company").hide();
+                        $("#Service_Provider_Contract").show();
+                        $("#Company_Id").val(data.STATUS_CODE);
+                        LoadCompanyDetail(data.STATUS_CODE);
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+
+        function Fn_ConfirmCompany() {
+            var Company_Id = $("#Company_Id").val();
+            $("#Service_Provider_Company").hide();
+            $("#Service_Provider_Contract").show();
+            LoadCompanyDetail(Company_Id)
+        }
+
+        function LoadCompanyDetail(Company_Id) {
+            $.post("@Url.Action("LoadCompanyDetails", "Account")", { Company_Id: Company_Id }, function (data) {
+                $(UI_Fields.COMPANY_DETAILS).empty();
+                $(data).each(function (i, e) {
+                    $(UI_Fields.COMPANY_DETAILS).append("<option value=" + e.Company_Id + ">" + e.Company_Name + "</option>");
+                });
+            });
+        }
+    </script>
+
+    <script>
+
+        function Func_DatetimeValida(id) {
+            debugger;
+            //var st =  $("#Contract_Start_Date").val();
+            var someDate = new Date($("#Contract_Start_Date").val())
+            var numberOfDaysToAdd = 365;
+            someDate.setDate(someDate.getDate() + numberOfDaysToAdd);
+
+            var day = ("0" + someDate.getDate()).slice(-2);
+            var month = ("0" + (someDate.getMonth() + 1)).slice(-2);
+
+
+            //var date = someDate.getFullYear() + "-" + (month) + "-" + day;
+            var date = someDate.getFullYear() + "-" + (month) + "-" + (day);
+            //var date = someDate.getDate() + '-' + (someDate.getMonth()+1) + '-' + someDate.getFullYear();
+
+            $(id).val(date);
+
+            $(id).attr('min', date);
+        }
+
+        function Func_Datetime(id) {
+            debugger;
+            let minDate = '@DateTime.Now.AddDays(365).ToString("yyyy-MM-dd")';
+            $(id).attr('max', minDate);
+        }
+        function Applicalbe_Documents_File_EX(clsname, keyname) {
+            var $el1 = $("#" + clsname);
+            $el1.fileinput({
+                uploadUrl: '/Account/UploadPhotoFiles' + '?Keyname=' + keyname,
+                uploadAsync: false,
+                showRemove: false,
+                showUpload: false, // hide upload button
+                overwriteInitial: false, // append files to initial preview
+                minFileCount: 1,
+                maxFileCount: 5,
+                browseOnZoneClick: true,
+                initialPreviewAsData: true,
+            }).on("filebatchselected", function (event, files) {
+                $el1.fileinput("upload");
+            });
+        }
+
+        function FnEmailDulicheck(Email_Id) {
+            var Company_Id = $("#Company_Id").val();
+            $.post("@Url.Action("Email_Id_Check_Duilpcate", "Account")", { Email_Id: Email_Id, Company_Id: Company_Id }, function (data) {
+                if (data.STATUS_CODE == "100") {
+                    $("#Manager_Incharge").val(data.Return_1);
+                    $("#Mobile_No").val(data.Return_2);
+                    $("#Designation").val(data.Return_3);
+
+                    $("#Manager_Incharge").attr("readonly", "readonly");
+                    $("#Mobile_No").attr("readonly", "readonly");
+                    $("#Designation").attr("readonly", "readonly");
+                }
+                else if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.MESSAGE,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        //window.location.reload();
+                        $("#Official_Email_Id").val('');
+                        $("#Manager_Incharge").removeAttr("readonly");
+                        $("#Mobile_No").removeAttr("readonly");
+                        $("#Designation").removeAttr("readonly");
+
+                        $("#Manager_Incharge").val('');
+                        $("#Mobile_No").val('');
+                        $("#Designation").val('');
+                    });
+                }
+                else {
+                    $("#Manager_Incharge").removeAttr("readonly");
+                    $("#Mobile_No").removeAttr("readonly");
+                    $("#Designation").removeAttr("readonly");
+
+                    $("#Manager_Incharge").val('');
+                    $("#Mobile_No").val('');
+                    $("#Designation").val('');
+                }
+            });
+        }
+
+        function FnCompany_NameDulicheck(Company_Name) {
+            debugger;
+            $.post("@Url.Action("Company_Name_Check_Duilpcate", "Account")", { Company_Name: Company_Name }, function (data) {
+                if (data.STATUS_CODE != "-1") {
+                    $("#btnConfirm").show();
+                    $("#btnComSubmit").hide();
+                    $("#Company_MobileNo").val(data.Return_1);
+                    $("#Company_Email").val(data.Return_2);
+                    $("#Company_MobileNo").attr("readonly", "readonly");
+                    $("#Company_Email").attr("readonly", "readonly");
+                    $("#Company_Id").val(data.STATUS_CODE);
+                }
+                else {
+                    $("#btnConfirm").hide();
+                    $("#btnComSubmit").show();
+                    $("#Company_MobileNo").val('');
+                    $("#Company_Email").val('');
+                    $("#Company_MobileNo").removeAttr("readonly");
+                    $("#Company_Email").removeAttr("readonly");
+                    $("#Company_Id").val("0")
+                }
+            });
+        }
+
+
+        function FnPurchaseOrderDulicheck(Purchase_Order_Number) {
+            debugger;
+            $.post("@Url.Action("Purchase_Order_Number_Check_Duilpcate", "Account")", { Purchase_Order_Number: Purchase_Order_Number }, function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.MESSAGE,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        //window.location.reload();
+                        $("#Purchase_Order_Number").val('');
+                    });
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function Applicalbe_Documents_File(val, clsname) {
+            readImage(val, clsname);
+        }
+        function readImage(input, clsname) {
+            if (input.files && input.files[0]) {
+                var FR = new FileReader();
+                FR.onload = function (e) {
+                    $.post("@Url.Action("FiletoDataApplicableReports", "Account")", { FileData: e.target.result }, function (data) {
+                        var cls = "." + clsname;
+                        $(cls).val(data);
+                    }).always(function () {
+                        //$("#Loaderbck").hide();
+                        //$("#Loader").hide();
+                    });
+                };
+                FR.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function Fn_ServiceProviderSumbit() {
+            var Company_id = $("#Company_Details").val();
+            $.post("@Url.Action("UpdateService_Provider", "Account")", { Company_id: Company_id }, function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                        window.location.href = "/Account/Login";
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        }
+
+
+        function uploadFiles(inputId, UploadPhotoId) {
+            debugger
+            var input = document.getElementById(inputId);
+            var files = input.files;
+            var formData = new FormData();
+
+            if (files.length <= 5) {
+                for (var i = 0; i != files.length; i++) {
+                    formData.append("files", files[i]);
+                }
+                var _url = '@Url.Action("Internal_Aud_UploadPhotoFiles", "Account")';
+                $.ajax({
+                    url: _url,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: "POST",
+                    success: function (data) {
+                        $("." + UploadPhotoId).val("");
+                        $("." + UploadPhotoId).val(data)
+                    }
+                });
+            }
+
+            else {
+                $("." + inputId).val("");
+                $("." + UploadPhotoId).val("");
+                toastr["info"]("Maximum Allowed 5 Files");
+            }
+        }
+    </script>
+
+
+
+    <script src="@Url.Content("~/assets/js/multiselect/select_2.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap4.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.select.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/metismenujs/metismenujs.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simplebar/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/eva-icons/eva.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/apexcharts/apexcharts.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/choices.js/public/assets/scripts/choices.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/swiper/swiper-bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.es5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/libs/toastr/build/toastr.min.js")"></script>
+    <script src="@Url.Content("~/assets/js/validation/jquery.validate.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script src="@Url.Content("~/assets/js/app.js")"></script>
+</body>

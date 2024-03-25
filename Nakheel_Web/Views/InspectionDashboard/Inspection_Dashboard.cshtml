@@ -1,0 +1,1920 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Inspection Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tbl_card {
+        width: 100%;
+        display: flow;
+        min-height: 236px;
+        overflow-y: scroll !important;
+        height: 120px;
+    }
+
+    .tblround_DAsh {
+        border-radius: 10px;
+        margin: 0px;
+    }
+
+    .insp_Mgmt {
+       
+        padding-bottom: 20px;
+        border-radius: 10px;
+    }
+    .scroll {
+        max-height: 327px;
+        overflow-y: auto;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 0px;
+        height: 37px;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #e1e1e1;
+        border-radius: 9px;
+    }
+
+    .dashboardtopdiv {
+        background-color: #1b334a !important;
+    }
+
+    .FilterHead {
+        color: #fff;
+        margin-top: 9px;
+    }
+
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        overflow-anchor: none;
+    }
+
+    .txt_lable {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    .txt_Injury_Label {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 18%;
+    }
+
+    .card-header {
+        padding: 6px !important;
+        margin-bottom: 0;
+        background-color: #fff;
+        border-bottom: 1px solid #eff0f2;
+        background: #fff;
+        color: #00263A;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    label {
+        font-weight: 500;
+        margin-bottom: 0px !important;
+    }
+
+    .list-group-item {
+        padding: 0.3rem 1.25rem !important;
+    }
+</style>
+<style>
+    #map-canvas_view {
+        height: 500px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .txtheader {
+        margin-left: 14px;
+        margin-top: 5px;
+        color: #fff;
+        font-family: 'Nakheel-Textregular';
+    }
+</style>
+
+@*<script src="~/assets/js/validation/insp_dashboard/insp_dash_serverside.js"></script>
+*@
+<body>
+    <div class="container-fluid">
+        <div class="accordion">
+            <div class="accordion-item">
+                <h1 class="accordion-header" id="HD1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                        <h5 class="FilterHead">Filter Option</h5>
+                    </button>
+                </h1>
+                <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                    <div class="accordion-body">
+
+                        <div class="row align-items-center">
+                            <div class="col-lg-3">
+                                <label>Year</label>
+                                <select class="form-select rounded-pill InputField" id="Drp_Year" onchange="Fn_Drp_Year(this);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Zone</label>
+                                <select class="form-select rounded-pill" id="Drp_Zone" onchange="Fn_Drp_Zone(this);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Community</label>
+                                <select class="form-select rounded-pill" id="Drp_Community" onchange="Fn_Drp_Community(this);">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Building</label>
+                                <select class="form-select rounded-pill" id="Drp_Building" onchange="Fn_Drp_Building();">
+                                </select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label>Filter By Date</label><br />
+                                <div class="form-group">
+                                    <input class="InputField" type="checkbox" switch="info" id="FilterDate" onchange="FilterDate()" />
+                                    <label for="FilterDate" data-on-label="Yes" data-off-label="No"></label>
+                                </div>
+                            </div>
+                            <div id="Frm_ToDiv" class="col-lg-3" style="display:none;">
+                                <div class="mb-3">
+                                    <div class="form-group">
+                                        <label class="form-check-label" for="inlineRadio2">From</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="From_Date" onchange="DateFilter()" />
+                                        <label class="form-check-label" for="inlineRadio2">To</label>
+                                        <input type="date" class="form-control form-control-sm InputField" data-provider="flatpickr" id="To_Date" onchange="DateFilter()" />
+                                    </div>
+                                </div>
+                            </div>
+                            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10")
+                            {
+                                <div class="col-lg-3">
+                                    <label>Filter By HSE Team</label><br />
+                                    <div class="form-group">
+                                        <input class="InputFieldHSE" type="checkbox" switch="info" id="FilterHSETeam" onchange="Filter_HSETeam()" />
+                                        <label for="FilterHSETeam" data-on-label="Yes" data-off-label="No"></label>
+                                    </div>
+                                </div>
+                                <div id="Frm_HSETeamDiv" class="col-lg-3" style="display:none;">
+                                    <div class="mb-3">
+                                        <div class="form-group">
+                                            <label>HSE Team</label>
+                                            <select class="form-select rounded-pill" id="Filter_HSETeam" onchange="Fn_Drp_Filter_HSETeam(this);">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card" style="height: 75%;">
+                <div class="card-header">
+                    <label class="txt_lable">Inspection Management</label>
+                </div><!-- end card header -->
+                <div class="card-body" style="height: 250px;overflow-y: scroll;">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush insp_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Total_Insp_Persentage" style="background:#00263A;color:#fff"><h6 style="color:#fff">Closed Percentage</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('1','#Total_Insp_Persentage','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Total_Insp_Persentage_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Total_Insp_Count" style="background:#00617F;color:#fff"><h6 style="color:#fff">Planned</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('2','#Total_Insp_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Total_Insp_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Planned_Count" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Inspection Open</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('3','#Planned_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-endo" id="Planned_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Total_Insp_Completed" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Inspection Close</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('1','#Total_Insp_Completed','tbl_Insp')"> <span class="badge rounded-pill align-items-end"  id="Total_Insp_Completed_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Closed_Count" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Completed</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('37','#Closed_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Walk_Closed_Count" style="background:#3CD1FF;color:#fff"><h6 style="color:#fff">Walk-In Completed</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('39','#Walk_Closed_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Walk_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Findings_Overdue_Count" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('50','#Findings_Overdue_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" id="Findings_Overdue_Count_Id"></span></a></li>
+                            @*<li class="list-group-item d-flex justify-content-between align-items-center" id="Action_Open_Count"><h6>Open</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('6','#Action_Open_Count','tbl_Insp_CA')"><span class="badge bg-warning rounded-pill align-items-end" id="Action_Open_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Action_Closed_Count"><h6>Closed</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('5','#Action_Closed_Count','tbl_Insp_CA')"><span class="badge bg-success rounded-pill align-items-end" id="Action_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Action_Overdue_Count"><h6>Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('7','#Action_Overdue_Count','tbl_Insp_CA')"><span class="badge bg-danger rounded-pill align-items-end" id="Action_Overdue_Count_Id"></span></a></li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="height: 75%;">
+                <div class="card-header">
+                    <label class="txt_lable">Schedule Inspection</label>
+                </div><!-- end card header -->
+                <div class="card-body" style="height: 250px;overflow-y: scroll;">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush insp_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Total_Insp_Persentage" style="background:#00263A;color:#fff"><h6 style="color:#fff">Closed Percentage</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('23','#Sch_Total_Insp_Persentage','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Sch_Total_Insp_Persentage_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Total_Insp_Count" style="background:#00617F;color:#fff"><h6 style="color:#fff">Planned</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('24','#Sch_Total_Insp_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Sch_Total_Insp_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Total_Insp_Completed" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Completed</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('23','#Sch_Total_Insp_Completed','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Sch_Total_Insp_Completed_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Planned_Count" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Inspection Open</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('25','#Sch_Planned_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Sch_Planned_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Closed_Count" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Inspection Close</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('38','#Sch_Closed_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Sch_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sch_Findings_Overdue_Count" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('51','#Sch_Findings_Overdue_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" id="Sch_Findings_Overdue_Count_Id"></span></a></li>
+                            @*<li class="list-group-item d-flex justify-content-between align-items-center" id="Sch_Total_Actions_Count"><h6>Total Actions</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('26','#Sch_Total_Actions_Count','tbl_Insp_CA')"><span class="badge bg-info rounded-pill align-items-end" id="Sch_Total_Actions_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sch_Action_Open_Count"><h6>Open</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('28','#Sch_Action_Open_Count','tbl_Insp_CA')"><span class="badge bg-warning rounded-pill align-items-end" id="Sch_Action_Open_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sch_Action_Closed_Count"><h6>Closed</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('27','#Sch_Action_Closed_Count','tbl_Insp_CA')"><span class="badge bg-success rounded-pill align-items-end" id="Sch_Action_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sch_Action_Overdue_Count"><h6>Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Sch_Model_Insp_Details('29','#Sch_Action_Overdue_Count','tbl_Insp_CA')"><span class="badge bg-danger rounded-pill align-items-end" id="Sch_Action_Overdue_Count_Id"></span></a></li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-3">
+        <div class="card" style="height: 80%;">
+        <div class="card-header">
+        <label class="txt_lable">Walk-In Inspection</label>
+        </div><!-- end card header -->
+        <div class="card-body" style="height: 250px;overflow-y: scroll;">
+        <div class="row">
+        <ul class="list-group list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Total_Insp_Persentage"><h6>Completed Percentage</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('30','#Walk_Total_Insp_Persentage','tbl_Insp')"> <span class="badge rounded-pill align-items-end" style="background-color:#7A73BD" id="Walk_Total_Insp_Persentage_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Total_Insp_Completed"><h6>Completed</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('30','#Walk_Total_Insp_Completed','tbl_Insp')"> <span class="badge rounded-pill align-items-end" style="background-color:#7A73BD" id="Walk_Total_Insp_Completed_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Total_Insp_Count"><h6>Total Inspection</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('31','#Walk_Total_Insp_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end bg-info" id="Walk_Total_Insp_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Planned_Count"><h6>Pending</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('32','#Walk_Planned_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end bg-info" id="Walk_Planned_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Closed_Count"><h6>Completed</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('39','#Walk_Closed_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end bg-success" id="Walk_Closed_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Total_Actions_Count"><h6>Total Actions</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('33','#Walk_Total_Actions_Count','tbl_Insp_CA')"><span class="badge bg-info rounded-pill align-items-end" id="Walk_Total_Actions_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Action_Open_Count"><h6>Open</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('35','#Walk_Action_Open_Count','tbl_Insp_CA')"><span class="badge bg-warning rounded-pill align-items-end" id="Walk_Action_Open_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Action_Closed_Count"><h6>Closed</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('34','#Walk_Action_Closed_Count','tbl_Insp_CA')"><span class="badge bg-success rounded-pill align-items-end" id="Walk_Action_Closed_Count_Id"></span></a></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" id="Walk_Action_Overdue_Count"><h6>Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Walk_Model_Insp_Details('36','#Walk_Action_Overdue_Count','tbl_Insp_CA')"><span class="badge bg-danger rounded-pill align-items-end" id="Walk_Action_Overdue_Count_Id"></span></a></li>
+        </ul>
+        </div>
+        </div>
+        </div>
+        </div>*@
+        <div class="col-sm-3">
+            <div class="card" style="height: 75%;">
+                <div class="card-header">
+                    <label class="txt_lable">Service Provider</label>
+                </div><!-- end card header -->
+                <div class="card-body" style="height: 280px;overflow-y: scroll;">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush insp_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Total_Insp_Persentage" style="background:#00263A;color:#fff"><h6 style="color:#fff">Closed Percentage</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('8','#Sp_Total_Insp_Persentage','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Sp_Total_Insp_Persentage_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Total_Insp_Count" style="background:#00617F;color:#fff"><h6 style="color:#fff">Planned</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('9','#Sp_Total_Insp_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Sp_Total_Insp_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Total_Insp_Completed" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Completed</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('8','#Sp_Total_Insp_Completed','tbl_Insp')"> <span class="badge rounded-pill align-items-end"  id="Sp_Total_Insp_Completed_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Planned_Count" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Inspection Open</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('10','#Sp_Planned_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end " id="Sp_Planned_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Closed_Count" style="background:#48C7EE;color:#fff"><h6 style="color:#fff">Inspection Close</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('40','#Sp_Closed_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end" id="Sp_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Sp_Findings_Overdue_Count" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('52','#Sp_Findings_Overdue_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" id="Sp_Findings_Overdue_Count_Id"></span></a></li>
+                            @*<li class="list-group-item d-flex justify-content-between align-items-center" id="Sp_Total_Actions_Count"><h6>Total Actions</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('11','#Sp_Total_Actions_Count','tbl_Insp_CA')"><span class="badge bg-info rounded-pill align-items-end" id="Sp_Total_Actions_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sp_Action_Open_Count"><h6>Open</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('13','#Sp_Action_Open_Count','tbl_Insp_CA')"><span class="badge bg-warning rounded-pill align-items-end" id="Sp_Action_Open_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sp_Action_Closed_Count"><h6>Closed</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('12','#Sp_Action_Closed_Count','tbl_Insp_CA')"><span class="badge bg-success rounded-pill align-items-end" id="Sp_Action_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center" id="Sp_Action_Overdue_Count"><h6>Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Service_Model_Insp_Details('14','#Sp_Action_Overdue_Count','tbl_Insp_CA')"><span class="badge bg-danger rounded-pill align-items-end" id="Sp_Action_Overdue_Count_Id"></span></a></li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card" style="height: 75%;">
+                <div class="card-header">
+                    <label class="txt_lable">Corrective Action</label>
+                </div>
+                <div class="card-body" style="height: 250px;overflow-y: scroll;">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush insp_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Total_Actions_Count" style="background:#00263A;color:#fff"><h6 style="color:#fff"> Total Actions</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('4','#Total_Actions_Count','tbl_Insp_CA')"><span class="badge  rounded-pill align-items-end" id="Total_Actions_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Action_Open_Count" style="background:#00617F;color:#fff"><h6 style="color:#fff">Action Open</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('6','#Action_Open_Count','tbl_Insp_CA')"><span class="badge rounded-pill align-items-end" id="Action_Open_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Action_Closed_Count" style="background:#0D87AC;color:#fff"><h6 style="color:#fff">Action Close</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('5','#Action_Closed_Count','tbl_Insp_CA')"><span class="badge rounded-pill align-items-end" id="Action_Closed_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" id="Action_Overdue_Count" style="background:#30ACD2;color:#fff"><h6 style="color:#fff">Overdue</h6><a href="#" onclick="event.preventDefault();Fn_Model_Insp_Details('7','#Action_Overdue_Count','tbl_Insp_CA')"><span class="badge rounded-pill align-items-end" id="Action_Overdue_Count_Id"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-top: -76px;">
+        <div class="col-sm-3">
+            <div class="card" style="height: 85%;">
+                <div class="card-header">
+                    <label class="txt_lable">Inspection Type</label>
+                </div><!-- end card header -->
+                <div class="card-body" style="height: 250px;overflow-y: scroll;">
+                    <div class="row">
+                        <ul class="list-group list-group list-group-flush insp_Mgmt">
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" style="background:#00263A;color:#fff" id="Type_Spot_Inspection_Count"><h6 style="color:#fff">Spot Inspection</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('15','#Type_Spot_Inspection_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end"  id="Spot_Count_Id"></span></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" style="background:#00617F;color:#fff" id="Type_Joint_Inspection_Count"><h6 style="color:#fff">Joint Inspection</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('16','#Type_Joint_Inspection_Count','tbl_Insp')"> <span class="badge rounded-pill align-items-end"  id="Joint_Count_Id"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center tblround_DAsh" style="background:#0D87AC;color:#fff" id="Type_Leadership_Tour_Count"><h6 style="color:#fff">Leadership Tour</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('17','#Type_Leadership_Tour_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" id="Leadership_Count_Id"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center tblround_DAsh" style="background:#30ACD2;color:#fff" id="Type_Handover_Inspection_Count"><h6 style="color:#fff">Handover Inspection</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('18','#Type_Handover_Inspection_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end"  id="Handover_Count_Id"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center tblround_DAsh" style="background:#48C7EE;color:#fff" id="Type_Health_Safety_Count"><h6 style="color:#fff">Health & Safety</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('19','#Type_Health_Safety_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" s id="Health_Safety_Count_Id"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center tblround_DAsh" style="background:#3CD1FF;color:#fff" id="Type_Service_Provider_Count"><h6 style="color:#fff">Service Provider</h6><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('20','#Type_Service_Provider_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end"  id="Service_Provider_Count_Id"></span></a></li>
+                            <li class="list-group-item  d-flex justify-content-between align-items-center tblround_DAsh" style="background:#30ACD2;color:#fff"id="Type_Fire_Life_Count"><h6>Fire & Life Safety</h6 style="color:#fff"><a href="#" onclick="event.preventDefault();Fn_Type_Model_Insp_Details('21','#Type_Fire_Life_Count','tbl_Insp')"><span class="badge rounded-pill align-items-end" id="Fire_Safety_Count_Id"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="card" style="height: 85%;">
+                <div class="card-header">
+                    <label class="txt_lable">Zone-Wise Data</label>
+                </div>
+                <div class="card-body" style="height: 280px;overflow-y: scroll;">
+                    <div id="Graph1" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: -42px;">
+        <div class="col-sm-3">
+            <div class="card" style="height: 85%;">
+                <div class="card-header">
+                    <label class="txt_lable">Community-Wise Data</label>
+                </div>
+                <div class="card-body" style="height: 280px;overflow-y: scroll;">
+                    <div class="row" id="CommunityWiseDiv">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card" style="height: 85%;">
+                <div class="card-header">
+                    <label class="txt_lable">Category-Wise Data</label>
+                </div>
+                <div class="card-body" style="height: 280px;overflow-y: scroll;">
+                    <div id="Graph1_CatWise" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="card" style="height: 85%;">
+                <div class="card-header">
+                    <label class="txt_lable">Observation Type</label>
+                </div>
+                <div class="card-body" style="height: 280px;overflow-y: scroll;">
+                    <div id="chart_SubCat" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-top: -41px;">
+        <div class="col-sm-6">
+            <div class="card" style="height: 88%;">
+                <div class="card-header">
+                    <label class="txt_lable">Inspection Management - Monthly Statistics</label>
+                </div>
+                <div class="card-body" style="height: 300px;overflow-y: scroll;">
+                    <div id="Insp_Mgmt_Graph" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="card" style="height: 88%;">
+                <div class="card-header">
+                    <label class="txt_lable">Inspection Management - Yearly Statistics</label>
+                </div>
+                <div class="card-body" style="height: 300px;overflow-y: scroll;">
+                    <div id="Insp_Mgmt_Graph_Year" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+   @* <div class="row" style="margin-top: -35px;">
+        
+
+    </div>*@
+    <div class="row" style="margin-top: -35px;">
+        <div class="col-sm-12">
+            <div class="card" style="height: 88%;">
+                <div class="card-header">
+                    <label class="txt_lable">HSE Officer-Wise Data</label>
+                </div>
+                <div class="card-body" style="height: 300px;overflow-y: scroll;">
+                    <div id="Insp_HSE_Officer_Graph" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="Model_Insp_Details" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Inspection Report</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;">
+                        <table id="tbl_Insp_Details_card_view" class="table table-striped">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Inspection ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Inspection Type</th>
+                                    <th style="text-align:left;">Inspection Date</th>
+                                    <th style="text-align:left;">Created By</th>
+                                    <th style="text-align:left;">Assigned To</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllInsp_Details_cardList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Model_Insp_Details_CA" class="modal fade" tabindex="-1" aria-labelledby="#ImpactPopLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title col-lg-11" id="ImpactPopLabel" style="text-align:center;"><b id="OverDueHead">Inspection Report</b> </h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 col-md-12 table-responsive" id="ImapactDiv" style="overflow:auto;margin-left: 1px;">
+                        <table id="tbl_Insp_Details_card_view_CA" class="table table-striped">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Inspection ID</th>
+                                    <th style="text-align:left;">Business Unit</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building</th>
+                                    <th style="text-align:left;">Inspection Type</th>
+                                    <th style="text-align:left;">Assignee Type</th>
+                                    <th style="text-align:left;">Assignee Name</th>
+                                    <th style="text-align:left;">Target Date</th>
+                                    <th style="text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAllInsp_Details_cardList_CA">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/assets/js/apexcharts.js"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            DRP_YEAR: "#Drp_Year",
+            M_ZONE: "#Drp_Zone",
+            COMMUNITY_ID: "#Drp_Community",
+            BUILDING_ID: "#Drp_Building",
+            MASTER_COMMUNITY_ID: "#Drp_Master_Community",
+            FROM_DATE: "#From_Date",
+            TO_DATE: "#To_Date",
+            FILTER_DATE: "#FilterDate",
+            FRM_TO_DIV: "#Frm_ToDiv",
+            tbl_Insp_Details_card_view: "#tbl_Insp_Details_card_view",
+            GetAllInsp_Details_cardList: "#GetAllInsp_Details_cardList",
+            Model_Insp_Details: "#Model_Insp_Details",
+            tbl_Insp_Details_card_view_CA: "#tbl_Insp_Details_card_view_CA",
+            GetAllInsp_Details_cardList_CA: "#GetAllInsp_Details_cardList_CA",
+            Model_Insp_Details_CA: "#Model_Insp_Details_CA",
+            FilterHSETeam: "#FilterHSETeam",
+        });
+        var Zone_Onchage_Value = "";
+        var Cat_Max_Name = "";
+        var Zone_Graph_Change = "No";
+        var Zone_On_Name = "";
+        var Var_If_HSE_Team = "No";
+        $(document).ready(function () {
+            LOAD_ZONE_INSP();
+            var currentYear = new Date().getFullYear();
+            LoadYear(currentYear);
+        });
+        function LoadYear(currentYear) {
+            $(UI_Fields.DRP_YEAR).empty();
+            for (let i = currentYear; i >= 2022; i--) {
+                //$(UI_Fields.DRP_YEAR).append("<option class='center' value=" + i + ">" + i + "  -   " + (i + 1) + "</option>");
+                $(UI_Fields.DRP_YEAR).append("<option class='center' value=" + i + ">" + i + "</option>");
+            }
+        }
+        function LOAD_ZONE_INSP() {
+            $.post("@Url.Action("Insp_Dash_LoadAllZone", "InspectionDashboard")", function (data) {
+                debugger
+                var data_Count = data.length;
+                $(UI_Fields.M_ZONE).empty();
+                if (data_Count > 1) {
+                    $(UI_Fields.M_ZONE).append("<option selected value='All' style='text-align:center'>All</option>");
+                }
+                $(data).each(function (i, e) {
+                    $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                });
+
+                if (data_Count > 1) {
+                    FilterOpt_Load("All");
+                } else {
+                    Fn_Load_Single_Zone(data[0].Zone_Id);
+                    FilterOpt_Load(data[0].Zone_Id);
+                }
+
+            });
+        }
+        function Fn_Drp_Year(Year) {
+            Zone_Onchage_Value = "";
+            Zone_Graph_Change = "No";
+            Zone_On_Name = "";
+            FilterOpt();
+        }
+        function Fn_Load_Single_Zone(Zone) {
+            debugger
+            Zone_Onchage_Value = "";
+            Zone_Graph_Change = "No";
+            Zone_On_Name = "";
+            var Zone_Value = Zone;
+            if (Zone_Value == "All") {
+                $(UI_Fields.COMMUNITY_ID).empty();
+                $(UI_Fields.BUILDING_ID).empty();
+            } else {
+                $.post("@Url.Action("Insp_Dash_LoadAllCommunity", "InspectionDashboard")", { Zone_Id: Zone_Value }, function (data) {
+                    $(UI_Fields.COMMUNITY_ID).empty();
+                    $(UI_Fields.BUILDING_ID).empty();
+                    $(UI_Fields.COMMUNITY_ID).append("<option selected value='All'style='text-align:center'>All</option>");
+                    $(data).each(function (i, e) {
+                        $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Community").val("");
+            $("#Drp_Building").val("");
+            //FilterOpt();
+        }
+        function Fn_Drp_Zone(Zone) {
+            debugger
+            Zone_Onchage_Value = "";
+            Zone_Graph_Change = "No";
+            Zone_On_Name = "";
+            var Zone_Value = Zone.value;
+            if (Zone_Value == "All") {
+                $(UI_Fields.COMMUNITY_ID).empty();
+                $(UI_Fields.BUILDING_ID).empty();
+            } else {
+                $.post("@Url.Action("Insp_Dash_LoadAllCommunity", "InspectionDashboard")", { Zone_Id: Zone_Value }, function (data) {
+                    $(UI_Fields.COMMUNITY_ID).empty();
+                    $(UI_Fields.BUILDING_ID).empty();
+                    $(UI_Fields.COMMUNITY_ID).append("<option selected value='All'style='text-align:center'>All</option>");
+                    $(data).each(function (i, e) {
+                        $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Community").val("");
+            $("#Drp_Building").val("");
+            FilterOpt();
+        }
+        function Fn_Drp_Community(Community) {
+            Zone_Onchage_Value = "";
+            Zone_Graph_Change = "No";
+            Zone_On_Name = "";
+            var Community_Id = Community.value;
+            var Zone = $("#Drp_Zone").val();
+            if (Community_Id == "All") {
+                $(UI_Fields.BUILDING_ID).empty();
+            } else {
+                $.post("@Url.Action("Insp_Dash_LoadAllBuilding", "InspectionDashboard")", { Zone_Id: Zone, Community_Id: Community_Id }, function (data) {
+                    $(UI_Fields.BUILDING_ID).empty();
+                    if (data.lenght > 1) {
+                        $(UI_Fields.BUILDING_ID).append("<option selected value='All'style='text-align:center'>All</option>");
+                    }
+                    $(data).each(function (i, e) {
+                        $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                    });
+                });
+            }
+            $("#Drp_Building").val("");
+            FilterOpt();
+        }
+        function Fn_Drp_Building() {
+            Zone_Onchage_Value = "";
+            FilterOpt();
+        }
+        function FilterOpt_Load(Zone_Load) {
+            debugger
+            let yr = $("#Drp_Year").val();
+            let Zone = Zone_Load;
+            let Community_Id = "";
+            let Building_Id = "";
+            let From_Date = "";
+            let To_date = "";
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: '',
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Dashboard_Data');
+            Fn_Dash_Data(Dash_data);
+        }
+        function Fn_Dash_Data(Dash_data) {
+            debugger;
+            var data = Dash_data;
+            if (data != null) {
+                var Persentage_Id = "0.00%";
+                var Sch_Persentage_Id = "0.00%";
+                var Walk_Persentage_Id = "0.00%";
+                var Sp_Persentage_Id = "0.00%"
+                $(data.Insp_Dash_Management_Count).each(function (i, e) {
+                    $("#Total_Insp_Persentage_Id").text(0);
+                    $("#Total_Insp_Completed_Id").text(0);
+                    $("#Total_Insp_Count_Id").text(0);
+                    $("#Planned_Count_Id").text(0);
+                    $("#Closed_Count_Id").text(0);
+                    $("#Findings_Overdue_Count_Id").text(0);
+                    $("#Total_Actions_Count_Id").text(0);
+                    $("#Action_Open_Count_Id").text(0);
+                    $("#Action_Closed_Count_Id").text(0);
+                    $("#Action_Overdue_Count_Id").text(0);
+                    Persentage_Id = e.Total_Insp_Persentage + "%";
+                    $("#Total_Insp_Persentage_Id").text(Persentage_Id);
+                    $("#Total_Insp_Completed_Id").text(e.Insp_Completed_Count);
+                    $("#Total_Insp_Count_Id").text(e.Total_Insp_Count);
+                    $("#Planned_Count_Id").text(e.Planned_Count);
+                    $("#Closed_Count_Id").text(e.Closed_Count);
+                    $("#Findings_Overdue_Count_Id").text(e.Findings_Overdue_Count);
+                    $("#Total_Actions_Count_Id").text(e.Total_Actions_Count);
+                    $("#Action_Open_Count_Id").text(e.Action_Open_Count);
+                    $("#Action_Closed_Count_Id").text(e.Action_Closed_Count);
+                    $("#Action_Overdue_Count_Id").text(e.Action_Overdue_Count);
+                });
+                $(data.Insp_Dash_Mgmt_Schedule_Count).each(function (i, e) {
+                    $("#Sch_Total_Insp_Count_Id").text(0);
+                    $("#Sch_Total_Insp_Completed_Id").text(0);
+                    $("#Sch_Total_Insp_Persentage_Id").text(0);
+                    $("#Sch_Planned_Count_Id").text(0);
+                    $("#Sch_Closed_Count_Id").text(0);
+                    $("#Sch_Findings_Overdue_Count_Id").text(0);
+                    $("#Sch_Total_Actions_Count_Id").text(0);
+                    $("#Sch_Action_Open_Count_Id").text(0);
+                    $("#Sch_Action_Closed_Count_Id").text(0);
+                    $("#Sch_Action_Overdue_Count_Id").text(0);
+                    Sch_Persentage_Id = e.Total_Insp_Persentage + "%";
+                    $("#Sch_Total_Insp_Persentage_Id").text(Sch_Persentage_Id);
+                    $("#Sch_Total_Insp_Completed_Id").text(e.Insp_Completed_Count);
+                    $("#Sch_Total_Insp_Count_Id").text(e.Total_Insp_Count);
+                    $("#Sch_Planned_Count_Id").text(e.Planned_Count);
+                    $("#Sch_Findings_Overdue_Count_Id").text(e.Findings_Overdue_Count);
+                    $("#Sch_Total_Actions_Count_Id").text(e.Total_Actions_Count);
+                    $("#Sch_Action_Open_Count_Id").text(e.Action_Open_Count);
+                    $("#Sch_Action_Closed_Count_Id").text(e.Action_Closed_Count);
+                    $("#Sch_Action_Overdue_Count_Id").text(e.Action_Overdue_Count);
+                });
+                $(data.Insp_Dash_Mgmt_WalkIn_Count).each(function (i, e) {
+                    $("#Walk_Total_Insp_Count_Id").text(0);
+                    $("#Walk_Total_Insp_Persentage_Id").text(0);
+                    $("#Walk_Total_Insp_Persentage_Id").text(0);
+                    $("#Walk_Total_Insp_Completed_Id").text(0);
+                    $("#Walk_Planned_Count_Id").text(0);
+                    $("#Walk_Closed_Count_Id").text(0);
+                    $("#Walk_Total_Actions_Count_Id").text(0);
+                    $("#Walk_Action_Open_Count_Id").text(0);
+                    $("#Walk_Action_Closed_Count_Id").text(0);
+                    $("#Walk_Action_Overdue_Count_Id").text(0);
+                    Walk_Persentage_Id = e.Total_Insp_Persentage + "%";
+                    $("#Walk_Total_Insp_Persentage_Id").text(Walk_Persentage_Id);
+                    $("#Walk_Total_Insp_Completed_Id").text(e.Insp_Completed_Count);
+                    $("#Walk_Total_Insp_Count_Id").text(e.Total_Insp_Count);
+                    $("#Walk_Planned_Count_Id").text(e.Planned_Count);
+                    $("#Walk_Closed_Count_Id").text(e.Closed_Count);
+                    $("#Walk_Total_Actions_Count_Id").text(e.Total_Actions_Count);
+                    $("#Walk_Action_Open_Count_Id").text(e.Action_Open_Count);
+                    $("#Walk_Action_Closed_Count_Id").text(e.Action_Closed_Count);
+                    $("#Walk_Action_Overdue_Count_Id").text(e.Action_Overdue_Count);
+                });
+
+                $(data.Insp_Dash_Types_Insp_Count).each(function (i, e) {
+                    $("#Spot_Count_Id").text(0);
+                    $("#Joint_Count_Id").text(0);
+                    $("#Leadership_Count_Id").text(0);
+                    $("#Handover_Count_Id").text(0);
+                    $("#Health_Safety_Count_Id").text(0);
+                    $("#Service_Provider_Count_Id").text(0);
+                    $("#Fire_Safety_Count_Id").text(0);
+
+                    $("#Spot_Count_Id").text(e.Spot_Count);
+                    $("#Joint_Count_Id").text(e.Joint_Count);
+                    $("#Leadership_Count_Id").text(e.Leadership_Count);
+                    $("#Handover_Count_Id").text(e.Handover_Count);
+                    $("#Health_Safety_Count_Id").text(e.Health_Safety_Count);
+                    $("#Service_Provider_Count_Id").text(e.Service_Provider_Count);
+                    $("#Fire_Safety_Count_Id").text(e.Fire_Safety_Count);
+                });
+
+                $(data.Insp_Dash_ServiceProvider_Count).each(function (i, e) {
+                    $("#Sp_Total_Insp_Persentage_Id").text(0);
+                    $("#Sp_Total_Insp_Completed_Id").text(0);
+                    $("#Sp_Total_Insp_Count_Id").text(0);
+                    $("#Sp_Planned_Count_Id").text(0);
+                    $("#Sp_Closed_Count_Id").text(0);
+                    $("#Sp_Findings_Overdue_Count_Id").text(0);
+                    $("#Sp_Total_Actions_Count_Id").text(0);
+                    $("#Sp_Action_Open_Count_Id").text(0);
+                    $("#Sp_Action_Closed_Count_Id").text(0);
+                    $("#Sp_Action_Overdue_Count_Id").text(0);
+
+                    Sp_Persentage_Id = e.Total_Insp_Persentage + "%";
+
+                    $("#Sp_Total_Insp_Persentage_Id").text(Sp_Persentage_Id);
+                    $("#Sp_Total_Insp_Completed_Id").text(e.Insp_Completed_Count);
+                    $("#Sp_Total_Insp_Count_Id").text(e.Total_Insp_Count);
+                    $("#Sp_Planned_Count_Id").text(e.Planned_Count);
+                    $("#Sp_Closed_Count_Id").text(e.Closed_Count);
+                    $("#Sp_Findings_Overdue_Count_Id").text(e.Findings_Overdue_Count);
+                    $("#Sp_Total_Actions_Count_Id").text(e.Total_Actions_Count);
+                    $("#Sp_Action_Open_Count_Id").text(e.Action_Open_Count);
+                    $("#Sp_Action_Closed_Count_Id").text(e.Action_Closed_Count);
+                    $("#Sp_Action_Overdue_Count_Id").text(e.Action_Overdue_Count);
+                });
+
+                if (Zone_Onchage_Value != "Yes") {
+                    $("#Graph1").empty();
+                }
+                $("#Graph1_CatWise").empty();
+                $("#chart_SubCat").empty();
+                $("#CommunityWiseDiv").empty();
+                $("#Insp_Mgmt_Graph").empty();
+                $("#Insp_Mgmt_Graph_Year").empty();
+                $("#Insp_HSE_Officer_Graph").empty();
+                var Community_list = $("#CommunityWiseDiv").append('<ul class="list-group list-group list-group-flush insp_Mgmt">').find('ul');
+
+                var colors = ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                                "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                                "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                                "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                                "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                                "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",
+                            "#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF",];
+                $(data.Insp_Dash_CommunityWise_Count).each(function (i, e) {
+                    var iddd = colors[i];
+                    Community_list.append('<li class="list-group-item d-flex justify-content-between align-items-center tblround_DAsh" style="background:' + iddd + ';color:#fff"><h6 style="color:#fff">' + e.Name + '</h6 ><a href="#" onclick="event.preventDefault();Fn_Comunity_Card_Data(' + e.Id + ')"><span class="badge rounded-pill align-items-end"  id="badge' + i + '">' + e.Value + '</span></a></li>');
+                });
+
+                Insp_ZoneData(data.Insp_Dash_ZoneWise_Count);
+                Insp_Mgmt_Graph_Year(data.Insp_Dash_Management_Year_Graph);
+                Insp_Mgmt_Graph(data.Insp_Dash_Management_Graph);
+                Insp_HSE_OfficerData(data.Insp_Dash_HSE_Officer_Count);
+                Insp_CategoryData(data.Insp_Dash_CategoryWise_Count);
+                Insp_SubCategoryData(data.Insp_Dash_SubCategoryWise_Count);
+
+            }
+        }
+        function Insp_ZoneData(data) {
+            debugger;
+            //var Chartdata = [];
+            //var monthdata = [];
+            //if (data != null) {
+            //    $(data).each(function (i, m) {
+            //        monthdata.push(parseInt(m.Value));
+            //        Chartdata.push(m.Name);
+            //    });
+            //    DrawGraphZone_Datas(monthdata, Chartdata, 'Zone');
+            //}
+
+            $("#Graph1").html('');
+            var High1 = [];
+            var Medium1 = [];
+
+            var arr = [];
+            $.each(data, function (i, val) {
+                var high = val.Planned;
+                High1.push(high);
+                var medium = val.Completed;
+                Medium1.push(medium);
+                var Zone_Name = val.Zone_Name;
+                arr.push(Zone_Name);
+            });
+            var options = {
+                chart: {
+                    type: 'bar',
+                    height: 220
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                }, dataLabels: {
+                    enabled: true,
+                    textAnchor: 'middle',
+                    style: {
+                        colors: ['#fff']
+                    },
+                    formatter: function (val, opts) {
+                        return val
+                    },
+                    offsetX: 0,
+                    dropShadow: {
+                        enabled: true
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                series: [
+                    { name: "Planned", data: High1 },
+                    { name: "Completed", data: Medium1 },
+                ],
+                xaxis: { categories: arr },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                legend: { position: "bottom" },
+                fill: { opacity: 1 }
+            },
+                chart = new ApexCharts(document.querySelector("#Graph1")
+                    , options);
+            chart.render();
+            //var chart = new ApexCharts(document.querySelector("#Graph1"), options);
+            //chart.render();
+            //ApexCharts.exec('Graph1', 'updateOptions', {
+            //    series: arr1,
+            //    labels: arr2
+            //});
+            //   var chart = new ApexCharts(document.querySelector("#Graph1")
+            //        , options);
+            //chart.render();
+
+        }
+
+        function Insp_HSE_OfficerData(data) {
+            debugger;
+            var High1 = [];
+            var Medium1 = [];
+
+            var arr = [];
+            $.each(data, function (i, val) {
+                var high = val.Planned;
+                High1.push(high);
+                var medium = val.Completed;
+                Medium1.push(medium);
+                var HSE_Officer = val.HSE_Officer;
+                arr.push(HSE_Officer);
+            });
+
+            var options = {
+                series: [
+                    { name: "Planned", data: High1 },
+                    { name: "Completed", data: Medium1 },
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 230,
+                    toolbar: {
+                        tools: {
+                            download: true,
+                            selection: false,
+                            zoom: false,
+                            zoomin: false,
+                            zoomout: false,
+                            pan: false,
+                            reset: false
+                        }
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    textAnchor: 'middle',
+                    style: {
+                        colors: ['#fff']
+                    },
+                    formatter: function (val, opts) {
+                        return val
+                    },
+                    offsetX: 0,
+                    dropShadow: {
+                        enabled: true
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                xaxis: {
+                    labels: { rotate: 0 }, categories: arr
+                },
+                //xaxis: { categories: arr },
+                fill: {
+                    opacity: 1
+                }
+                //tooltip: {
+                //    y: {
+                //        formatter: function (val) {
+                //            return val
+                //        }
+                //    }
+                //}
+            };
+
+            var chart = new ApexCharts(document.querySelector("#Insp_HSE_Officer_Graph"), options);
+            chart.render();
+
+            //$("#Insp_HSE_Officer_Graph").html('');
+            //var High1 = [];
+            //var Medium1 = [];
+
+            //var arr = [];
+            //$.each(data, function (i, val) {
+            //    var high = val.Planned;
+            //    High1.push(high);
+            //    var medium = val.Completed;
+            //    Medium1.push(medium);
+            //    var HSE_Officer = val.HSE_Officer;
+            //    arr.push(HSE_Officer);
+            //});
+            //var options = {
+            //    chart: { height: 220, type: "bar", stacked: false, toolbar: { show: !1 } }, plotOptions: { bar: { horizontal: !1, columnWidth: "50%" } },
+            //    dataLabels: { enabled: !1 },
+            //    series: [
+            //        { name: "Planned", data: High1 },
+            //        { name: "Completed", data: Medium1 },
+            //    ],
+
+            //    xaxis: { labels: { rotate: 0 }, categories: arr, tickPlacement: 'on' },
+            //    colors: ["#1668b6", "#1ee498", "#008000"],
+            //    legend: { position: "bottom" },
+            //    fill: { opacity: 1 }
+            //},
+            //                chart = new ApexCharts(document.querySelector("#Insp_HSE_Officer_Graph")
+            //        , options);
+            //chart.render();
+
+        }
+
+        //function MultiplotGraph_Topic_Based_PB(data, ID, cl) {
+        //    $("#Graph1").html('');
+        //    var High1 = [];
+        //    var Medium1 = [];
+
+        //    var arr = [];
+        //    $.each(data, function (i, val) {
+        //        var high = val.High;
+        //        High1.push(high);
+        //        var medium = val.Medium;
+        //        Medium1.push(medium);
+        //        var low = val.Low;
+        //        Low1.push(low);
+        //        var PB_name = val.Project_Building_Name;
+        //        arr.push(PB_name);
+        //    });
+        //    options = {
+        //        chart: { height: 360, type: "bar", stacked: !0, toolbar: { show: !1 }, zoom: { enabled: !0 } }, plotOptions: { bar: { horizontal: !1, columnWidth: "50%" } },
+        //        dataLabels: { enabled: !1 },
+        //        series: [
+        //            { name: "High", data: High1 },
+        //            { name: "Medium", data: Medium1 },
+        //        ],
+        //        xaxis: { categories: arr },
+        //        colors: ["#FF0000", "#FFA500", "#008000"],
+        //        legend: { position: "bottom" },
+        //        fill: { opacity: 1 }
+        //    },
+
+        //        chart = new ApexCharts(document.querySelector(ID)
+        //            , options);
+        //    chart.render();
+
+        //}
+        //function DrawGraphZone_Datas(arr1, arr2, name) {
+        //    let chartOption;
+        //    chartOption = {
+        //        height: 250,
+        //        type: "pie",
+        //        toolbar: {
+        //            show: true,
+        //        },
+        //        events: {
+        //            dataPointSelection: (event, chartContext, config) => {
+        //                let selectedValue = options.labels[config.dataPointIndex];
+        //                Filter_Onchage_Graph(selectedValue);
+        //            }
+        //        },
+        //        id: "chart-id"
+        //    };
+        //    var barchartColors = ["#BD9E70", "#00617F", "#00B0A6", "#B5ABA3", "#36563D", "#7D5959", "#BD9E70", "#F2E596", "#B5ABA3"],
+        //        options = {
+        //            chart: chartOption,
+        //            series: arr1,
+        //            labels: arr2,
+        //            legend: {
+        //                position: "bottom"
+        //            },
+        //            dataLabels: {
+        //                dropShadow: {
+        //                    enabled: !1
+        //                }
+        //            },
+        //            colors: barchartColors,
+
+        //        };
+        //    var chart = new ApexCharts(document.querySelector("#Graph1"), options);
+        //    chart.render();
+        //    ApexCharts.exec('Graph1', 'updateOptions', {
+        //        series: arr1,
+        //        labels: arr2
+        //    });
+        //}
+        function Insp_CategoryData(data) {
+            var Chartdata = [];
+            var monthdata = [];
+            if (data != null) {
+                Cat_Max_Name = data[0].Name;
+                $(data).each(function (i, m) {
+                    monthdata.push(parseInt(m.Value));
+                    Chartdata.push(m.Name);
+                });
+                DrawGraphCategory_Datas(monthdata, Chartdata, 'Category');
+            }
+        }
+        function DrawGraphCategory_Datas(arr1, arr2, name) {
+            let chartOption;
+            chartOption = {
+                height: 260,
+                type: "pie",
+                toolbar: {
+                    show: true,
+                },
+                events: {
+                    dataPointSelection: (event, chartContext, config) => {
+                        let selectedValue = options.labels[config.dataPointIndex];
+                        Filter_Cat_Onchage(selectedValue);
+
+                    }
+                },
+                id: "chart-id1"
+            };
+            var barchartColors = ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"],
+                options = {
+                    chart: chartOption,
+                    series: arr1,
+                    labels: arr2,
+                    legend: {
+                        position: "bottom"
+                    },
+                    dataLabels: {
+                        dropShadow: {
+                            enabled: !1
+                        }
+                    },
+                    colors: barchartColors,
+
+                };
+            var chart = new ApexCharts(document.querySelector("#Graph1_CatWise"), options);
+            chart.render();
+            ApexCharts.exec('chart-id1', 'updateOptions', {
+                series: arr1,
+                labels: arr2
+            });
+        }
+        function Insp_SubCategoryData(data) {
+            var Chart_Value = [];
+            var Chart_Name = [];
+            if (data != null) {
+                $(data).each(function (i, m) {
+                    Chart_Value.push(parseInt(m.Value));
+                    Chart_Name.push(m.Name);
+                });
+                DrawGraphSubCategory_Datas(Chart_Value, Chart_Name, 'Category');
+            }
+        }
+        function DrawGraphSubCategory_Datas(arr, arr1, name) {
+            var options = {
+                series: [
+                    {
+                        name: "Observation Type",
+                        data: arr,
+                    },
+                ],
+                chart: {
+                    type: 'bar',
+                    height: 270,
+
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 0,
+                        horizontal: true,
+                        distributed: true,
+                        barHeight: '80%',
+                        //isFunnel: false,
+                    },
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                ],
+                //dataLabels: {
+                //    enabled: true,
+                //    formatter: function (val, opt) {
+                //        return opt.w.globals.labels[opt.dataPointIndex] + ':  ' + val
+                //    },
+                //    dropShadow: {
+                //        enabled: true,
+                //    },
+                //},
+                title: {
+                    text: Cat_Max_Name,
+                    align: 'middle',
+                    fontFamily: 'Nakheel-Textregular',
+                },
+                xaxis: {
+                    categories: arr1,
+                },
+                legend: {
+                    show: false,
+                },
+            };
+
+            var chart = new ApexCharts(document.querySelector("#chart_SubCat"), options);
+            chart.render();
+            ApexCharts.exec('chart_SubCat', 'updateOptions', {
+                series: arr,
+                labels: arr1
+            });
+        }
+        function Insp_Mgmt_Graph(data) {
+            let LMH = [];
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    let G1 = {};
+                    let GD = [];
+                    G1.name = e.Name;
+                    GD.push(parseInt(e.January));
+                    GD.push(parseInt(e.February));
+                    GD.push(parseInt(e.March));
+                    GD.push(parseInt(e.April));
+                    GD.push(parseInt(e.May));
+                    GD.push(parseInt(e.June));
+                    GD.push(parseInt(e.July));
+                    GD.push(parseInt(e.August));
+                    GD.push(parseInt(e.September));
+                    GD.push(parseInt(e.October));
+                    GD.push(parseInt(e.November));
+                    GD.push(parseInt(e.December));
+                    G1.data = GD;
+                    LMH.push(G1);
+                });
+            }
+            DrawInsp_Mgmt_Graph_Datas(LMH);
+        }
+        function Insp_Mgmt_Graph_Year(data) {
+            let LMH = [];
+            if (data != null) {
+                $(data).each(function (i, e) {
+                    let G1 = {};
+                    let GD = [];
+                    G1.name = e.Name;
+                    //GD.push(parseInt(e.Year2019));
+                    //GD.push(parseInt(e.Year2020));
+                    //GD.push(parseInt(e.Year2021));
+                    //GD.push(parseInt(e.Year2022));
+                    GD.push(parseInt(e.Year2023));
+                    GD.push(parseInt(e.Year2024));
+                    GD.push(parseInt(e.Year2025));
+                    GD.push(parseInt(e.Year2026));
+                    GD.push(parseInt(e.Year2027));
+                    //GD.push(parseInt(e.Year2028));
+                    //GD.push(parseInt(e.Year2029));
+                    //GD.push(parseInt(e.Year2030));
+                    G1.data = GD;
+                    LMH.push(G1);
+                });
+            }
+            DrawInsp_Mgmt_Year_Graph_Datas(LMH);
+        }
+        function DrawInsp_Mgmt_Graph_Datas(arr) {
+            var options = {
+                series: arr,
+                chart: {
+                    type: 'bar',
+                    height: 230
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    textAnchor: 'middle',
+                    style: {
+                        colors: ['#fff']
+                    },
+                    formatter: function (val, opts) {
+                        return val
+                    },
+                    offsetX: 0,
+                    dropShadow: {
+                        enabled: true
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                ],
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val
+                        }
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#Insp_Mgmt_Graph"), options);
+            chart.render();
+        }
+        function DrawInsp_Mgmt_Year_Graph_Datas(arr) {
+            var options = {
+                series: arr,
+                chart: {
+                    type: 'bar',
+                    height: 230
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        columnWidth: '55%',
+                        endingShape: 'rounded'
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    textAnchor: 'middle',
+                    style: {
+                        colors: ['#fff']
+                    },
+                    formatter: function (val, opts) {
+                        return val
+                    },
+                    offsetX: 0,
+                    dropShadow: {
+                        enabled: true
+                    }
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                colors: ["#00263A", "#00617F", "#0D87AC", "#30ACD2", "#48C7EE", "#3CD1FF"
+                ],
+                xaxis: {
+                    categories: ['2023', '2024', '2025', '2026', '2027'/*, '2028', '2029', '2030'*/],
+                },
+                fill: {
+                    opacity: 1
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val
+                        }
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#Insp_Mgmt_Graph_Year"), options);
+            chart.render();
+        }
+        function FilterOpt() {
+            let yr = $("#Drp_Year").val();
+            let Zone = $("#Drp_Zone").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: '',
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Dashboard_Data');
+            Fn_Dash_Data(Dash_data);
+        }
+        function Filter_Onchage_Graph(name) {
+            Zone_Onchage_Value = "";
+            Zone_Graph_Change = "Yes";
+            Zone_On_Name = name;
+            let yr = $("#Drp_Year").val();
+            let Zone = name;
+            let Community_Id = "";
+            let Building_Id = "";
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: "Zone_Onchange",
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Dashboard_Data');
+            Zone_Onchage_Value = "Yes";
+            Fn_Dash_Data(Dash_data);
+        }
+        function Filter_Cat_Onchage(name) {
+            debugger
+            var Zone_Name = "";
+            var Remarks_Val = "";
+            if (Zone_Onchage_Value == "Yes") {
+                Zone_Name = Zone_On_Name;
+                Remarks_Val = "Yes";
+            } else {
+                Zone_Name = $("#Drp_Zone").val();
+                Remarks_Val = "No";
+            }
+            Cat_Max_Name = name;
+            let yr = $("#Drp_Year").val();
+            let Zone = Zone_Name;
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: name,
+                Remarks: Remarks_Val,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Dashboard_Cat_Onchage_Data');
+            Fn_Dash_Data_Cat_Onchange(Dash_data);
+        }
+        function Fn_Dash_Data_Cat_Onchange(Dash_data) {
+            var data = Dash_data;
+            if (data != null) {
+                $("#chart_SubCat").empty();
+                Insp_SubCategoryData(data.Insp_Dash_SubCategoryWise_Count);
+            }
+        }
+        function GetDB_Data(model, url) {
+            let H_data;
+            $.ajax({
+                url: url,
+                type: "POST",
+                cache: false,
+                async: false,
+                data: { dash_Params: model },
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        H_data = data;
+                    }
+                    else {
+                        H_data = null;
+                    }
+                },
+                error: function (error) {
+                }
+            });
+            return H_data;
+        }
+        function FilterDate() {
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                $(".InputField").attr("disabled", true);
+                $(UI_Fields.FROM_DATE).attr("disabled", false);
+                $(UI_Fields.TO_DATE).attr("disabled", false);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).show(100);
+            }
+            else {
+                $(".InputField").attr("disabled", false);
+                $(UI_Fields.FROM_DATE).attr("disabled", true);
+                $(UI_Fields.TO_DATE).attr("disabled", true);
+                $(UI_Fields.FILTER_DATE).attr("disabled", false);
+                $(UI_Fields.FRM_TO_DIV).hide(100);
+                $(UI_Fields.FROM_DATE).val('');
+                $(UI_Fields.TO_DATE).val('');
+                FilterOpt();
+            }
+        }
+        function Filter_HSETeam() {
+
+            let ch = $(UI_Fields.FilterHSETeam).is(':checked');
+            if (ch) {
+                $(".InputFieldHSE").attr("disabled", true);
+                $(UI_Fields.FilterHSETeam).attr("disabled", false);
+                $("#Frm_HSETeamDiv").show(100);
+                Var_If_HSE_Team = "Yes";
+                Load_Filter_HSETeam();
+            }
+            else {
+                $(".InputFieldHSE").attr("disabled", false);
+                $(UI_Fields.FilterHSETeam).attr("disabled", false);
+                $("#Frm_HSETeamDiv").hide(100);
+                Var_If_HSE_Team = "No";
+                $("#Filter_HSETeam").empty();
+                FilterOpt();
+            }
+        }
+        function Load_Filter_HSETeam() {
+            $.post("@Url.Action("Insp_Dash_Filter_HSETeam_GetAll", "InspectionDashboard")", function (data) {
+                debugger
+                $("#Filter_HSETeam").empty();
+                $("#Filter_HSETeam").append("<option disabled selected value='0'style='text-align:center'>--Select--</option>");
+                $(data).each(function (i, e) {
+                    $("#Filter_HSETeam").append("<option value=" + e.Value + ">" + e.Name + "</option>");
+                });
+            });
+        }
+        function DateFilter() {
+            Zone_Onchage_Value = "";
+            let Dash_data = CMMDateFilter();
+            ApplyINCFilter(Dash_data);
+        }
+        function CMMDateFilter() {
+            let model;
+            let FD = $("#From_Date").val();
+            let TD = $("#To_Date").val();
+            if (TD == null || TD == '') {
+                return false;
+            }
+            if (FD == null || FD == '') {
+                toastr["error"]("Please Select From Date!");
+                return false;
+            }
+            if (Date.parse(TD) > Date.parse(FD)) {
+                FilterOpt()
+            }
+            else {
+                toastr["error"]("Invalid Date Range!");
+                return false;
+            }
+        }
+
+        function Insp_Card_Toggle(data) {
+            $(UI_Fields.tbl_Insp_Details_card_view).dataTable().fnDestroy();
+            $(UI_Fields.GetAllInsp_Details_cardList).html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Module_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Inspection_Date + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Reported_By + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Assign_Action_HSE + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+
+                $(UI_Fields.GetAllInsp_Details_cardList).append(htmls);
+                $(UI_Fields.Model_Insp_Details).modal('toggle');
+                ApplyDataTable(UI_Fields.tbl_Insp_Details_card_view, 'Inspection Report');
+
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+        function Insp_Card_Toggle_CA(data) {
+            $(UI_Fields.tbl_Insp_Details_card_view_CA).dataTable().fnDestroy();
+            $(UI_Fields.GetAllInsp_Details_cardList_CA).html('');
+            let htmls = "";
+            if (data != null) {
+                $(data).each(function (i, e) {
+
+                    htmls += '<tr><td align="left" valign="middle">' + e.Unique_Id + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Business_Unit_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Zone_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Community_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Building_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Module_Name + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Assignee_Type + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Responsibility_To + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Target_Date + '</td>';
+                    htmls += '<td align="left" valign="middle">' + e.Status + '</td>';
+                });
+
+                $(UI_Fields.GetAllInsp_Details_cardList_CA).append(htmls);
+                $(UI_Fields.Model_Insp_Details_CA).modal('toggle');
+                ApplyDataTable(UI_Fields.tbl_Insp_Details_card_view_CA, 'Inspection Report');
+
+            }
+            else {
+                toastr["error"]("Something went wrong Please Try Again!");
+            }
+        }
+        function ApplyDataTable(id, title) {
+            $(id).DataTable({
+                "initComplete": function (settings, json) {
+                    $(id).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+                },
+                "columnDefs": [
+                    {
+                        "visible": false,
+                        "searchable": false
+                    },
+                ],
+                dom: 'lBfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Excel',
+                        title: title
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF',
+                        title: title
+                    },
+                    {
+                        extend: 'colvis',
+                        text: 'Show Columns',
+                        columns: ':not(.dt-head-hidden)'
+                    }
+                ]
+            });
+            $(id).attr("style", "width:100%");
+        }
+        function Fn_Comunity_Card_Data(Comm_Id) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = Comm_Id;
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: "22",
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Insp_Dash_Card_View_Data');
+            Insp_Card_Toggle(Dash_data);
+        }
+        function Fn_Drp_Filter_HSETeam(Id) {
+            Var_If_HSE_Team = "Yes";
+            FilterOpt();
+        }
+
+        function Fn_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: Card_Access,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Insp_Dash_Card_View_Data');
+
+            if (table_Access == "tbl_Insp") {
+                Insp_Card_Toggle(Dash_data);
+            } else {
+                Insp_Card_Toggle_CA(Dash_data);
+            }
+
+        }
+
+        function Fn_Sch_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: Card_Access,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Sch_Dash_Card_View_Data');
+
+            if (table_Access == "tbl_Insp") {
+                Insp_Card_Toggle(Dash_data);
+            } else {
+                Insp_Card_Toggle_CA(Dash_data);
+            }
+
+        }
+
+        function Fn_Walk_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: Card_Access,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Walk_Dash_Card_View_Data');
+
+            if (table_Access == "tbl_Insp") {
+                Insp_Card_Toggle(Dash_data);
+            } else {
+                Insp_Card_Toggle_CA(Dash_data);
+            }
+
+        }
+
+        function Fn_Type_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: Card_Access,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Type_Dash_Card_View_Data');
+
+            if (table_Access == "tbl_Insp") {
+                Insp_Card_Toggle(Dash_data);
+            } else {
+                Insp_Card_Toggle_CA(Dash_data);
+            }
+
+        }
+
+        function Fn_Service_Model_Insp_Details(Card_Access, Row_ID, table_Access) {
+            let Zone = "";
+            let Category_Name = "";
+            if (Zone_Graph_Change == "Yes") {
+                Zone = Zone_On_Name;
+                Category_Name = "Zone_Onchange";
+            } else {
+                Zone = $("#Drp_Zone").val();
+                Category_Name = "";
+            }
+
+            let yr = $("#Drp_Year").val();
+            let Community_Id = $("#Drp_Community").val();
+            let Building_Id = $("#Drp_Building").val();
+            let From_Date = $("#From_Date").val();
+            let To_date = $("#To_Date").val();
+            let If_HSE_Team = Var_If_HSE_Team;
+            let HSE_Team_Id = $("#Filter_HSETeam").val();
+
+            let ch = $(UI_Fields.FILTER_DATE).is(':checked');
+            if (ch) {
+                yr = "";
+            }
+            let model = {
+                Year: yr,
+                Zone_Id: Zone,
+                Community_Id: Community_Id,
+                Building_Id: Building_Id,
+                From_Date: From_Date,
+                To_date: To_date,
+                Category_Name: Category_Name,
+                Card_Access: Card_Access,
+                If_HSE_Team: If_HSE_Team,
+                HSE_Team_Id: HSE_Team_Id,
+            };
+            let Dash_data = GetDB_Data(model, '/InspectionDashboard/Get_Insp_Service_Dash_Card_View_Data');
+
+            if (table_Access == "tbl_Insp") {
+                Insp_Card_Toggle(Dash_data);
+            } else {
+                Insp_Card_Toggle_CA(Dash_data);
+            }
+
+        }
+    </script>
+</body>
+

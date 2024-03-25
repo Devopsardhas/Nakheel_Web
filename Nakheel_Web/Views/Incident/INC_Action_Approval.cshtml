@@ -1,0 +1,354 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Action Closure Approval";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.IncidentReport.Corrective_Assign_Action>;
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="" style="margin-top:16px"> <h4 class="">Action Closure Approval List</h4></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblActionClosure" class="table table-striped dt-responsive nowrap tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Incident ID</th>
+                            <th>Description Actions</th>
+                            <th>Priority</th>
+                            <th>Target Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">NCM-HSSE-@item.Inc_Id</td>
+                                    <td align="left" valign="middle">@item.Description_Actions</td>
+                                    <td align="left" valign="middle">@item.Priority</td>
+                                    <td align="left" valign="middle">@item.Target_Date</td>
+                                    @if (item.Status == "Closure Verification Pending")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (item.Status == "Action Closure Approved")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (item.Status == "Action Closure Rejected")
+                                    {
+                                        <td align="left" valign="middle"><span class="badge bg-danger">@item.Status</span> </td>
+                                        <td align="left">
+                                            <div class="d-flex gap-3">
+                                                <a onclick="Closure_View(@item.Created_By,@item.Corrective_Action_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="Inc_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Incident </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewIncidentList">
+                </div>
+                <div id="ActionClosre_Eviden">
+                    <div class="row">
+                        <input type="hidden" id="Corrective_Action_Id" />
+                        <label for="example-number-input" class="col-md-4 col-form-label">Action Taken</label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Action_Taken_Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label">Evidence Upload</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-12">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Inc_View_Evidence_Photos" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Incident </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback_Ev" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewIncidentList_Ev">
+                </div>
+                <div id="ViewIncidentList_Ev_Photos">
+                </div>
+                @if (LoginClass.Role_Id == "5")
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Ev(1)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" >
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action_Closure_Ev(1)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabelLvl1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Reject Reason</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Reject_Reason" name="Reject_Reason" style="height: 107px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div>
+
+                                    <button type="button" onclick="btn_Submit_Action_Closure_Ev(2)" class="btn btn-primary waves-effect waves-light submit" style="cursor:pointer">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MAIN_TABLE: "#tblActionClosure",
+        TBODY_TABLE: "#GetIncidentList",
+    });
+
+    $(document).ready(function () {
+       
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    })
+</script>
+
+
+
+<script>
+    function Closure_View(val, Corrective_Action_Id) {
+        $("#Corrective_Action_Id").val(Corrective_Action_Id);
+        $("#List_View").hide(100);
+        $("#Inc_View_Evidence_Photos").show(100);
+        Hzurl = '/Incident/_ViewIncidentReport';
+        Hzurl += '/?Inc_Id=' + val;
+        $("#ViewIncidentList_Ev").load(Hzurl);
+
+        Hzurl = '/Incident/_ViewIncidentClosureEv';
+        Hzurl += '/?Corrective_Action_Id=' + Corrective_Action_Id;
+        $("#ViewIncidentList_Ev_Photos").load(Hzurl);
+    }
+    $("#btn_ViewIncback_Ev").on('click',function(){
+        $("#List_View").show(100);
+        $("#Inc_View_Evidence_Photos").hide();
+    })
+    function btn_Submit_Action_Closure_Ev(val) {
+        debugger;
+        if (val == "1") {
+            var Obj = {
+                Corrective_Action_Id: $("#hdn_Corrective_Action_Id").val(),
+                Inc_Id: $("#hdn_Inc_Id").val(),
+                Status: "2",
+            };
+            $.ajax({
+                url: "/Incident/Update_Corrective_Assign_Action",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Approved Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        else {
+            var varCorrectiveAction_Id = $("#hdn_Corrective_Action_Id").val();
+            var varRejectedReason = $("#Reject_Reason").val();
+            var model = {
+                Corrective_Action_Id: varCorrectiveAction_Id,
+                Rejected_Reason: varRejectedReason,
+                Status: "5",
+            };
+            $.ajax({
+                url: "/Incident/Update_Corrective_Assign_Action",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(model),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Rejected Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+
+    }
+</script>

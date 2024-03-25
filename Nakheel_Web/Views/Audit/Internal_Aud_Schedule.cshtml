@@ -1,0 +1,1153 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Internal Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="Internal_List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"><h4 class="card-title">Internal Audit List</h4></div>
+                    @* @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                    {
+                    <div class="col-lg-2">
+                    <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Int_Audit_btn_Add" onclick="Internal_AddNew();"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                    }*@
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="Main_Table_Internal" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Audit Id</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Get_Main_Table_Internal">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="Int_View_Schd" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"><h4>Internal Audit</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Int_Audit_btn_back" onclick="Int_Audit_back();"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i> Back </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <input class="form-control" type="hidden" value="" id="Lat">
+                    <input class="form-control" type="hidden" value="" id="Long">
+                    <table class="table tab ">
+                        <tbody id="tblIncidentDetailsViewPage">
+                            <tr>
+                                <td><b class="font-bold">Internal Audit Reference no</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Internal_Audit_Reference"></td>
+
+                                <td><b class="font-bold">Report Name</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Reported_by">@LoginClass.First_Name</td>
+
+                                <td><b class="font-bold">Designation</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Designation">@LoginClass.Designation_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Date_Time"></td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Business_Unit_Id"></td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Zone_Id"></td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Community_Id"></td>
+
+                                <td><b class="font-bold">Building</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Building"></td>
+                                <td><b class="font-bold">Lead Auditor</b></td>
+                                <td>:</td>
+                                <td class="tdtxt" id="Lead_Auditor"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="InternalAuditData" style="display:none">
+                        <form id="F_Inter_Audit_Schd" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                            <input type="hidden" name="Internal_Audit_Id" value="" id="Internal_Audit_Id" />
+                            <lable style="color: #b5abab;font-size: 13px;">Auditor Details</lable>
+                            <div class="row col-lg-12">
+                                <div class="col-lg-6">
+                                    <table id="tbl_Internal_Audit_Team" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Audit Team</th>
+                                                <th>Action</th>
+                                                <th>
+                                                    <button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Audit_TeamAdd" onclick="Int_AuditTeam_AddMore();">
+                                                        <i class="mdi mdi-plus me-1"></i>Add
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody_Internal_Audit_Team_Emp">
+                                            <tr>
+                                                <td style="width: 70%;">
+                                                    <div class="col-md-12">
+                                                        <select class="form-control clsInt_Audit_Team" id="Int_Audit_Team" name="Int_Audit_Team" required minlen="1"><option selected value="" style="text-align:center;">--Select Audit Team--</option></select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-lg-6">
+                                    <table id="tbl_Internal_Service_Provider" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Service Provider Representative</th>
+                                                <th>Action</th>
+                                                <th><button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Service_Prov" onclick="Int_ServiceProv_AddMore();"><i class="mdi mdi-plus"></i>Add</button></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody_Internal_Service_Provider_Emp">
+                                            <tr>
+                                                <td style="width: 70%;">
+                                                    <div class="col-md-12">
+                                                        <select class="form-control clsInt_Service_Provider_Rep" id="Service_Pro_Emp" name="Int_Service_Provider_Rep" required minlen="1"><option value="" style="text-align:center;">--Select Service Provider--</option></select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Internal_Aud_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Internal Audit </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" onclick="Fn_btn_Viewback()" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewInternalAuditList">
+                </div>
+
+                <div id="ViewInvestigationListAppr">
+                </div>
+                <table id="tblIntAuditorsChecklist" class="table table-striped dt-responsive nowrap tblround" style="width:100%;display:none">
+                    <thead>
+                        <tr>
+                            <th>Sno</th>
+                            <th>Checklist Points / Questions</th>
+                            <th>Objective Evidence</th>
+                            <th>Findings</th>
+                        </tr>
+                    </thead>
+                    <tbody id="INT_Audit_Verify_details">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-lg-6" style="display:none" id="divbtn_IAud_Submit">
+                        <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="Fn_IAud_btnSubmit()" id="btn_IAud_Submit">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                        </button>
+                    </div>
+
+                    <div style="display:none" id="divbtn_ApproveReject">
+                        <table id="tblIntAuditorsChecklist_NCR" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Sno</th>
+                                    <th>Checklist Points / Questions</th>
+                                    <th>Objective Evidence</th>
+                                    <th>Findings</th>
+                                    <th>NCR Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="INT_Audit_Verify_details_Verfiy">
+                            </tbody>
+                        </table>
+
+                        @if (LoginClass.Role_Id == "10")
+                        {
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_SDManager(1)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_SDManager(2)" class="btn btn-danger waves-effect waves-light submit" style="cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_SDManager(3)" class="btn btn-success waves-effect waves-light" style="float: right;" id="DivSubmitSD">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">NCR Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="NCRFormList"></div>
+                <form id="FN_NCRFormSubmit" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row col-lg-12">
+                        <input type="hidden" id="NCR_Report_Id" value="" />
+                        <input type="hidden" id="Questionnaire_Id" />
+                        <input type="hidden" id="Clause_Id" />
+                        <input type="hidden" id="hdnIsNCRComplete_Id" />
+                        <div class="col-6">
+                            <div class="">
+                                <h6 for="" class="">Non-Conformity Description:</h6>
+                                <textarea class="form-control" id="Non_Conformity" name="Non_Conformity" readonly style="font-size: 14px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="">
+                                <h6 for="" class="">Applicable Standard/Procedure Requirements:<span class="requ">*</span></h6>
+                                <textarea class="form-control" id="Applicable_Standard" name="Applicable_Standard" style="font-size: 14px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br /><br /><br /><br />
+                    <div class="row col-lg-12">
+                        <div class="col-3">
+                            <div class="">
+                                <h6 for="" class="">Responsibility<span class="requ">*</span> </h6>
+                                <div class="col-md-12">
+                                    <select class="form-control clsAudResponsibility" id="Responsibility" name="Responsibility" required minlen="1"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3" style="display:none">
+                            <div class="">
+                                <h6 for="" class="">Completion Date<span class="requ">*</span> </h6>
+                                <div class="">
+                                    <input class="form-control" type="date" value="" id="Completion_Date" name="Completion_Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="">
+                                <h6 for="" class="">Target Date<span class="requ">*</span> </h6>
+                                <div class="">
+                                    <input class="form-control" type="date" value="" id="Target_Date" name="Target_Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3" style="display:none">
+                            <div class="">
+                                <h6 for="" class="">Authorised by<span class="requ">*</span> </h6>
+                                <div class="">
+                                    <input class="form-control" type="text" value="" id="Authorised_by" name="Authorised_by">
+                                </div>
+                            </div>
+                        </div>
+                    </div><br><br><br><br>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade add-newncrAction" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">NCR Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="NCRFormListAction"></div>
+                <form id="FN_NCRFormSubmit_Report" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row col-lg-12">
+                        <input type="hidden" id="Action_NCR_Report_Id" value="" />
+                        <input type="hidden" id="Action_Questionnaire_Id" />
+                        <input type="hidden" id="Action_Clause_Id" />
+                        <input type="hidden" id="hdnIsNCRComplete_Id" />
+                        <div class="col-6">
+                            <div class="">
+                                <h6 for="" class="">Non-Conformity Description:</h6>
+                                <textarea class="form-control" id="Action_Non_Conformity" name="Action_Non_Conformity" readonly style="font-size: 14px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="">
+                                <h6 for="" class="">Applicable Standard/Procedure Requirements:<span class="requ">*</span></h6>
+                                <textarea class="form-control" id="Action_Applicable_Standard" readonly name="Action_Applicable_Standard" style="font-size: 14px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <br /><br /><br /><br />
+                    <div class="row col-lg-12">
+                        <div class="col-3">
+                            <div class="">
+                                <h6 for="" class="">Responsibility<span class="requ">*</span> </h6>
+                                <div class="col-md-12">
+                                    @*<select class="form-control clsAudResponsibility" id="Action_Responsibility" name="Action_Responsibility" required minlen="1"></select>*@
+                               <input class="form-control" type="text" readonly value="" id="Action_Responsibility" name="Action_Responsibility">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="">
+                                <h6 for="" class="">Target Date<span class="requ">*</span> </h6>
+                                <div class="">
+                                    <input class="form-control" type="text" readonly value="" id="Action_Target_Date" name="Action_Target_Date">
+                                </div>
+                            </div>
+                        </div>
+                    </div><br /><br /><br />
+                    <table id="tbl_Root_Cause_Analysis" class="table table-striped dt-responsive nowrap tblround">
+                        <thead>
+                            <tr>
+                                <th>Root Cause Analysis</th>
+                                <th>Description of Root cause</th>
+                                <th>Action</th>
+                                <th><button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Service_Prov" onclick="Int_Root_Cause_Analysis_AddMore();"><i class="mdi mdi-plus"></i>Add More</button></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_Root_Cause_Analysis_Emp">
+                            <tr>
+                                <td>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control Root_Cause_Analysis_Name" name="Root_Cause_Analysis_Name" id="" style="font-size: 14px;"></textarea>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control Root_Cause_Analysis_Description" id="" name="Root_Cause_Analysis_Description" style="font-size: 14px;"></textarea>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="tbl_Corrective_Action" class="table table-striped dt-responsive nowrap tblround">
+                        <thead>
+                            <tr>
+                                <th>Corrective Action</th>
+                                <th>Action</th>
+                                <th>
+                                    <button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Service_Prov" onclick="Int_Corrective_Action_AddMore();">
+                                        <i class="mdi mdi-plus"></i>Add More
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody_Corrective_Action_Emp">
+                            <tr>
+                                <td>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control Corrective_Action_Name" name="Corrective_Action_Name" id="" style="font-size: 14px;"></textarea>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/js/validation/audit_validation/AuditMasterValidation.js"></script>
+<script src="~/assets/js/validation/audit_validation/Audit_ServerDataTable.js"></script>
+<script>
+    "Use strict";
+    const UI_FIELDS1 = Object.freeze({
+        MAIN_TABLE_INTERNAL: "#Main_Table_Internal",
+        INT_AUDIT_BTN_ADD: "#Int_Audit_btn_Add",
+        INTERNAL_LIST_VIEW: "#Internal_List_View",
+        INT_VIEW_SCHD: "#Int_View_Schd",
+        INTER_AUDIT_SCHD: "#Inter_Audit_Schd",
+        BUSINESS_UNIT_INT: "#Business_Unit_Id",
+        AUDIT_ZONE_INT: "#Zone_Id",
+        COMMUNITY_ID_INT: "#Community_Id",
+        BUILDING_INT: "#Building",
+        INT_LEAD_AUDITOR: "#Lead_Auditor_Id",
+        INT_AUDIT_TEAM_ADDMORE: "#Int_Audit_TeamAdd",
+        INT_SERVICE_PROVIDER: "#Int_Service_Prov",
+        INTERNAL_AUDIT_TEAM_EMP: "#tbody_Internal_Audit_Team_Emp",
+        TBL_AUDIT_TEAM: "#tbl_Audit_Team",
+        INTERNAL_SERVICE_PROVIDER: "#tbody_Internal_Service_Provider_Emp",
+        INT_AUDIT_DELTEBUTTON: ".Int_Audit_tblDeleteButton",
+        TBL_SERVICE_PROVIDER: "#tbl_Service_Provider",
+        INT_AUDIT_SERVICE_PROV: ".Int_Audit_Service_Prov",
+        INT_AUDIT_VERIFY_DETAILS: "#INT_Audit_Verify_details",
+        INT_AUDIT_VERIFY_DETAILS_VERFY: "#INT_Audit_Verify_details_Verfiy",
+        INT_AUDIT_TEAM: "#Int_Audit_Team",
+        SERVICE_PRO_EMP: "#Service_Pro_Emp",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        INTERNAL_AUD_VIEW: "#Internal_Aud_View",
+        VIEW_INTERNAL_AUDIT_LIST: "#ViewInternalAuditList",
+        TBL_ROOT_CAUSE_ANALYSIS: "#tbody_Root_Cause_Analysis_Emp",
+        TBL_CORRECTIVE_ACTION_EMP: "#tbody_Corrective_Action_Emp",
+        DATE_TIME: "#Date_Time",
+        INTERNAL_AUDIT_REFERENCE: "#Internal_Audit_Reference",
+        BUSINESS_UNIT_TYPE: "#Business_Unit_Type",
+        INT_LEAD_AUDITOR_NAME: "#Lead_Auditor",
+    });
+    $(document).ready(function () {
+        Load_GoogleMaps();
+        AuditInternalAuditServerTable();
+        //ApplySelect2("#Business_Unit_Id");
+        //ApplySelect2("#Zone_Id");
+        ApplySelect2(".clsAudResponsibility");
+        ApplySelect2("#Lead_Auditor_Id");
+        ApplySelect2("#Int_Audit_Team");
+        ApplySelect2("#Service_Pro_Emp");
+
+        $(UI_FIELDS1.TBL_AUDIT_TEAM).on("click", UI_FIELDS1.INT_AUDIT_DELTEBUTTON, function () {
+            $(this).closest('tr').remove();
+        });
+        $(UI_FIELDS1.TBL_SERVICE_PROVIDER).on("click", UI_FIELDS1.INT_AUDIT_SERVICE_PROV, function () {
+            $(this).closest('tr').remove();
+        });
+
+        $("#tbl_Internal_Audit_Team").on("click", '.Int_Audit_tblDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tbl_Internal_Service_Provider").on("click", '.Int_Audit_Service_DelProv', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tbl_Root_Cause_Analysis").on("click", '.Root_Cause_Analysis_DelProv', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tbl_Corrective_Action").on("click", '.Int_Corrective_Action_DelProv', function () {
+            $(this).closest("tr").remove();
+        });
+    });
+
+    function Fn_IAud_btnSubmit() {
+        //alert("dd");
+        debugger;
+        var subSno = 1;
+        var varImagefile = [];
+        var varInternalAuditList = [];
+        $("#tblIntAuditorsChecklist tbody tr").each(function () {
+            var checname = "SubVerify_detail" + subSno;
+            var finds = "Clause_Findings_" + subSno;
+            if ($('input[name="' + checname + '"]').is(':checked')) {
+
+                var varQuestionnaire_chck = $('#Questionnaire_Details_' + subSno).val();
+                //var varAuditor_Verification_Details = $('#aud_Verify' + subSno).val();
+                var varSite_Inspection_Details = $('#Insp_Detail' + subSno).val();
+                var varFindings = $('input[name="' + finds + '"]:checked').val(); // $('.Clause_Find' + subSno).val();
+                var varInternal_Topic = $('#Audit_Topics_Name_' + subSno).val();
+                var varInternal_Sub_Topic = $('#Audit_Sub_Topics_Name_' + subSno).val();
+
+
+                var data = {};
+                data.Clause_Id = "0";
+                data.Questionnaire_Id = varQuestionnaire_chck;
+                data.Internal_Audit_Id = $("#Inv_Inc_Id").val();
+                data.Auditor_Verification_Details = "";
+                data.Site_Inspection_Details = varSite_Inspection_Details;
+                data.Findings = varFindings;
+                data.Internal_Topic = varInternal_Topic;
+                data.Internal_Sub_Topic = varInternal_Sub_Topic;
+                data.L_Aud_Internal_Evidence_Photos = varImagefile;
+                varInternalAuditList.push(data);
+                subSno++;
+                varImagefile = [];
+            }
+        });
+        var Obj = {
+            Add_Checklist_List_Lev1: varInternalAuditList,
+        };
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("Add_Internal_Aud_CheckList", "Audit"))',
+            type: "POST",
+            cache: true,
+            async: false,
+            data: JSON.stringify(varInternalAuditList),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    //toastr["info"](data);
+                    //window.location.reload();
+                }
+            },
+            error: function (errormessage) {
+            }
+        });
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Load_GoogleMaps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_FIELDS1.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+
+
+    function Int_Audit_back() {
+        $(UI_FIELDS1.INTERNAL_LIST_VIEW).show(100);
+        $(UI_FIELDS1.INT_VIEW_SCHD).hide(100);
+    }
+
+    function Fn_btn_Viewback() {
+        //window.location.reload();
+        $(UI_FIELDS1.INTERNAL_LIST_VIEW).show(100);
+        $(UI_FIELDS1.INTERNAL_AUD_VIEW).hide(100);
+    }
+
+    var count = 1;
+    function Int_AuditTeam_AddMore() {
+        var Zone_Id = $("#Lat").val();
+        var Community_Id = $("#Long").val();
+        var html = "";
+        var varInternal_AuditTeam = "Int_Audit_Team" + count;
+        var varInternal_Auditid = "#Int_Audit_Team" + count;
+        html += '<tr><td><input type="hidden" class="Audit_Schd_Id" value="0"><select class="form-control clsInt_Audit_Team" id="' + varInternal_AuditTeam + '" name="Int_Audit_Team' + count + '" required minlen="1"><option value="" style="text-align:center;" selected>--Select Audit Team--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Int_Audit_tblDeleteButton">Remove</button></td></tr>'
+        Int_Load_Audit_Team('AuditTeam', "#" + varInternal_AuditTeam, Zone_Id, Community_Id);
+        $(UI_FIELDS1.INTERNAL_AUDIT_TEAM_EMP).append(html);
+        ApplySelect2(varInternal_Auditid);
+        count++;
+    }
+    var index = 1;
+
+    function Int_ServiceProv_AddMore() {
+        debugger
+        var Zone_Id = $("#Lat").val();
+        var Community_Id = $("#Long").val();
+        var html = "";
+        var varService_Provider = "Int_Service_Provider" + index;
+        var varService_Providerid = "#Int_Service_Provider" + index;
+        html += '<tr><td><input type="hidden" class="Aud_Schd_Id" value="0"><select class="form-control clsInt_Service_Provider_Rep" id="' + varService_Provider + '" name="Int_Service_Provider' + index + '" required minlen="1"><option value="" selected style="text-align:center;"selected>--Select Service Provider--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Int_Audit_Service_DelProv">Remove</button></td>< /tr>'
+        Int_Load_Audit_Team('Service_provider', "#" + varService_Provider, Zone_Id, Community_Id);
+        $(UI_FIELDS1.INTERNAL_SERVICE_PROVIDER).append(html);
+        ApplySelect2(varService_Providerid);
+        index++;
+    }
+
+    function Int_Root_Cause_Analysis_AddMore() {
+        debugger
+        var html = "";
+        var var_Root_Cause_Analysis = "Root_Cause_Analysis" + index;
+        var var_Root_Cause_Analysisid = "#Root_Cause_Analysis" + index;
+        html += '<tr><td><div class="col-md-12"><textarea class="form-control Root_Cause_Analysis_Name" id="" style="font-size: 14px;"></textarea></div></td><td><div class="col-md-12"><textarea class="form-control Root_Cause_Analysis_Description" id="" style="font-size: 14px;"></textarea></div></td>'
+        html += '<td><button type="button" class="btn btn-danger Root_Cause_Analysis_DelProv">Remove</button></td>< /tr>'
+        $(UI_FIELDS1.TBL_ROOT_CAUSE_ANALYSIS).append(html);
+        index++;
+    }
+
+    function Int_Corrective_Action_AddMore() {
+        debugger
+        var html = "";
+        var var_Int_Corrective_Action = "Int_Corrective_Action" + index;
+        var var_Int_Corrective_Actionid = "#Int_Corrective_Action" + index;
+        html += '<tr><td><div class="col-md-12"><textarea class="form-control Corrective_Action_Name" id="" style="font-size: 14px;"></textarea></div></td>'
+        html += '<td><button type="button" class="btn btn-danger Int_Corrective_Action_DelProv">Remove</button></td>< /tr>'
+        $(UI_FIELDS1.TBL_CORRECTIVE_ACTION_EMP).append(html);
+        index++;
+    }
+
+    function LoadClause() {
+        debugger;
+        $("#divbtn_IAud_Submit").show();
+        $("#divbtn_ApproveReject").hide();
+        $("#tblIntAuditorsChecklist").show();
+        var subTopicSno = 1;
+        var subSno = 1;
+        var index = 0;
+        var markup = "";
+        var Questionnaire = 0;
+        $.post("@Url.Action("Load_Sub_Topics_Quest","CommonMaster")", { Audit_Category_Id: "3" }, function (data) {
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS).empty();
+            $(data).each(function (i, e) {
+                if (e.Audit_Topics_Name == "") {
+                    markup += '<tr><td style="vertical-align: sub;color: #000;">' + subSno + '</td><td  colspan=5><input type=hidden id="Audit_Topics_Id" value="' + e.Audit_Topics_Id + '"><label style="color: #000;">' + e.Audit_Topics_Name + '</label></td></tr>';
+                    subSno++;
+                }
+                else {
+                    markup += '<tr><td style="vertical-align: sub;color: #000;">' + subSno + '</td><td  colspan=5><input type=hidden id="Audit_Topics_Id" value="' + e.Audit_Topics_Id + '"><label style="color: #000;">' + e.Audit_Topics_Name + '</label></td></tr>';
+                    subSno++;
+                }
+                $(data[index].Audit_Sub_Topics).each(function (a, s) {
+                    $(data[index].Audit_Sub_Topics[a].Load_All_Quest).each(function (x, y) {
+                        var files = 'files_' + subTopicSno;
+                        var UploadPhotos = 'UploadPhotos_' + subTopicSno;
+                        var AutoSavePdficons = 'AutoSavePdficons_' + subTopicSno;
+
+                        markup += '<td colspan=5><label>' + s.Audit_Sub_Topics_Name + '</label></td>';
+                        var varQuestionnaire = "aud_Verification" + Questionnaire;
+                        markup += '<tr><td style="width: 2px !important"></td><input type="hidden" id="Audit_Topics_Name_' + subTopicSno + '" value="' + e.Audit_Topics_Name + '"><input type="hidden" id="Audit_Sub_Topics_Name_' + subTopicSno + '" value="' + s.Audit_Sub_Topics_Name + '"><td style="text-align: justify;width: 34%;"><input style="margin: 8px" type=checkbox name="SubVerify_detail' + subTopicSno + '" id=Questionnaire_Details_' + subTopicSno + ' class="Questionnaire_Details" value="' + y.Audit_Questionnaires_Id + '" onchange="In_Audit_Quest_Validate(' + subTopicSno + ')"><span>' + y.Audit_Questionnaires_Name + '</span><br/></td><td><textarea style="height: 95px;" name="Insp_Detail" id = Insp_Detail' + subTopicSno + ' class=form-control disabled></textarea></td>';
+                        markup += '<td style="width: 20%;">'
+                        $(data[index].Audit_Sub_Topics[a].Load_All_Quest[x].Aud_Ins_Details).each(function (p, q) {
+                            markup += '<input type="hidden" name="Findings_Type" value="' + q.Findings_Type + '"><input type=radio onchange="FnClause_Finds(this.value,' + "'" + files + "'" + ')" disabled style="vertical-align: top;" class="Clause_Find' + subTopicSno + '" name=Clause_Findings_' + subTopicSno + ' id="' + q.Findings_Name + subTopicSno + '" value="' + q.Findings_Name + '">&nbsp;' + q.Findings_Name + '<br>';
+                        });
+                        markup += '</td>'
+                        markup += '</tr>'
+                    });
+                    Questionnaire++;
+                    subTopicSno++;
+                });
+                index++;
+            });
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS).append(markup);
+        });
+    }
+
+
+    function Load_Emp_List(Role_Name, Zone_Id, Community_Id) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $(UI_FIELDS1.INT_LEAD_AUDITOR).empty();
+                $(UI_FIELDS1.INT_LEAD_AUDITOR).append("<option selected value='0' style='text-align:center' disabled> --Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $(UI_FIELDS1.INT_LEAD_AUDITOR).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                }
+            },
+        });
+    }
+
+    function Load_Emp_Responsibility(Role_Name, Zone_Id, Community_Id, Selectedval) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $(".clsAudResponsibility").empty();
+                $(".clsAudResponsibility").append("<option selected value='0' style='text-align:center' disabled> --Select Responsibility--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $(".clsAudResponsibility").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                    if (Selectedval != null)
+                        $(".clsAudResponsibility").val(Selectedval);
+                }
+            },
+        });
+    }
+
+    function Load_Emp_AuditList(Role_Name, Audit_Id, Zone_Id, Community_Id) {
+        debugger
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $(Audit_Id).empty();
+                $(Audit_Id).append("<option selected value='0' style='text-align:center' disabled> --Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $(Audit_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                }
+            },
+        });
+    }
+
+    function Load_Emp_ServiceProviderList(Role_Name, Audit_Id, Zone_Id, Community_Id) {
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $(Audit_Id).empty();
+                $(Audit_Id).append("<option selected value='0' style='text-align:center' disabled> --Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        $(Audit_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                }
+            },
+        });
+    }
+    function Int_Load_Audit_Team(Role_Name, Audit_Id, Zone_Id, Community_Id) {
+        debugger
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(data).each(function (a, b) {
+                $(Audit_Id).append("<option value=" + b.Employee_Identity_Id + ">" + b.First_Name + "</option>");
+            });
+        });
+    }
+
+    function In_Audit_Quest_Validate(val) {
+        debugger;
+        var checname = "SubVerify_detail" + val;
+        var textarea_1 = "#aud_Verify" + val;
+        var textarea_2 = "#Insp_Detail" + val;
+        var Fingings_1 = ".Clause_Find" + val;
+        ///var fileupload_1 = "#files_" + val;
+        if ($('input[name="' + checname + '"]').is(':checked')) {
+            $(textarea_1).removeAttr("disabled");
+            $(textarea_2).removeAttr("disabled");
+            $(Fingings_1).removeAttr("disabled");
+            //$(fileupload_1).removeAttr("disabled");
+        } else {
+            $(textarea_1).val('');
+            $(textarea_2).val('');
+            $(Fingings_1).val('');
+            //$(fileupload_1).val('');
+            $('input[name="Clause_Findings_' + val + '"]').prop('checked', false)
+
+            $(textarea_1).prop('disabled', true);
+            $(textarea_2).prop('disabled', true);
+            $(Fingings_1).prop('disabled', true);
+            //$(fileupload_1).prop('disabled', true);
+        }
+    }
+
+    function uploadFiles(val, inputId, UploadPhotoId, PDFAutoSave) {
+        debugger;
+        var input = document.getElementById(inputId);
+        var files = val.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Internal_Aud_UploadPhotoFiles", "Audit")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    //alert(data);
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("." + PDFAutoSave).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FnClause_Finds(val, files) {
+        var fileupload_1 = "#" + files;
+        if (val == "NC-Nonconformance") {
+            $(fileupload_1).removeAttr("disabled");
+        } else {
+            $(fileupload_1).prop('disabled', true);
+            $(fileupload_1).val('');
+        }
+    }
+
+    function LoadChecklist(Internal_Audit_Id) {
+        debugger;
+       
+        $("#divbtn_IAud_Submit").hide();
+        $("#divbtn_ApproveReject").show();
+
+        var subTopicSno = 1;
+        var subSno = 1;
+        var index_ncr = 1;
+        var markup = "";
+        var Questionnaire = 0;
+        $.post("@Url.Action("_ViewAuditCheckList","Audit")", { Internal_Audit_Id: Internal_Audit_Id }, function (data) {
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).empty();
+            var pre_ref_title = "";
+            $(data).each(function (i, e) {
+                var curr_ref_title = e.Internal_Topic;
+                if (pre_ref_title == curr_ref_title || curr_ref_title == "") {
+
+                }
+                else {
+                    pre_ref_title = e.Internal_Topic;
+                    markup += '<tr><td style="vertical-align: sub;color: #000;">' + subSno + '</td><td  colspan=5><input type=hidden id="Audit_Topics_Id" value="' + e.Internal_Topic + '"><label style="color: #000;">' + e.Internal_Topic + '</label></td></tr>';
+                    subSno++;
+                }
+                markup += '<td colspan=5><label>' + e.Internal_Sub_Topic + '</label></td>';
+                markup += '<tr><td></td><td style="text-align: justify;width: 34%;"><span>' + e.Remarks_1 + '</span><br/></td><td style="width: 37%;"><textarea class=form-control disabled style="height: 100px">' + e.Site_Inspection_Details + '</textarea></td><td><span>' + e.Findings + '</span></td>';
+                //alert(e.Findings);
+                if (e.Findings == "NC-Nonconformance") {
+                    if (e.Is_NCR_Checked == 1) {
+                        markup += '<td><i class="mdi mdi-checkbox-multiple-marked-circle-outline" style="color: green;font-size: 22px !important;padding: 16px;"></i> <a onclick="Fn_ReportPDF_1(' + "'" + e.Internal_Audit_Id + "'" + ',' + "'" + e.Clause_Id + "'" + ',' + "'" + e.Questionnaire_Id + "'" + ')" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="PDF" aria-label="View"><i class="mdi mdi-file-pdf font-size-20"></i></a></td>'
+                    }
+                    else {
+                        markup += '<td><input type="hidden" value="0" id="Is_NCR_Complete_' + index_ncr + '"> <i class="mdi mdi-checkbox-multiple-marked-circle-outline" style="color: green;font-size: 22px !important;padding: 16px;display:none" id="checkbox_multiple_' + e.Questionnaire_Id + '" ></i><a style="background: #0770a7;padding: 5px;color: white;border-radius: 5px;" id="NCRFormmodal_' + e.Questionnaire_Id + '" href="" data-bs-toggle="modal" onclick="Fn_NCRForm(' + "'" + Internal_Audit_Id + "'" + ' ,' + "'" + e.Internal_Sub_Topic + "'" + ' ,' + "'" + e.Questionnaire_Id + "'" + ',' + "'" + e.Clause_Id + "'" + ',' + "'" + index_ncr + "'" + ')" data-bs-target=".add-new">NCR Form</a></td>'
+                    }
+                }
+                index_ncr++;
+                markup += '</td></tr>';
+            });
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).append(markup);
+        });
+    }
+
+    function btn_Submit_SDManager(val) {
+        debugger;
+        var Obj = "";
+        if (val == "3") {
+            Obj = {
+                Internal_Audit_Id: $("#Inv_Inc_Id").val(),
+                Status: "3",
+                Remarks_1: "HSE Manger Approval Pending",
+            };
+        }
+        else if (val == "1"){
+            Obj = {
+                Internal_Audit_Id: $("#Inv_Inc_Id").val(),
+                Status: "4",
+                Remarks_1:"NCR Action Pending",
+            };
+        }
+        $.ajax({
+            url: "/Audit/Complete_NCR_Report_Form",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                        //$('.add-newhseteam').modal('hide');
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function Fn_NCRForm(Internal_Audit_Id, Internal_Sub_Topic, Questionnaire_Id, Clause_Id, index_ncr) {
+        //alert(Questionnaire_Id)
+        //$(".add-new").reload();
+        Load_Emp_Responsibility('AuditResponsibility', '1', '1')
+
+        $("#Applicable_Standard").val('');
+        $("#Questionnaire_Id").val('');
+        $("#Clause_Id").val('');
+        let url = "";
+        url = '/Audit/_ViewInternalAudNcrForm';
+        url += '/?Internal_Audit_Id=' + Internal_Audit_Id;
+        $("#NCRFormList").load(url);
+        $("#Non_Conformity").val(Internal_Sub_Topic);
+        $("#Questionnaire_Id").val(Questionnaire_Id);
+        $("#Clause_Id").val(Clause_Id);
+        $("#hdnIsNCRComplete_Id").val(index_ncr);
+
+    }
+
+    function LoadNCRChecklist(Internal_Audit_Id) {
+        debugger;
+        $("#divbtn_IAud_Submit").hide();
+        $("#divbtn_ApproveReject").show();
+
+        var subTopicSno = 1;
+        var subSno = 1;
+        var index_ncr = 1;
+        var markup = "";
+        var Questionnaire = 0;
+        $.post("@Url.Action("_ViewAuditCheckList","Audit")", { Internal_Audit_Id: Internal_Audit_Id }, function (data) {
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).empty();
+            var pre_ref_title = "";
+            $(data).each(function (i, e) {
+                var curr_ref_title = e.Internal_Topic;
+                if (pre_ref_title == curr_ref_title || curr_ref_title == "") {
+
+                }
+                else {
+                    pre_ref_title = e.Internal_Topic;
+                    markup += '<tr><td style="vertical-align: sub;color: #000;">' + subSno + '</td><td  colspan=5><input type=hidden id="Audit_Topics_Id" value="' + e.Internal_Topic + '"><label style="color: #000;">' + e.Internal_Topic + '</label></td></tr>';
+                    subSno++;
+                }
+                markup += '<td colspan=5><label>' + e.Internal_Sub_Topic + '</label></td>';
+                markup += '<tr><td></td><td style="text-align: justify;width: 34%;"><span>' + e.Remarks_1 + '</span><br/></td><td><textarea class=form-control disabled>' + e.Site_Inspection_Details + '</textarea></td><td><span>' + e.Findings + '</span></td>';
+
+                if (e.Findings == "NC-Nonconformance") {
+                    if (e.Is_NCR_Checked == 1) {
+                        markup += '<td><i class="mdi mdi-eye" style="color: green;font-size: 22px !important;padding: 16px;cursor: pointer;" data-bs-toggle="modal" data-bs-target=".add-new" onclick="FN_View_NCR_Details(' + "'" + Internal_Audit_Id + "'" + ' ,' + "'" + e.Questionnaire_Id + "'" + ')"></i> <a onclick="Fn_ReportPDF_1(' + "'" + e.Internal_Audit_Id + "'" + ',' + "'" + e.Clause_Id + "'" + ',' + "'" + e.Questionnaire_Id + "'" + ')" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="PDF" aria-label="View"><i class="mdi mdi-file-pdf font-size-20"></i></a></td>'
+                    }
+                    else {
+                        markup += '<td><input type="hidden" value="0" id="Is_NCR_Complete_' + index_ncr + '"> <i class="mdi mdi-checkbox-multiple-marked-circle-outline" style="color: green;font-size: 22px !important;padding: 16px;display:none" id="checkbox_multiple_' + e.Questionnaire_Id + '" ></i><a id="NCRFormmodal_' + e.Questionnaire_Id + '" href="" data-bs-toggle="modal" onclick="Fn_NCRForm(' + "'" + Internal_Audit_Id + "'" + ' ,' + "'" + e.Internal_Sub_Topic + "'" + ' ,' + "'" + e.Questionnaire_Id + "'" + ',' + "'" + e.Clause_Id + "'" + ',' + "'" + index_ncr + "'" + ')" data-bs-target=".add-new">Add NCR Form</a></td>'
+                    }
+                }
+                index_ncr++;
+                markup += '</td></tr>';
+            });
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).append(markup);
+        });
+    }
+
+
+    function LoadNCRChecklist_Action(Internal_Audit_Id) {
+        debugger;
+        $("#divbtn_IAud_Submit").hide();
+        $("#divbtn_ApproveReject").show();
+
+        var subTopicSno = 1;
+        var subSno = 1;
+        var index_ncr = 1;
+        var markup = "";
+        var Questionnaire = 0;
+        $.post("@Url.Action("_ViewAuditCheckList","Audit")", { Internal_Audit_Id: Internal_Audit_Id }, function (data) {
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).empty();
+            var pre_ref_title = "";
+            $(data).each(function (i, e) {
+                var curr_ref_title = e.Internal_Topic;
+                if (pre_ref_title == curr_ref_title || curr_ref_title == "") {
+
+                }
+                else {
+                    pre_ref_title = e.Internal_Topic;
+                    markup += '<tr><td style="vertical-align: sub;color: #000;">' + subSno + '</td><td  colspan=5><input type=hidden id="Audit_Topics_Id" value="' + e.Internal_Topic + '"><label style="color: #000;">' + e.Internal_Topic + '</label></td></tr>';
+                    subSno++;
+                }
+                markup += '<td colspan=5><label>' + e.Internal_Sub_Topic + '</label></td>';
+                markup += '<tr><td></td><td style="text-align: justify;width: 34%;"><span>' + e.Remarks_1 + '</span><br/></td><td><textarea class=form-control disabled>' + e.Site_Inspection_Details + '</textarea></td><td><span>' + e.Findings + '</span></td>';
+
+                if (e.Findings == "NC-Nonconformance") {
+                    if('@LoginClass.Employee_Identity_Id'== e.Remarks)   
+                    {
+                        markup += '<td><i class="mdi mdi mdi-pencil font-size-18" style="color: green;font-size: 22px !important;padding: 16px;cursor: pointer !important;" data-bs-toggle="modal" data-bs-target=".add-newncrAction" onclick="FN_View_NCR_Details_Action(' + "'" + Internal_Audit_Id + "'" + ' ,' + "'" + e.Questionnaire_Id + "'" + ')"></i></td>'
+                    } 
+                    //if (e.Is_NCR_Checked == 1) {
+                    //}
+                    //else {
+                    //    markup += '<td><input type="hidden" value="0" id="Is_NCR_Complete_' + index_ncr + '"> <i class="mdi mdi-checkbox-multiple-marked-circle-outline" style="color: green;font-size: 22px !important;padding: 16px;display:none" id="checkbox_multiple_' + e.Questionnaire_Id + '" ></i><a id="NCRFormmodal_' + e.Questionnaire_Id + '" href="" data-bs-toggle="modal" onclick="Fn_NCRForm(' + "'" + Internal_Audit_Id + "'" + ' ,' + "'" + e.Internal_Sub_Topic + "'" + ' ,' + "'" + e.Questionnaire_Id + "'" + ',' + "'" + e.Clause_Id + "'" + ',' + "'" + index_ncr + "'" + ')" data-bs-target=".add-new">Add NCR Form</a></td>'
+                    //}
+                }
+                index_ncr++;
+                markup += '</td></tr>';
+            });
+            $(UI_FIELDS1.INT_AUDIT_VERIFY_DETAILS_VERFY).append(markup);
+        });
+    }
+
+
+    function FN_View_NCR_Details(Internal_Audit_Id, Questionnaire_Id) {
+        let url = "";
+        url = '/Audit/_ViewInternalAudNcrForm';
+        url += '/?Internal_Audit_Id=' + Internal_Audit_Id;
+        $("#NCRFormList").load(url);
+        debugger
+        $.post("@Url.Action("Get_NCR_Report_Form_Details", "Audit")", { Internal_Audit_Id: Internal_Audit_Id, Questionnaire_Id: Questionnaire_Id }, function (data) {
+            $("#NCR_Report_Id").val(data.NCR_Report_Id);
+            $("#Non_Conformity").val(data.Non_Conformity_Description);
+            $("#Applicable_Standard").val(data.Applicable_Standard_Procedure);
+            $("#Target_Date").val(data.Target_Date);
+            Load_Emp_Responsibility('AuditResponsibility', '1', '1', data.Responsibility);
+        });
+    }
+
+    function FN_View_NCR_Details_Action(Internal_Audit_Id, Questionnaire_Id) {
+        let url = "";
+        url = '/Audit/_ViewInternalAudNcrForm';
+        url += '/?Internal_Audit_Id=' + Internal_Audit_Id;
+        $("#NCRFormListAction").load(url);
+        debugger
+        $.post("@Url.Action("Get_NCR_Report_Form_Details", "Audit")", { Internal_Audit_Id: Internal_Audit_Id, Questionnaire_Id: Questionnaire_Id }, function (data) {
+            $("#Action_NCR_Report_Id").val(data.NCR_Report_Id);
+            $("#Action_Non_Conformity").val(data.Non_Conformity_Description);
+            $("#Action_Applicable_Standard").val(data.Applicable_Standard_Procedure);
+            $("#Action_Target_Date").val(data.Target_Date);
+            $("#Action_Responsibility").val(data.Remarks_1);
+            //Load_Emp_Responsibility('AuditResponsibility', '1', '1', data.Responsibility);
+        });
+    }
+
+    function Internal_AddNew(Internal_Audit_Id) {
+        debugger;
+
+        $.post("@Url.Action("_ViewInternalAudSed", "Audit")", { Internal_Audit_Id: Internal_Audit_Id }, function (data) {
+            $(UI_FIELDS1.INTERNAL_LIST_VIEW).hide(100);
+            $(UI_FIELDS1.INT_VIEW_SCHD).show(100);
+
+            Load_Emp_List('HSETeam', data.Aud_Lat, data.Aud_Long);
+            Load_Emp_AuditList('AuditTeam', "#Int_Audit_Team", data.Aud_Lat, data.Aud_Long);
+            Load_Emp_ServiceProviderList('Service_provider', "#Service_Pro_Emp", data.Aud_Lat, data.Aud_Long);
+            $("#Lat").val(data.Aud_Lat);
+            $("#Long").val(data.Aud_Long);
+            $("#Internal_Audit_Id").val(data.Internal_Audit_Id);
+            $(UI_FIELDS1.DATE_TIME).text(data.Date_Time);
+            $(UI_FIELDS1.INTERNAL_AUDIT_REFERENCE).text(data.Unique_Id);
+            $(UI_FIELDS1.BUSINESS_UNIT_INT).text(data.Business_Unit_Id);
+            $(UI_FIELDS1.AUDIT_ZONE_INT).text(data.Zone_Id);
+            $(UI_FIELDS1.COMMUNITY_ID_INT).text(data.Community_Id);
+            $(UI_FIELDS1.BUILDING_INT).text(data.Remarks_1);
+            $(UI_FIELDS1.INT_LEAD_AUDITOR_NAME).text(data.Remarks_4);
+
+            if ('@LoginClass.Employee_Identity_Id' == data.Lead_Auditor_Id) {
+                $("#InternalAuditData").show();
+            }
+            else {
+                $("#InternalAuditData").hide();
+            }
+        });
+    }
+
+    function Fn_ReportPDF_1(id, Unique_Id,Questionnaire_Id) {
+        debugger
+        $(".preloader").show();
+        $("#List_View").hide();
+        let Internal_Audit_Id = parseInt(id);
+        $.post("/Report/InternalAudit_Report", { Internal_Audit_Id: Internal_Audit_Id, Unique_Id: Unique_Id, Questionnaire_Id: Questionnaire_Id }, function (data) {
+            if (data) {
+                window.open(data);
+            }
+            else {
+                toastr["error"]("Please try again");
+            }
+        }).always(function () {
+            $("#List_View").show();
+            $(".preloader").hide();
+        });
+    }
+</script>

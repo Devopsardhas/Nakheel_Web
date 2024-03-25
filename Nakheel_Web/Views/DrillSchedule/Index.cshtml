@@ -1,0 +1,277 @@
+﻿@{
+    ViewData["Title"] = "Drill Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+
+        .lblwidth {
+            width: 15% !important;
+        }
+
+        .form-label, .form-control {
+            margin-bottom: 0.5rem;
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        label {
+            color: #141b2b;
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular' !important;
+            font-size: 15px;
+        }
+
+        table {
+            font-family: 'Nakheel-Textregular';
+        }
+
+        span {
+            font-weight: 500;
+            font-family: 'Nakheel-Textregular';
+            font-size: 15px;
+        }
+
+        .tdtxt {
+            color: #00617F;
+        }
+
+        .accordion-button {
+            background-color: #00263a !important;
+            color: white;
+            font-size: 14px !important;
+            height: 10px !important;
+        }
+
+            .accordion-button:not() {
+                background-color: #00263a !important;
+                color: white;
+            }
+
+        .accordion-body {
+            padding: 0rem 0.25rem !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: white !important;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+</head>
+<body>
+    <div id="Loader" style="display:none;">
+        <img style="width: 10%;text-align: center;margin-left: 39%;margin-top: 10%;" src="/assets/images/Loader_new.gif">
+    </div>
+    <div class="row" id="List_View">
+        <div class="col-xl-12">
+            <div class="modal fade" id="staticBackdrop" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Assign Drill Commander and Service Provider</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="#" method="post" id="DrillAssignFrm">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body">
+                                    <input type="hidden" id="Assign_DS_ID" />
+                                    <div class="table-responsive col-lg-12">
+                                        <table class="table table-sm">
+                                            <tbody id="">
+                                                <tr>
+                                                    <td class="lblwidth"><b class="font-bold">Drill Commander</b><span class="requ">*</span></td>
+                                                    <td>:</td>
+                                                    <td class="col-lg-4">
+                                                        <select required="" class="form-select" id="DC_Drp">
+                                                        </select>
+                                                    </td>
+                                                    <td class="lblwidth"><b class="font-bold">Service provider</b><span class="requ">*</span></td>
+                                                    <td>:</td>
+                                                    <td class="col-lg-4">
+                                                        <select class="form-select" id="SP_Drp">
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="">
+                                <div style="text-align:center;">
+                                    <button type="submit" class="btn btn-success" id="Assign_SUB"> Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="row mb-1">
+                        <div class="col-lg-10 mt-4 mb-3"> <h4 class="card-title">Drill Schedule List</h4></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="MainTable" class="table table-sm table-striped" style="width:100%;">
+                            <thead>
+                                <tr class="">
+                                    <th style="text-align:left;">Unique_ID</th>
+                                    <th style="text-align:left;">Zone</th>
+                                    <th style="text-align:left;">Community</th>
+                                    <th style="text-align:left;">Building Name</th>
+                                    <th style="text-align:left;">Drill Type</th>
+                                    <th style="text-align:left;">Created By</th>
+                                    <th style="text-align:left;">Commander</th>
+                                    <th style="text-align:left;">Service Provider</th>
+                                    <th style="text-align:left;">Created Date</th>
+                                    <th style="text-align:left;">Schedule Date</th>
+                                    <th style="text-align:left;">Status</th>
+                                    <th style="text-align:left;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="MainTable_Tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="DrillFrm_Div" style="display:none;">
+    </div>
+
+    <script src="~/assets/js/emr_common/common.js"></script>
+    <script src="~/assets/js/emr_common/emr_drill.js"></script>
+    <script>
+        "use strict";
+        var NM_Prev = [];
+        var NM_Prev1 = [];
+        var NM_Config = [];
+        var NM_Config1 = [];
+        var AllowImg = ['jpg', 'png', 'jpeg', 'bmp'];
+        var VideoImg = ['mp4', 'avi'];
+        const UI_Fields = Object.freeze({
+            ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            DRILL_TYPE: "#Drill_type",
+            DRILL_FRM_DIV: "#DrillFrm_Div",
+            LIST_VIEW: "#List_View",
+            LOADER: "#Loader",
+            MAINTABLE: "#MainTable",
+            MAINTABLE_TBODY: "#MainTable_Tbody",
+            POP_UP: "#staticBackdrop",
+            REJECT_POP: "#RejectPop",
+            DRILL_ASSIGN_FRM: "#DrillAssignFrm",
+            DC_DRP: "#DC_Drp",
+            SP_DRP: "#SP_Drp",
+            ASSIGN_DS_ID: "#Assign_DS_ID",
+            ASSIGN_SUB: "#Assign_SUB",
+            BTN_BACK: "#btn_back",
+            INPUT_PHOTO: "#Photos",
+            INPUT_VIDEO: "#Videos",
+            TBL_TEAM_MEM: "#tbl_TeamMem",
+            TBODY_TEAM_MEM: "#tbody_TeamMem",
+            TBL_TASK_OBSR: "#tbl_Task_Obsr",
+            TBODY_TASK_OBSR: "#tbody_Task_Obsr",
+            MAIN_DRILL_ID: "#Main_Drill_ID",
+            TBL_TASK_ASSIGN: "#tblTaskAssign",
+            TBL_TASK_ASSIGN_ZS: "#tblTaskAssignZS",
+            TBODY_TASK_ASSIGN: "#tbodyTaskAssign",
+            FRM_REJECT_ZM: "#Frm_RejectZM",
+            BTN_REJECT_ZM: "#Btn_RejectZM",
+            TXT_REJ: "#TxtRej",
+            TBODY_TASK_ASSIGN_ZS: "#tbodyTaskAssignZS",
+            ASSIGNEE_TYPE: ".Assignee_Type",
+            FRM_TASK_ASSIGN: "#FrmTaskAssign",
+            FRM_SCH_TASK_ASSIGN: "#FrmSchTaskAssign",
+            ZS_SUBMIT: "#ZS_Submit",
+            START_TIME: "#Start_Time",
+            END_TIME: "#End_Time",
+            PLP_REPORTING: "#PLP_Reporting",
+            LP_REPORTING: "#LP_Reporting",
+            FIRST_OCCUPANT: "#First_Occupant",
+            LAST_OCCUPANT: "#Last_Occupant",
+            FIRST_SOUND: "#First_Sound",
+            DEL_BTN: ".DelBtn",
+            TIME: ".TimeField",
+            REPORT: ".Report",
+            OCCUPANT: ".Occupant",
+            SPOT_RD: ".SpotRd",
+            DEL_BTN_ACT: ".DelBtnAct",
+
+        });
+        $(function () {
+            LOAD_GRID();
+            $(UI_Fields.MAINTABLE).on('click', '.AssignT', function () {
+                let token = GetformToken(UI_Fields.DRILL_ASSIGN_FRM);
+                let Drill_ID = $(this).closest('tr').find('.Drill_ID').val();
+                AjaxAsynT('/DrillSchedule/Drill_Sch_Assign', { Drill_Sch_ID: Drill_ID }, token, function (resp) {
+                    if (resp.STATUS_CODE == "200") {
+                        $(UI_Fields.ASSIGN_DS_ID).val(Drill_ID);
+                        let ele1 = $(UI_Fields.SP_DRP);
+                        let ele2 = $(UI_Fields.DC_DRP);
+                        PopulateDrp(ele1, resp.Data.ServiceProviders, '--Select--');
+                        PopulateDrp(ele2, resp.Data.Commanders, '--Select--');
+                        $(UI_Fields.POP_UP).modal('show');
+                    }
+                    else {
+                        ToastrMessage("error", "Error While processing your request.");
+                    }
+                });
+            });
+
+            $(UI_Fields.MAINTABLE).on('click', '.DrillEdit', function () {
+                $(UI_Fields.LOADER).show();
+                let Drill_ID = $(this).closest('tr').find('.Drill_ID').val();
+                let model = {
+                    Drill_Schedule_ID: Drill_ID
+                };
+                $(UI_Fields.LIST_VIEW).hide(100);
+                AjaxAsynHTML('/DrillSchedule/Schedule_Report', { _Param: model }, UI_Fields.DRILL_FRM_DIV);
+
+            });
+
+            $(UI_Fields.MAINTABLE).on('click', '.DrillReport', function () {
+                let Drill_ID = $(this).closest('tr').find('.Drill_ID').val();
+                let U_ID = "DRILL-0001";
+                $(UI_Fields.LIST_VIEW).hide(100);
+                let data = { Drill_ID: parseInt(Drill_ID), Unique_Id: U_ID };
+                View_Report("/DrillReport/Drill_Fire_Report", data, UI_Fields.LIST_VIEW, UI_Fields.LOADER);
+
+            });
+
+
+            $(UI_Fields.ASSIGN_SUB).on('click', SubmitAssignee);
+            ApplySelect2(UI_Fields.SP_DRP);
+            ApplySelect2(UI_Fields.DC_DRP);
+        });
+
+
+        function LOAD_GRID() {
+            $(UI_Fields.LOADER).show();
+            let msg = '@TempData["msg"]';
+            $(UI_Fields.DRILL_FRM_DIV).hide();
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+            LoadTable();
+            if (msg != "") {
+                toastr["info"](msg);
+            }
+        }
+
+    </script>
+</body>

@@ -1,0 +1,410 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Landscape
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    b {
+        font-family: 'Nakheel-Textregular' !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
+        padding: 0.1em 0.1em !important;
+        font-size: small !important;
+    }
+
+</style>
+@if (Model != null)
+{
+    <form id="FM_Insp_Landscape_WalkIn">
+        <input type="hidden" class="form-control Insp_Request_Id" id="Insp_Request_Id" value="0">
+        <div class="table-responsive">
+            <table class="table table-sm Basic_Details">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">Inspected By</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <textarea disabled id="CreatedBy_Name" name="CreatedBy_Name" required class="form-control CreatedBy_Name" rows="1">@Model.CreatedBy_Name</textarea>
+                        </td>
+
+                        <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <select required class="form-control Drop_Search" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+
+                        <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <select required class="form-control Drop_Search" asp-for="Zone_Id" onchange="Fn_Zone(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <select required class="form-control Drop_Search" name="Community_Id" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+
+                        <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <select onchange="Fn_Building(this.value)" required class="form-control Drop_Search" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+
+                        <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <input required type="date" asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" name="Inspection_Date">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Responsible Department</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            <label style="margin-top: 10px;display: contents;" for="Yes"> <input id="NCM_Staff" class="Responsible_Dept" name="Responsible_Dept" type="radio" value="NCM_Staff" required>&nbsp;NCM Staff&nbsp;&nbsp;</label>
+                            <label for="No"> <input id="Service_provider" class="Responsible_Dept" name="Responsible_Dept" type="radio" value="Service_provider" required>&nbsp;Service provider</label>
+                        </td>
+
+                        <td><b class="font-bold">Assigned To</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt" colspan="9">
+                            <select required class="form-control Drop_Search" asp-for="Company_Id" asp-items="@(new SelectList(Model.Insp_landscap_SP_Company_List!,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Report To</b><span class="requ">*</span></td>
+                        <td>:</td>
+                        <td class="tdtxt" colspan="12">
+                            <select multiple="multiple" required class="form-control Drop_Search" asp-for="All_Zone_Emp_Id" asp-items="@(new SelectList(Model.Insp_landscap_Zone_Emp_List!,"Value","Text"))">
+                                <option value="" style="text-align:center;">--Select--</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if (Model.Insp_landscap_Check_Master_List != null)
+        {
+            var S_Count = 0;
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive" style="margin-top: 1px;">
+                        <table id="tbl_Insp_Landscape_Qns" class="table tblround table-sm table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="width: 3%;">S.No</th>
+                                    <th style="width: 10%;">Description</th>
+                                    <th style="width: 25%;">Scope of Work</th>
+                                    <th style="width: 25%;">#<span class="requ">*</span></th>
+                                    <th style="width: 23%;">Remarks</th>
+                                    <th style="width: 18%;">Photo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbl_Insp_Landscape_Tbody_Qns" style="border: #cbcbcb !important;">
+
+                                @foreach (var item in Model.Insp_landscap_Check_Master_List)
+                                {
+                                    @if (item.Insp_landscap_Check_Sub_Master_List != null)
+                                    {
+                                        var Sub_Count = @item.Insp_landscap_Check_Sub_Master_List.Count();
+
+                                        foreach (var item_Sub in item.Insp_landscap_Check_Sub_Master_List)
+                                        {
+
+                                            @if (item_Sub.ROW_NUMBER == "1")
+                                            {
+                                                <tr>
+                                                    <input type="hidden" value="@item.Value" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                    <input type="hidden" value="@item_Sub.Value" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                    <input type="hidden" value="0" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                    <td rowspan="@Sub_Count">
+                                                        <label>@item.ROW_NUMBER</label>
+                                                    </td>
+                                                    <td rowspan="@Sub_Count">
+                                                        <label><b>@item.Text</b></label>
+                                                    </td>
+                                                    <td>
+                                                        <label>@item_Sub.ROW_NUMBER. @item_Sub.Text</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="Yes" required style="vertical-align: middle;">&nbsp;Accepted
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="No" required style="vertical-align: middle;">&nbsp;Not- Accepted
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="NA" required style="vertical-align: middle;" checked>&nbsp;NA
+                                                    </td>
+                                                    <td>
+                                                        <textarea id="Qns_Remarks_@S_Count" name="Qns_Remarks_@S_Count" class="form-control Qns_Remarks" rows="1"></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <input id="file_@S_Count" class="form-control Qns_file" onchange="QnsUploadFiles('file_@S_Count','hdn_Qns_file_Value_@S_Count')" type="file" accept=".png, .jpg, .jpeg">
+                                                        <input type="hidden" class="hdn_Qns_file_Value" name="hdn_Qns_file_Value_@S_Count" id="hdn_Qns_file_Value_@S_Count">
+                                                    </td>
+                                                </tr>
+                                                S_Count++;
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <input type="hidden" value="@item.Value" class="Insp_Landscap_Mas_Id" name="Insp_Landscap_Mas_Id_@S_Count" id="Insp_Landscap_Mas_Id_@S_Count">
+                                                    <input type="hidden" value="@item_Sub.Value" class="Insp_Landscap_Sub_Mas_Id" name="Insp_Landscap_Sub_Mas_Id_@S_Count" id="Insp_Landscap_Sub_Mas_Id_@S_Count">
+                                                    <input type="hidden" value="0" class="Landscape_Qns_Id" name="Landscape_Qns_Id_@S_Count" id="Landscape_Qns_Id_@S_Count">
+
+                                                    <td>
+                                                        <label>@item_Sub.ROW_NUMBER. @item_Sub.Text</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="Yes" required style="vertical-align: middle;">&nbsp;Accepted
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="No" required style="vertical-align: middle;">&nbsp;Not- Accepted
+                                                        <input type="radio" name="Qns_Action_@S_Count" class="Qns_Action" value="NA" required style="vertical-align: middle;" checked>&nbsp;NA
+                                                    </td>
+                                                    <td>
+                                                        <textarea id="Qns_Remarks_@S_Count" name="Qns_Remarks_@S_Count" class="form-control Qns_Remarks" rows="1"></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <input id="file_@S_Count" class="form-control Qns_file" onchange="QnsUploadFiles('file_@S_Count','hdn_Qns_file_Value_@S_Count')" type="file" accept=".png, .jpg, .jpeg">
+                                                        <input type="hidden" class="hdn_Qns_file_Value" name="hdn_Qns_file_Value_@S_Count" id="hdn_Qns_file_Value_@S_Count">
+                                                    </td>
+                                                </tr>
+                                                S_Count++;
+                                            }
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-lg-6">
+                <br>
+                <button onclick="Fn_Landscape_Qns_Submit()" type="button" class="btn Fn_Landscape_Qns_Submit btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </form>
+}
+
+<script>
+    $(document).ready(function () {
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        minDate_valid = minDate;
+        $('.Target_Date').attr('min', minDate);
+        ApplySelect2(".Drop_Search");
+
+
+        $('input[type=radio][name=Responsible_Dept]').change(function () {
+            debugger
+            if (this.value == 'NCM_Staff') {
+                let valid = $("#Zone_Id").valid();
+                if (!valid) {
+                    ApplySelect2("#Zone_Id");
+                    return false;
+                } else {
+                    $("#Company_Id").empty();
+                    var Zone_Id = $("#Zone_Id").val();
+                    Fn_Land_Zone(Zone_Id);
+                }
+            }
+            else {
+                let valid = $("#Building_Id").valid();
+                if (!valid) {
+                    ApplySelect2("#Building_Id");
+                    return false;
+                }else{
+                    $("#Company_Id").empty();
+                    var Sub_Building_Id = $("#Building_Id").val();
+                    Fn_Building(Sub_Building_Id);
+                }
+                 
+            }
+        });
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Fn_Landscape_Qns_Submit() {
+        debugger
+        let valid = $("#FM_Insp_Landscape_WalkIn").valid();
+        if (!valid) {
+            $(window).scrollTop(0);
+            toastr.error("Please fill all mandatory fields", "Error");
+            ApplySelect2(".Drop_Search");
+            return false;
+        }
+        $('.Fn_Landscape_Qns_Submit').prop('disabled', true);
+        var All_Zone_Emp_List = [];
+        var Sub_Main_List = [];
+        var subSno = 0;
+        $('#tbl_Insp_Landscape_Qns tbody tr').each(function () {
+            var var_Insp_Landscap_Mas_Id = $(this).closest('tr').find('.Insp_Landscap_Mas_Id').val();
+            var var_Insp_Landscap_Sub_Mas_Id = $(this).closest('tr').find('.Insp_Landscap_Sub_Mas_Id').val();
+            var var_Qns_Action = $(this).closest('tr').find('input[name="Qns_Action_' + subSno + '"]:checked').val();
+            var var_Qns_Remarks = $(this).closest('tr').find('.Qns_Remarks').val();
+            var var_V_Main_UploadPhotos = $(this).closest('tr').find('.hdn_Qns_file_Value').val();
+            var File_Path = "";
+
+            if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+                var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        File_Path = x;
+                    }
+                }
+            }
+
+            var data = {};
+            data.Landscape_Qns_Id = $(".Landscape_Qns_Id").val();
+            data.Insp_Landscap_Mas_Id = var_Insp_Landscap_Mas_Id;
+            data.Insp_Landscap_Sub_Mas_Id = var_Insp_Landscap_Sub_Mas_Id;
+            data.Qns_Action = var_Qns_Action;
+            data.Qns_Remarks = var_Qns_Remarks;
+            data.File_Path = File_Path;
+            Sub_Main_List.push(data);
+            subSno++;
+        });
+        var var_Zone_Emp_Id = $("#All_Zone_Emp_Id").val();
+        $(var_Zone_Emp_Id).each(function (i, b) {
+            var item = {};
+            item.Value = b,
+                All_Zone_Emp_List.push(item);
+        });
+        var Obj = {
+            Insp_Request_Id: $("#Insp_Request_Id").val(),
+            Business_Unit_Id: $("#Business_Unit_Id").val(),
+            Zone_Id: $("#Zone_Id").val(),
+            Community_Id: $("#Community_Id").val(),
+            Building_Id: $("#Building_Id").val(),
+            Inspection_Date: $("#Inspection_Date").val(),
+            Company_Id: $("#Company_Id").val(),
+            Responsible_Dept: $('input[name="Responsible_Dept"]:checked').val(),
+            Insp_landscap_Zone_Emp_List: All_Zone_Emp_List,
+            Insp_landscap_Qns_List: Sub_Main_List,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Landscape_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                        $('.Fn_Landscape_Qns_Submit').prop('disabled', false);
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('.Fn_Landscape_Qns_Submit').prop('disabled', false);
+                }
+            },
+        });
+    }
+
+    function QnsUploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger
+                    if (data == "[\"Invalid Format\"]") {
+                        $("#" + inputId).val("");
+                        toastr["error"]("Invalid Format");
+                    } else {
+                        $(".Div_Leader_UploadPicture").hide();
+                        $("#" + UploadPhotoId).val("");
+                        $("#" + UploadPhotoId).val(data);
+                        toastr["success"]("Uploaded Successfully");
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["error"]("Maximum Allowed 5 Files");
+        }
+    }
+
+</script>
+
+

@@ -1,0 +1,721 @@
+﻿@model Nakheel_Web.Models.AccountsMaster.ServiceProviderSignUp;
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+<style>
+    .table > :not(caption) > * > * {
+        padding: 0.25rem 0.25rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .col-md-3 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 14% !important;
+        font-size: 12px !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <div class="">
+            <!-- Contact detail -->
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                <table class="table tab ">
+                    <tbody id="tblIncidentDetailsViewPage">
+                        <tr>
+                            <td><b class="font-bold">Project Title</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.W_Name_Position</td>
+                            <td><b class="font-bold">Contract Type</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.W_Contact</td>
+                            <td><b class="font-bold">Business Unit</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Business_Unit_Id</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Zone</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Zone_Id</td>
+                            <td><b class="font-bold">Community</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Community_Id</td>
+                            <td>
+                                <b class="font-bold">Company Name</b>
+                            </td>
+                            <td>:</td>
+                            <td id="View_INC_CAT_NAME" class="tdtxt">@Model.Company_Id</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Manager Incharge</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Manager_Incharge</td>
+                            <td><b class="font-bold">Designation</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Designation</td>
+                            <td><b class="font-bold">Mobile No</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Mobile_No</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Purchase Order/DMS Number </b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Purchase_Order_Number</td>
+                             <td><b class="font-bold">Contract Start Date</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Contract_Start_Date</td>
+                             <td><b class="font-bold">Contract End Date</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Contract_End_Date</td>
+                        </tr>
+
+                        <tr>
+                            <td><b class="font-bold">Permit Validity</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.W_Permit_Validity</td>
+                            <td><b class="font-bold">HSE Officer Name</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.HSE_Officer</td>
+                            <td><b class="font-bold">HSE Officer Email</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.HSE_Officer_Email</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Mobile Number</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.HSE_Officer_Mobile_Number</td>
+                            <td style="width: 14%;"><b class="font-bold">Email ID (Will be the user name and login credentials will be sent to this email ID to access the application)</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model.Official_Email_Id</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="background: #f5f6f8;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                    <label class="form-label" style="font-size: 15px;color: black;">Scope Of Work</label>
+                    <div class="col-md-12">
+                        <div class="row" style="margin-left: 0%;">
+                            <div id="InjuryTypesList" style="display: contents;">
+                                <div class="col-md-3">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                        <label class="form-check-label">@Model.W_Scope_of_work</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="form-label" style="font-size: 15px;color: black;">Work Description</label>
+                    <div class="col-md-12">
+                        <div class="row" style="margin-left: 0%;">
+                            <div id="InjuryTypesList" style="display: contents;">
+                                <div class="col-md-12">
+                                    <div class="form-check mb-3">
+                                        <label class="form-check-label">@Model.W_Work_Description</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="form-label" style="font-size: 15px;color: black;">Specific Requirements </label>
+                    <div class="col-md-12">
+                        <div class="row" style="margin-left: 0%;">
+                            <div id="InjuryTypesList" style="display: contents;">
+                                <div class="col-md-12">
+                                    <div class="form-check mb-3">
+                                        <label class="form-check-label">@Model.W_Specific_Requirements</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="form-label" style="font-size: 15px;color: black;">Building</label>
+                    <div class="col-md-12">
+                        <div class="row" style="margin-left: 0%;">
+                            <div id="InjuryTypesList" style="display: contents;">
+                                @{
+                                    if (Model.L_M_Building_List != null)
+                                    {
+                                        @foreach (var item in Model.L_M_Building_List)
+                                        {
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                    <label class="form-check-label">@item.Building_Id</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <label class="form-label" style="font-size: 15px;color: black;">Major HSE Risk</label>
+                    <div class="col-md-12">
+                        <div class="row" style="margin-left: 0%;">
+                            <div id="InjuryTypesList" style="display: contents;">
+                                @{
+                                    if (Model.L_M_Major_HSE_Risk_List != null)
+                                    {
+                                        @foreach (var item in Model.L_M_Major_HSE_Risk_List)
+                                        {
+                                            <div class="col-md-3">
+                                                <div class="form-check mb-3">
+                                                    <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                    <label class="form-check-label">@item.Remarks</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-size: 15px;color: black;">
+                            Document Submission
+                        </label><br>
+                        <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Document Type</th>
+                                    <th>Upload Documents</th>
+                                    <th>Expiry Date</th>
+                                    <th>Description</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.L_M_RequiredAttachments_List!)
+                                {
+                                    var extn = item.Required_File_Path!.Split(".").Last();
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@item.Document_Type</td>
+                                        @if (extn == "png" || extn == "jpeg")
+                                        {
+                                            <td align="left" valign="middle">
+                                                <a href="@item.Required_File_Path" target="_blank"><img src='@item.Required_File_Path' style="height:20px;width:20px" /></a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td align="left" valign="middle">
+                                                <a href="@item.Required_File_Path" target="_blank"><img src='~/assets/images/pdf.png' style="height:20px;width:20px" /></a>
+                                            </td>
+                                        }
+                                        @if (item.Document_Type == "Workmen’s Compensation Insurance")
+                                        {
+                                            <td align="left" valign="middle">@item.Expiry_Date</td>
+                                        }
+                                        else if (@item.Document_Type == "Third Party Liability Insurance")
+                                        {
+                                            <td align="left" valign="middle">@item.Expiry_Date</td>
+                                        }
+                                        else
+                                        {
+                                            <td align="left" valign="middle">N/A</td>
+                                        }
+                                        <td align="left" valign="middle" style="word-break: break-word;">@item.Description</td>
+                                        <td align="left" valign="middle"><a onclick="SP_Update_Document_Submission(@item.RequiredDcouments_Id,'@item.Document_Type')" href="javascript:void(0);" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="Edit">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-pencil font-size-18"></i></a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" style="font-size: 15px;color: black;">
+                            Competent Person
+                        </label><br>
+                        <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Name & Position</th>
+                                    <th>Contact</th>
+                                    <th>Email Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.L_M_Work_Superviosor_List!)
+                                {
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@item.Name_Position</td>
+                                        <td align="left" valign="middle">@item.Contact</td>
+                                        <td align="left" valign="middle">@item.Email_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @if (Model.L_M_Service_Provider_Update_History != null && Model.L_M_Service_Provider_Update_History.Count != 0)
+                {
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="mt-xl-0 mt-4">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                                History of Approval
+                                            </button>
+                                        </h2>
+                                        <div style="padding: 10px;">
+                                            <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Company Name</th>
+                                                        <th>Manager Inchager Name</th>
+                                                        <th>Email Id</th>
+                                                        <th>Date and Time</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@Model.Company_Name</td>
+                                                        <td align="left" valign="middle">@Model.Manager_Incharge</td>
+                                                        <td align="left" valign="middle">@Model.Official_Email_Id</td>
+                                                        <td align="left" valign="middle">@Model.CreatedDate</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Employee Name</th>
+                                                            <th>Role</th>
+                                                            <th>Date and Time</th>
+                                                            <th>Approve Date</th>
+                                                            <th>Remarks</th>
+                                                            <th>Comments</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="GettblIncidentHistory">
+                                                        @foreach (var item in Model.L_M_Service_Provider_Update_History)
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td align="left" valign="middle">@item.Emp_Id</td>
+                                                                <td align="left" valign="middle">@item.Role_Id</td>
+                                                                <td align="left" valign="middle">@item.Remarks5</td>
+                                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                <td align="left" valign="middle">@item.Remarks</td>
+                                                                <td align="left" valign="middle" style="word-break: break-all;">@item.Remarks1</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+                @* @if (Model.Status == "3")
+                {
+                @if (Model.L_M_Service_Provider_Update_History != null && Model.L_M_Service_Provider_Update_History.Count != 0)
+                {
+                <div class="row">
+                <div class="col-xl-12">
+                <div class="mt-xl-0 mt-4">
+                <div class="accordion" id="accordionExample_2">
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_2" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                Reject Reason
+                </button>
+                </h2>
+                <div id="collapseTwo_2" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample_2">
+                <div class="accordion-body">
+                <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                <tbody id="GettblIncidentHistory">
+                @foreach (var item in Model.L_M_Service_Provider_Update_History)
+                {
+                <tr class="clstr">
+                <td align="left" valign="middle">@item.Remarks</td>
+                </tr>
+                }
+                </tbody>
+                </table>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                }
+                }
+
+                @if (Model.Status == "4")
+                {
+                @if (Model.L_M_Service_Provider_Update_History != null && Model.L_M_Service_Provider_Update_History.Count != 0)
+                {
+                <div class="row">
+                <div class="col-xl-12">
+                <div class="mt-xl-0 mt-4">
+                <div class="accordion" id="accordionExample_3">
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_3" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                Approval Comments
+                </button>
+                </h2>
+                <div id="collapseTwo_3" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample_3">
+                <div class="accordion-body">
+                <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                <tbody id="GettblIncidentHistory">
+                @foreach (var item in Model.L_M_Service_Provider_Update_History)
+                {
+                <tr class="clstr">
+                <td align="left" valign="middle">@item.Remarks1</td>
+                </tr>
+                }
+                </tbody>
+                </table>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                </div>
+                }
+                }*@
+
+                @if ((Model.Status == "1" && (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "3")) || Model.Status == "2")
+                {
+                    <br />
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-2"></div>
+                            <div class="col-lg-4">
+                                @* <button type="button" onclick="btn_Approve_manger_App('2','@Model.SignUp_Id')" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">*@
+                                <button type="reset" data-bs-toggle="modal" data-bs-target=".add-new-app" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer;">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-2">
+                                <button type="reset" data-bs-toggle="modal" data-bs-target=".add-new" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                            <div class="col-lg-4">
+                                <button type="reset" data-bs-toggle="modal" data-bs-target=".add-new-Return" class="btn btn-info waves-effect waves-light" style="cursor:pointer;margin-left: -27%;">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Required to More Information
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade add-new-app" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Remarks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="">
+                            <textarea class="form-control" rows="1" cols="40" name="Remarks" id="AppDesc" required style="height: 127px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="">
+                    <div class="col-12 text-end" style="text-align:center;">
+                        <button type="button" onclick="btn_Approve_manger_App('2','@Model.SignUp_Id')" class="btn btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="">
+                            <label class="form-model" style="color:black;" for="AddOrder-Billing-Name">Description</label>
+                            <textarea class="form-control" rows="1" cols="40" name="Remarks" id="Remarks" required style="height: 127px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="">
+                    <div class="col-12 text-end" style="text-align:center;">
+                        <button type="button" onclick="btn_Approve_manger_App('3','@Model.SignUp_Id')" class="btn btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade add-new-Return" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Return Remarks</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="">
+                            <textarea class="form-control" rows="1" cols="40" name="Remarks" id="ReturnAppDesc" required style="height: 127px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="">
+                    <div class="col-12 text-end" style="text-align:center;">
+                        <button type="button" onclick="btn_Approve_manger_App('5','@Model.SignUp_Id')" class="btn btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade Sp_doc_add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Upload Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="">
+                            <input type="hidden" id="Doc_Id"/>
+                            <div id="doc_date" style="display:none">
+                            <label for="Inc_Time" class="">Expiry Date</label>
+                            <input type="date" id="Max_Date" value="" class="form-control ExpiryDate" name="Doc_Date1" /><br />
+                            </div>
+                            <label for="Inc_Time" class="">Description</label>
+                            <textarea class="form-control" rows="1" cols="40" name="Doc_Description" id="Doc_Description" required style="height: 103px;"></textarea><br />
+                            <input type="hidden" id="hdnService_Appendix_A" class="hdncls_Documents_File APPENDIX_A_Viewhide" />
+                            <input type="file" class="form-control" placeholder="" id="liability_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Documents_File')" name="StudImage6" accept=".pdf">
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="">
+                    <div class="col-12 text-end" style="text-align:center;">
+                        <button type="button" onclick="btn_Approve_Upload_Doc('@Model.SignUp_Id')" class="btn btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<script>
+    function btn_Approve_manger_App(Status, SignUp_Id) {
+        if (@LoginClass.Role_Id== "5" || @LoginClass.Role_Id == "4" || @LoginClass.Role_Id == "3") {
+            if (Status == "3") {
+                Status = "3";
+                his_Status = "2";
+                his_Remarks = "Rejected";
+                ApprvRejct_Cmds = $("#Remarks").val();
+            }
+            else if (Status == "5") {
+                Status = "5";
+                his_Status = "5";
+                his_Remarks = "Return More Information";
+                ApprvRejct_Cmds = $("#ReturnAppDesc").val();
+            }
+            else {
+                Status = "2";
+                his_Status = "1";
+                his_Remarks = "Approved";
+                ApprvRejct_Cmds = $("#AppDesc").val();
+            }
+        }
+        else if (@LoginClass.Role_Id== "10" || @LoginClass.Role_Id== "11" || @LoginClass.Role_Id== "9") {
+            if (Status == "3") {
+                Status = "3";
+                his_Status = "3";
+                his_Remarks = "Rejected";
+                ApprvRejct_Cmds = $("#Remarks").val();
+            }
+            else if (Status == "5") {
+                Status = "5";
+                his_Status = "5";
+                his_Remarks = "Return More Information";
+                ApprvRejct_Cmds = $("#ReturnAppDesc").val();
+            }
+            else {
+                Status = "4";
+                his_Status = "4";
+                his_Remarks = "Approved";
+                ApprvRejct_Cmds = $("#AppDesc").val();
+            }
+        }
+        var Obj = {
+            SignUp_Id: SignUp_Id,
+            Status: Status,
+            Remarks: $("#Remarks").val(),
+            DMS_Number: '@LoginClass.Employee_Identity_Id',
+            W_Work_Description: his_Status,
+            W_Specific_Requirements: his_Remarks,
+            ApproveRes_1: ApprvRejct_Cmds
+        };
+        $.ajax({
+            url: "/Master/UpdateSignUpStatus",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+
+    function SP_Update_Document_Submission(rowid,Document_Type)
+    {
+        //alert(Document_Type);
+        if (Document_Type == "Workmen’s Compensation Insurance" || Document_Type == "Third Party Liability Insurance")
+        {
+            $("#doc_date").removeAttr("style");
+        }
+        else
+        {
+            $("#doc_date").css("display", "none");
+        }
+        $("#Doc_Id").val('');
+        $("#Max_Date").val('');
+        $("#Doc_Description").val('');
+        $("#hdncls_Documents_File").val('');
+        $('.Sp_doc_add-new').modal('show');
+        $("#Doc_Id").val(rowid);
+    }
+
+
+    function Applicalbe_Documents_File(val, clsname) {
+        readImage(val, clsname);
+    }
+    function readImage(input, clsname) {
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoDataApplicableReports", "Account")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    //$("#Loaderbck").hide();
+                    //$("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function btn_Approve_Upload_Doc(SignUp_Id) {
+        var Obj = {
+            RequiredDcouments_Id: $("#Doc_Id").val(),
+            Expiry_Date: $("#Max_Date").val(),
+            Description: $("#Doc_Description").val(),
+            Required_File_Path: $(".hdncls_Documents_File").val(),
+        };
+        $.ajax({
+            url: "/Master/Update_SignUp_Document_Submission",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        //window.location.reload();
+                        Fn_View(SignUp_Id);
+                        $('.Sp_doc_add-new').modal('hide');
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+
+
+</script>

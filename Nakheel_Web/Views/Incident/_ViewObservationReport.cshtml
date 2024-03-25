@@ -1,0 +1,1248 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+    label {
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 15px;
+    }
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+    .error {
+        color: red !important;
+        font-size: 12px;
+    }
+</style>
+<style>
+    #map-canvas_view {
+        height: 200px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .accordion-button {
+        background-color: #00263a !important;
+        color: white;
+        height: 33px;
+    }
+
+    .accordion-button:not(){
+        background-color: #00263a !important;
+        color: white;
+    }
+
+    .accordion-body {
+        padding: 0rem 0.25rem !important;
+    }
+
+    .accordion-button:not(.collapsed) {
+        color: white !important;
+    }
+</style>
+
+@model Nakheel_Web.Models.IncidentReport.M_IncidentObservationReport;
+@if (Model != null)
+{
+    <div class="" id="ViewObservation">
+        <div class="row">
+            <div class="col-12">
+                <div class="">
+                    <!-- Contact Detail -->
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            <div class="">
+                                <br />
+                                <input type="hidden" value="@Model.Inc_Obser_Report_Id" id="Inc_Observation_Id">
+                                <input type="hidden" value="@Model.Loc_Latitude" id="Loc_Latitude">
+                                <input type="hidden" value="@Model.Loc_Longitude" id="Loc_Longitude">
+                                <input type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy">
+                                <input type="hidden" value="@Model.Zone_Id" id="Zone_Id">
+                                <input type="hidden" value="@Model.Community_Id" id="ECommunity_Id">
+                                <table class="table table-sm table-striped dt-responsive tblround">
+                                    <tbody id="tblObservationView">
+                                        <tr>
+                                            <td><b class="font-bold">Reference No</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">NCM-HSSE-@Model.Unique_Id</td>
+
+                                            <td><b class="font-bold">Company Name</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Company_Name</td>
+
+                                            <td><b class="font-bold">Contact Name</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Contact_Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Date and Time</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Obser_Date / @Model.Obser_Time</td>
+
+                                            <td><b class="font-bold">Business Unit</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                            <td><b class="font-bold">Zone</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Zone_Name</td>
+
+                                            <td style="display:none"><b class="font-bold">Mobile number</b></td>
+                                            <td style="display:none">:</td>
+                                            <td class="tdtxt" style="display:none">@Model.Mobile_Number</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Community</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Community_Name</td>
+                                            <td><b class="font-bold">Building</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Building_Name</td>
+
+                                            <td><b class="font-bold">Category</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt"> @Model.Category</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <b class="font-bold">Observation Type</b>
+                                            </td>
+                                            <td>:</td>
+                                            <td id="View_INC_CAT_NAME" class="tdtxt">@Model.Observation_Type</td>
+
+                                            @if (Model.Business_Unit_Type_Name != "0")
+                                            {
+                                                var obane = "";
+                                                <td><b class="font-bold">Business Unit Type</b></td>
+                                                <td>:</td>
+                                                @if (Model.Business_Unit_Type_Name == "Party")
+                                                {
+                                                    obane = "JOP 3rd Party";
+                                                }
+                                                else if (Model.Business_Unit_Type_Name == "JOP_Common")
+                                                {
+                                                    obane = "JOP-Common Area";
+                                                }
+                                                else
+                                                {
+                                                    obane = "Master Community";
+                                                }
+                                                <td class="tdtxt" style="word-break: break-all">@obane</td>
+                                            }
+                                            <td style="display:none"><b class="font-bold">Master Community</b></td>
+                                            <td style="display:none">:</td>
+                                            <td class="tdtxt" style="display:none">@Model.Master_Community_Name</td>
+                                            <td><b class="font-bold">Location</b></td>
+                                            <td>:</td>
+                                            <td><img src="/assets/images/viewLoc.png" style="cursor:pointer;width:20px;" data-bs-toggle="modal" data-bs-target=".View_Location"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="modal fade View_Location" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered" style="height:50%;width:50%;">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="myExtraLargeModalLabel">Observation Location</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div id="map-canvas_view"></div>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+                                <div class="row g-3">
+                                    @if (@Model.Observation_Type == "Health_Safety")
+                                    {
+                                        <div class="col-md-12">
+                                            <label for="example-number-input" class="col-md-4 col-form-label">Health & Safety</label>
+                                            <div class="row" style="margin-left: 0%;">
+                                                <div id="Health_SafetyList" style="display: contents;">
+                                                    @{
+                                                        if (Model.L_Inc_Health_Observation_Type != null)
+                                                        {
+                                                            @foreach (var item in Model.L_Inc_Health_Observation_Type)
+                                                            {
+                                                                <div class="col-md-4">
+                                                                    <div class="form-check mb-3">
+                                                                        <input class="form-check-input clsHealth_Safety" checked type="radio">
+                                                                        <label class="form-check-label">@item.Health_Safety_Name</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (@Model.Observation_Type == "Environment")
+                                    {
+                                        <div class="col-md-12">
+                                            <label for="example-number-input" class="col-md-4 col-form-label">Environment</label>
+                                            <div class="row" style="margin-left: 0%;">
+                                                <div id="EnvironmentList" style="display: contents;">
+                                                    @{
+                                                        if (Model.L_Inc_Environment_Observation_Type != null)
+                                                        {
+                                                            @foreach (var item in Model.L_Inc_Environment_Observation_Type)
+                                                            {
+                                                                <div class="col-md-4">
+                                                                    <div class="form-check mb-3">
+                                                                        <input class="form-check-input clsEnvironment" checked type="radio">
+                                                                        <label class="form-check-label">@item.Environment_Name</label>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="col-md-4" style="display:none">
+                                                <label class="form-label">Observation Details</label>
+                                                <textarea class="form-control" readonly style="height: 100px;">@Model.Description_Observation</textarea>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Description Of The Observation</label>
+                                                <textarea class="form-control" readonly style="height: 100px;">@Model.Obser_Details</textarea>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label">Immediate Corrective Action Taken</label>
+                                                <textarea class="form-control" readonly style="height: 100px;">@Model.Imm_Corrective_Actions</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="col-md-12">
+                                                <label class="form-label">Evidence</label>
+                                                <div class="row" style="height: 200px;overflow-y: scroll;">
+                                                    @if (Model.L_Inc_Observation_Photos != null && Model.L_Inc_Observation_Photos.Count != 0)
+                                                    {
+                                                        @foreach (var item in Model.L_Inc_Observation_Photos)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:180px;width:180px;padding:12px;" /></a>
+                                                            </div>
+                                                        }
+                                                        <br>
+                                                    }
+                                                    @if (Model.L_Inc_Observation_Videos != null && Model.L_Inc_Observation_Videos.Count != 0)
+                                                    {
+                                                        @foreach (var item in Model.L_Inc_Observation_Videos)
+                                                        {
+                                                            <div class="row col-md-4" style="padding: 10px;">
+                                                                <iframe src='@item.Video_File_Path' style="width:165%"></iframe>
+                                                            </div>
+                                                        }
+                                                        <br>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6" style="display:none">
+                                            <label class="form-label" @* id="mapclick_popup"*@>Observation Location</label>
+                                            <div id=""></div><br>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ViewIncidentList_Supervisor">
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="mt-xl-0 mt-4">
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="text-muted">
+                                        @if (Model!.L_Observation_Status_History != null && Model.L_Observation_Status_History.Count != 0)
+                                        {
+                                            <br>
+                                            <table id="tblObservationHistory" class="table table-sm table-striped dt-responsive tblround" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Date and Time</th>
+                                                        <th>Due On</th>
+                                                        <th>Assigned To</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblObservationHistory">
+                                                    @foreach (var item in Model.L_Observation_Status_History)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Id</td>
+                                                            <td align="left" valign="middle">@item.Role_Id</td>
+                                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                            <td align="left" valign="middle">@item.Remarks2</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        @if (Model.L_Observation_Report_Reject != null && Model.L_Observation_Report_Reject.Count != 0)
+        {
+            <div class="col-md-12">
+                <label class="form-label">
+                    Observation Reject
+                </label><br>
+                <table id="tblObservationRejectList" class="table table-sm table-striped dt-responsive tblround" style="width:100%;font-size:13px">
+                    <thead>
+                        <tr>
+                            <th>Reject Reason Description</th>
+                            <th>Rejected By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.L_Observation_Report_Reject!)
+                        {
+                            <tr class="clstr">
+                                <td align="left" valign="middle"><textarea disabled rows="1" style="height: 82px;width: 100%;">@item.Reject_Reason_Description</textarea></td>
+                                <td align="left" valign="middle">@item.RejectedBy</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <br>
+        }
+        @if (Model!.Status == "1")
+        {
+            @if (LoginClass.Role_Id == "5" && Model!.Category == "Negative (Action Required)")
+            {
+                <div>
+                    <form id="F_Incident_Observation_Assign" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                        <div class="col-lg-6">
+                            <label class="form-label">Assign Action to ?</label><br>
+                            <input type="radio" name="AssignActionTo" class="form-check-input AssignActionval" style="vertical-align:sub" id="Zone_Team" value="Supervisor">&nbsp;<span><label class="form-check-label" for="Zone_Team">Zone Team</label></span>
+                            <input type="radio" name="AssignActionTo" class="form-check-input AssignActionval" style="vertical-align:sub" id="Service_Provider" value="Service_Provider">&nbsp;<span><label class="form-check-label" for="Service_Provider">Service Provider</label></span>
+                            <br> <label id="txtvalidemail" style="color:red"> </label>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="btn_add_more_emp" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddEmployeeList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <table id="tblAssignEmpNameList" class="table table-sm table-striped dt-responsive tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Target Date</th>
+                                    <th>Description</th>
+                                    <th id="ActionHead">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="AddMoreAssignToList">
+                                <tr>
+                                    <td>
+                                        <select class="form-control Responsible_Id" name="Action_Employee_Id" id="Action_Employee_Id_0" required>
+                                        </select>
+                                    </td>
+                                    <td><input type="date" class="form-control Target_Date" id="Target_Date" name="Target_Date" autocomplete="off" required /></td>
+                                    <td><textarea type="text" class="form-control Action_Description" id="Action_Description" name="Action_Description" autocomplete="off" required></textarea></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit_Assign" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+            @if (LoginClass.Role_Id == "5" && Model!.Category == "Positive (Good Practice)")
+            {
+                <div>
+                    <form id="F_Incident_Observation_Positive" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <label class="form-label">Remarks<span class="requ">*</span></label>
+                                <textarea class="form-control" id="Positive_Remarks" style="height:40px"></textarea>
+                                <label id="txtvalidemail" style="color:red"> </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit_Positive" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            }
+        }
+        <!-- Approval By HSE Team -->
+        @if (Model!.Status == "4" || Model!.Status == "6" && Model!.Observation_Type == "Health & Safety")
+        {
+            @foreach (var item in Model.L_Observation_Report_CA!)
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="hidden" class="form-control" name="Obs_Corrective_Action_Id_SE" id="Obs_Corrective_Action_Id" value="@item.Obs_Corrective_Action_Id">
+                        <label class="form-label">Action Taken Description</label>
+                        <textarea class="form-control" readonly style="height: 160px;">@item.Description_Action</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Evidence</label>
+                        <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding:10px;" /></a>
+                    </div>
+                </div>
+            }
+            @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+            {
+                <div class="" id="HSE_Team">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Priority<span class="requ">*</span></label>
+                            <select class="form-control" name="Priority" id="Priority">
+                                <option value="0">-- Select Risk Level --</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                            <br> <label id="txtvalidemail" style="color:red"> </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" onclick="btn_Submit_Action_Closure_HSE()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-reject" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade add-reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Observation</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div style="display:none;">
+                                        <div class="form-group">
+                                            <input class="form-control" name="Obs_Reject_Id" id="Obs_Reject_Id" value="0">
+                                            <input class="form-control" name="Reject_Reason_Stage" id="Reject_Reason_Stage" value="Rejected By HSE">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="col-md-12">
+                                            <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                            <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Reason_Description" name="Reject_Reason_Description" required minlen="1"></textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="">
+                                    <div style="text-align:center;">
+                                        <button type="submit" class="btn btn-success" onclick="btn_Reject_Action_Closure_HSE()"> Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+            }
+        }
+        <!-- Approval By S&E Team -->
+        @if (Model!.Status == "4" || Model!.Status == "6" && Model!.Observation_Type == "Environment")
+        {
+            @foreach (var item in Model.L_Observation_Report_CA!)
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="hidden" class="form-control" name="Obs_Corrective_Action_Id_SE" id="Obs_Corrective_Action_Id_SE" value="@item.Obs_Corrective_Action_Id">
+                        <label class="form-label">Action Taken Description</label>
+                        <textarea class="form-control" readonly style="height: 160px;">@item.Description_Action</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Evidence</label>
+                        <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding:10px;" /></a>
+                    </div>
+                </div>
+            }
+            @if (LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+            {
+                <div class="" id="SE_Team">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Priority<span class="requ">*</span></label>
+                            <select class="form-control" name="Priority" id="Priority">
+                                <option value="0">-- Select Risk Level --</option>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                            <br> <label id="txtvalidemail" style="color:red"> </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" onclick="btn_Submit_Action_Closure_SE()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".se-reject" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade se-reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Observation</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div style="display:none;">
+                                        <div class="form-group">
+                                            <input class="form-control" name="Obs_Reject_Id" id="Obs_Reject_Id" value="0">
+                                            <input class="form-control" name="Reject_Reason_Stage_SE" id="Reject_Reason_Stage_SE" value="Rejected By S&E">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-12">
+                                            <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                            <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Reason_Description_SE" name="Reject_Reason_Description_SE" required minlen="1"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <div style="text-align:center;">
+                                        <button type="submit" class="btn btn-success" onclick="btn_Reject_Action_Closure_SE()"> Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
+            }
+        }
+        @if (Model!.Status == "5")
+        {
+            @foreach (var item in Model.L_Observation_Report_CA!)
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Action Taken Description</label>
+                        <textarea class="form-control" readonly style="height: 160px;">@item.Description_Action</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Evidence</label><br/>
+                        <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding:10px;" /></a>
+                    </div>
+                </div>
+            }
+        }
+        @if (Model!.Status == "8" && Model!.Category == "Positive (Good Practice)" && Model!.Observation_Type == "Health & Safety")
+            {
+                <!-- Acknowledged By HSE Team -->
+                @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                {
+                    <div>
+                        <form id="F_Incident_Observation_Ack" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="example-tel-input" class="col-md-4 col-form-label">Priority<span class="requ">*</span></label>
+                                    <select class="form-control" name="Priority" id="Priority">
+                                        <option value="0">-- Select Risk Level --</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                        <option value="NA">NA</option>
+                                    </select>
+                                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-success waves-effect waves-light submit_HSE" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                        <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            }
+        @if (Model!.Status == "8" && Model!.Observation_Type == "Environment" && Model!.Category == "Positive (Good Practice)")
+            {
+                <!-- Acknowledged By S&E Team -->
+                @if (LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+                {
+                    <div>
+                        <form id="F_Incident_Observation_Ack" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="example-tel-input" class="col-md-4 col-form-label">Priority<span class="requ">*</span></label>
+                                    <select class="form-control" name="Priority" id="Priority">
+                                        <option value="0">-- Select Risk Level --</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                        <option value="NA">NA</option>
+                                    </select>
+                                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-success waves-effect waves-light submit_HSE" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="reset" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                        <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            }
+        </div>
+}
+
+<script>
+    @*$("#mapclick_popup").click(function () {
+        $(".add-new").modal('show');
+        Mapping_Locations();
+    });*@
+
+    $(document).ready(function(){
+        Load_Google_Maps();
+        ApplySelect2("#Action_Employee_Id_0");
+
+            $(function () {
+                var dtToday = new Date();
+
+                var month = dtToday.getMonth() + 1;
+                var day = dtToday.getDate();
+                var year = dtToday.getFullYear();
+
+                if (month < 10)
+                    month = '0' + month.toString();
+                if (day < 10)
+                    day = '0' + day.toString();
+
+                var maxDate = year + '-' + month + '-' + day;
+                $('#Target_Date').attr('min', maxDate);
+            });
+
+        $('input[name=AssignActionTo]').change(function () {
+            var Role_Name = $('input[name=AssignActionTo]:checked').val();
+            var Zone_Id = $("#Zone_Id").val();
+            var Community_Id = $("#ECommunity_Id").val();
+            //alert(Zone_Id);
+            //alert(Community_Id);
+            if (Role_Name == "Service_Provider") {
+                //$("#ListEmp").show();
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+            else {
+                //$("#ListEmp").show();
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+        });
+
+        $("#tblAssignEmpNameList").on("click", ".TblDeleteButton", function () {
+            $(this).closest("tr").remove();
+        });
+            $(".submit_Positive").click(function () {
+                debugger
+                var Obs_Positive_Remarks = $("#Positive_Remarks").val();
+                //alert(Obs_Positive_Remarks)
+                if (Obs_Positive_Remarks == null) {
+                    $('#txtvalidemail').text("Please Entry Positive Remarks");
+                    return false;
+                }
+                //alert(Inc_Observation_Id);
+                else {
+                    var Obj = {
+                        Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+                        Description_Observation: $("#Positive_Remarks").val(),
+                    };
+                    $.ajax({
+                        url: "/Incident/Update_Obs_Category_Positive",
+                        type: "POST",
+                        cache: false,
+                        data: JSON.stringify(Obj),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Updated Successfully',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(function () {
+                                    window.location.reload();
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'Error',
+                                    title: 'Error',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        },
+                    });
+                }
+                return false;
+            });
+            $(".submit_Assign").click(function () {
+                //debugger
+                if ($('input[name="AssignActionTo"]:checked').length == 0) {
+                    $('#txtvalidemail').text("Select Assign Action Required");
+                    return false;
+                }
+                let valid = $("#F_Incident_Observation_Assign").valid();
+                if (!valid) { 
+                    $("#Action_Employee_Id_0-error").addClass('m-100');
+                    return false;
+                }
+                else {
+                    var EMP_ARR = [];
+                    $('#tblAssignEmpNameList tbody > tr').each(function () {
+                        var varEmpId = $(this).closest('tr').find('.Responsible_Id').val();
+                        var Inc_Obser_Report_Id = $("#Inc_Observation_Id").val();
+                        var varTarget_Date = $(this).closest('tr').find('.Target_Date').val();
+                        var varAction_Description = $(this).closest('tr').find('.Action_Description').val();
+                        var CreatedBy = $("#CreatedBy").val();
+                        var data = {};
+                        data.Responsible_Id = varEmpId;
+                        data.Inc_Obser_Report_Id = Inc_Obser_Report_Id;
+                        data.Target_Date = varTarget_Date;
+                        data.Action_Description = varAction_Description;
+                        data.CreatedBy = CreatedBy;
+                        EMP_ARR.push(data);
+                    });
+                    var Obj = {
+                        Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+                        L_M_Inc_Observation_Emp: EMP_ARR
+                    };
+                    $.ajax({
+                        url: "/Incident/AddObservationTeam",
+                        type: "POST",
+                        cache: false,
+                        data: JSON.stringify(Obj),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Updated Successfully',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(function () {
+                                    window.location.reload();
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    position: 'top-end',
+                                    icon: 'Error',
+                                    title: 'Error',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        },
+                    });
+                }
+                return false;
+            });
+
+        $(".submit_HSE").click(function () {
+            if ($("#Priority").val() == "0") {
+                $('#txtvalidemail').text("Select the Priority");
+                return false;
+            }
+            var Obj = {
+                Inc_Obser_Report_Id: $("#Inc_Observation_Id").val(),
+                Priority: $("#Priority").val()
+            };
+            $.ajax({
+                url: "/Incident/UpdateObservationPriority",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Updated Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+            //}
+            return false;
+        });
+    });
+
+    function EMP_DRP_DWN(Role_Name, id, Zone_Id, Community_Id) {
+        //debugger;
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + id).empty();
+            $("#" + id).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#" + id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                @*$("#" + id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + " / " + e.Email_Id + "</option>");*@
+            });
+        });
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Load_Google_Maps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $("#viewmap").load(map_Hzurl);
+    }
+    
+    var i = 1;
+    function AddEmployeeList() {
+        //debugger
+        var Html = "";
+        var varResponsible_Id = "Action_Employee_Id_" + i;
+        var varTarget_DateAdd = "#Target_DateAdd_" + i;
+        Html += '<tr><td><select required style="width: 227px;" class="form-control Responsible_Id" id="Action_Employee_Id_' + i + '" name="Responsible_Id_' + i + '"><label id="txtvalidemail" style="color:red"> </label></select></td>';
+        Html += '<td><input required class="form-control Target_Date" id="Target_DateAdd_' + i + '" name="Target_DateAdd_' + i + '" type="date"></td>';
+        Html += '<td><textarea required type="text" class="form-control Action_Description" id="Action_Description_' + i + '" name="Action_Description_' + i + '"></textarea></td>';
+        Html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $("#AddMoreAssignToList").append(Html);
+        var Role_Name = $('input[name=AssignActionTo]:checked').val();
+        var Zone_Id = $("#Zone_Id").val();
+        var Community_Id = $("#ECommunity_Id").val();
+        $('input[name=AssignActionTo]').change(function () {
+            var Role_Name = $('input[name=AssignActionTo]:checked').val();
+            var Zone_Id = $("#Zone_Id").val();
+            var Community_Id = $("#ECommunity_Id").val();
+            if (Role_Name == "Service_Provider") {
+                EMP_DRP_DWN(Role_Name, varResponsible_Id, Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+            else {
+                EMP_DRP_DWN(Role_Name, varResponsible_Id, Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+        });
+        Target_DateAdd_AddMore(varTarget_DateAdd);
+        ApplySelect2("#" + varResponsible_Id);
+        i++;
+    }
+    function Target_DateAdd_AddMore(id) {
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var maxDate = year + '-' + month + '-' + day;
+        $(id).attr('min', maxDate);
+    }
+    function Target_DateAdd() {
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        $('#Target_DateAdd').attr('min', maxDate);
+    }
+    function btn_Submit_Action_Closure_HSE() {
+        //alert(1)Reject
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val()
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Reject_Action_Closure_HSE() {
+        //alert('Reject')
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Obs_Reject_Id: $("#Obs_Reject_Id").val(),
+            Reject_Reason_Stage: $("#Reject_Reason_Stage").val(),
+            Reject_Reason_Description: $("#Reject_Reason_Description").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    function btn_Reject_Action_Closure_SE() {
+        //alert('Reject')
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id_SE").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val(),
+            Obs_Reject_Id: $("#Obs_Reject_Id").val(),
+            Reject_Reason_Stage: $("#Reject_Reason_Stage_SE").val(),
+            Reject_Reason_Description: $("#Reject_Reason_Description_SE").val(),
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>
+<script>
+    $(document).ready(function(){
+        Load_Google_Maps();
+        ApplySelect2("#Action_Employee_Id_0");
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Load_Google_Maps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $("#viewmap").load(map_Hzurl);
+    }
+    
+    @*var i = 1;
+    function AddEmployeeList() {
+        //debugger
+        var Html = "";
+        var varResponsible_Id = "Action_Employee_Id_" + i;
+        Html += '<tr><td><select style="width: 227px;" class="form-control Responsible_Id" id="Action_Employee_Id_' + i + '" name="Responsible_Id"><label id="txtvalidemail" style="color:red"> </label></select></td>';
+        Html += '<td><input class="form-control Target_DateAdd" id="Target_DateAdd" name="Target_DateAdd" type="date"></td>';
+        Html += '<td><textarea type="text" class="form-control Action_Description" id="Action_Description" name="Action_Description"></textarea></td>';
+        Html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $("#AddMoreAssignToList").append(Html);
+        var Role_Name = $('input[name=AssignActionTo]:checked').val();
+        EMP_DRP_DWN(Role_Name, varResponsible_Id);
+        Target_DateAdd();
+        ApplySelect2("#" + varResponsible_Id);
+        i++;
+    }*@
+    
+    function btn_Submit_Action_Closure_HSE() {
+        //alert(1)Reject
+        var Obj = {
+            Obs_Corrective_Action_Id: $("#Obs_Corrective_Action_Id").val(),
+            Inc_Observation_Id: $("#Inc_Observation_Id").val()
+        };
+        $.ajax({
+            url: "/Incident/Update_Observation_Corrective_Action_HSE",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+        
+</script>
+
+<script>
+    // if HTML DOM Element that contains the map is found...
+
+    if (document.getElementById('map-canvas_view')) {
+
+        debugger
+        var content;
+
+        var latitude = $("#Loc_Latitude").val();
+        var longitude = $("#Loc_Longitude").val();
+
+        var map;
+        var marker;
+        navigator.geolocation.getCurrentPosition(loadMap);
+
+        function loadMap(location) {
+            if (location.coords) {
+                latitude = $("#Loc_Latitude").val();//location.coords.latitude;
+                longitude = $("#Loc_Longitude").val();//location.coords.longitude;
+            }
+
+            // Coordinates to center the map
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+            // Other options for the map, pretty much selfexplanatory
+            var mapOptions = {
+                zoom: 12,
+                center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                mapTypeId: google.maps.MapTypeId.PLAN,
+            };
+
+            var image = '../../assets/images/mappin.png';
+            // Attach a map to the DOM Element, with the defined settings
+            map = new google.maps.Map(document.getElementById("map-canvas_view"), mapOptions);
+
+            content = document.getElementById('information');
+            google.maps.event.addListener(map, 'click', function (e) {
+                placeMarkerView(e.latLng);
+                //alert(e.latLng);
+            });
+            marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                icon: image
+            });
+        }
+    }
+    function placeMarkerView(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>

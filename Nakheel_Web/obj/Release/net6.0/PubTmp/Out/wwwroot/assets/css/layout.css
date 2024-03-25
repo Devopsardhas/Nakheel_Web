@@ -1,0 +1,30 @@
+﻿.menu-li {
+    background: #eeeded;
+    border-radius: 10px;
+    margin-top: 3px;
+}
+
+
+.blink {
+    color: #fff;
+    text-align: center;
+    animation: animate 1.5s linear infinite;
+    background: red;
+    border-radius: 17px;
+    transform: translate(3%,32%);
+}
+
+@keyframes animate {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+

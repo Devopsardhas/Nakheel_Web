@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #map-canvas {
+        height: 500px;
+        width: 100%;
+    }
+
+    #search_input {
+        font-size: 18px;
+        width: 430px;
+        height: 40px;
+        margin: 5px;
+        padding: 5px;
+        box-sizing: border-box;
+    }
+
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.11&sensor=false&libraries=places&key=AIzaSyDmPNge2CFXcAkv2jbONq2T5yyE069N1Do" type="text/javascript"></script>
+
+
+<input type="text" id="search_input" placeholder="Search for a place" />
+<div id="information"></div>
+<div id="map-canvas"></div>
+
+<script>
+    // if HTML DOM Element that contains the map is found...
+    if (document.getElementById('map-canvas')) {
+        var content;
+        var latitude = 25.1143122;
+        var longitude = 55.1387501;
+        var map;
+        var marker;
+        navigator.geolocation.getCurrentPosition(loadMap);
+
+        function loadMap(location) {
+            if (location.coords) {
+                latitude = location.coords.latitude;
+                longitude = location.coords.longitude;
+            }
+
+            // Coordinates to center the map
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+            // Other options for the map, pretty much selfexplanatory
+            var mapOptions = {
+                zoom: 12,
+                center: new google.maps.LatLng(25.1143122, 55.1387501),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            // Attach a map to the DOM Element, with the defined settings
+            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+            content = document.getElementById('information');
+            google.maps.event.addListener(map, 'click', function (e) {
+                placeMarker(e.latLng);
+            });
+
+            var input = document.getElementById('search_input');
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            var searchBox = new google.maps.places.SearchBox(input);
+
+            google.maps.event.addListener(searchBox, 'places_changed', function () {
+                debugger
+                var places = searchBox.getPlaces();
+                placeMarker(places[0].geometry.location);
+            });
+
+            marker = new google.maps.Marker({
+                map: map,
+            });
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        //map.setCenter(location)
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>
+
+
+
+
+
+

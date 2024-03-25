@@ -1,0 +1,221 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.BUSINESS_UNIT>;
+@{
+    ViewData["Title"] = "Business Unit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Business Unit List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Business Unit ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Business Unit Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Description</th>
+                            <th style="text-align:left;"><i class="bx bxs-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Business_Unit_Name</td>
+                                    <td align="left" valign="middle">@item.Description</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Business_Unit_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Business_Unit_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            @*<a onclick="View(@item.Designation_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>*@
+                                        </div>
+                                       @* <ul class="list-unstyled hstack gap-1 mb-0">
+                                            <li title="Edit"><a href="javascript:void(0);" class="text-success" onclick="Edit(@item.Business_Unit_Id)"><i class="mdi mdi-pencil-outline font-size-18 "></i></a></li>
+                                            <li title="Delete"><a href="javascript:void(0);" class="text-danger" onclick="Delete(@item.Business_Unit_Id)"><i class="mdi mdi-delete-outline font-size-18"></i></a></li>
+                                        </ul>*@
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*/*ADD PAGE*/*@
+<form id="AddModule_div" asp-controller="Master" asp-action="AddBusinessUnit" method="post">
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Business_Unit_Id" id="Business_Unit_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4 ">
+                                <label for="example-search-input" class="form-model" style="color:black;">Business Unit Name</label>
+                                <input class="form-control" type="text" id="Business_Unit_Name" name="Business_Unit_Name" required minlen="1" autocomplete="off">
+                                @* <span asp-validation-for="Business_Unit_Name" class="text-danger"></span>*@
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                <label for="example-search-input" class="form-model" style="color:black;">Description</label>
+                                <textarea class="form-control" rows="1" cols="40" id="Description" name="Description" required minlen="1"></textarea>
+                                @*<span asp-validation-for="Description" class="text-danger"></span>*@
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success"> Submit</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</form>
+
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Business_Unit_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        BUSINESS_UNIT_NAME: "#Business_Unit_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#List_View",
+        BTN_ADD: "#btnadd",
+        BTN_BACK: "#btn_back",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+    });
+
+    //$(function () {
+    //    CLEAR_FIELDS();
+    //});
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $("#btnadd").click(function () {
+            $(UI_Fields.MODULE_ID).val('0');
+            $(UI_Fields.BUSINESS_UNIT_NAME).val('');
+            $(UI_Fields.DESCRIPTION).val('');
+        });
+
+    });
+
+    function Edit(id) {
+        $(".add-new").modal('show');
+        $.post("@Url.Action("BU_GetByID", "Master")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Business_Unit_Id);
+            $(UI_Fields.BUSINESS_UNIT_NAME).val(data.Business_Unit_Name);
+            $(UI_Fields.DESCRIPTION).val(data.Description);
+        });
+    }
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("BU_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+
+
+                }
+            });
+
+    }
+
+   
+</script>
+

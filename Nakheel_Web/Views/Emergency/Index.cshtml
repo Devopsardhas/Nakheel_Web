@@ -1,0 +1,891 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "ERT";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">ERT List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_team" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Team</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-3">
+                        <label>Department</label>
+                        <select class="form-select  InputField" id="Drp_Business_Unit">
+                        </select>
+                    </div>
+                    <div class="col-lg-3">
+                        <label>Role</label>
+                        <select class="form-select  InputField" id="Drp_Role">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Type</label>
+                        <select class="form-select  InputField" id="Drp_Type">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Training Status</label>
+                        <select class="form-select  InputField" id="Drp_Training_Status">
+                        </select>
+                    </div>
+                    <div class="col-lg-2 pull-right">
+                        <br />
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Submit_Filter">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                        </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Clr_Filter">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table id="tbl_Emr" class="table table-striped dt-responsive tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Langauge</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Role</th>
+                            <th>Type</th>
+                            <th>Certificate Date</th>
+                            <th>Exprity Date</th>
+                            <th>Training Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Main_tbody">
+                       
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_EMR_Team" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Create Team</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_ERT_Team" action="#" method="post" class="" novalidate="novalidate">
+                    <input class="form-control" type="hidden" value="" id="ERT_Id">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Employee Name<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Employee_Name" name="Employee_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Gender</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Gender_Name" name="Gender_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Langauge</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Langauge_Name" name="Langauge_Name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Nationality</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Nationality_Name" name="Nationality_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Age</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Age_Name" name="Age_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Department<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control clsDepartment_Type" id="Department_Type" name="Department_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Position</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="" id="Position_Name" name="Position_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Role<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Role_Type" name="Role_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Type<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="ERTType_Type" name="ERTType_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Certificate Date</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" id="CertificateDate_Name" name="CertificateDate_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Exprity Date</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" id="Exprity_Date_Name" name="Exprity_Date_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Staff Status<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="StaffStatus_Type" name="StaffStatus_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                        <option value="Valid">Valid</option>
+                                        <option value="Not Valid">Not Valid</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Training Status<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="TrainingStatus_Type" name="TrainingStatus_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Business_Unit_Type" name="Business_Unit_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Building No<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Building_No_Type" name="Building_No_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Floor No<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Floor_No_Type" name="Floor_No_Type">
+                                        <option selected="selected" disabled>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Upload</label>
+                                <div class="col-md-8">
+                                    <input type="hidden" id="hdnService_Appendix_A" class="hdncls_Evidence_Documents_File APPENDIX_A_Viewhide" />
+                                    <input class="form-control" type="file" value="" id="Upload_Name" name="Upload_Name" onchange="Applicalbe_Documents_File(this,'hdncls_Evidence_Documents_File')" accept=".jpg,.jpeg,.png,.doc,.docx,.pdf">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Declaration Completed<span class="requ">*</span></label>
+                                <div class="row col-md-8">
+                                    <div class="col-md-4 col-form-label">
+                                        <div id="InjYes" class="" onclick="Fninsuranceclaim('1')">
+                                            <label for="insuranceYes"> <input id="insuranceYes" class="Insuranceclaim required" name="Insuranceclaim" type="radio" value="Yes" />&nbsp;Yes </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-form-label">
+                                        <div id="InjNo" class="floatBlock" onclick="Fninsuranceclaim('2')">
+                                            <label for="insuranceNo"> <input id="insuranceNo" class="Insuranceclaim" name="Insuranceclaim" type="radio" value="No" />&nbsp;No </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="Inc_EMR_Team" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View ERT Details </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewERTList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/jquery.validate.min.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_EMR_TEAM: "#Add_EMR_Team",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAINTABLE: "#tbl_Emr",
+        TBODY_TABLE: "#GetObservationList",
+        BTN_ADD_TEAM: "#btn_add_team",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        M_ZONE: "#Zone",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        MASTER_COMMUNITY_ID: "#Master_Community_Id",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        EDIT_GOOGLE_MAP_API: "#map-canvas_view",
+        DEPARTMENT_TYPE: "#Department_Type",
+        EMR_DATE: "#Emr_Date",
+        TEAM_MEM: "#tbl_TeamMem",
+        TEAM_MEM_TBODY: "#tbody_TeamMem",
+        EMR_TIME: "#EMR_Time",
+        TBL_SPOT: "#tbl_Spot",
+        TBODY_SPOT: "#tbody_Spot",
+        TBL_ACT_DEL: ".TblTMDelBtn",
+        ROLE_TYPE: "#Role_Type",
+        ERTTYPE_TYPE: "#ERTType_Type",
+        TRAININGSTATUS_TYPE: "#TrainingStatus_Type",
+        BUSINESS_UNIT_TYPE: "#Business_Unit_Type",
+        FLOOR_NO_TYPE: "#Floor_No_Type",
+        BUILDING_NO_TYPE: "#Building_No_Type",
+        BTN_VIEW_BACK: "#btn_ViewIncback",
+        INC_EMR_TEAM: "#Inc_EMR_Team",
+        VIEW_ERT_LIST:"#ViewERTList",
+        DRP_BUSINESS_UNIT:"#Drp_Business_Unit",
+        DRP_ROLE: "#Drp_Role",
+        DRP_TYPE:"#Drp_Type",
+        DRP_TRAINING_STATUS:"#Drp_Training_Status",
+        FILTER_SUBMIT: "#Submit_Filter"
+    });
+
+    $(function () {
+        LoadGrid();
+        LoadDepartment();
+        LoadRole();
+        LoadType();
+        LoadTrainingStatus();
+
+        ApplySelect2("#Department_Type");
+        ApplySelect2("#Business_Unit_Type");
+        ApplySelect2("#Building_No_Type");
+
+        // Load_GoogleMaps();
+        $(UI_Fields.BTN_VIEW_OBS_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_EMR_TEAM).hide(100);
+            $(UI_Fields.OBS_DETAILS_VIEW).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields.BTN_VIEW_BACK).click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.BTN_ADD_TEAM).click(function () {
+            LoadDepartment();
+            LoadRole();
+            LoadType();
+            LoadTrainingStatus();
+            LoadBuildingNo();
+            LoadFloorNo();
+
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_EMR_TEAM).show(100);
+            $(UI_Fields.GOOGLE_MAP_API).show(100);
+        });
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_EMR_TEAM).hide(100);
+            window.location.reload();
+        });
+
+      
+
+
+        $(UI_Fields.FILTER_SUBMIT).click(function () {
+            var Business_Unit = $("#Drp_Business_Unit").val();
+            var Role = $("#Drp_Role").val();
+            var Type = $("#Drp_Type").val();
+            var Training_Status = $("#Drp_Training_Status").val();
+            if (Business_Unit == null) {
+                Business_Unit = '0';
+            }
+            if (Role == null) {
+                Role = '0';
+            }
+            if (Type == null) {
+                Type = '0';
+            }
+            if (Training_Status == null) {
+                Training_Status = '0';
+            }
+            $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+            $.post("@Url.Action("_GetERT_Team_Master", "Emergency")", { Business_Unit: Business_Unit, Role: Role, Type: Type, Training_Status: Training_Status }, function (data) {
+                $("#Main_tbody").html('');
+                $("#Main_tbody").html(data);
+            });
+
+        });
+
+        $("#Clr_Filter").click(function () {
+            //window.location.reload();
+            var card_id = "0";
+            window.location.href = "/Emergency/Index/0";
+        });
+    });
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function LoadDepartment() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Department_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.DEPARTMENT_TYPE).empty();
+            $(UI_Fields.DEPARTMENT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(UI_Fields.BUSINESS_UNIT_TYPE).empty();
+            $(UI_Fields.BUSINESS_UNIT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(UI_Fields.DRP_BUSINESS_UNIT).empty();
+            $(UI_Fields.DRP_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.DEPARTMENT_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                $(UI_Fields.BUSINESS_UNIT_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                $(UI_Fields.DRP_BUSINESS_UNIT).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadRole() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Role_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.ROLE_TYPE).empty();
+            $(UI_Fields.ROLE_TYPE).append("<option selected value='0' disabled> --Select Role--</option>");
+
+            $(UI_Fields.DRP_ROLE).empty();
+            $(UI_Fields.DRP_ROLE).append("<option selected value='0' disabled> --Select Role--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.ROLE_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                $(UI_Fields.DRP_ROLE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadType() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Type_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.ERTTYPE_TYPE).empty();
+            $(UI_Fields.ERTTYPE_TYPE).append("<option selected value='0'  disabled> --Select Type--</option>");
+
+            $(UI_Fields.DRP_TYPE).empty();
+            $(UI_Fields.DRP_TYPE).append("<option selected value='0'  disabled> --Select Type--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.ERTTYPE_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                $(UI_Fields.DRP_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadTrainingStatus() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Training_Status_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.TRAININGSTATUS_TYPE).empty();
+            $(UI_Fields.TRAININGSTATUS_TYPE).append("<option selected value='0'  disabled> --Select Training Status--</option>");
+
+            $(UI_Fields.DRP_TRAINING_STATUS).empty();
+            $(UI_Fields.DRP_TRAINING_STATUS).append("<option selected value='0'  disabled> --Select Training Status--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.TRAININGSTATUS_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                $(UI_Fields.DRP_TRAINING_STATUS).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadBuildingNo() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Building_No_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.BUILDING_NO_TYPE).empty();
+            $(UI_Fields.BUILDING_NO_TYPE).append("<option selected value='0' disabled> --Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_NO_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadFloorNo() {
+        debugger;
+        $.post("@Url.Action("Load_ERT_FloorNo_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.FLOOR_NO_TYPE).empty();
+            $(UI_Fields.FLOOR_NO_TYPE).append("<option selected value='0' disabled> --Select Floor No--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.FLOOR_NO_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+        });
+    }
+
+    function LoadGrid()
+    {
+        var Business_Unit = $("#Drp_Business_Unit").val();
+        var Role = $("#Drp_Role").val();
+        var Type = $("#Drp_Type").val();
+        var Training_Status = $("#Drp_Training_Status").val();
+
+        if (Business_Unit == null) {
+            Business_Unit = '0';
+        }
+        if (Role == null) {
+            Role = '0';
+        }
+        if (Type == null) {
+            Type = '0';
+        }
+        if (Training_Status == null) {
+            Training_Status = '0';
+        }
+        $(UI_Fields.MAINTABLE).dataTable().fnDestroy();
+        $.post("@Url.Action("_GetERT_Team_Master", "Emergency")", { Business_Unit: Business_Unit, Role: Role, Type: Type, Training_Status: Training_Status }, function (data) {
+            $("#Main_tbody").html('');
+            $("#Main_tbody").html(data);
+        });
+    }
+</script>
+
+<script>
+    $("#F_ERT_Team").validate({
+        rules: {
+            Employee_Name: {
+                required: true,
+            },
+            Department_Type: {
+                required: true,
+            },
+            Role_Type: {
+                required: true,
+            },
+        },
+        messages: {
+            Employee_Name: {
+                required: "Please Enter Employee Name",
+            },
+            Department_Type: {
+                required: "Please Select Department",
+            },
+            Role_Type: {
+                required: "Please Select Role",
+            },
+        },
+        errorPlacement: function (label, element) {
+            label.addClass('mt-2 text-danger');
+            label.insertAfter(element);
+
+            $("#Department_Type-error").removeClass('mt-2');
+            $("#Department_Type-error").addClass('m-100 text-danger');
+
+            $("#Role_Type-error").removeClass('mt-2');
+            $("#Role_Type-error").addClass('m-112 text-danger');
+
+        },
+        highlight: function (element, errorClass) {
+            $(element).parent().addClass('has-danger')
+            $(element).addClass('form-control-danger')
+        },
+        submitHandler: function () {
+
+            var Obj = {
+                ERT_Id: $("#ERT_Id").val(),
+                Employee_Name: $("#Employee_Name").val(),
+                Gender: $("#Gender_Name").val(),
+                Langauge: $("#Langauge_Name").val(),
+                Nationality: $("#Nationality_Name").val(),
+                Age: $("#Age_Name").val(),
+                Department: $("#Department_Type").val(),
+                Position: $("#Position_Name").val(),
+                Role: $("#Role_Type").val(),
+                Type: $("#ERTType_Type").val(),
+                Certificate_Date: $("#CertificateDate_Name").val(),
+                Exprity_Date: $("#Exprity_Date_Name").val(),
+                Staff_Status: $("#StaffStatus_Type").val(),
+                Training_Status: $("#TrainingStatus_Type").val(),
+                Business_Unit: $("#Business_Unit_Type").val(),
+                Building_No: $("#Building_No_Type").val(),
+                Floor_No: $("#Floor_No_Type").val(),
+                Declaration_Completed: $("input[type='radio'].Insuranceclaim:checked").val(),
+                ERT_Upload_File: $(".hdncls_Evidence_Documents_File").val(),
+            };
+            $.ajax({
+                url: "/Emergency/AddERT_TeamDetails",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    });
+</script>
+
+<script>
+    function Applicalbe_Documents_File(val, clsname, PhotoId) {
+        debugger;
+        readImage(val, clsname);
+        $("#" + PhotoId).hide();
+    }
+
+    function readImage(input, clsname) {
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoDataApplicableReports", "Incident")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    $("#Loaderbck").hide();
+                    $("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function Fn_View(id) {
+        debugger;
+        $(UI_Fields.LIST_VIEW).hide();
+        var Hzurl = "";
+        $(UI_Fields.INC_EMR_TEAM).show(100);
+        Hzurl = '/Emergency/_View_ERTTeam_list';
+        Hzurl += '/?ERT_Id=' + id;
+        $(UI_Fields.VIEW_ERT_LIST).load(Hzurl);
+    }
+
+    function Fn_Edit(ERT_Id) {
+        $(UI_Fields.LIST_VIEW).hide();
+        $(UI_Fields.ADD_EMR_TEAM).show();
+        $("#CertificateDate_Name").val('');
+        $("#Exprity_Date_Name").val('');
+        $.post("@Url.Action("Edit_ERTTeam_list", "Emergency")", { ERT_Id: ERT_Id }, function (data) {
+            debugger
+            $("#ERT_Id").val(data.ERT_Id);
+            $("#Employee_Name").val(data.Employee_Name);
+            $("#Gender_Name").val(data.Gender);
+            $("#Langauge_Name").val(data.Langauge);
+            $("#Nationality_Name").val(data.Nationality);
+            $("#Age_Name").val(data.Age);
+            $("#Position_Name").val(data.Position);
+            $("#CertificateDate_Name").val(data.Certificate_Date);
+            $("#Exprity_Date_Name").val(data.Exprity_Date);
+            $("#StaffStatus_Type").val(data.Staff_Status);
+            $("#Business_Unit_Type").val(data.Business_Unit);
+            var Declaration_Completed = data.Declaration_Completed;
+
+            if(Declaration_Completed=="Yes"){
+                $("#insuranceYes").prop("checked", true);
+            }else if(Declaration_Completed=="No"){
+                $("#insuranceNo").prop("checked", true);
+            }
+
+
+            LoadDepartmentEdit(data.Department);
+            LoadDepartment_BuEdit(data.Business_Unit);
+            LoadBuildingNo_Edit(data.Building_No);
+
+            LoadRole_Edit(data.Role);
+            LoadType_Edit(data.Type);
+            LoadTrainingStatus_Edit(data.Training_Status);
+            LoadFloorNo_Edit(data.Floor_No);
+        });
+    }
+
+    function LoadDepartmentEdit(selectedValue){
+        $.post("@Url.Action("Load_ERT_Department_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.DEPARTMENT_TYPE).empty();
+            $(UI_Fields.DEPARTMENT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            //$(UI_Fields.BUSINESS_UNIT_TYPE).empty();
+            //$(UI_Fields.BUSINESS_UNIT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.DEPARTMENT_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+                //$(UI_Fields.BUSINESS_UNIT_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+
+            if (selectedValue != null)
+                $(UI_Fields.DEPARTMENT_TYPE).val(selectedValue);
+        });
+    }
+
+    function LoadDepartment_BuEdit(selectedValue) {
+        $.post("@Url.Action("Load_ERT_Department_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.BUSINESS_UNIT_TYPE).empty();
+            $(UI_Fields.BUSINESS_UNIT_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_UNIT_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+
+            if (selectedValue != null)
+                $(UI_Fields.BUSINESS_UNIT_TYPE).val(selectedValue);
+        });
+    }
+
+    function LoadBuildingNo_Edit(selectedValue) {
+        $.post("@Url.Action("Load_ERT_Building_No_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.BUILDING_NO_TYPE).empty();
+            $(UI_Fields.BUILDING_NO_TYPE).append("<option selected value='0' style='text-align:center' disabled> --Select Department--</option>");
+
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_NO_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+
+            if (selectedValue != null)
+                $(UI_Fields.BUILDING_NO_TYPE).val(selectedValue);
+        });
+    }
+
+
+
+    function LoadRole_Edit(selectedValue) {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Role_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.ROLE_TYPE).empty();
+            $(UI_Fields.ROLE_TYPE).append("<option selected value='0' disabled> --Select Role--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ROLE_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ROLE_TYPE).val(selectedValue);
+        });
+    }
+
+    function LoadType_Edit(selectedValue) {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Type_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.ERTTYPE_TYPE).empty();
+            $(UI_Fields.ERTTYPE_TYPE).append("<option selected value='0'  disabled> --Select Type--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ERTTYPE_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ERTTYPE_TYPE).val(selectedValue);
+        });
+    }
+
+    function LoadTrainingStatus_Edit(selectedValue) {
+        debugger;
+        $.post("@Url.Action("Load_ERT_Training_Status_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.TRAININGSTATUS_TYPE).empty();
+            $(UI_Fields.TRAININGSTATUS_TYPE).append("<option selected value='0'  disabled> --Select Training Status--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.TRAININGSTATUS_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.TRAININGSTATUS_TYPE).val(selectedValue);
+        });
+    }
+
+    function LoadFloorNo_Edit(selectedValue) {
+        debugger;
+        $.post("@Url.Action("Load_ERT_FloorNo_GetAll", "CommonMaster")", function (data) {
+            $(UI_Fields.FLOOR_NO_TYPE).empty();
+            $(UI_Fields.FLOOR_NO_TYPE).append("<option selected value='0' disabled> --Select Floor No--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.FLOOR_NO_TYPE).append("<option value=" + e.Id + ">" + e.Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.FLOOR_NO_TYPE).val(selectedValue);
+        });
+    }
+
+
+    function Fn_Delete(ERT_Id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("DeleteEdit_ERTTeam_list", "Emergency"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ERT_Id: ERT_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == true) {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }   
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+</script>

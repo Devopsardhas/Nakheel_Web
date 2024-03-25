@@ -1,0 +1,148 @@
+﻿@{
+    ViewData["Title"] = "Drill Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="Add_Page_Service">
+        <div class="col-lg-12">
+            <div class="modal fade" id="SCH_POP" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Assign Drill Commander and Service Provider</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="#" method="post" id="DrillAssignFrm">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body">
+                                    <input type="hidden" id="Assign_DS_ID" />
+                                    <div class="table-responsive col-lg-12">
+                                        <table class="table table-sm">
+                                            <tbody id="">
+                                                <tr>
+                                                    <td class="lblwidth"><b class="font-bold">Drill Commander</b><span class="requ">*</span></td>
+                                                    <td>:</td>
+                                                    <td class="col-lg-4">
+                                                        <select required="" class="form-select" id="DC_Drp">
+                                                        </select>
+                                                    </td>
+                                                    <td class="lblwidth"><b class="font-bold">Service provider</b><span class="requ">*</span></td>
+                                                    <td>:</td>
+                                                    <td class="col-lg-4">
+                                                        <select class="form-select" id="SP_Drp">
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="">
+                                <div style="text-align:center;">
+                                    <button type="submit" class="btn btn-success" id="Assign_SUB"> Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="row mb-1">
+                        <div class="col-lg-10 mt-4 mb-3"> <h4 class="card-title">Create Schedule</h4></div>
+
+                    </div>
+                </div><!-- end card header -->
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-3">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Zone<span class="requ">*</span> </label>
+                                <div class="">
+                                    <select class="form-select" name="Zone_Id" id="Zone_Id" onchange="Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="">
+                                <label for="" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-select" name="Community_Id" id="Community_Id" onchange="Fn_Community(this.value);Get_SCH_List(1)">
+                                        <option style="text-align:center;">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Drill Type<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-select" name="Drill_type" id="Drill_type" onchange="Get_SCH_List(2)">
+                                        <option value="">--Select--</option>
+                                        <option value="1">Drowning Drill</option>
+                                        <option value="2">Elevator Rescue</option>
+                                        <option value="3">Spill Control Drill</option>
+                                        <option value="4">Fire Drill</option>
+                                      @*  <option value="5">Gas Leak</option>*@
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="">
+                                <label for="" class="col-md-5 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="">
+                                    <select class="form-select" name="Building_Id" id="Building_Id" onchange="Get_SCH_List(2)">
+                                        <option style="text-align:center;">--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row" id="Schedule_Div">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/assets/js/emr_common/common.js"></script>
+    <script src="~/assets/js/emr_common/emr_schedule.js"></script>
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            DRILL_TYPE: "#Drill_type",
+            SCHEDULE_DIV: "#Schedule_Div",
+            FRM_SCH: "#Frm_Drill_Schedule",
+            DRILL_SCH_TABLE: "#Drill_Sch_table",
+            DRILL_SCH_TBODY: "#Drill_Sch_Tbody",
+            SCH_POP: "#SCH_POP",
+            ADD_MORE_SCH: "#AddMoreSCH",
+        });
+        $(function () {
+            LOAD_ZONE();
+        });
+        
+    </script>
+</body>

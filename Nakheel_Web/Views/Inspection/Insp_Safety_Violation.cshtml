@@ -1,0 +1,606 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Safety Violation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .m-100 {
+        margin-top: 0px !important;
+    }
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+
+
+<div class="row" id="List_Grid_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Safety Violation List</h4></div>
+                    @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd_Violation"><i class="mdi mdi-plus me-1"></i> Add Safety Violation </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Safety-Vio ID</th>
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Type</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllSafetyList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Safety_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Safety Violation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light btn_back_View" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <form id="F_Add_Insp_Safety_Violation" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                <div class="card-body Load_Add_Safety">
+                </div><!-- End Card Boby -->
+
+                <br />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Create_Safety_Vio_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Safety Violation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light btn_back_View" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <form id="F_Add_Create_Safety_Vio" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                <div class="card-body Load_Create_Safety_Vio">
+                </div><!-- End Card Boby -->
+
+                <br />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade add-Safe-Vio-Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_Safe_Vio_Reject_Details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Safe_Vio_Reject_Details" required></textarea>
+                                <label id="Safe_Vio_Reject_Details-error" style="font-size: small;color:red;" class="error" for="Safe_Vio_Reject_Details"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_Safety_Violation_Approval('2','HSE Manager Approval Pending')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Safe-Vio-Approve" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_Safe_Vio_Approval_Details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Safe_Vio_Approve_Details" required></textarea>
+                                <label id="Safe_Vio_Approve_Details-error" style="font-size: small;color:red;" class="error" for="Safe_Vio_Approve_Details"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_Safety_Violation_Approval('3','HSE Manager Approval Pending')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Safe-Vio-Dir-Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_Safe_Vio_Reject_Dir_Details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Safe_Vio_Reject_Dir_Details" required></textarea>
+                                <label id="Safe_Vio_Reject_Dir_Details-error" style="font-size: small;color:red;" class="error" for="Safe_Vio_Reject_Dir_Details"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_Safety_Violation_Approval('4','HSE Director Approval Pending')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade add-Safe-Vio-Dir-Approval" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Approve Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_Safe_Vio_Approve_Dir_Details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Safe_Vio_Approve_Dir_Details" required></textarea>
+                                <label id="Safe_Vio_Approve_Dir_Details-error" style="font-size: small;color:red;" class="error" for="Safe_Vio_Approve_Dir_Details"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_Safety_Violation_Approval('5','HSE Director Approval Pending')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade Add_CA_Rej" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_CA_Reject" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control hdn_Corrective_Action_Id" id="hdn_Corrective_Action_Id" />
+                                <textarea class="form-control CA_Reject_Remarks" id="CA_Reject_Remarks" required></textarea>
+                                <label id="CA_Reject_Remarks-error" style="font-size: small;" class="error" for="CA_Reject_Remarks"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_CA_Reject_Submit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade View_CA_Rej_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Unique_Id" disabled class="form-control CA_View_Unique_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Reject_Reason" disabled class="form-control CA_View_Reject_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Rejected <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedDate" disabled class="form-control CA_View_CreatedDate" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedBy" disabled class="form-control CA_View_CreatedBy" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade View_CA_Re_Asign_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Id" disabled class="form-control CA_View_Re_Assig_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_By" disabled class="form-control CA_View_Re_Assig_By" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned To <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_To" disabled class="form-control CA_View_Re_Assig_To" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Re-Assigned <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Date" disabled class="form-control CA_View_Re_Assig_Date" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-12">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Reason" disabled class="form-control CA_View_Re_Assig_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<script src="~/assets/js/validation/inspection_validation/inspsafetyviolationseverside.js"></script>
+<script src="~/assets/js/validation/inspection_validation/safetyviolationformvalidation.js"></script>
+
+<script>
+    var Loc_Add = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Add_Safety_Div: "#Add_Safety_Div",
+        List_Grid_Div: "#List_Grid_Div",
+        TBODY_TABLE: "#GetAllSafetyList",
+        MainTable: "#MainTable",
+        BTN_BACK: "#btn_back",
+        btn_back_View: ".btn_back_View",
+        Load_Add_Safety: ".Load_Add_Safety",
+        Create_Safety_Vio_Div: "#Create_Safety_Vio_Div",
+        Load_Create_Safety_Vio: ".Load_Create_Safety_Vio",
+        F_Add_Create_Safety_Vio: "#F_Add_Create_Safety_Vio",
+        btnadd_Violation: "#btnadd_Violation",
+    });
+
+    $(document).ready(function () {
+        debugger
+        let msg = '@TempData["msg"]';
+        let Temp_Safety_Id = '@TempData["Safety_Id"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+
+        if (Temp_Safety_Id != null && Temp_Safety_Id != "") {
+            Edit_Safety_Violation(Temp_Safety_Id, '', '')
+        } else {
+            ServerSideTable_SafetyInsp();
+        }
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+        //ServerSideTable_SafetyInsp();
+
+
+        $("#btnadd_Violation").click(function () {
+            $(UI_Fields.List_Grid_Div).hide(100);
+            $(UI_Fields.Add_Safety_Div).hide(100);
+            $.post("@Url.Action("P_Create_Safety_Violation", "Inspection")", { ID: "0" }, function (data) {
+                $(UI_Fields.Load_Create_Safety_Vio).html('');
+                $(UI_Fields.Load_Create_Safety_Vio).html(data);
+            }).always(function () {
+                $(UI_Fields.Create_Safety_Vio_Div).show(100);
+            });
+        });
+
+    });
+
+    function Edit_Safety_Violation(id, Name, Access) {
+        $(UI_Fields.List_Grid_Div).hide(100);
+        $(UI_Fields.Add_Safety_Div).show(100);
+        $.post("@Url.Action("P_Safety_Violation_Add_View", "Inspection")", { ID: id }, function (data) {
+            $(UI_Fields.Load_Add_Safety).html('');
+            $(UI_Fields.Load_Add_Safety).html(data);
+        });
+    }
+    function Fn_SV_Rej() {
+        $("#Safe_Vio_Reject_Details").val("");
+        $("#Safe_Vio_Reject_Dir_Details").val("");
+    }
+
+    function Fn_Safety_Violation_Approval(Status, Status_Name) {
+        debugger
+        var Safe_Vio_Reject_Details = "";
+        if (Status_Name == "HSE Manager Approval Pending") {
+            if (Status == "3") {
+                let valid = $("#Fm_Safe_Vio_Approval_Details").valid();
+                if (!valid) {
+                    return false;
+                }
+                Safe_Vio_Reject_Details = $("#Safe_Vio_Approve_Details").val();
+            } else {
+                let valid = $("#Fm_Safe_Vio_Reject_Details").valid();
+                if (!valid) {
+                    return false;
+                }
+                Safe_Vio_Reject_Details = $("#Safe_Vio_Reject_Details").val();
+            }
+
+        } else {
+            if (Status == "5") {
+                let valid = $("#Fm_Safe_Vio_Approve_Dir_Details").valid();
+                if (!valid) {
+                    return false;
+                }
+                Safe_Vio_Reject_Details = $("#Safe_Vio_Approve_Dir_Details").val();
+            } else {
+                let valid = $("#Fm_Safe_Vio_Reject_Dir_Details").valid();
+                if (!valid) {
+                    return false;
+                }
+                Safe_Vio_Reject_Details = $("#Safe_Vio_Reject_Dir_Details").val();
+            }
+
+        }
+        var Safety_Violation_Id = $("#Safety_Violation_Id").val();
+        $.post("@Url.Action("Insp_Safety_Violation_ApprovalReject", "Inspection")", { Safety_Violation_Id: Safety_Violation_Id, Reject_Reason: Safe_Vio_Reject_Details, Status: Status, Remarks: Status_Name }, function (data) {
+            if (data.STATUS_CODE == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data.MESSAGE,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    function Fn_CA_Rej_Model(rowid) {
+        $("#hdn_Corrective_Action_Id").val("");
+        $("#CA_Reject_Remarks").val("");
+        $("#hdn_Corrective_Action_Id").val(rowid);
+    }
+    function Fn_CA_Reject_Submit() {
+        var varInsp_Request_Id = "";
+        varInsp_Request_Id = $("#Safety_Violation_Id").val();
+        var Rowid = $("#hdn_Corrective_Action_Id").val();
+        var Class_Name = "Reject";
+        var Status = "2";
+        var Description = $("#CA_Reject_Remarks").val();
+        let valid = $("#Fm_CA_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("Insp_SV_CA_Approval_Add", "Inspection")", { SV_Corrective_Action_Id: Rowid, Remarks: Class_Name, Status: Status, Description: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $("#CA_Reject_Remarks").val("");
+                    $(".Add_CA_Rej").modal('toggle');
+                    Edit_Safety_Violation(varInsp_Request_Id, "", "");
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    function FnViewRejectDetails(Unique_Id, Reject_Reason, CreatedDate, CreatedBy) {
+        $("#CA_View_Unique_Id").val("");
+        $("#CA_View_Reject_Reason").val("");
+        $("#CA_View_CreatedDate").val("");
+        $("#CA_View_CreatedBy").val("");
+        $("#CA_View_Unique_Id").val(Unique_Id);
+        $("#CA_View_Reject_Reason").val(Reject_Reason);
+        $("#CA_View_CreatedDate").val(CreatedDate);
+        $("#CA_View_CreatedBy").val(CreatedBy);
+    }
+    function FnViewReAssignDetails(Unique_Id, Responsibility_To, Re_Assign_To, CreatedDate, Remarks) {
+        $("#CA_View_Re_Assig_Id").val("");
+        $("#CA_View_Re_Assig_By").val("");
+        $("#CA_View_Re_Assig_To").val("");
+        $("#CA_View_Re_Assig_Date").val("");
+        $("#CA_View_Re_Assig_Reason").val("");
+        $("#CA_View_Re_Assig_Id").val(Unique_Id);
+        $("#CA_View_Re_Assig_By").val(Responsibility_To);
+        $("#CA_View_Re_Assig_To").val(Re_Assign_To);
+        $("#CA_View_Re_Assig_Date").val(CreatedDate);
+        $("#CA_View_Re_Assig_Reason").val(Remarks);
+    }
+    function Fn_CA_Approval_Submit(Rowid, Class_Name, Status) {
+        var varSafety_Violation_Id = "";
+        varSafety_Violation_Id = $("#Safety_Violation_Id").val();
+        var trRowid = ".CA_Approval_tr_" + Rowid;
+        $.post("@Url.Action("Insp_SV_CA_Approval_Add", "Inspection")", { SV_Corrective_Action_Id: Rowid, Remarks: Class_Name, Status: Status, Description: "NA" }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Approved Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    Edit_Safety_Violation(varSafety_Violation_Id, "", "");
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        debugger
+        $("#Community_Id").empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#Community_Id").append("<option selected value=''style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Community_Id").append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("Insp_LoadAllServiceProvider", "Inspection")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Emp_Service_provider").empty();
+            $("#Emp_Service_provider").append("<option selected value=''style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Emp_Service_provider").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+</script>

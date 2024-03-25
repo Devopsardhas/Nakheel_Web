@@ -1,0 +1,2019 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+<style>
+    .select2-search__field {
+        text-align: center !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search .select2-search__field {
+        width: 100%;
+        height: 1.5rem;
+        margin-top: -24px;
+        margin-left: 0;
+        font-family: inherit;
+        line-height: 1.5;
+        background-color: transparent;
+    }
+</style>
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 13px;
+    }
+
+    label {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 13px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+
+    .font-bold {
+        color: #00263a !important;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .submit_Req_Approval {
+        background-color: #3CB371;
+    }
+
+    .submit_Req_Approval_Hse {
+        background-color: #3CB371;
+    }
+
+    .Zone_Details_Approve {
+        background-color: #3CB371;
+    }
+
+    .HSE_Details_Approve {
+        background-color: #3CB371;
+    }
+</style>
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+@model Nakheel_Web.Models.SecurityIncidentReport.M_Sec_Incident_Report;
+@if (Model.Status == "1")
+{
+    <div class="" id="viewSecurityIncident">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            <div class="">
+                                <input type="hidden" value="@Model.Sec_Inc_Report_Id" id="Sec_Report_Id">
+                                <input type="hidden" value="@Model.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                                <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                                <input type="hidden" value="@Model.Building_Id" id="Building_Id">
+                                <input type="hidden" value="@Model.Sec_Escalation" id="Sec_Escalation">
+                                <table class="table tab ">
+                                    <tbody id="tblSecIncReportView">
+                                        <tr>
+                                            <td><b class="font-bold">Reference No</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">INC-@Model.Unique_Id</td>
+                                            <td><b class="font-bold">Incident Category</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control Drop_Search" asp-for="@Model.Sec_Inc_Category_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Category_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                            <td><b class="font-bold">Severity</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                @*<select asp-for="@Model.Sec_Inc_Severity" required>
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>*@
+                                                <select class="form-control" asp-for="@Model.Sec_Inc_Severity">
+                                                    <option value="0" disabled selected="selected">--Select Severity--</option>
+                                                    <option value="Major">Major</option>
+                                                    <option value="Minor">Major</option>
+                                                    <option value="Critical">Critical</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Zone</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control Drop_Search" asp-for="@Model.Zone_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                            <td><b class="font-bold">Community</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control Drop_Search" asp-for="@Model.Community_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                            <td><b class="font-bold">Building</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control Drop_Search" asp-for="@Model.Building_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Method of Report</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control USec_Method"  asp-for="@Model.Sec_Inc_Method">
+                                                    <option value="0" disabled selected="selected">--Select--</option>
+                                                    <option value="Verbal">Verbal</option>
+                                                    <option value="By Email">By Email</option>
+                                                    <option value="Walk-In">Walk-In</option>
+                                                </select>
+                                            </td>
+                                            <td><b class="font-bold">Location</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control" asp-for="@Model.Location_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Location_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                            <td><b class="font-bold">Sub Location</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">
+                                                <select class="form-control" asp-for="@Model.Sub_Location_Id" asp-items="@(new SelectList(Model.Sec_Comman_Master_List!.Sub_Location_Master_List,"Value","Text"))">
+                                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">Complaint</label>
+                                        <textarea class="form-control USec_Complaint" id="USec_Complaint" name="USec_Complaint">@Model.Sec_Inc_Complaint</textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">How Did incident Occur?</label>
+                                        <label class="tdtxt">@Model.Sec_Inc_Occur</label>
+                                        @*<textarea class="form-control" id="Sec_Inc_Occur" name="Sec_Inc_Occur">@Model.Sec_Inc_Occur</textarea>*@
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="row">
+                            @if (Model!.L_Sec_Inc_Photos != null && Model.L_Sec_Inc_Photos.Count != 0 || Model.L_Sec_Inc_Videos != null && Model.L_Sec_Inc_Videos.Count != 0)
+                            {
+                                <div class="col-md-6" style="height: 100px;min-height: 340px;overflow-y: scroll;">
+                                    <label for="example-number-input" class="col-md-6 col-form-label">Evidence</label>
+                                    <div class="row">
+                                        @foreach (var item in Model.L_Sec_Inc_Photos!)
+                                        {
+                                            <div class="col-md-4">
+                                                <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:200px;width:150px;padding:5px;" /></a>
+                                            </div>
+                                        }
+                                        @foreach (var item in Model.L_Sec_Inc_Videos!)
+                                        {
+                                            <div class="col-md-4">
+                                                <iframe src='@item.Video_File_Path' style="height:200px;width:150px;padding:5px;"></iframe>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Medical Assistance</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="Medical_Assistance" style="display: contents;">
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-3">
+                                                    <b class="">Medical Assistance<span>:</span></b>
+                                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Medical_Assistance</span>
+                                                    @if (@Model.Sec_Medical_Assistance == "Yes")
+                                                    {
+                                                        <label class="font-bold">Provider By Whom?</label>
+                                                        <label class="form-check-label">@Model.Sec_Provider</label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- Medical Assistance End -->
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Police Enquiry</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="Medical_Assistance" style="display: contents;">
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-3">
+                                                    <b class="">Police Enquiry<span>:</span></b>
+                                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Police_Enquire</span>
+                                                    @if (@Model.Sec_Police_Enquire == "Yes")
+                                                    {
+                                                        <div class="form-check mb-3">
+                                                            <label class="font-bold">Police</label>
+                                                            <label class="form-check-label">@Model.Sec_Police</label>
+                                                        </div>
+                                                        <div class="form-check mb-3">
+                                                            <label class="font-bold">Police Vechicle Number</label>
+                                                            <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                                        </div>
+                                                        <div class="form-check mb-3">
+                                                            <label class="font-bold">Recovery Vechicle</label>
+                                                            <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                                        </div>
+                                                        <div class="form-check mb-3">
+                                                            <label class="font-bold">CID</label>
+                                                            <label class="form-check-label">@Model.Sec_CID</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- Police Enquiry End -->
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Ambulance</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="Medical_Assistance" style="display: contents;">
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-3">
+                                                    <b class="">Ambulance<span>:</span></b>
+                                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Ambulance</span>
+                                                    @if (@Model.Sec_Ambulance == "Yes")
+                                                    {
+                                                        <div class="row">
+                                                            <div class="form-check mb-3">
+                                                                <label class="font-bold">Name Injured Person</label>
+                                                                <label class="form-check-label">Testing</label>
+                                                            </div>
+                                                            <div class="form-check mb-3">
+                                                                <label class="font-bold">Ambulance Vechicle Number</label>
+                                                                <label class="form-check-label">@Model.Sec_Ambulance</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (@Model.Sec_Ambulance == "No")
+                                        {
+                                            <table class="table tab ">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><b class="font-bold">@Model.Sec_Injure_Person</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b class="font-bold">Address</b></td>
+                                                        <td>:</td>
+                                                        <td class="tdtxt">@Model.Sec_Address</td>
+
+                                                        <td><b class="font-bold">Approximate Age</b></td>
+                                                        <td>:</td>
+                                                        <td class="tdtxt">@Model.Sec_Approxi_Age</td>
+
+                                                        <td><b class="font-bold">Witnesses</b></td>
+                                                        <td>:</td>
+                                                        <td class="tdtxt">@Model.Sec_Witnesses</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+                                </div><!-- Ambulance End -->
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Property Demage</label>
+                                    <div class="row" style="margin-left: 0%;">
+                                        <div id="Property_Demage" style="display: contents;">
+                                            <div class="col-md-4">
+                                                <div class="form-check mb-3">
+                                                    <b class="">Property Demage<span>:</span></b>
+                                                    <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Damage</span>
+                                                    @if (@Model.Sec_Damage == "Yes")
+                                                    {
+                                                        <div class="row">
+                                                            <div class="form-check mb-3">
+                                                                <label class="font-bold">Details Of Demage</label>
+                                                                <label class="form-check-label">@Model.Sec_Details_Damage</label>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- Property Demage End -->
+                            </div>
+                        </div><!-- Evidence Row End -->
+                        <table class="table tab ">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Reported By</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_ReportedBy</td>
+                                    <td><b class="font-bold">Escalation</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Escalation</td>
+                                    <td><b class="font-bold">Incident Status</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Inc_Status</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Further Action</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Further_Action</td>
+                                    <td><b class="font-bold">Related Incident</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Related_Incident</td>
+                                    <td><b class="font-bold">Search Key</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Search_key</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Assign & Report Team -->
+        @if (Model!.L_M_Sec_FollowUp_ReportedTo != null && Model!.L_M_Sec_FollowUp_ReportedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Reported_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Reported To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsReportedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_ReportedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        @if (Model!.L_M_Sec_FollowUp_AssignedTo != null && Model!.L_M_Sec_FollowUp_AssignedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Assign_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Assigned To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsAssignedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_AssignedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <br />
+    @*/*ACTION TAKEN ADD PAGE*/*@
+    <form id="AddModule_Taken" action="#">
+        <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myExtraLargeModalLabel">Action Taken</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Action Taken Description<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Action_Taken" name="Sec_Action_Taken" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Comments<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Comments" name="Sec_Comments" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Recommended<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Recommended_View" name="Sec_Recommended_View" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">File Upload<span class="requ">*</span></label>
+                                    <input id="file0" class="form-control file InputPhoto" onchange="uploadFiles('file0','UploadPhotos0')" type="file" accept=".jpg,.jpeg,.png,.doc,.docx,.pdf">
+                                    <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div style="text-align:center;">
+                                <button type="button" class="btn btn-success" onclick="Fn_SecActionTaken_Submit()"> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-lg-10"> <h5 class="card-title">Action Taken Description</h5></div>
+        @if (LoginClass.Role_Id == "5")
+        {
+            <div class="col-lg-2">
+                <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add </button>
+            </div>
+        }
+        else
+        {
+            <div class="col-lg-2" style="padding:13px"></div>
+        }
+        <br />
+    </div>
+    <table id="tblActions_Taken_Description" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width:33%">Action Description</th>
+                <th>Comment</th>
+                <th>Recommended</th>
+                <th style="width:12%">Reported By</th>
+                <th>Date and Time</th>
+            </tr>
+
+        </thead>
+        <tbody id="GetActionsTakenList">
+            @foreach (var item in Model.L_M_Security_ActionTaken!)
+            {
+                <tr>
+                    <td>@item.Action_Taken</td>
+                    <td>@item.Comments</td>
+                    <td>@item.Recommended</td>
+                    <td>@item.ReportedBy</td>
+                    <td>@item.CreatedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @*/*FOLLOW UP ADD PAGE*/*@
+    <form id="AddModule_Taken" action="#">
+        <div class="modal fade add-follow-up" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myExtraLargeModalLabel">Follow Up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Reference No<span class="requ">*</span></label>
+                                    <input type="text" class="form-control Reference_No" name="Reference_No" id="Reference_No">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">File Upload</label>
+                                    <input id="Followfile" class="form-control file InputPhoto" onchange="uploadFiles('Followfile','FollowUpFile')" type="file" multiple>
+                                    <input type="hidden" value="" class="FollowUpFile" name="FollowUpFile" id="FollowUpFile">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Action Details</label>
+                                    <textarea class="form-control" rows="1" cols="100" id="Action_Details" name="Action_Details" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div style="text-align:center;">
+                                <button type="button" class="btn btn-success" onclick="Fn_SecFollowUp_Submit()">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </form>
+    <br />
+    <div class="row">
+        <div class="col-lg-10"> <h5 class="card-title">Follow Up Action</h5></div>
+        <br />
+        @*@if (LoginClass.Role_Id == "5")
+    {*@
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-follow-up"><i class="mdi mdi-plus me-1"></i> Add </button>
+        </div>
+        @*}
+    else
+    {
+    <div class="col-lg-2" style="padding:13px"></div>
+    }*@
+    </div>
+    <table id="tblFollowUp_Action" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th style="width:10%">Reference No</th>
+                <th>Action Details</th>
+                <th style="width:20%">Attachments</th>
+                <th style="width:12%">Reported By</th>
+                <th style="width:10%">Date and Time</th>
+            </tr>
+        </thead>
+        <tbody id="GetActionsTakenList">
+            @foreach (var item in Model.L_M_Sec_Incident_FollowUp!)
+            {
+                <tr>
+                    <td>@item.Reference_No</td>
+                    <td>@item.Action_Details</td>
+                    <td>
+                        @foreach (var item_P in @item.L_M_Sec_FollowUp_Attachments!)
+                        {
+                            var extn = @item_P.File_Path!.Split(".").Last();
+                            <a href="@item_P.File_Path" target="_blank">
+                                @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "JPG")
+                                {
+                                    <img target="_blank" src="@item_P.File_Path" style="height:32px;width:32px;padding:5px;">
+                                }
+                                else if (extn == "mp4")
+                                {
+                                    <img src='~/assets/images/241_f_video_playbutton.jpg' style="height:32px;width:32px;padding:5px;" />
+                                }
+                                else if (extn == "pdf")
+                                {
+                                    <img src="~/assets/images/pdf.png" style="height:32px;width:32px;padding:5px;" />
+                                }
+                                else
+                                {
+                                    <label></label>
+                                }
+                            </a>
+                        }
+                    </td>
+                    <td>@item.CreatedBy</td>
+                    <td>@item.CreatedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (@Model.Sec_Escalation == "No")
+    {
+        @if (LoginClass.Role_Id == "14")
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <label for="example-search-input" class="form-model" style="color:black;">Review & Comments</label>
+                    <textarea class="form-control" rows="1" cols="40" style="height: 50px;" id="Review_Comments" name="Review_Comments" required minlen="1"></textarea>
+                </div>
+                <div class="col-lg-6">
+                    <label for="example-tel-input" class="col-md-4 col-form-label">Status<span class="requ">*</span></label>
+                    <select class="form-control" name="Action_Status" id="Action_Status">
+                        <option value="0">-- Select --</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="submit" style="float:right; cursor:pointer; margin-top:15px;" class="btn btn-success waves-effect waves-light submit" id="Sec_Incident_Level2">
+                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                    </button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        @if (LoginClass.Role_Id == "14" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="submit" style="float:right; cursor:pointer; margin-top:15px;" class="btn btn-success waves-effect waves-light submit" id="Sec_Incident_Level2">
+                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                    </button>
+                </div>
+            </div>
+        }
+    }
+}
+@if (Model!.Status == "2")
+{
+    <div class="" id="viewSecurityIncident">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            <div class="">
+                                <input type="hidden" value="@Model.Sec_Inc_Report_Id" id="Sec_Report_Id">
+                                <input type="hidden" value="@Model.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                                <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                                <input type="hidden" value="@Model.Building_Id" id="Building_Id">
+
+                                <table class="table tab ">
+                                    <tbody id="tblSecIncReportView">
+                                        <tr>
+                                            <td><b class="font-bold">Reference no  </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">INC-@Model.Unique_Id</td>
+
+                                            <td><b class="font-bold">Incident Category</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Category_Name</td>
+                                            <td><b class="font-bold">Severity</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Severity</td>
+                                        </tr>
+                                        <tr>
+
+                                            <td><b class="font-bold">Zone</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Zone_Name</td>
+                                            <td><b class="font-bold">Community </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Community_Name</td>
+                                            <td><b class="font-bold">Building </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Building_Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Method of Report  </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Method</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">Complaint</label>
+                                        <label class="tdtxt">@Model.Sec_Inc_Complaint</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">How Did incident Occur?</label>
+                                        <label class="tdtxt">@Model.Sec_Inc_Occur</label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model!.L_Sec_Inc_Photos != null && Model.L_Sec_Inc_Photos.Count != 0 || Model.L_Sec_Inc_Videos != null && Model.L_Sec_Inc_Videos.Count != 0)
+                        {
+                            <div class="col-md-6" style="height: 100px;min-height: 340px;overflow-y: scroll;">
+                                <label for="example-number-input" class="col-md-6 col-form-label"> Upload Photos / Videos</label>
+                                <div class="row">
+                                    @foreach (var item in Model.L_Sec_Inc_Photos!)
+                                    {
+                                        <div class="col-md-3">
+                                            <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding: 12px;" /></a>
+                                        </div>
+                                    }
+                                </div>
+                                <br>
+                                <div class="row">
+                                    @foreach (var item in Model.L_Sec_Inc_Videos!)
+                                    {
+                                        <div class="row col-md-4" style="padding: 10px;">
+                                            <iframe src='@item.Video_File_Path' style="width: 165%;"></iframe>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <br>
+                        }
+                        <table class="table tab ">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Reported By</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_ReportedBy</td>
+                                    <td><b class="font-bold">Escalation</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Escalation</td>
+                                    <td><b class="font-bold">Incident Status</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Inc_Status</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Further Action</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Further_Action</td>
+                                    <td><b class="font-bold">Related Incident</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Related_Incident</td>
+                                    <td><b class="font-bold">Search Key</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Search_key</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Medical Assistance</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Medical Assistance<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Medical_Assistance</span>
+                                @if (@Model.Sec_Medical_Assistance == "Yes")
+                                {
+                                    <label class="font-bold">Provider By Whom?</label>
+                                    <label class="form-check-label">@Model.Sec_Provider</label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Medical Assistance End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Police Enquiry</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Police Enquiry<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Police_Enquire</span>
+                                @if (@Model.Sec_Police_Enquire == "Yes")
+                                {
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Police</label>
+                                        <label class="form-check-label">@Model.Sec_Police</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Police Vechicle Number</label>
+                                        <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Recovery Vechicle</label>
+                                        <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">CID</label>
+                                        <label class="form-check-label">@Model.Sec_CID</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Police Enquiry End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Ambulance</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Ambulance<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Ambulance</span>
+                                @if (@Model.Sec_Ambulance == "Yes")
+                                {
+                                    <div class="row">
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Name Injured Person</label>
+                                            <label class="form-check-label">Testing</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Ambulance Vechicle Number</label>
+                                            <label class="form-check-label">@Model.Sec_Ambulance</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @if (@Model.Sec_Ambulance == "No")
+                    {
+                        <table class="table tab ">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">@Model.Sec_Injure_Person</b></td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Address</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Address</td>
+
+                                    <td><b class="font-bold">Approximate Age</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Approxi_Age</td>
+
+                                    <td><b class="font-bold">Witnesses</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Witnesses</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div><!-- Ambulance End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Property Demage</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Property_Demage" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Property Demage<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Damage</span>
+                                @if (@Model.Sec_Damage == "Yes")
+                                {
+                                    <div class="row">
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Details Of Demage</label>
+                                            <label class="form-check-label">@Model.Sec_Details_Damage</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Property Demage End -->
+        </div>
+    </div>
+    <div class="row">
+        @if (Model!.L_M_Sec_FollowUp_ReportedTo != null && Model!.L_M_Sec_FollowUp_ReportedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <label class="form-label">Reported To</label>
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Reported_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Reported To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsReportedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_ReportedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model!.L_M_Sec_FollowUp_AssignedTo != null && Model!.L_M_Sec_FollowUp_AssignedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <label class="form-label">Assigned To</label>
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Assign_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Assigned To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsAssignedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_AssignedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @*/*ADD PAGE*/*@
+    <form id="AddModule_Taken" action="#">
+        <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myExtraLargeModalLabel">Action Taken</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div style="display:none;">
+                                <div class="form-group">
+                                    <input class="form-control" name="Business_Unit_Id" id="Business_Unit_Id" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4 ">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Action Taken Description<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Action_Taken" name="Sec_Action_Taken" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Comments<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Comments" name="Sec_Comments" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Recommended<span class="requ">*</span></label>
+                                    <textarea class="form-control" rows="1" cols="40" id="Sec_Recommended" name="Sec_Recommended" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div style="text-align:center;">
+                                <button type="button" class="btn btn-success" onclick="Fn_SecActionTaken_Submit()"> Submit</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </form>
+    <br />
+    @if (Model.L_M_Security_ActionTaken != null)
+    {
+        <div class="row">
+            <div class="col-lg-10"> <h5 class="card-title">Action Taken Description</h5></div>
+            <div class="col-lg-2" style="display:none;">
+                <button type="button" class="btn btn-success waves-effect waves-light" style="float:right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add </button>
+            </div>
+            <br />
+        </div>
+        <table id="tblActions_Taken_Description" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Action Taken</th>
+                    <th>Comment</th>
+                    <th>Recommended</th>
+                    <th style="width:12%">Reported By</th>
+                    <th>Date and Time</th>
+                </tr>
+            </thead>
+            <tbody id="GetActionsTakenList">
+                @foreach (var item in Model.L_M_Security_ActionTaken!)
+                {
+                    <tr>
+                        <td>@item.Action_Taken</td>
+                        <td>@item.Comments</td>
+                        <td>@item.Recommended</td>
+                        <td>@item.ReportedBy</td>
+                        <td>@item.CreatedDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    @*<div class="row">
+        <div class="col-lg-10"> <h5 class="card-title">Investigation Finding Details</h5></div>
+        <div class="col-lg-2">
+            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;display:none;" onclick="FN_Add_Corrective_Actions()"><i class="mdi mdi-plus me-1"></i> Add</button>
+        </div>
+    </div>
+    <br />
+    <table id="tblInvestigation_Finding" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Document Type</th>
+                <th>Description of the Actions</th>
+                <th>Evidence</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody id="GetInvestigation_FindingList">
+            @if (Model != null)
+            {
+                var subSno = 1;
+                @foreach (var item in Model.L_Sec_Investigation_Finding!)
+                {
+                    <tr>
+                        <td><b>@subSno</b></td>
+                        <td>@item.Sec_Doc_Type</td>
+                        <td>@item.Sec_Description</td>
+                        <td>@item.Sec_File_Upload</td>
+                        <td>@item.CreatedDate</td>
+                    </tr>
+                    subSno++;
+                }
+            }
+        </tbody>
+    </table>
+    <table id="tblActions_Taken_Immediately" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th>Document Type</th>
+                <th>Description of the Actions</th>
+                <th>Evidence</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="GetCorrectiveActionList">
+        </tbody>
+    </table>*@
+    @*/*FOLLOW UP ADD PAGE*/*@
+    <form id="AddModule_Taken" action="#">
+        <div class="modal fade add-follow-up" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myExtraLargeModalLabel">Follow Up</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Reference No<span class="requ">*</span></label>
+                                    <input type="text" class="form-control Reference_No" name="Reference_No" id="Reference_No">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">File Upload</label>
+                                    <input id="Followfile" class="form-control file InputPhoto" onchange="uploadFiles('Followfile','FollowUpFile')" type="file" multiple>
+                                    <input type="hidden" value="" class="FollowUpFile" name="FollowUpFile" id="FollowUpFile">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    <label for="example-search-input" class="form-model" style="color:black;">Action Details</label>
+                                    <textarea class="form-control" rows="1" cols="100" id="Action_Details" name="Action_Details" required minlen="1"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div style="text-align:center;">
+                                <button type="button" class="btn btn-success" onclick="Fn_SecFollowUp_Submit()">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </form>
+    <br />
+    @if (Model.L_M_Sec_Incident_FollowUp != null)
+    {
+        <div class="row">
+            <div class="col-lg-10"> <h5 class="card-title">Follow Up Action</h5></div>
+            @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "14" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+            {
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-success waves-effect waves-light" style="float:right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-follow-up"><i class="mdi mdi-plus me-1"></i> Add </button>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-2" style="padding:13px"></div>
+            }
+            <br />
+        </div>
+        <table id="tblFollowUp_Action" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="width:10%">Reference No</th>
+                    <th>Action Details</th>
+                    <th style="width:20%">Attachments</th>
+                    <th style="width:12%">Reported By</th>
+                    <th style="width:10%">Date and Time</th>
+                </tr>
+            </thead>
+            <tbody id="GetActionsTakenList">
+                @foreach (var item in Model.L_M_Sec_Incident_FollowUp!)
+                {
+                    <tr>
+                        <td>@item.Reference_No</td>
+                        <td>@item.Action_Details</td>
+                        <td>
+                            @foreach (var item_P in @item.L_M_Sec_FollowUp_Attachments!)
+                            {
+                                var extn = @item_P.File_Path!.Split(".").Last();
+                                <a href="@item_P.File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "JPG")
+                                    {
+                                        <img target="_blank" src="@item_P.File_Path" style="height:32px;width:32px;padding:5px;">
+                                    }
+                                    else if (extn == "mp4")
+                                    {
+                                        <img src='~/assets/images/241_f_video_playbutton.jpg' style="height:32px;width:32px;padding:5px;" />
+                                    }
+                                    else if (extn == "pdf")
+                                    {
+                                        <img src="~/assets/images/pdf.png" style="height:32px;width:32px;padding:5px;" />
+                                    }
+                                    else
+                                    {
+                                        <label></label>
+                                    }
+                                </a>
+                            }
+                        </td>
+                        <td>@item.CreatedBy</td>
+                        <td>@item.CreatedDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "14" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+    {
+        <div class="row">
+            <div class="col-lg-6">
+                <label for="example-search-input" class="form-model" style="color:black;">Review & Comments</label>
+                <textarea class="form-control" rows="1" cols="40" style="height: 50px;" id="Review_Comments" name="Review_Comments" required minlen="1"></textarea>
+            </div>
+            <div class="col-lg-6">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Status<span class="requ">*</span></label>
+                <select class="form-control" name="Action_Status" id="Action_Status">
+                    <option value="0">-- Select --</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <br> <label id="txtvalidemail" style="color:red"> </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <button type="submit" style="float:right; cursor:pointer; margin-top:15px;" class="btn btn-success waves-effect waves-light submit" id="Sec_Incident_Final">
+                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                </button>
+            </div>
+        </div>
+    }
+}
+@if (Model!.Status == "3")
+{
+    <div class="" id="viewSecurityIncident">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-xxl-12 mb-5 mb-xxl-0">
+                        @if (Model != null)
+                        {
+                            <div class="">
+                                <input type="hidden" value="@Model.Sec_Inc_Report_Id" id="Sec_Report_Id">
+                                <input type="hidden" value="@Model.Zone_Id" id="Zone_Id" class="Zone_Ids">
+                                <input type="hidden" value="@Model.Community_Id" id="Community_Id" class="Community_Ids">
+                                <input type="hidden" value="@Model.Building_Id" id="Building_Id">
+
+                                <table class="table tab ">
+                                    <tbody id="tblSecIncReportView">
+                                        <tr>
+                                            <td><b class="font-bold">Reference No:</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">INC-@Model.Unique_Id</td>
+
+                                            <td><b class="font-bold">Incident Category</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Category_Name</td>
+                                            <td><b class="font-bold">Severity</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Severity</td>
+                                        </tr>
+                                        <tr>
+
+                                            <td><b class="font-bold">Zone</b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Zone_Name</td>
+                                            <td><b class="font-bold">Community </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Community_Name</td>
+                                            <td><b class="font-bold">Building </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Building_Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b class="font-bold">Method of Report  </b></td>
+                                            <td>:</td>
+                                            <td class="tdtxt">@Model.Sec_Inc_Method</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">Complaint</label>
+                                        <label class="tdtxt">@Model.Sec_Inc_Complaint</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="example-number-input" class="col-md-4 col-form-label">How Did incident Occur?</label>
+                                        <label class="tdtxt">@Model.Sec_Inc_Occur</label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model!.L_Sec_Inc_Photos != null && Model.L_Sec_Inc_Photos.Count != 0 || Model.L_Sec_Inc_Videos != null && Model.L_Sec_Inc_Videos.Count != 0)
+                        {
+                            <div class="col-md-6" style="height: 100px;min-height: 340px;overflow-y: scroll;">
+                                <label for="example-number-input" class="col-md-6 col-form-label"> Upload Photos / Videos</label>
+                                <div class="row">
+                                    @foreach (var item in Model.L_Sec_Inc_Photos!)
+                                    {
+                                        <div class="col-md-3">
+                                            <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding: 12px;" /></a>
+                                        </div>
+                                    }
+                                </div>
+                                <br>
+                                <div class="row">
+                                    @foreach (var item in Model.L_Sec_Inc_Videos!)
+                                    {
+                                        <div class="row col-md-4" style="padding: 10px;">
+                                            <iframe src='@item.Video_File_Path' style="width: 165%;"></iframe>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <br>
+                        }
+                        <table class="table tab ">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">Reported By</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_ReportedBy</td>
+                                    <td><b class="font-bold">Escalation</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Escalation</td>
+                                    <td><b class="font-bold">Incident Status</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Inc_Status</td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Further Action</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Further_Action</td>
+                                    <td><b class="font-bold">Related Incident</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Related_Incident</td>
+                                    <td><b class="font-bold">Search Key</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Search_key</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Medical Assistance</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Medical Assistance<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Medical_Assistance</span>
+                                @if (@Model.Sec_Medical_Assistance == "Yes")
+                                {
+                                    <label class="font-bold">Provider By Whom?</label>
+                                    <label class="form-check-label">@Model.Sec_Provider</label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Medical Assistance End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Police Enquiry</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Police Enquiry<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Police_Enquire</span>
+                                @if (@Model.Sec_Police_Enquire == "Yes")
+                                {
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Police</label>
+                                        <label class="form-check-label">@Model.Sec_Police</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Police Vechicle Number</label>
+                                        <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">Recovery Vechicle</label>
+                                        <label class="form-check-label">@Model.Sec_Recovery_Vechicle</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <label class="font-bold">CID</label>
+                                        <label class="form-check-label">@Model.Sec_CID</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Police Enquiry End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Ambulance</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Medical_Assistance" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Ambulance<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Ambulance</span>
+                                @if (@Model.Sec_Ambulance == "Yes")
+                                {
+                                    <div class="row">
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Name Injured Person</label>
+                                            <label class="form-check-label">Testing</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Ambulance Vechicle Number</label>
+                                            <label class="form-check-label">@Model.Sec_Ambulance</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    @if (@Model.Sec_Ambulance == "No")
+                    {
+                        <table class="table tab ">
+                            <tbody>
+                                <tr>
+                                    <td><b class="font-bold">@Model.Sec_Injure_Person</b></td>
+                                </tr>
+                                <tr>
+                                    <td><b class="font-bold">Address</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Address</td>
+
+                                    <td><b class="font-bold">Approximate Age</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Approxi_Age</td>
+
+                                    <td><b class="font-bold">Witnesses</b></td>
+                                    <td>:</td>
+                                    <td class="tdtxt">@Model.Sec_Witnesses</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div><!-- Ambulance End -->
+            <div class="col-md-12">
+                <label for="example-number-input" class="col-md-4 col-form-label">Property Demage</label>
+                <div class="row" style="margin-left: 0%;">
+                    <div id="Property_Demage" style="display: contents;">
+                        <div class="col-md-4">
+                            <div class="form-check mb-3">
+                                <b class="">Property Demage<span>:</span></b>
+                                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">&nbsp;<span>@Model.Sec_Damage</span>
+                                @if (@Model.Sec_Damage == "Yes")
+                                {
+                                    <div class="row">
+                                        <div class="form-check mb-3">
+                                            <label class="font-bold">Details Of Demage</label>
+                                            <label class="form-check-label">@Model.Sec_Details_Damage</label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Property Demage End -->
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        @if (Model!.L_M_Sec_FollowUp_ReportedTo != null && Model!.L_M_Sec_FollowUp_ReportedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <label class="form-label">Reported To</label>
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Reported_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Reported To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsReportedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_ReportedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model!.L_M_Sec_FollowUp_AssignedTo != null && Model!.L_M_Sec_FollowUp_AssignedTo.Count != 0)
+        {
+            <div class="col-6">
+                <div class="col-md-12">
+                    <label class="form-label">Assigned To</label>
+                    <div class="row" style="height: 100px;overflow-y: scroll;">
+                        <table id="tblActions_Assign_To" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Assigned To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetActionsAssignedToList">
+                                @foreach (var item in Model.L_M_Sec_FollowUp_AssignedTo!)
+                                {
+                                    <tr>
+                                        <td>@item.Emp_Id</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="col-lg-10"> <h5 class="card-title">Action Taken Description</h5></div>
+        <div class="col-lg-2" style="display:none">
+            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add </button>
+        </div>
+        <br />
+    </div>
+    <br />
+    <table id="tblActions_Taken_Description" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th>Action Taken</th>
+                <th>Comment</th>
+                <th>Recommended</th>
+                <th style="width:12%;">Reported By</th>
+                <th>Date and Time</th>
+            </tr>
+        </thead>
+        <tbody id="GetActionsTakenList">
+            @foreach (var item in Model.L_M_Security_ActionTaken!)
+            {
+                <tr>
+                    <td>@item.Action_Taken</td>
+                    <td>@item.Comments</td>
+                    <td>@item.Recommended</td>
+                    <td>@item.ReportedBy</td>
+                    <td>@item.CreatedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @*<div class="row">
+        <div class="col-lg-10"> <h5 class="card-title"> Investigation Finding Details</h5></div>
+        <div class="col-lg-2" style="display:none">
+            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_Corrective_Actions()"><i class="mdi mdi-plus me-1"></i> Add</button>
+        </div>
+    </div>
+    <br />
+    <table id="tblInvestigation_Finding" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Document Type</th>
+                <th>Description of the Actions</th>
+                <th>Evidence</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody id="GetInvestigation_FindingList">
+            @if (Model != null)
+            {
+                var subSno = 1;
+                @foreach (var item in Model.L_Sec_Investigation_Finding!)
+                {
+                    <tr>
+                        <td><b>@subSno</b></td>
+                        <td>@item.Sec_Doc_Type</td>
+                        <td>@item.Sec_Description</td>
+                        <td>@item.Sec_File_Upload</td>
+                        <td>@item.CreatedDate</td>
+                    </tr>
+                    subSno++;
+                }
+            }
+        </tbody>
+    </table>
+    <table id="tblActions_Taken_Immediately" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+        <thead>
+            <tr>
+                <th>Document Type</th>
+                <th>Description of the Actions</th>
+                <th>Evidence</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="GetCorrectiveActionList">
+        </tbody>
+    </table>*@
+    @if (Model.L_M_Sec_Incident_FollowUp != null)
+    {
+        <div class="row">
+            <div class="col-lg-10"> <h5 class="card-title">Follow Up Action</h5></div>
+            <div class="col-lg-2" style="display:none;">
+                <button type="button" class="btn btn-success waves-effect waves-light" style="float:right;" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add </button>
+            </div>
+            <br />
+        </div>
+        <table id="tblFollowUp_Action" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="width:10%">Reference No</th>
+                    <th>Action Details</th>
+                    <th style="width:20%">Attachments</th>
+                    <th style="width:12%">Reported By</th>
+                    <th style="width:10%">Date and Time</th>
+                </tr>
+            </thead>
+            <tbody id="GetActionsTakenList">
+                @foreach (var item in Model.L_M_Sec_Incident_FollowUp!)
+                {
+                    <tr>
+                        <td>@item.Reference_No</td>
+                        <td>@item.Action_Details</td>
+                        <td>
+                            @foreach (var item_P in @item.L_M_Sec_FollowUp_Attachments!)
+                            {
+                                var extn = @item_P.File_Path!.Split(".").Last();
+                                <a href="@item_P.File_Path" target="_blank">
+                                    @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "JPG")
+                                    {
+                                        <img target="_blank" src="@item_P.File_Path" style="height:32px;width:32px;padding:5px;">
+                                    }
+                                    else if (extn == "mp4")
+                                    {
+                                        <img src='~/assets/images/241_f_video_playbutton.jpg' style="height:32px;width:32px;padding:5px;" />
+                                    }
+                                    else if (extn == "pdf")
+                                    {
+                                        <img src="~/assets/images/pdf.png" style="height:32px;width:32px;padding:5px;" />
+                                    }
+                                    else
+                                    {
+                                        <label></label>
+                                    }
+                                </a>
+                            }
+                        </td>
+                        <td>@item.CreatedBy</td>
+                        <td>@item.CreatedDate</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+<script src="~/assets/js/secincidentvalidation/serversidedatatable_securityincident.js"></script>
+<script>
+    "use strict";
+    const UI_Fields1 = Object.freeze({
+        ACTIONTAKEN_TABLE: "#tblActions_Taken_Immediately",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        BTN_BACK_VIEWLIST: "#Sec_Incident_Back"
+    });
+    $(document).ready(function () {
+        $(UI_Fields1.ACTIONTAKEN_TABLE).on("click", UI_Fields1.TBL_DELETE_BUTTON, function () {
+            $(this).closest("tr").remove();
+        });
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp', 'pdf', 'doc'],
+            uploadUrl: '/HandOverInspection/UploadImage',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+    });
+    $("#Sec_Check_other_Doc").click(function () {
+        var other = $("#Sec_Check_other_Doc").is(":checked");
+        if (other == true) {
+            $("#Sec_Other_Document").show();
+        }
+        else {
+            $("#Sec_Other_Document").hide();
+        }
+    });
+    function Sec_Applicalbe_Documents_File(val, clsname, PhotoId) {
+        readImage(val, clsname);
+        $("#" + PhotoId).hide();
+    }
+    function readImage(input, clsname) {
+        debugger
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoDataApplicableReports", "SecurityIncident")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    $("#Loaderbck").hide();
+                    $("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+    function uploadFiles(inputId, UploadPhotoId) {
+        //debugger;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>
+<script>
+    $("#Sec_Incident_Submit").click(function () {
+        var i = 1;
+        var Sec_Investigation_Find = [];
+        $('#GetCorrectiveActionList  tr').each(function () {
+            var Is_Doc = "";
+            //if ($("input[type='checkbox'].OtherDocument" + i).is(':checked')) {
+            //    Is_Doc = $("input[type='checkbox'].OtherDocument" + i + ":checked").val();
+            //    $('#tblActions_OtherDoc  tr').each(function () {
+            //        var varOtherDocType = $(this).closest('tr').find('.clsOtherDoctype').val();
+            //        var varOtherDesAction = $(this).closest('tr').find('.clsOtherAction').val();
+            //        var varOtherCorrectiveEvUpload = $(this).closest('tr').find('.clsFileActionDate').val();
+            //        var varOtherDoc = Is_Doc;
+            //        var data = {};
+            //        data.Inves_Find_Id = "0";
+            //        data.Sec_Inc_Report_Id = $("#Sec_Report_Id").val();
+            //        data.Sec_Doc_Type = varOtherDocType;
+            //        data.Sec_Description = varOtherDesAction;
+            //        data.Sec_File_Upload = varOtherCorrectiveEvUpload;
+            //        data.Other_Document = varOtherDoc;
+            //    });
+            //}
+            var varDocType = $(this).closest('tr').find('.clsRiskMatrix').val();
+            var varDesAction = $(this).closest('tr').find('.clsDesCorrectiveAction').val();
+            var varCorrectiveEvUpload = $(this).closest('tr').find('.Corrective_Actions_APPENDIX_A_Viewhide').val();
+            var varOtherDoc = Is_Doc;
+            var data = {};
+            data.Inves_Find_Id = "0";
+            data.Sec_Inc_Report_Id = $("#Sec_Report_Id").val();
+            data.Sec_Doc_Type = varDocType;
+            data.Sec_Description = varDesAction;
+            data.Sec_File_Upload = varCorrectiveEvUpload;
+            data.Other_Document = varOtherDoc;
+            data.Status = "2";
+            Sec_Investigation_Find.push(data);
+        });
+        varSec_Report_Id = $("#Sec_Report_Id").val();
+        var Obj = {
+            Sec_Inc_Report_Id: $("#Sec_Report_Id").val(),
+            L_Sec_Invest_Finding: Sec_Investigation_Find
+        };
+        $.ajax({
+            url: "/SecurityIncident/AddInvestigationFinding",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        FnSec_ActionTaken(varSec_Report_Id);
+                        //window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    $("#Sec_Incident_Level2").click(function () {
+        var Obj = {
+            Sec_Inc_Report_Id: $("#Sec_Report_Id").val(),
+            Sec_Inc_Category_Id: $("#Sec_Inc_Category_Id").val(),
+            //Sec_Sub_Cat_Id: $("#USec_Inc_Sub_Name").val(),
+            Sec_Inc_Severity: $("#Sec_Inc_Severity").val(),
+            Sec_Inc_Complaint: $("#USec_Complaint").val(),
+            Sec_Inc_Method: $("#Sec_Inc_Method").val(),
+            Zone_Id: $("#Zone_Id").val(),
+            Community_Id: $("#Community_Id").val(),
+            Building_Id: $("#Building_Id").val(),
+            Location_Id: $("#Location_Id").val(),
+            Sub_Location_Id: $("#Sub_Location_Id").val(),
+            //Sec_Inc_Occur: $("#Sec_Inc_Occur").val(),
+            Action_Taken: $("#Action_Status").val(),
+            Comments: $("#Review_Comments").val()
+        };
+        $.ajax({
+            url: "/SecurityIncident/SecurityIncActionStatus",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    $("#Sec_Incident_Final").click(function () {
+        var Obj = {
+            Sec_Inc_Report_Id: $("#Sec_Report_Id").val(),
+            Sec_Inc_Category_Id: $("#USec_Inc_Cat").val(),
+            //Sec_Sub_Cat_Id: $("#USec_Inc_Sub_Name").val(),
+            Sec_Inc_Severity: $("#USec_Inc_Serv").val(),
+            Sec_Inc_Complaint: $("#USec_Complaint").val(),
+            Sec_Inc_Method: $("#USec_Method").val(),
+            Zone_Id: $("#UZone_Id").val(),
+            Community_Id: $("#UCommunity_Id").val(),
+            Building_Id: $("#UBuilding_Id").val(),
+            Location: $("#ULocation").val(),
+            Sub_Location: $("#USub_Location").val(),
+            //Sec_Inc_Occur: $("#Sec_Inc_Occur").val(),
+            Recommended: $("#Sec_Escalation").val(),
+            Action_Taken: $("#Action_Status").val(),
+            Comments: $("#Review_Comments").val()
+        };
+        $.ajax({
+            url: "/SecurityIncident/SecurityIncActionStatus",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    function Fn_SecActionTaken_Submit() {
+        var varSec_Report_Id = "";
+        varSec_Report_Id = $("#Sec_Report_Id").val();
+        var varUploadedFile = $(".UploadPhotos").val();
+    @*let valid = $("#AddModule_Taken").valid();
+            if (!valid) {
+            return false;
+            }*@
+                if (varUploadedFile != "" && varUploadedFile != null) {
+            //Photo_List_QN = [];
+            var val_UploadPhotos = varUploadedFile.split(',');
+            var varUploadedFileFinal;
+            var i;
+            for (i = 0; i < val_UploadPhotos.length; i++) {
+                var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                if (x != "/") {
+                    //var Pdata = {};
+                    varUploadedFileFinal = x;
+                    //Pdata.Insp_Sub_Photo_Id = "0";
+                    //Photo_List_QN.push(Pdata);
+                }
+            }
+        }
+        var Obj = {
+            Sec_Inc_Report_Id: $("#Sec_Report_Id").val(),
+            Action_Taken: $("#Sec_Action_Taken").val(),
+            Comments: $("#Sec_Comments").val(),
+            Recommended: $("#Sec_Recommended_View").val(),
+            File_Path: x
+        };
+        $.ajax({
+            url: "/SecurityIncident/Security_ActionTaken_Update",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $(".add-new").modal('hide');
+                        FnSec_ActionTaken(varSec_Report_Id);
+                        //window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+    @*Follow Up Action*@
+        function Fn_SecFollowUp_Submit() {
+            debugger;
+            //alert("Save - Follow Up");
+            var varSec_Report_Id = "";
+            varSec_Report_Id = $("#Sec_Report_Id").val();
+            var varFollowUpFile = $(".FollowUpFile").val();
+            if (varFollowUpFile != "" && varFollowUpFile != null) {
+                File_List = [];
+                var val_UploadFiles = varFollowUpFile.split(',');
+                var varUploadedFilePhoto;
+                var i;
+                for (i = 0; i < val_UploadFiles.length; i++) {
+                    var x = val_UploadFiles[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        var Pdata = {};
+                        Pdata.File_Path = x;
+                        Pdata.Sec_Inc_Report_Id = varSec_Report_Id;
+                        File_List.push(Pdata);
+                    }
+                }
+            }
+    @*let valid = $("#AddModule_Taken").valid();
+                if (!valid) {
+                return false;
+                }*@
+
+                var Obj = {
+                Sec_Inc_Report_Id: $("#Sec_Report_Id").val(),
+                Reference_No: $("#Reference_No").val(),
+                Action_Details: $("#Action_Details").val(),
+                L_M_Sec_FollowUp_Attachments: File_List
+            };
+            $.ajax({
+                url: "/SecurityIncident/Security_Inc_FollowUpAction_Add",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            $(".add-follow-up").modal('hide');
+                            FnSec_ActionTaken(varSec_Report_Id);
+                            //window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+</script>

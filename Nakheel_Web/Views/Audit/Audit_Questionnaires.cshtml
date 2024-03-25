@@ -1,0 +1,362 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.AuditMaster.M_Audit_Sub_Topics>
+@{
+    ViewData["Title"] = "Audit Questionnaires";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Audit Questionnaires List</h4></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive tblround" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Category ID</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Audit Category</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Audit_Category_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Audit_Category_Id,'@item.Audit_Category_Name')" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Audit_Questionnaires_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Audit Questionnaires </h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Add_Audit_Questionnaires" action="#" method="post" class="" novalidate="novalidate">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control Audit_Category_Id" name="Audit_Category_Id" id="Audit_Category_Id" value="0">
+                                <input class="form-control Audit_Sub_Topics_Id" name="Audit_Sub_Topics_Id" id="Audit_Sub_Topics_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="example-search-input" class="form-model" style="color:black;">Audit Category</label>
+                                <input class="form-control" type="text" name="Audit_Category_Name" id="Audit_Category_Name" required minlen="1" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            @*<div class="mb-3">
+                            <label for="example-search-input" class="form-model" style="color:black;">Audit Sub Topics</label>
+                            <input class="form-control" type="text" name="Audit_Sub_Topics_Name" id="Audit_Sub_Topics_Name" required minlen="1" autocomplete="off">
+                            </div>*@
+                            <div class="mb-3">
+                                <label for="example-search-input" class="form-model" style="color:black;">Audit Topics</label>
+                                <select class="form-control" id="AU_AuditTopics" name="Sel_Audit_Topics" onchange="Fn_AuditTopics(this.value)">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            @*<div class="mb-3">
+                            <label for="example-search-input" class="form-model" style="color:black;">Audit Sub Topics</label>
+                            <input class="form-control" type="text" name="Audit_Sub_Topics_Name" id="Audit_Sub_Topics_Name" required minlen="1" autocomplete="off">
+                            </div>*@
+                            <div class="mb-3" id="Audit_SubTopics">
+                                <label for="example-search-input" class="form-model" style="color:black;">Audit Sub-Topics</label>
+                                <select class="form-control" id="AU_AuditSubTopics" name="Sel_Audit_SubTopics" onchange="Fn_AuditSubTopics(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddMasterCommList()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br /> <br />
+                        <table id="tblAuditTopicsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Audit Questionnaires Name</th>
+                                    <th id="ActionHead">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAuditTopicsList">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="Submit_Div" id="Submit_Div">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success btn_Submit" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/assets/js/validation/audit_validation/auditmastervalidation.js"></script>
+
+
+<script>
+    var Category_Id = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Audit_Category_Id: "#Audit_Category_Id",
+        Audit_Category_Name: "#Audit_Category_Name",
+        Audit_Topics_Id: "#Audit_Topics_Id",
+        Audit_Topics_Name: "#Audit_Topics_Name",
+        Audit_Sub_Topics_Id: "#Audit_Sub_Topics_Id",
+        Audit_Sub_Topics_Name: "#Audit_Sub_Topics_Name",
+        Add_div: "#Add_div",
+        List_View_Div: "#List_View_Div",
+        Add_Audit_Questionnaires_Div: "#Add_Audit_Questionnaires_Div",
+        MainTable: "#MainTable",
+        GetAuditTopicsList: "#GetAuditTopicsList",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        TBL_EDIT_BUTTON: ".TblEditButton",
+        Submit_Div: ".Submit_Div",
+        BTN_BACK: "#btn_back",
+        AU_AUDIT_TOPICS: "#AU_AuditTopics",
+        AU_AUDITSUB_TOPICS: "#AU_AuditSubTopics"
+    });
+    var Count = 1;
+
+    $(function () {
+        $(UI_Fields.MainTable).DataTable({
+            "order": [[0, "asc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MainTable).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.GetAuditTopicsList).on("click", UI_Fields.TBL_DELETE_BUTTON, function () {
+            debugger
+            //let varSubComID = $(this).closest('tr').find('.Audit_Questionnaires_Id').val();
+            let varSubComID = $(this).closest('tr').find('.Audit_Sub_Topics_Id').val();
+            
+            if (varSubComID == '0' || varSubComID == null) {
+                $(this).closest("tr").remove();
+            }
+            else {
+                Delete(varSubComID, this);
+                $(this).closest("tr").remove();
+            }
+        });
+
+        $(UI_Fields.GetAuditTopicsList).on("click", UI_Fields.TBL_EDIT_BUTTON, function () {
+            debugger
+            $(UI_Fields.Submit_Div).show(100);
+            let varSubName = $(this).closest('tr').find('.Audit_Questionnaires_Name').prop('readonly', false);
+            $(this).closest('tr').addClass('Modified');
+        });
+
+
+    });
+
+    function Fn_AuditTopics(rowval) {
+        var Cat_Name = $("#Audit_Category_Name").val();
+        if(Category_Id == "3"){
+            GetbyEdit(rowval, Cat_Name);
+        }else{
+            GetEditTopics(rowval);
+        }
+      
+    }
+
+    function Fn_AuditSubTopics(rowval) {
+            GetbyEditSubTopics(rowval);   
+    }
+
+    function GetbyEdit(Cat_Id, Cat_Name) {
+        $.post("@Url.Action("Audit_Sub_Topics_GetByID", "Audit")", { ID: Cat_Id }, function (data) {
+            $(UI_Fields.AU_AUDITSUB_TOPICS).empty();
+            $(UI_Fields.AU_AUDITSUB_TOPICS).append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.AU_AUDITSUB_TOPICS).append("<option value=" + e.Audit_Sub_Topics_Id + ">" + e.Audit_Sub_Topics_Name + "</option>");
+            });
+        });
+    }
+    //new
+    function GetEditTopics(Cat_Id) {
+        debugger
+
+        $.post("@Url.Action("Get_Env_Sp_Questionaire", "Audit")", { Audit_Category_Id: Cat_Id }, function (data) {
+            debugger
+            $("#GetAuditTopicsList").empty();
+            if (data != null) {
+                debugger
+                $(data).each(function (i, e) {
+                    debugger
+                  
+                    let AT = "Audit_Sub_Topics_Name" + i;
+                    var html = "";
+                    html += '<tr><td><input type="hidden" class="form-control Audit_Sub_Topics_Id" name="Audit_Sub_Topics_Id" value="' + e.Audit_Questionnaires_Id + '"/><textarea class="form-control required Audit_Questionnaires_Name" name="Audit_Sub_Topics_Name" style="height: 97px" readonly>' + e.Audit_Questionnaires_Name + '</textarea></td > ';
+                    html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                    $(UI_Fields.GetAuditTopicsList).append(html);
+                    $(UI_Fields.Submit_Div).hide();
+                });
+            }
+            else {
+                var html = "";
+               // $("#GetAuditTopicsList").empty();
+                html += '<tr class="Modified"><td><input type="hidden" class="Audit_Sub_Topics_Id" value="0"/><textarea type="text" class="form-control required Audit_Questionnaires_Name" style="height: 97px" name="Audit_Sub_Topics_Name" onchange="duplicate_Community(this.value); "></textarea></td>';
+                html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.GetAuditTopicsList).append(html);
+                $(UI_Fields.Submit_Div).show(100);
+            }
+        });
+    }
+
+    function GetbyEditSubTopics(Cat_Id) {
+        debugger
+        $("#GetAuditTopicsList").empty();
+        $.post("@Url.Action("Audit_Questionnaires_GetByID", "Audit")", { Audit_Sub_Topics_Id: Cat_Id }, function (data) {
+            if (data != null) {
+                $(data).each(function (i, e) {
+                   // $("#GetAuditTopicsList").html('');
+                    let AT = "Audit_Sub_Topics_Name" + i;
+                    var html = "";
+                    html += '<tr><td><input type="hidden" class="form-control Audit_Sub_Topics_Id" name="Audit_Sub_Topics_Id" value="' + e.Audit_Questionnaires_Id + '"/><textarea class="form-control required Audit_Questionnaires_Name" name="Audit_Sub_Topics_Name" style="height: 97px" readonly>' + e.Audit_Questionnaires_Name + '</textarea></td > ';
+                    html += '<td><button type="button" class="btn btn-success TblEditButton">Edit</button>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                    $(UI_Fields.GetAuditTopicsList).append(html);
+                    $(UI_Fields.Submit_Div).hide();
+                });
+            }
+            else {
+                var html = "";
+                //$("#GetAuditTopicsList").html('');
+                html += '<tr class="Modified"><td><input type="hidden" class="Audit_Sub_Topics_Id" value=""/><textarea type="text" class="form-control required Audit_Questionnaires_Name" style="height: 97px" name="Audit_Sub_Topics_Name" onchange="duplicate_Community(this.value); "></textarea></td>';
+                html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+                $(UI_Fields.GetAuditTopicsList).append(html);
+                $(UI_Fields.Submit_Div).show(100);
+            }
+        });
+    }
+
+    function Edit(Cat_Id, Cat_Name) {
+        $(UI_Fields.Add_Audit_Questionnaires_Div).show(100);
+        $(UI_Fields.List_View_Div).hide(100);
+        Category_Id = Cat_Id;
+        let Category_Name = Cat_Name;
+        if (Category_Id == 1 || Category_Id == 4 || Category_Id == 2) {
+            $("#Audit_SubTopics").hide();
+        }
+        else {
+            $("#Audit_SubTopics").show();
+        }
+
+        $(UI_Fields.Audit_Category_Id).val(Category_Id);
+        $(UI_Fields.Audit_Category_Name).val(Category_Name);
+        $(UI_Fields.Audit_Sub_Topics_Id).val(Audit_Sub_Topics_Id);
+        $(UI_Fields.Audit_Category_Name).attr('readonly', true);
+        $(UI_Fields.GetAuditTopicsList).html('');
+
+        $.post("@Url.Action("Audit_Topics_GetById", "Audit")", { ID: Cat_Id }, function (data) {
+            $(UI_Fields.AU_AUDIT_TOPICS).empty();
+            $(UI_Fields.AU_AUDIT_TOPICS).append("<option selected value='0' style='text-align:center' disabled> --Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.AU_AUDIT_TOPICS).append("<option value=" + e.Audit_Topics_Id + ">" + e.Audit_Topics_Name + "</option>");
+            });
+        });
+    }
+
+    function AddMasterCommList() {
+        debugger
+        $(UI_Fields.Submit_Div).show(100);
+        var AT = "Audit_Questionnaires_Name" + Count;
+        var html = "";
+        html += '<tr class="Modified"><td><input type="hidden" class="Audit_Questionnaires_Id" value="0"/><input type="text" class="form-control required Audit_Questionnaires_Name" name="' + AT + '" onchange="duplicate_Community(this.value);"/></td>';
+        html += '<td><button type="button" class="btn btn-danger TblDeleteButton">Remove</button></td></tr>';
+        $(UI_Fields.GetAuditTopicsList).append(html);
+        Count++;
+        $("input[name='" + AT + "']").focus();
+    }
+
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Audit_Questionnaires_Delete", "Audit"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                $(ele).closest("tr").remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+</script>
+
+

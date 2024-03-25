@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null;
+    string filesplit = "";
+    string[] Str_ARR;
+}
+
+@model List<Nakheel_Web.Models.Emergency.Mitigation_Report>
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var item in Model )
+    {
+        filesplit = @item.Remarks!;
+        Str_ARR = filesplit.Split(',');
+        int length = Str_ARR.Length;
+
+
+        <tr class="clstr">
+            <td align="left" valign="middle">@item.REF_NO</td>
+            <td align="left" valign="middle">@item.Area</td>
+            <td align="left" valign="middle">@item.Start_Time</td>
+            <td align="left" valign="middle">@item.End_Time</td>
+
+            <td align="left" valign="middle">@item.Resp_Time</td>
+            <td align="left" valign="middle">@item.Duration</td>
+            <td align="left" valign="middle">@item.Pumps_Deployed</td>
+
+            <td align="left" valign="middle">@item.Pump_OP_Duration</td>
+            <td align="left" valign="middle">@item.Tankers_Deployed</td>
+            <td align="left" valign="middle">@item.No_Trips</td>
+
+            <td align="left" valign="middle">@item.Clear_Time</td>
+            <td align="left" valign="middle">@item.Deployed_SP</td>
+            <td align="left" valign="middle">@item.Deployed_NCM</td>
+
+            <td align="left" valign="middle">@item.Mitigation_Cost</td>
+            <td align="left" valign="middle">@item.Gauge_Reading</td>
+            <td align="left" valign="middle">
+                @for (var i = 0; i < length; i++)
+                {
+                    <a href="@Str_ARR[i]" target="_blank">Evidence_@(i+1)</a><br />
+                }
+            </td>
+
+        </tr>
+
+    }
+    
+    <tr>
+
+        <td align="left" valign="middle" class="tdtxt">Total</td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_Pumps </td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_Tankers </td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_No_Trips </td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_Deployed_SP </td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_Deployed_NCM </td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Mitigation_Cost</td>
+        <td align="left" valign="middle" class="tdtxt">@Model[0].Total_Mitigation_Cost </td>
+        <td align="left" valign="middle" class="tdtxt">----</td>
+    </tr>  
+}
+
+<script>
+    $("#Report_Table").DataTable({
+        "order": [[0, "desc"]],
+        "initComplete": function (settings, json) {
+            $("#Report_Table").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+        },
+        dom: 'lBfrtip',
+        buttons: ['excel', 'pdf', 'print'],
+    });
+</script>

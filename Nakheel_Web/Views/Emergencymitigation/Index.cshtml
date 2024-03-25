@@ -1,0 +1,468 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+    ServiceProviderSignUp LoginAccount = JsonConvert.DeserializeObject<ServiceProviderSignUp>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Emergency Escalation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    label {
+        color: #141b2b;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 15px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+</style>
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .pac-container {
+        z-index: 100000;
+    }
+</style>
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Emergency Escalation List</h4></div>
+                    @if (LoginClass.Role_Id != "16")
+                    {
+                                            <div class="col-lg-2">
+                                                <button type="button" id="btn_add_Miti" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i>Add New </button>
+                                            </div>
+                    }
+                    else
+                    {
+                       <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblEmerMiti" class="table table-striped dt-responsive tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Building</th>
+                            <th>Emergency Title</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetEmerMiti">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-xl-12" id="Add_Emr_Miti" style="display:none;">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-lg-10"> <h4 class="card-title">Add Emergency Escalation</h4></div>
+                <div class="col-lg-12">
+                    <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                </div>
+                <input type="hidden" id="bckval" value="0" />
+            </div>
+
+        </div>
+        <div class="card-body">
+            <form id="Emer_Mitigationt_Form" action="" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                <div style="display:none;">
+                    <div class="form-group">
+                        <input class="col-form-label" name="Emer_Miti_Id" id="Emer_Miti_Id" value="0">
+                        <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <br />
+                            <label class="form-label" for="AddOrder-Billing-Name">Company<span class="requ">*</span></label>
+                            <input type="text" class="form-control" value="@LoginClass.Company_Name" name="Emer_Company" id="Emer_Company" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <br />
+                            <label class="form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                            <select class="form-control" disabled name="Business_Unit" id="Business_Unit">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <br />
+                            <label for="" class="form-model">Zone<span class="requ">*</span></label>
+                            <select class="form-control" name="Zone" id="Zone" onchange="Fn_Zone(this.value)">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <br />
+                        <label for="" class="form-model">Community<span class="requ">*</span></label>
+                        <select class="form-control" name="Community" id="Community_Id" onchange="Fn_Community(this.value)">
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <br />
+                            <label class="form-label" for="AddOrder-Billing-Name">Building<span class="requ">*</span></label>
+                            <select class="form-control" name="Building_Id" id="Building_Id">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row" style="display:none" id="Fn_Business_Unit_Type">
+                        <label for="example-text-input" class="">Business Unit Type<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <select class="form-control" id="Inc_Business_Unit_Type" name="Inc_Business_Unit_Type">
+                                <option value="0">--Select--</option>
+                                <option value="Party">JOP 3rd Party</option>
+                                <option value="JOP_Common">JOP- Common Area</option>
+                                <option value="Master_Community">Master Community</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <br />
+                            <label class="form-label" for="AddOrder-Billing-Name">Emergency Title<span class="requ">*</span></label>
+                            <input type="text" class="form-control" name="Emergency_Title" id="Emergency_Title">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="AddOrder-Billing-Name">Description<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Emer_Description" name="Emer_Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="AddOrder-Billing-Name">Potential Risk<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Emer_Potential" name="Emer_Potential"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="AddOrder-Billing-Name">Current Situation<span class="requ">*</span></label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Emer_Situation" name="Emer_Situation"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label" for="AddOrder-Billing-Name">Emergency Level</label>
+                        <div class="col-md-12">
+                            <select class="form-control" id="Emergency_Level" onchange="Fn_EMLevel()" name="Emergency_Level" multiple>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="AddOrder-Billing-Name">Team List</label>
+                        <div class="col-md-12">
+                            <ul class="b" id="EmployeeList">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="">
+                            <label for="example-number-input" class="col-md-2 col-form-label"> Upload Files</label>
+                            <div class="row mb-3" id="MediaDiv">
+                                <div class="form-group col-md-12">
+                                    <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                    <div class="file-loading">
+                                        <input id="inputPhoto" name="files" type="file" accept="image/*" multiple>
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <button type="submit" class="btn btn-success waves-effect waves-light submitAdd" style="float: right;width: 90px;">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="Emer_Miti_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Emergency Escalation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_Viewback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewEmerMitiList">
+                </div>
+
+                <div id="ViewEmerMitiList_Team">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/emergency/emermitigationvalidate.js"></script>
+<script src="~/assets/js/emergency/serversidedatatableemermiti.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_EMER_MITI_FORM: "#Add_Emr_Miti",
+        LIST_VIEW: "#List_View",
+        ADD_BTN_MITI: "#btn_add_Miti",
+        M_ZONE: "#Zone",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        BTN_BACK: "#btn_back",
+        MAINTABLE: "#tblEmerMiti",
+        TBODY_TABLE: "#GetEmerMiti",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        EMER_MITI_VIEW: "#Emer_Miti_View",
+        EMER_MITI_LIST: "#ViewEmerMitiList",
+        EMER_MITI_LIST_TEAM: "#ViewEmerMitiList_Team",
+        VIEW_BACK: "#btn_Viewback",
+        LEVELM_ID: "#Emergency_Level",
+    });
+    $(document).ready(function () {
+        ApplySelect2("#Business_Unit");
+        ApplySelect2("#Zone");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Emergency_Level");
+        Emer_Mitigation_ServerTable();
+        LOAD_LEVELM();
+        $(UI_Fields.ADD_BTN_MITI).click(function () {
+            LOAD_BUSINESS_UNIT('@LoginClass.Business_Unit_Id');
+            LOAD_ZONE('@LoginClass.Zone_Id');
+            $(UI_Fields.ADD_EMER_MITI_FORM).show(100);
+            $(UI_Fields.LIST_VIEW).hide(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_EMER_MITI_FORM).hide(100);
+            $(UI_Fields.EMER_MITI_VIEW).hide(100);
+        });
+        $(UI_Fields.VIEW_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.EMER_MITI_VIEW).hide(100);
+            $(UI_Fields.ADD_EMER_MITI_FORM).hide(100);
+        });
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/Emergencymitigation/EmerEviUploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        if ('@LoginClass.Role_Id' != "16" || '@LoginClass.Role_Id' != "5") {
+            $('#Zone').removeProp('disabled');
+        } else {
+            $('#Zone').prop('disabled', true);
+        }
+    });
+</script>
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function LOAD_BUSINESS_UNIT(selectedValue) {
+        debugger
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_BUSINESS_UNIT).val(selectedValue);
+        });
+    }
+
+    function LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        debugger
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.M_ZONE).val(selectedValue);
+            Fn_Zone(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function Fn_Zone(Zone_Id, Community_Id, Building_Id) {
+        debugger
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+            Fn_Community(Community_Id, Building_Id);
+        });
+
+        $.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+            });
+        });
+
+    }
+
+    function Fn_Community(Community_Id, Building_Id) {
+        debugger;
+
+        $("#Community_Id-error").css('display', 'none');
+        var Zone_Id = $("#Zone").val();
+
+       Fn_EMLevel();
+
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+
+
+    }
+
+    function LOAD_LEVELM() {
+        $.post("@Url.Action("Load_Level_Master", "CommonMaster")", function (data) {
+            $(UI_Fields.LEVELM_ID).empty();
+            $(data).each(function (i, e) {
+                if ('@LoginClass.Role_Id' != "16") {
+                    if (e.LevelM_Name != "Gold") {
+                        $(UI_Fields.LEVELM_ID).append("<option value=" + e.LevelM_Id + ">" + e.LevelM_Name + "</option>");
+                    }
+                }
+            });
+        });
+    }
+
+
+
+function Fn_EMLevel() {
+    debugger
+    $("#EmployeeList").html('');
+
+    var Emergency_Level_Arr = [];
+    var Emergency_Level_List = $("#Emergency_Level").val();
+
+    var Zone_Id = $("#Zone").val();
+    var Community_Id = $("#Community_Id").val();
+
+    $(Emergency_Level_List).each(function (i, b) {
+        debugger;
+        var item = {};
+        item.Emergency_Level_List = b,
+            Emergency_Level_Arr.push(item);
+    });
+    let commaSeperated = Emergency_Level_Arr.map(x => x.Emergency_Level_List).join(",");
+    //alert(commaSeperated);
+
+    var html = "";
+    $.post("@Url.Action("Crisis_Get_Emp_Level", "Master")", { Level_Id: commaSeperated, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+        if (data != null) {
+            $(data).each(function (key, value) {
+                html += '<li>' + value.Remarks + '</li>';
+            });
+            $("#EmployeeList").append(html);
+        }
+        else {
+            $("#EmployeeList").append("No Employee List");
+        }
+    });
+}
+</script>
+
+

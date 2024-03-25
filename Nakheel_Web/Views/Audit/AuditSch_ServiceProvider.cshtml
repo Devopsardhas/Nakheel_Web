@@ -1,0 +1,456 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Service Provider Audit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="Service_Prov_List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"><h4 class="card-title">Service Provider Audit List</h4></div>
+                    @if (LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "9")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Audit_btn_Add" onclick="AddNew();"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                    
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="Main_Table_Service_Prov" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Audit Id</th>
+                            <th>Zone</th>
+                            <th>Community & Location</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ServicePoviderAudTbl">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Service_View_Schd" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"><h4>Service Provider Audit</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="Audit_btn_back" onclick="back_btn();"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i> Back </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <form id="Audit_schd_Form" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                        <br />
+                        <input class="form-control" type="hidden" value="0" name="Audit_Sch_Id" id="Audit_Sch_Id">
+                        <input class="form-control" type="hidden" value="" id="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Name</label>
+                                <input type="text" class="form-control" disabled id="Reported_by" name="Reported_by" value="@LoginClass.First_Name" placeholder="Name" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Designation</label>
+                                <input type="text" class="form-control" disabled id="Designation" name="Designation" value="@LoginClass.Designation_Name" placeholder="Designation" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>Date & Time</label>
+                                <input class="form-control" type="datetime-local" id="DateTime" name="DateTime" />
+                            </div>
+                        </div>
+                        <br />
+                        <lable style="color: #b5abab;font-size: 13px;margin-top: 1%;">Location Details</lable>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Business Unit</label>
+                                <select class="form-control SelBusiness_Unit" id="Business_Unit_Id" name="Business_Unit_Id" onchange="BusinessUnit_Type();"></select>
+                                @* <div style="display:none;">
+                                <input type="text" class="form-control" name="Business_Unit" id="Business_Unit" />
+                                </div>*@
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Zone</label>
+                                <select class="form-control" id="Zone_Id" name="Zone_Id" onchange="LoadCommuntiy(this.value)"></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Community</label>
+                                <select class="form-control" id="Community_Id" name="Community_Id" onchange="Load_Lead_Auditor(this.value);"></select>
+                            </div>
+                        </div>
+                        <br />
+                        <lable style="color: #b5abab;font-size: 13px;margin-top: 1%;">Auditor Details</lable>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Lead Auditor</label>
+                                <select class="form-control" id="Lead_Auditor_Id" name="Lead_Auditor_Id"><option selected style="text-align:center;" value="">--Select LeadAuditor--</option></select>
+                            </div>
+
+                            <div class="col-md-6" style="display:none" id="Audit_Business_Unit_Type">
+                                <label>Business Unit Type</label>
+                                <div>
+                                    <select class="form-control" id="Business_Unit_Type" name="Business_Unit_Type">
+                                        <option value="0">--Select--</option>
+                                        <option value="Party">JOP 3rd Party</option>
+                                        <option value="JOP_Common">JOP- Common Area</option>
+                                        <option value="Master_Community">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="example-number-input" class="col-md-2 col-form-label">Exact Location</label>
+                                    <div id="GoogleMapApi"></div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <table id="tbl_ServiceProv_Audit_Team" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Audit Team</th>
+                                    <th>Action</th>
+                                    <th>
+                                        <button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Service_Prov_Audit_TeamAdd" onclick="Service_AuditTeam_AddMore();">
+                                            <i class="mdi mdi-plus me-1"></i>Add More
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_Service_Audit_Team_Emp">
+                                <tr>
+                                    <td style="width: 70%;">
+                                        <div class="col-md-12">
+                                            <select class="form-control clsAudit_Emp_Id" id="Audit_Emp_Id" name="Audit_Emp_Id" required minlen="1"><option selected value="" style="text-align:center;">--Select Audit Team--</option></select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table id="tbl_Service_Provider" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Service Provider Representative</th>
+                                    <th>Action</th>
+                                    <th><button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Service_Prov" onclick="ServiceProv_AddMore();"><i class="mdi mdi-plus"></i>Add More</button></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_Service_Provider_Emp">
+                                <tr>
+                                    <td style="width: 70%;">
+                                        <div class="col-md-12">
+                                            <select class="form-control cls_Service_Prov_Emp_Id" id="Service_Prov_Emp_Id" name="Service_Prov_Emp_Id" required minlen="1"><option value="" style="text-align:center;">--Select Service Provider--</option></select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @* <label style="color: #b5abab;font-size: 13px;margin-top: 1%;">Audit Details</label>
+                        <table id="clause_Audit" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                        <thead>
+                        <tr>
+                        <th>Sno</th>
+                        <th>Description</th>
+                        <th>Audit Findings</th>
+                        <th>Objective Evidence</th>
+                        </tr>
+                        </thead>
+                        @* <tbody id="INT_Audit_Verify_details">
+                        </tbody>
+                        </table>*@
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="Audit_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Audit Schedule</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="Btn_Back_Clause" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="btn_Back_Findings();"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="Load_All_Checklists">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/Audit_Validation/AuditMasterValidation.js"></script>
+<script src="~/assets/js/validation/Audit_Validation/Audit_ServerDataTable.js"></script>
+<script>
+    "Use strict";
+    const UI_FIELDS = Object.freeze({
+        MAINTABLE_SERVICE_PROV: "#Main_Table_Service_Prov",
+        AUDIT_BTN_ADD: "#Audit_btn_Add",
+        SERVICE_PROVIDER_LIST_VIEW: "#Service_Prov_List_View",
+        SERVICE_VIEW_SCHD: "#Service_View_Schd",
+        INTER_AUDIT_SCHD: "#Inter_Audit_Schd",
+        BUSINESS_UNIT_INT: "#Business_Unit_Id",
+        ZONE_ID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        LEAD_AUDITOR: "#Lead_Auditor_Id",
+        INT_AUDIT_TEAM_ADDMORE: "#Int_Audit_TeamAdd",
+        INT_SERVICE_PROVIDER: "#Int_Service_Prov",
+        SERVICE_TEAM_EMP: "#tbody_Service_Audit_Team_Emp",
+        TBL_AUDIT_TEAM: "#tbl_Audit_Team",
+        SERVICE_PROVIDER_REP: "#tbody_Service_Provider_Emp",
+        AUDIT_DELTEBUTTON: ".Audit_tblDeleteButton",
+        TBL_SERVICE_PROVIDER: "#tbl_Service_Provider",
+        AUDIT_VERIFY_DETAILS: "#Audit_Verify_details",
+        AUDIT_EMP_ID: "#Audit_Emp_Id",
+        SERVICE_PRO_EMP: "#Service_Prov_Emp_Id",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        SERVICE_PROVIDER_AUD_TBL: "#ServicePoviderAudTbl",
+        AUDIT_VIEW: "#Audit_View",
+        LOAD_ALL_CHECKLISTS: "#Load_All_Checklists"
+
+    });
+    $(document).ready(function () {
+        Load_GoogleMaps();
+        AuditServerTable();
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Lead_Auditor_Id");
+        ApplySelect2("#Audit_Emp_Id");
+        ApplySelect2("#Service_Prov_Emp_Id");
+        $("#tbl_ServiceProv_Audit_Team").on("click", '.Audit_tblDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tbl_Service_Provider").on("click", '.Audit_Service_DelProv', function () {
+            $(this).closest("tr").remove();
+        });
+    });
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Load_GoogleMaps() {
+        map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_FIELDS.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+
+    function AddNew() {
+        $(UI_FIELDS.SERVICE_PROVIDER_LIST_VIEW).hide(100);
+        $(UI_FIELDS.SERVICE_VIEW_SCHD).show(100);
+        LOAD_BUSINESS_UNIT();
+        LoadZone();
+        //LoadClause();
+    }
+    function back_btn() {
+        $(UI_FIELDS.SERVICE_PROVIDER_LIST_VIEW).show(100);
+        $(UI_FIELDS.SERVICE_VIEW_SCHD).hide(100);
+        $(UI_FIELDS.AUDIT_VIEW).hide(100);
+    }
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_FIELDS.BUSINESS_UNIT_INT).empty();
+            $(UI_FIELDS.BUSINESS_UNIT_INT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_FIELDS.BUSINESS_UNIT_INT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            //if (selectedValue != null)
+            //    $(UI_Fields.M_BUSINESS_UNIT).val(selectedValue);
+        });
+    }
+    function LoadZone() {
+        $.post("@Url.Action("LoadAllZone","CommonMaster")", function (data) {
+            $(UI_FIELDS.ZONE_ID).empty();
+            $(UI_FIELDS.ZONE_ID).append("<option selected value='0' style='text-align:center' disabled>--Select Zone--</option>")
+            $(data).each(function (x, y) {
+                $(UI_FIELDS.ZONE_ID).append("<option value=" + y.Zone_Id + ">" + y.Zone_Name + "</option>")
+            });
+        });
+    }
+    function LoadCommuntiy(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone","CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_FIELDS.COMMUNITY_ID).empty();
+            $(UI_FIELDS.COMMUNITY_ID).append("<option selected value='0' style='text-align:center'disabled>--Select Community--</option");
+            $(data).each(function (a, b) {
+                $(UI_FIELDS.COMMUNITY_ID).append("<option value=" + b.Community_Master_Id + ">" + b.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function BusinessUnit_Type() {
+        var Int_BusinessUnit = $("#Business_Unit_Id option:selected").text();
+        if (Int_BusinessUnit == "NCM") {
+            $("#Audit_Business_Unit_Type").show();
+        }
+        else {
+            $("#Audit_Business_Unit_Type").hide();
+        }
+    }
+    var count = 1;
+    function Service_AuditTeam_AddMore() {
+        debugger;
+        var html = "";
+        var varService_AuditTeam = "Audit_Emp_Id" + count;
+        var varService_Auditid = "#Audit_Emp_Id" + count;
+        html += '<tr><td><input type="hidden" class="Audit_Schd_Id" value="0"><select class="form-control clsAudit_Emp_Id" id="' + varService_AuditTeam + '" name="Audit_Emp_Id" required minlen="1"><option value="" style="text-align:center;" selected>--Select Audit Team--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Audit_tblDeleteButton">Remove</button></td></tr>'
+        Load_Audit_Team("#" + varService_AuditTeam);
+        $(UI_FIELDS.SERVICE_TEAM_EMP).append(html);
+        ApplySelect2(varService_Auditid);
+        count++;
+    }
+    var index = 1;
+    function ServiceProv_AddMore() {
+        var html = "";
+        var varService_Provider = "cls_Service_Prov_Emp_Id" + index;
+        var varService_Providerid = "#cls_Service_Prov_Emp_Id" + index;
+        html += '<tr><td><input type="hidden" class="Aud_Schd_Id" value="0"><select class="form-control cls_Service_Prov_Emp_Id" id="' + varService_Provider + '" name="Int_Service_Provider" required minlen="1"><option value="" selected style="text-align:center;"selected>--Select Service Provider--</option></select></td>'
+        html += '<td><button type="button" class="btn btn-danger Audit_Service_DelProv">Remove</button></td>< /tr>'
+        Load_Audit_Team("#" + varService_Provider);
+        $(UI_FIELDS.SERVICE_PROVIDER_REP).append(html);
+        ApplySelect2(varService_Providerid);
+        index++;
+    }
+    function Load_Lead_Auditor(Emp_Community_Id) {
+        Zone_Id = $(UI_FIELDS.ZONE_ID).val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Zone_Id: Zone_Id, Emp_Community_Id: Emp_Community_Id }, function (data) {
+            $(UI_FIELDS.LEAD_AUDITOR).empty();
+            $(UI_FIELDS.LEAD_AUDITOR).append("<option selected value='0'style='text-align:center'  disabled>--Select Lead Auditor--</option>");
+            $(data).each(function (i, e) {
+                $(UI_FIELDS.LEAD_AUDITOR).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $(UI_FIELDS.AUDIT_EMP_ID).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $(UI_FIELDS.SERVICE_PRO_EMP).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+
+            });
+        });
+    }
+    function Load_Audit_Team(Audit_Id) {
+        Zone_Id = $(UI_FIELDS.ZONE_ID).val();
+        Emp_Community_Id = $(UI_FIELDS.COMMUNITY_ID).val();
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Zone_Id: Zone_Id, Emp_Community_Id: Emp_Community_Id }, function (data) {
+            $(data).each(function (a, b) {
+                $(Audit_Id).append("<option value=" + b.Employee_Identity_Id + ">" + b.First_Name + "</option>");
+            });
+        });
+    }
+    function btn_Back_Findings(){
+        $(UI_FIELDS.AUDIT_VIEW).hide(100);
+        $(UI_FIELDS.SERVICE_PROVIDER_LIST_VIEW).show(100);
+    }
+</script>
+<script>
+    function Location() {
+        debugger;
+        // if HTML DOM Element that contains the map is found...
+        if (document.getElementById('map-canvas_view_Edit')) {
+            var content;
+            var latitude = $("#Lat").val();
+            var longitude = $("#Long").val();
+            //alert(latitude + ' ' + longitude);
+            var map;
+            var marker;
+            navigator.geolocation.getCurrentPosition(loadMap);
+
+            function loadMap(location) {
+                if (location.coords) {
+                    latitude = $("#Lat").val();//location.coords.latitude;
+                    longitude = $("#Long").val();//location.coords.longitude;
+                }
+
+                // Coordinates to center the map
+                var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+                // Other options for the map, pretty much selfexplanatory
+                var mapOptions = {
+                    zoom: 12,
+                    center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                    mapTypeId: google.maps.MapTypeId.PLAN,
+                };
+
+                var image = '../assets/images/mappin.png';
+                // Attach a map to the DOM Element, with the defined settings
+                map = new google.maps.Map(document.getElementById("map-canvas_view_Edit"), mapOptions);
+
+                content = document.getElementById('information');
+                google.maps.event.addListener(map, 'click', function (e) {
+                    placeMarker(e.latLng);
+                });
+                marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    icon: image
+                });
+            }
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>

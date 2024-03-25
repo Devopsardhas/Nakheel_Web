@@ -1,0 +1,297 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    /*  #rejectform1 {
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                }*/
+</style>
+@model Nakheel_Web.Models.ControlOfWorkMaster.Ptw_Confined_Space_Add;
+
+
+<div id="EditNotification">
+    <div class="col-md-4">
+        <div class="mb-3">
+            <label class="col-form-label" for="Email_Id">Date and Time Of Observation <span class="requ">*</span></label>
+            <input type="datetime-local" class="form-control" id="C_Date_Time_Obs" name="C_Date_Time_Obs" value="@Model.Date_Time_of_Observation">
+        </div>
+    </div>
+
+    <div class="row">
+        <br />
+        <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+
+    </div>
+    <br />
+    <div class="col-6">
+
+        <div class="mb-3 row">
+            <label for="example-password-input" class="col-md-4 col-form-label">Business Unit</label>
+            <div class="col-md-8">
+                <select class="form-select" placeholder="--Select Business Unit--" name="Business_Unit_Id" id="Business_Unit_Id" onchange="FnBusiness_Unit()" required>
+                </select>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="example-tel-input" class="col-md-4 col-form-label">Community</label>
+            <div class="col-md-8">
+                <select class="form-select" placeholder="--Select Community--" id="Community_Id" name="Community_Id" onchange="Fn_Community(this.value)">
+                </select>
+            </div>
+        </div>
+
+
+        <div class="mb-3 row" style="display:none" id="Fn_Business_Unit_Type">
+            <label for="example-text-input" class="col-md-4 col-form-label">Business Unit Type</label>
+            <div class="col-md-8">
+                <select class="form-control" id="Con_Business_Unit_Type" name="Con_Business_Unit_Type">
+                    <option value="0">--Select--</option>
+                    <option value="Party">JOP 3rd Party</option>
+                    <option value="JOP_Common">JOP- Common Area</option>
+                    <option value="Master_Community">Master Community</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+
+        <div class="mb-3 row">
+            <label for="example-password-input" class="col-md-4 col-form-label">Zone</label>
+            <div class="col-md-8">
+                <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                </select>
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+            <div class="col-md-8">
+                <select class="form-control" placeholder="--Select Building--" name="Building" id="Building_Id" onchange="Fn_Building()">
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="example-number-input" class="col-md-4 col-form-label">Exact Location</label>
+        <div class="col-md-12">
+            <div id="GoogleMapApi" style="display:none"></div>
+            <div id="map-canvas_view_Edit" style="display:none"></div>
+        </div>
+    </div>
+    <div class="row">
+        <br />
+        <div class="col-lg-10"> <h4 class="card-title">Requestor Details & Submission </h4></div>
+        <br />
+        <br />
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="col-form-label" for="Email_Id">Company Name <span class="requ">*</span></label>
+                <input type="text" class="form-control" id="C_Company_Name" name="C_Company_Name" @*placeholder=""*@>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="col-form-label" for="Email_Id">Contractor Tittle/No <span class="requ">*</span></label>
+                <input type="text" class="form-control" id="C_Tittle_No" name="C_Tittle_No" @*placeholder=""*@>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label class="col-form-label" for="Email_Id">Competent Person <span class="requ">*</span></label>
+                <input type="text" class="form-control" id="C_Competent" name="C_Competent" @*placeholder=""*@>
+            </div>
+        </div>
+        <br />
+
+        <br />
+        <div class="col-lg-10"> <h4 class="card-title">Requested By</h4></div>
+        <br />
+        <br>
+        <div class="col-6">
+
+            <div class="mb-3 row">
+                <label for="example-password-input" class="col-md-4 col-form-label">Name & Position</label>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" value="@LoginClass.First_Name" id="C_Name" name="C_Name_Position">
+
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Email Id</label>
+                <div class="col-md-8">
+                    <input type="email" class="form-control" value="@LoginClass.Email_Id" id="C_Email_Id" name="C_Email_Id">
+
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Date and time</label>
+                <div class="col-md-8">
+                    <input type="datetime" class="form-control" id="C_Date_Time" name="C_Date_Time" placeholder="">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="mb-3 row">
+                <label for="example-password-input" class="col-md-4 col-form-label"> Position</label>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" value="@LoginClass.Designation_Name" id="C_Position" name="C_Name_Position">
+
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-password-input" class="col-md-4 col-form-label">Contact</label>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" value="@LoginClass.Mobile_Number" id="C_Contact" name="C_Contact">
+
+                </div>
+            </div>
+
+        </div>
+        <br>
+        <br />
+        <div class="col-lg-10"> <h4 class="card-title">Required Work Details  </h4></div>
+        <br>
+        <br>
+
+        <div class="mb-3 row">
+            <label for="example-number-input" class="col-md-6 col-form-label">Description of Work to be Performed and Purpose of Entry</label>
+            <div class="col-md-12">
+                <textarea class="form-control" name="C_Description" id="C_Description" style="height: 98px;"></textarea>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row">
+                <label for="" class="col-md-5 col-form-label">Approve Method Statement</label>
+                <div class="col-md-2 col-form-label">
+                    <div id="ConfineYes" class="">
+                        <label for="Yes"> <input id="Yes" class="C_Approve" name="C_Approve" type="radio" value="Yes" />&nbsp;Yes </label>
+                    </div>
+                </div>
+                <div class="col-md-2 col-form-label">
+                    <div id="ConfineNo" class="floatBlock">
+                        <label for="No"> <input id="No" class="C_Approve" name="C_Approve" type="radio" value="No" />&nbsp;No </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br />
+        <b>
+            Precautions:<br>
+            (The Competent person or his supervisor should tick the appropriate precautions which have been taken)
+        </b>
+        <table id="Tbl_CSP" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>Topics</th>
+                    <th>Yes</th>
+                    <th>No</th>
+                    <th>N/A</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody id="Confined_Ques" name="Confined_Ques">
+            </tbody>
+        </table>
+        <br>
+        <br>
+
+        <div class="mb-3 row">
+            <label for="example-number-input" class="col-md-6 col-form-label">Additional Precautions</label>
+            <div class="col-md-12">
+                <textarea class="form-control" name="C_Additional_Pre" id="C_Additional_Pre" style="height: 98px;"></textarea>
+            </div>
+        </div>
+        <div class="col-lg-10"> <h4 class="card-title">Work Duration and Schedule</h4></div>
+        <br />
+        <div class="col-6">
+
+            <div class="mb-3 row">
+                <label for="example-password-input" class="col-md-4 col-form-label">From Date & Time</label>
+                <div class="col-md-8">
+                    <input type="datetime-local" class="form-control" name="C_From_Date" id="C_From_Date" placeholder="">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="example-tel-input" class="col-md-4 col-form-label">Night Schedule</label>
+                <div class="col-md-8" id="Confine_NiT_Shedule">
+
+                    <label for="No1"><input type="radio" value="No" name="C_Night_Shedule" class="C_Night_Shedule" id="No1">No</label>
+                    <label for="No1"><input type="radio" value="Yes" name="C_Night_Shedule" class="C_Night_Shedule" id="Yes1">Yes</label>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+
+            <div class="mb-3 row">
+                <label for="example-password-input" class="col-md-4 col-form-label">To Date & Time</label>
+                <div class="col-md-8">
+                    <input type="datetime-local" class="form-control" name="C_To_Date" id="C_To_Date" placeholder="">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12" align="center">
+            <button type="submit" class="btn btn-success waves-effect waves-light submit" id="Confined_Submit">
+                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+            </button>
+
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/controlofworkvalidation/serversidedatatableconfined.js"></script>
+
+<script>
+   
+</script>

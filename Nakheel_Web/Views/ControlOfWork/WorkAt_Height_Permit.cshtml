@@ -1,0 +1,1114 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Work At Height Permit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .pac-container {
+        z-index: 100000;
+    }
+
+
+    #search_input_1 {
+        font-size: 18px;
+        width: 330px;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: 311px !important;
+    }
+
+    #search_input {
+        font-size: 18px;
+        width: 46% !important;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: -6px !important;
+    }
+
+
+    .m-txt-req {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_1 {
+        margin-top: 3px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_11 {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+        margin-left: 61%;
+    }
+</style>
+<div class="row" id="List_View_WAH">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Work At Height Permit List</h4></div>
+                    @if (LoginClass.Role_Id == "16")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_add_Wah" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> New Permit</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblWAH" class="table table-striped dt-responsive tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Business Unit</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="GetWAH">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_WAH_Permit" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Requestor Form </h4></div>
+
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back_WAH" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                        <input class="form-control" type="hidden" value="" id="History_Id" name="History_Id">
+                        <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="Emp_Id" name="Emp_Id">
+                        <input class="form-control" type="hidden" value="@LoginClass.Role_Id" id="Role_Id" name="Role_Id">
+                        <input class="form-control" type="hidden" value="" id="His_Date_Time" name="His_Date_Time">
+                        <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+
+            <div class="card-body">
+
+                <table id="Reject_Reason" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>Unique Id</th>
+                            <th>Reject Reason Description</th>
+                            <th>Rejected By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Reject_Reason_List">
+                    </tbody>
+                </table>
+
+                <form id="Form_WAH_Permit" action="" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="col-form-label" name="Work_Height_ID" id="Work_Height_ID" value="0">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+
+                    </div>
+                    <br />
+                    <br />
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">DMS Number</label>
+                            <div class="col-md-8">
+                                <select class="form-select" name="Contractor_Id" id="Contractor_Id" onchange="WAH_Fn_Contractor(this.value)" required>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Community</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Community--" id="Wah_Community_Id" name="Wah_Community_Id" onchange="Fn_Community(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">Business Unit</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Business Unit--" name="Wah_Business_Unit_Id" id="Wah_Business_Unit_Id" onchange="FnBusiness_Unit()" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+                            <div class="col-md-8">
+                                <select class="form-control" disabled placeholder="--Select Building--" name="Wah_Building_Id" id="Wah_Building_Id" onchange="Fn_Building()">
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-4">
+
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">Zone</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Zone--" id="Wah_Zone_Id" name="Wah_Zone_Id" onchange="FnZone_Id(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-10"> <h4 class="card-title">Requestor Details & Submission </h4></div>
+                    <br />
+                    <br />
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-6 col-form-label">Manager Incharge</label>
+                            <div class="col-md-12">
+                                <input type="text" readonly class="form-control" id="Contractor_name" value="@LoginClass.First_Name" name="Contractor_name" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Competent Number</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Comp_Number" value="" name="Comp_Number" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contract End Date <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="date" class="form-control" id="Con_End" name="Con_End" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Company Name <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" readonly class="form-control" id="C_Company_Name" value="@LoginClass.Company_Name" name="C_Company_Name" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contractor Title/No <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="C_Tittle_No" value="" name="C_Tittle_No" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">HSE Officer Name <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Hse_Name" value="" name="Hse_Name" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Competent Person <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <select class="form-select" id="C_Competent" name="C_Competent" disabled onchange="WAH_Function_Competent(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                         <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contract Start Date <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="date" class="form-control" id="Con_Start" name="Con_Start" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">HSE Mobile Number <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Hse_Number" value="" name="Hse_Number" autocomplete="off">
+                            </div>
+                        </div>
+                      
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="mt-xl-0 mt-4">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height:30px;">
+                                                Required Documents (Only PDF)
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-10 col-form-label" for="example-password-input">Method Statement<span class="requ">*</span></label>
+                                                            <div id="WAH_Method_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Method_files" name="Method_files" type="file" accept=".pdf" multiple class="form-control" onchange="WAH_Method_File_Upload('Method_files','MethodUploadPhotos','WAH_Method_Pdf')" />
+                                                                <input type="hidden" class="MethodUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">Risk Assessment<span class="requ">*</span></label>
+                                                            <div id="WAH_Risk_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Risk_files" name="Risk_files" type="file" accept=".pdf" multiple class="form-control" onchange="WAH_Risk_File_Upload('Risk_files','RiskUploadPhotos','WAH_Risk_Pdf')" />
+                                                                <input type="hidden" class="RiskUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">Emergency Plan<span class="requ">*</span></label>
+                                                            <div id="WAH_Emr_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Emr_files" name="Emr_files" type="file" accept=".pdf" multiple class="form-control" onchange="WAH_Emr_File_Upload('Emr_files','EmrUploadPhotos','WAH_Emr_Pdf')" />
+                                                                <input type="hidden" class="EmrUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">HSE Plan<span class="requ">*</span></label>
+                                                            <div id="WAH_HSE_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Hse_files" name="Hse_files" type="file" accept=".pdf" multiple class="form-control" onchange="WAH_HSE_File_Upload('Hse_files','HSEUploadPhotos','WAH_HSE_Pdf')" />
+                                                                <input type="hidden" class="HSEUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div>
+                                                            <label class="col-md-10 col-form-label" for="example-password-input">Staff Competency Document<span class="requ">*</span></label>
+                                                            <div id="WAH_Staff_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Competencyfiles" name="files" type="file" accept=".pdf" multiple class="form-control" onchange="WAH_Staff_File_Upload('Competencyfiles','UploadPhotos','WAH_Staff_Pdf')" />
+                                                                <input type="hidden" class="UploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none;">
+
+                        <div class="col-4">
+                            <div class="row">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Requested By</label>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Name & Role</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.First_Name" id="C_Name" name="C_Name_Position">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label"> Position</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.Designation_Name" id="C_Position" name="C_Name_Position">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Email Id</label>
+                                <div class="">
+                                    <input type="email" readonly class="form-control" value="@LoginClass.Email_Id" id="C_Email_Id" name="C_Email_Id">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Contact</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.Mobile_Number" id="C_Contact" name="C_Contact">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+
+
+                        <div class="col-6" style="display:none;">
+
+
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Date and time</label>
+                                <div class="col-md-8">
+                                    <input type="datetime" class="form-control" id="C_Date_Time" name="C_Date_Time" placeholder="">
+
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="row">
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="card-title">Required Work Details  </h4>
+                            <br />
+                            <label for="example-number-input" class="col-md-6 col-form-label">Description Of Work To Be Performed And Purpose Of Entry</label>
+                            <textarea class="form-control" name="C_Description" id="C_Description" style="height: 223px;"></textarea>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="example-number-input" class="col-md-2 col-form-label">Exact Location</label>
+                                <div id="GoogleMapApi"></div>
+                            </div>
+                        </div>
+                        <br />
+                        <label class="col-form-label">
+                            Precautions:<br>
+                            (The Competent person or his supervisor should tick the appropriate precautions which have been taken)
+                        </label>
+                        <table id="Tbl_Work_At_Height_Ques" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Questionnaire</th>
+                                    <th>Yes</th>
+                                    <th>No</th>
+                                    <th>N/A</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="HotWork_Ques" name="HotWork_Ques">
+                            </tbody>
+                        </table>
+                        <br>
+                        <br>
+
+                        <div class="mb-3 row">
+                            <label for="example-number-input" class="col-md-6 col-form-label">Additional Precautions</label>
+                            <div class="col-md-12">
+                                <textarea class="form-control" name="C_Additional_Pre" id="C_Additional_Pre" style="height: 98px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-10"> <h4 class="card-title">Work Duration And Schedule</h4></div>
+                        <br />
+                        <br />
+                        <div class="row">
+
+                            <div class="col-4">
+                                <div class="">
+                                    <label for="example-password-input" class="col-md-4 col-form-label">From Date</label>
+                                    <div class="">
+                                        <input type="date" class="form-control" name="C_From_Date" id="C_From_Date" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="">
+                                    <label for="example-password-input" class="col-md-4 col-form-label">To Date</label>
+                                    <div class="">
+                                        <input type="date" class="form-control" name="C_To_Date" id="C_To_Date" placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <div >
+                            <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">Additional Feature Required</h4>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="example-number-input" class="col-md-12 col-form-label">Attach Service Provider's Permit Signed by HSE & Engineer/Supervisor</label>
+                                <div id="Signed_Pdf" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <input id="Signed_files" name="Signed_files" type="file" accept=".pdf" required multiple class="form-control" onchange="WAH_Signed_File_Upload('Signed_files','SignedUploadPhotos','Signed_Pdf')" />
+                                    <input type="hidden" class="SignedUploadPhotos">
+                                </div>
+                            </div>
+                        </div>
+                         <div>
+                            <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">Service Providers Declaration</h4>
+                        </div>
+                          <br />
+                        <div class="row">
+                            <div class="col-md-12">                              
+                                <label for="example-tel-input" class="col-md-12 col-form-label"><input type="checkbox" id="Declare_Chk" value="1" name="Declare_Chk" class="Declare_Chk" />&nbsp; We confirm that the high risk activity will be carried out as per method statement, risk assessment and permit requirements under the  supervision of competent supervisor and HSE staff. Additional permit for each shift shall be issued by the service provider.Accepted by </label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-2 row">
+                                <label for="example-tel-input" class="col-md-3 col-form-label">Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Accept_Name" value="" name="Accept_Name" autocomplete="off">
+                                </div>
+                            </div>                           
+                        </div>
+                        <div class="col-4">
+                             <div class="mb-2 row">
+                                <label for="example-tel-input" class="col-md-3 col-form-label">Designation</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Accept_Desig" value="" name="Accept_Desig" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                         <div>
+                             <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">NCM Declaration</h4>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">                              
+                                <label for="example-number-input" class="col-md-12 col-form-label">The NCM reviews the service providers document to ensure all safety precautions are provided. Its responsibility of the service provider to physically  verify all permit requirements are complied at the time of work and provide competent supervision  at all times.</label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    @if (LoginClass.Role_Id == "16")
+                    {
+                        <div class="row">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <button type="submit" style="margin-top:15px" class="btn btn-success waves-effect waves-light submit" id="WAH_Submit">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                </button>
+                            </div>
+                        </div>
+                    }
+
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+<div id="WAH_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Requester form </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_View_WAH_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="View_WAH_List">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Add_Con_Location" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Work At Height Permit Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="GoogleMapApi" style="display:none"></div>
+                    <div id="map-canvas_view_Edit" style="display:none"></div>
+                </div>
+
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/controlofworkvalidation/confinedspacepermitofwork.js"></script>
+<script src="~/assets/js/controlofworkvalidation/serversidedatatableworkheight.js"></script>
+<script>
+      var login = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#Wah_Zone_Id",
+        COMMUNITY_ID: "#Wah_Community_Id",
+        BUSINESS_ID: "#Wah_Business_Unit_Id",
+        BUILDING_ID: "#Wah_Building_Id",
+        LIST_VIEW: "#List_View_WAH",
+        MAINTABLE: "#tblWAH",
+        TBODY_TABLE: "#GetWAH",
+        MAINTABLE_TBODY: "#Electrical_MainTable_TBODY",
+        ADD_WAH_PERMIT: "#Add_WAH_Permit",
+        BTN_ADD_WAH: "#btn_add_Wah",
+        BTN_BACK_WAH: "#btn_back_WAH",
+        WORK_At_HEIGHT_QUESTION: "#HotWork_Ques",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        EDIT_GOOGLE_MAP_API: "#map-canvas_view",
+        VIEW_WAH_LIST: "#View_WAH_List",
+        WAH_REQUEST_VIEW: "#WAH_View",
+        REJECT_REASON: "#Reject_Reason",
+        CONTRACT_EMPLOYEE: "#Contractor_name",
+        BTN_BACK_WAH_VIEW: "#btn_View_WAH_back"
+    });
+
+    $(document).ready(function () {
+        var Email_Login = '@LoginClass.Email_Id'
+        WORK_HEIGHT_LOAD_ALL_BU();
+        WORK_HEIGHT_LOAD_ZONE();
+        WORK_HEIGHT_LOAD_CONTRACT_DRP(Email_Login);
+
+        LoadWorkHeightQuestion();
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#C_Date_Time').val(today);
+
+        var Requestedname = '@LoginClass.First_Name' + '/' + '@LoginClass.Role_Name';
+        $("#C_Name").val(Requestedname);
+        ApplySelect2("#Wah_Business_Unit_Id");
+        ApplySelect2("#Wah_Zone_Id");
+        ApplySelect2("#Wah_Community_Id");
+        ApplySelect2("#Wah_Building_Id");
+        ApplySelect2("#C_Competent");
+         login = '@LoginClass.Employee_Identity_Id';
+        Serversidetable_WorkHeight(login);
+        Load_GoogleMaps();
+        $(UI_Fields.LIST_VIEW).show(100);
+        $(UI_Fields.ADD_WAH_PERMIT).hide(100);
+
+        $(UI_Fields.BTN_ADD_WAH).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_WAH_PERMIT).show(100);
+            $(UI_Fields.REJECT_REASON).hide(100)
+            $(UI_Fields.WAH_REQUEST_VIEW).hide(100)
+            $(UI_Fields.GOOGLE_MAP_API).show(100);
+            $(UI_Fields.EDIT_GOOGLE_MAP_API).hide(100);
+        });
+
+        $(UI_Fields.BTN_BACK_WAH).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_WAH_PERMIT).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields.BTN_BACK_WAH_VIEW).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_WAH_PERMIT).hide(100);
+            $(UI_Fields.WAH_REQUEST_VIEW).hide(100);
+            window.location.reload();
+        })
+        var e = '@DateTime.Now.ToString("dd-MM-yyyy HH:mm")';
+        $("#His_Date_Time").val(e);
+    });
+
+     function WAH_Function_Competent(id) {
+        $.post("@Url.Action("Get_Competent_Number", "ControlOfWork")", { Work_Superviosor_Id: id }, function (data) {
+            if (data != null) {
+                $("#Comp_Number").empty();
+                $("#Comp_Number").val(data.Contact);
+            }
+        });
+    }
+
+    function Load_GoogleMaps() {
+        var map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function WORK_HEIGHT_LOAD_ALL_BU(selectedValue) {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.BUSINESS_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function WORK_HEIGHT_LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            Wah_FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function Wah_FnZone_Id(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        //$(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            debugger;
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+            //Wah_Fn_Community(Community_Id, Building_Id);
+
+        });
+
+    }
+    function Wah_Fn_Community(Community_Id, Building_Id) {
+        var Zone_Id = $("#Wah_Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+
+    }
+
+    function WORK_HEIGHT_LOAD_CONTRACT_DRP(Email) {
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: Email }, function (data) {
+            $("#Contractor_Id").empty();
+            $("#Contractor_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Contractor_Id").append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+        });
+    }
+
+
+    var Count = 1;
+    function LoadWorkHeightQuestion() {
+        $.post("@Url.Action("Get_All_Work_Height_Question","ControlOfWork")", function (data) {
+            if (data != null) {
+                $(UI_Fields.WORK_At_HEIGHT_QUESTION).empty();
+                $.each(data, function (key, value) {
+                    var varTopics = "Topics" + Count;
+                    var varcheck = "Check" + Count;
+                    var varCompliantName = "Check_Id" + Count;
+                    var varRemarks = "Remarks" + Count;
+                    var varmajorworkid = "HSE_Work_Id" + Count;
+                    var Datamarkup = "";
+                    Datamarkup = '<tr><input type="hidden" class="major_HSE_Work_Id" id="' + varmajorworkid + '" value="' + value.Major_HSE_Work_Id + '"/><td class="Question_Name"><label class="col-form-label" id="' + varTopics + '">' + value.Major_Questionnaires_Name + '</label></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="Yes" style="vertical-align: middle;"onclick="Fn_CheckHide($.this,' + "'" + varRemarks + "'" + ')"/></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="No" style="vertical-align: middle;" onclick="Fn_Check($.this,' + "'" + varRemarks + "'" + ')"/></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="NA" style="vertical-align: middle;" onclick="Fn_Check($.this,' + "'" + varRemarks + "'" + ')"/></td><td><textarea class="form-control Remarks required" name="' + varRemarks + '" id="' + varRemarks + '" style="width: 200px; height: 6px;display:none;"></textarea></td></tr>'
+                    $("#Tbl_Work_At_Height_Ques").append(Datamarkup);
+                    Count++;
+                });
+            }
+        });
+
+    }
+
+    function Fn_CheckHide(Val, App_Id) {
+        $("#" + Val).hide();
+        $("#" + App_Id).hide();
+        $("#" + App_Id).val('');
+    }
+    function Fn_Check(Val, App_Id) {
+        $("#" + Val).show();
+        $("#" + App_Id).show();
+    }
+
+    function WAH_Fn_Contractor(Email) {
+        $("#C_Tittle_No").empty();
+        $("#Con_End").empty();
+        $("#Con_Start").empty();
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: Email }, function (data) {
+            $("#C_Company_Name").val(data.Company_Name);
+            $("#C_Tittle_No").val(data.Purchase_Order_Number);
+            $("#Con_End").val(data.Contract_End_Date);
+            $("#Con_Start").val(data.Contract_Start_Date);
+            WAH_Get_Edit_Business_Unit("#Wah_Business_Unit_Id", data.Business_Unit_Id);
+            WAH_Get_Edit_Zone_Unit("#Wah_Zone_Id", data.Zone_Id, data.Community_Id);
+            $("#Wah_Building_Id").removeAttr('disabled');
+            $("#C_Competent").empty();
+            $("#C_Competent").removeAttr('disabled');
+            if (data._Competent_Person != null && data._Competent_Person.length > 0) {
+                $("#C_Competent").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Competent_Person).each(function (i, e) {
+                    $("#C_Competent").append("<option value=" + e.Work_Superviosor_Id + ">" + e.Name_Position + "</option>");
+                });
+            }
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $("#Wah_Building_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $("#Wah_Building_Id").append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+        });
+    }
+
+    function WAH_Get_Edit_Business_Unit(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields.BUSINESS_ID).empty();
+                $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function WAH_Get_Edit_Zone_Unit(controlid, selectedValue, Community_Id, Building_Id) {
+        $(controlid).html("");
+        $(UI_Fields.BUILDING_ID).removeAttr('disabled');
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            Wah_FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function WAH_Staff_File_Upload(inputId, UploadPhotoId, StaffDiv) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + StaffDiv).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_Method_File_Upload(inputId, UploadPhotoId, Method_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Method_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_Risk_File_Upload(inputId, UploadPhotoId, RiskDiv) {
+        debugger;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + RiskDiv).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_Emr_File_Upload(inputId, UploadPhotoId, EmrDiv) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + EmrDiv).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_HSE_File_Upload(inputId, UploadPhotoId, HseDiv) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + HseDiv).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_Signed_File_Upload(inputId, UploadPhotoId, HSE_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + HSE_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function WAH_Get_Edit_DMS_No_Edit(controlid, selectedValue) {
+        var loginemail = '@LoginClass.Email_Id';
+        $(controlid).html("");
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: loginemail }, function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function WAH_Get_Comp_Person_Edit(controlid, selectedValue, DMS_ID, Build_Id, Selected_Build_Id) {
+        $(controlid).html("");
+        $(Build_Id).html("");
+        $(controlid).removeAttr('disabled');
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: DMS_ID }, function (data) {
+            $(controlid).empty();
+            $(Build_Id).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            if (data._Competent_Person != null && data._Competent_Person.length > 0) {
+                $(data._Competent_Person).each(function (i, e) {
+                    $(controlid).append("<option value=" + e.Work_Superviosor_Id + ">" + e.Name_Position + "</option>");
+                });
+            }
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $(Build_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $(Build_Id).append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            if (Selected_Build_Id != null)
+                $(Build_Id).val(Selected_Build_Id);
+        });
+    }
+</script>

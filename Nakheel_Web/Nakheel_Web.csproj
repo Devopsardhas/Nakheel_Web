@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.15" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.17.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.19" />
+    <PackageReference Include="SqlTableDependency" Version="8.5.8" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AuditData\Audit_Welfare.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Audit_Welfare.xsd</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AuditData\Audit_Welfare.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Audit_Welfare.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

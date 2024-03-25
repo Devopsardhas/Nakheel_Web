@@ -1,0 +1,1136 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Security Incident Reporting";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .pac-container {
+        z-index: 100000;
+    }
+</style>
+<style>
+    .tbl_card {
+        width: 100%;
+        display: flow;
+        min-height: 236px;
+        overflow-y: scroll !important;
+        height: 100px;
+    }
+
+    .txt_lable {
+        font-family: 'Nakheel-Textregular';
+        margin-left: 18%;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .accordion-header .accordion-button {
+        background-color: #1b334a !important;
+        border-radius: 13px;
+    }
+
+    .accordion-body {
+        font-family: 'Nakheel-Textregular';
+        background: #f7f9fc;
+        border-radius: 9px;
+    }
+
+    .dashboardtopdiv {
+        background-color: #1b334a !important;
+    }
+
+    .FilterHead {
+        color: whitesmoke;
+    }
+    /*.card-header-filter {
+            padding: 6px !important;
+            margin-bottom: 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eff0f2;
+            background: #1b334a;
+            color: #fff;
+        }*/
+    .accordion-button {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        width: 100%;
+        padding: 0.5rem 1.25rem;
+        font-size: .875rem;
+        color: #545965;
+        text-align: left;
+        border: 0;
+        /*overflow-anchor: none;*/
+    }
+</style>
+@*Grid View*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Security Incident</h4></div>
+                    @* @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                    {*@
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Security Incident</button>
+                    </div>
+                    @* }
+                    else
+                    {
+                    <div class="col-lg-2" style="padding:13px"></div>
+                    }*@
+                </div>
+            </div>
+            <div class="card-body">
+                @*FILTER OPTIONS*@
+              @*  <div class="accordion">
+                    <div class="accordion-item">
+                        <h1 class="accordion-header" id="HD1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#SHD1" aria-expanded="false" aria-controls="SHD1">
+                                <h5 class="FilterHead">FILTER OPTIONS</h5>
+                            </button>
+                        </h1>
+                        <div id="SHD1" class="accordion-collapse collapse" aria-labelledby="HD1">
+                            <div class="accordion-body">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-2">
+                                        <label>Year</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Year">
+                                            <option value="2023" style="text-align:center">2022-2023</option>
+                                            <option value="2022" style="text-align:center">2021-2022</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Zone</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Zone" onchange="Fn_Zone(this.value)">
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Community</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Community" onchange="Fn_Community(this.value)">
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="col-md-4 col-form-label">Building</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Building">
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Incident Category</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Master_Community">
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Incident Type</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Master_Community">
+                                        </select>
+                                    </div>
+                                    <br />
+                                    <div class="col-lg-3">
+                                        <label>Severity</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Year">
+                                            <option value="0" style="text-align:center disabled selected="selected">--Select Severity--</option>
+                                            <option value="2023" style="text-align:center">Major</option>
+                                            <option value="2022" style="text-align:center">Minor</option>
+                                            <option value="2022" style="text-align:center">Critical</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label>Method of Report</label>
+                                        <select class="form-select rounded-pill InputField" id="Drp_Year">
+                                            <option value="0" style="text-align:center disabled selected="selected">--Select Method of Report--</option>
+                                            <option value="2023" style="text-align:center">Verbal</option>
+                                            <option value="2022" style="text-align:center">By Email</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <br />
+                                        <button type="button" class="btn btn-success waves-effect waves-light" id="Submit_Filter">
+                                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <br />
+                                        <button type="button" class="btn btn-success waves-effect waves-light" id="Clr_Filter">
+                                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Clear Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                <table id="tblSecurityIncident" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th> ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Building</th>
+                            <th>Category</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetSecurityIncList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" id="Add_Sec_Incident" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Security Incident</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- End Card Header -->
+            <div class="card-body">
+                <form id="Sec_Incident_Report" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="Sec_Inc_Id" id="Sec_Inc_Id" value="0">
+                            <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Created By</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Sec_Report_By" value="@LoginClass.First_Name" name="Sec_Report_By" disabled>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label" id="lblSecDate">Date of Incident<span class="requ">*</span></label><br />
+                                <div class="col-md-8">
+                                    <input type="date" class="form-control" name="Incident_Date" id="Incident_Date" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Incident Category<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control SelIncident_Category" name="Sec_Inc_Cat" id="Sec_Inc_Cat" onchange="Fn_SubCate(this.value)" required>
+                                    </select>
+                                </div>
+                                <br />
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Id" id="CZone_Id" onchange="Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Community" id="CCommunity_Id" onchange="Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Block/Apartment</label>
+                                <div class="col-md-8">
+                                    @*<input type="text" class="form-control" id="Location" name="Location" maxlength="150">*@
+                                    <select class="form-control" name="Location" id="Location">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Severity <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Sec_Inc_Serv" name="Sec_Inc_Serv">
+                                        <option value="0" disabled selected="selected">--Select Severity--</option>
+                                        <option value="Major">Major</option>
+                                        <option value="Minor">Minor</option>
+                                        <option value="Critical">Critical</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Reported By</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Reported_By" name="Reported_By" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label" id="lblSecDate">Time of Incident<span class="requ">*</span></label><br />
+                                <div class="col-md-8">
+                                    <input type="time" class="form-control" name="Incident_Time" id="Incident_Time" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Sub Category <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control SelSubIncident_Category" name="Sec_Inc_Sub_Name" id="Sec_Inc_Sub_Name" onchange="Fn_DepSec(this.value)" required>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Department/Section<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control SelDeptSection" id="Sec_DeptSection" name="Sec_DeptSection">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Building/Cluster/Fronds/ District<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Building_Id" id="CBuilding_Id" onchange="Fn_Building(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Sub Location/ Villa No/ Apartment No<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    @*<input type="text" class="form-control" id="Sub_Location" name="Sub_Location" maxlength="50">*@
+                                    <select class="form-control" name="Sub_Location" id="Sub_Location">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Method of Report <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Sec_Method" name="Sec_Method">
+                                        <option value="0" disabled selected="selected">--Select--</option>
+                                        <option value="Verbal">Verbal</option>
+                                        <option value="By Email">By Email</option>
+                                        <option value="Walk-In">Walk-In</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="form-model" id="Medical">Medical Assistance<span class="requ">*</span>: &nbsp</label>
+                                    <label for="AssistanceYes"><input type="radio" value="Yes" name="Assistance" class="Assistance" id="AssistanceYes">&nbsp Yes</label>
+                                    <label for="AssistanceNo"><input type="radio" value="No" name="Assistance" class="Assistance" id="AssistanceNo">&nbsp No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="form-model" id="Pol_Enquiry">Police Enquiry<span class="requ">*</span>: &nbsp</label>
+                                    <label for="EnquiryYes"><input type="radio" value="Yes" name="Enquiry" class="Enquiry" id="EnquiryYes">&nbsp Yes</label>
+                                    <label for="EnquiryNo"><input type="radio" value="No" name="Enquiry" class="Enquiry" id="EnquiryNo">&nbsp No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="form-model" id="Propert_Dem">Property Damage<span class="requ">*</span>: &nbsp</label>
+                                    <label for="DamageYes"><input type="radio" value="Yes" name="Damage" class="Damage" id="DamageYes">&nbsp Yes</label>
+                                    <label for="DamageNo"><input type="radio" value="No" name="Damage" class="Damage" id="DamageNo">&nbsp No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8" style="display:none" id="Provided_by_Whom">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Provided by Whom?<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Provider" name="Provider">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Police">
+                                <div class="mb-3">
+                                    <label class="form-label" for="Email_Id">Police<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Sec_Police" name="Sec_Police">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Pol_Vechicle_Number">
+                                <div class="mb-3">
+                                    <label class="form-label" for="Email_Id">Police Vehicle Number<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id=" Vechicle_Number" name=" Vechicle_Number">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Recovery_Vechicle">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Recovery Vehicle<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Recovery" name="Recovery">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="CID">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">CID<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Sec_CID" name="Sec_CID">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Ambulance">
+                                <div class="mb-3">
+                                    <label for="" class="form-model" Id="Ambul">Ambulance<span class="requ">*</span>: &nbsp</label>
+                                    <label for="Sec_AmbYes"><input type="radio" value="Yes" name="Sec_Amb" class="Sec_Amb" id="Sec_AmbYes">&nbsp Yes</label>
+                                    <label for="Sec_AmbNo"><input type="radio" value="No" name="Sec_Amb" class="Sec_Amb" id="Sec_AmbNo">&nbsp No</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Amb_Number">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Ambulance Vehicle Number</label>
+                                    <input type="text" class="form-control" id="Ambulance_Vechicle" name="Ambulance_Vechicle">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Injured_Person">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Name Injured Person</label>
+                                    <input type="text" class="form-control" id="Injured" name="Injured">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Sec_Address">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Address</label>
+                                    <input type="text" class="form-control" id="Address" name="Address">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Sec_Age">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Approximate Age</label>
+                                    <input type="text" class="form-control" id="Age" name="Age">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Sec_Witnesses">
+                                <div class="mb-3">
+                                    <label class="form-label" for="">Witnesses</label>
+                                    <input type="text" class="form-control" id="Witnesses" name="Witnesses">
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="display:none" id="Detail_Damage">
+                                <div class="mb-3">
+                                    <label class="form-label" for="Email_Id">Details Of Damage<span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Details_Of_Damage" name="Details_Of_Damage">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Complaint<span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Sec_Complaint" name="Sec_Complaint"></textarea>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">How Did Incident Occur?<span class="requ">*</span></h4>
+                                        <div class="col-lg-2" style="padding:13px"></div>
+                                    </div><!-- end card header -->
+                                    <div class="card-body" id="Sec_Inc_Occur">
+                                        <div class="form-control ckeditor" name="Sec_Inc_Occur" id="ckeditor-classic-new"></div>
+                                    </div>
+                                </div>
+                            </div><!-- end col-->
+                        </div><!-- end row -->
+                        <!-- Photo & Video Uploading -->
+                        <div class="row">
+                            <div class="">
+                                <label for="example-number-input" class="col-md-2 col-form-label"> Upload Files</label>
+                                <div class="row mb-3" id="MediaDiv">
+                                    <div class="form-group col-md-6">
+                                        <label style="font-weight: 600;">Photos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 30MB</span>
+                                        <div class="">
+                                            <input id="inputPhoto" class="form-control file InputPhoto" onchange="uploadFiles('inputPhoto','IncidentPhotos')" type="file" accept="image/*" multiple>
+                                            <input type="hidden" class="IncidentPhotos" name="IncidentPhotos" id="IncidentPhotos">
+                                            @*<input id="inputPhoto" name="files" type="file" accept="image/*" multiple>*@
+                                        </div>&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label style="font-weight: 600;">Videos</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #c5c5c5">Note: Max Size : 50MB</span>
+                                        <div class="">
+                                            <input id="inputVideo" class="form-control file InputPhoto" onchange="uploadFiles('inputVideo','IncidentVideos')" type="file" accept="video/*">
+                                            <input type="hidden" class="IncidentVideos" name="IncidentVideos" id="IncidentVideos">
+                                            @*<input id="inputVideo" name="files" type="file" accept="video/*" multiple>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3" id="Action_Taken">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Action Taken Description</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Sec_ActionTaken" name="Sec_ActionTaken"></textarea>
+                                </div>
+                            </div>
+                        </div><!-- end row -->
+                        <div class="row">
+                            <div class="mb-3 ">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Comments</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Sec_Comment" name="Sec_Comment"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 ">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Recommended</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Sec_Recommended" name="Sec_Recommended"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label class="col-md-4 col-form-label" id="lblEscalation">Escalation<span class="requ">*</span></label><br />
+                                <div class="col-md-8">
+                                    <label for="EscalationYes"><input type="radio" value="Yes" name="Escalation" class="Escalation" id="EscalationYes">&nbsp; Yes</label>
+                                    <label for="EscalationNo"><input type="radio" value="No" name="Escalation" class="Escalation" id="EscalationNo">&nbsp; No</label>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Report_To_Show" style="display:none;">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Reported To</label>
+                                <div class="col-md-8">
+                                    <select class="form-control Sec_Report_To" name="Sec_Report_To" id="Sec_Report_To" style="height:150px;" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Further_Axn" style="display:none;">
+                                <label class="col-md-4 col-form-label" id="Further_Action">Further Action Needed?<span class="requ">*</span></label><br />
+                                <div class="col-md-8">
+                                    <label for="ActionYes"><input type="radio" value="Yes" name="Further_Action" class="Further_Action" id="ActionYes">&nbsp; Yes</label>
+                                    <label for="ActionNo"><input type="radio" value="No" name="Further_Action" class="Further_Action" id="ActionNo">&nbsp; No</label>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Incident Status <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Sec_Inc_Status" name="Sec_Inc_Status">
+                                        <option value="0" disabled selected="selected">--Select--</option>
+                                        <option value="Open">Open</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="Search_Key" class="col-md-4 col-form-label text-muted">Search Key</label>
+                                <div class="col-md-8" id="Search_Key">
+                                    <input class="form-control" id="Search_Key" type="text" placeholder="Enter Key Words" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Assigned_To" style="display:none;">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Assigned To</label>
+                                <div class="col-md-8">
+                                    <select class="form-control Sec_Assign_To" name="Sec_Assign_To" id="Sec_Assign_To" style="height:150px;" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Related Incident</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Sec_Related_Inc" name="Sec_Related_Inc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" align="center">
+                                <button type="submit" class="btn btn-success waves-effect waves-light" id="Sec_Inc_Submit">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                </button>
+                                <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+<div id="Sec_Incident_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Security Incident Report</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewSecback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewSecurityIncList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/secincidentvalidation/secincidentvalidate.js"></script>
+<script src="~/assets/js/secincidentvalidation/serversidedatatable_securityincident.js"></script>
+<script src="~/assets/js/pages/form-advanced.init.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        LIST_VIEW: "#List_View",
+        ADD_SEC_INCIDENT: "#Add_Sec_Incident",
+        BTN_BACK: "#btn_back",
+        BTN_ADD_INC: "#btn_add_incident",
+        INCIDENT_CATEGORY: ".SelIncident_Category",
+        SUB_INC_CATE: ".SelSubIncident_Category",
+        REPORTED_TO: "#Sec_Report_To",
+        ASSIGNED_TO: "#Sec_Assign_To",
+        TBODY_TABLE: "#GetSecurityIncList",
+        MAIN_TABLE: "#tblSecurityIncident",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        M_ZONE: "#CZone_Id",
+        COMMUNITY_ID: "#CCommunity_Id",
+        BUILDING_ID: "#CBuilding_Id",
+        MODULE_ID: "#Sec_Inc_Id",
+        SEC_INCIDENT: "#Sec_Inc_Cat",
+        DEPTSECTION: ".SelDeptSection",
+        VIEWBTNBACK: "#btn_ViewSecback",
+        ADDMORE_CORRECTIVE_ACTION: "#GetCorrectiveActionList",
+        SEC_INCIDENT_VIEW: "#Sec_Incident_View",
+        VIEW_SECURITY_INC_LIST: "#ViewSecurityIncList",
+        LOCATION: "#Location",
+        SUB_LOCATION: "#Sub_Location"
+    });
+    var key_nmew = 100;
+    $(document).ready(function () {
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Sec_Inc_Cat");
+        ApplySelect2("#Sec_Report_To");
+        ApplySelect2("#Sec_Assign_To");
+        ApplySelect2("#Location");
+        ApplySelect2("#Sub_Location");
+        Security_Incident_ServerTable();
+        $(UI_Fields.LIST_VIEW).show(100);
+        $(UI_Fields.ADD_SEC_INCIDENT).hide(100);
+
+        var $el1 = $("#inputPhoto");
+        $el1.fileinput({
+            allowedFileExtensions: ['jpg', 'png', 'jpeg', 'bmp'],
+            uploadUrl: '/SecurityIncident/SecurityUploadPhotoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el1.fileinput("upload");
+        });
+
+        var $el2 = $("#inputVideo");
+        $el2.fileinput({
+            allowedFileExtensions: ['mp4', 'avi', 'flv'],
+            uploadUrl: '/SecurityIncident/SecurityUploadVideoFiles',
+            uploadAsync: false,
+            //deleteUrl: '/Incident/DeletePhotoFiles',
+            showRemove: false,
+            showUpload: false, // hide upload button
+            overwriteInitial: false, // append files to initial preview
+            minFileCount: 1,
+            maxFileCount: 5,
+            browseOnZoneClick: true,
+            initialPreviewAsData: true,
+        }).on("filebatchselected", function (event, files) {
+            $el2.fileinput("upload");
+        });
+        //ServerSideTable_Security();
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_SEC_INCIDENT).hide(100);
+        });
+
+        $(UI_Fields.VIEWBTNBACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_SEC_INCIDENT).hide(100);
+            $(UI_Fields.SEC_INCIDENT_VIEW).hide(100);
+        });
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            LOAD_INC_CAT();
+            LOAD_ZONE();
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_SEC_INCIDENT).show(100);
+            FN_Add_Corrective_Actions();
+        });
+        ClassicEditor.create(document.querySelector("#Action_Des")).then(function (e) {
+            e.ui.view.editable.element.style.height = "200px"
+        }).catch(function (e) {
+            console.error(e)
+        });
+
+        ClassicEditor.create(document.querySelector("#ckeditor-classic-new")).then(function (e) {
+            e.ui.view.editable.element.style.height = "200px"
+        }).catch(function (e) {
+            console.error(e)
+        });
+        var quill = new Quill("#snow-editor", {
+            theme: "snow",
+            modules: {
+                toolbar: [
+                    [{
+                        font: []
+                    }, {
+                        size: []
+                    }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{
+                        color: []
+                    }, {
+                        background: []
+                    }],
+                    [{
+                        script: "super"
+                    }, {
+                        script: "sub"
+                    }],
+                    [{
+                        header: [!1, 1, 2, 3, 4, 5, 6]
+                    }, "blockquote", "code-block"],
+                    [{
+                        list: "ordered"
+                    }, {
+                        list: "bullet"
+                    }, {
+                        indent: "-1"
+                    }, {
+                        indent: "+1"
+                    }],
+                    ["direction", {
+                        align: []
+                    }],
+                    ["link", "image", "video"],
+                    ["clean"]
+                ]
+            }
+        }),
+            quill = new Quill("#bubble-editor", {
+                theme: "bubble"
+            });
+    })
+</script>
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function LOAD_INC_CAT() {
+        $.post("@Url.Action("LoadAllSecInc_Cat", "SecurityIncident")", function (data) {
+            debugger
+            $(UI_Fields.INCIDENT_CATEGORY).empty();
+            $(UI_Fields.INCIDENT_CATEGORY).append("<option selected value='0' style='text-align:center' disabled> --Select Incident Category--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.INCIDENT_CATEGORY).append("<option value=" + e.Sec_Inc_Category_Id + ">" + e.Sec_Inc_Category_Name + "</option>");
+            });
+        });
+    }
+    function Fn_SubCate(Sec_Inc_Category_Id) {
+        $.post("@Url.Action("LoadSubCategory_GetById", "SecurityIncident")", { Sec_Inc_Category_Id: Sec_Inc_Category_Id }, function (data) {
+            debugger
+            $(UI_Fields.SUB_INC_CATE).empty();
+            $(UI_Fields.SUB_INC_CATE).append("<option selected value='0'style='text-align:center'  disabled>--Select Sub Category--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SUB_INC_CATE).append("<option value=" + e.Sec_Sub_Cat_Id + ">" + e.Sec_Inc_Method + "</option>");
+            });
+        });
+    }
+    function Fn_DepSec(Sec_Inc_Sub_cat_Id) {
+        $.post("@Url.Action("LoadDeptSection_GetAll", "SecurityIncident")", { Sec_Sub_Cat_Id: Sec_Inc_Sub_cat_Id }, function (data) {
+            $(UI_Fields.DEPTSECTION).empty();
+            $(UI_Fields.DEPTSECTION).append("<option selected value='0'style='text-align:center'  disabled>--Select Department/Section--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.DEPTSECTION).append("<option value=" + e.Sec_Sub_Cat_Id + ">" + e.Sec_DeptSection + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#CZone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            LOAD_REPORTEDEMP_FILTERS('SecurityTeam', Zone_Id, Community_Id);
+            LOAD_ASSIGNEDEMP_FILTERS('SecurityTeamPlus', Zone_Id, Community_Id);
+        });
+    }
+    function Fn_Building(Building_Id) {
+        var Zone_Id = $("#CZone_Id").val();
+        var Community_Id = $("#CCommunity_Id").val();
+        $.post("@Url.Action("LoadAllLocationbyBuilding", "SecurityIncident")", { Zone_Id: Zone_Id, Community_Id: Community_Id, Building_Id: Building_Id }, function (data) {
+            $(UI_Fields.LOCATION).empty();
+            $(UI_Fields.LOCATION).append("<option selected value='0'style='text-align:center'  disabled>--Select Location--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.LOCATION).append("<option value=" + e.Location_Id + ">" + e.Location_Name + "</option>");
+            });
+            Fn_Sub_Location(Building_Id);
+        });
+    }
+    function Fn_Sub_Location(Building_Id) {
+        var Zone_Id = $("#CZone_Id").val();
+        var Community_Id = $("#CCommunity_Id").val();
+        $.post("@Url.Action("LoadAllLocationbyBuilding", "SecurityIncident")", { Zone_Id: Zone_Id, Community_Id: Community_Id, Building_Id: Building_Id }, function (data) {
+            $(UI_Fields.SUB_LOCATION).empty();
+            $(UI_Fields.SUB_LOCATION).append("<option selected value='0'style='text-align:center'  disabled>--Select Sub Location--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.SUB_LOCATION).append("<option value=" + e.Sub_Location_Id + ">" + e.Sub_Location_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_REPORTEDEMP_FILTERS(Role_Name, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.REPORTED_TO).empty();
+            $(UI_Fields.REPORTED_TO).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.REPORTED_TO).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ASSIGNEDEMP_FILTERS(Role_Name, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.ASSIGNED_TO).empty();
+            $(UI_Fields.ASSIGNED_TO).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ASSIGNED_TO).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    $('input[name="Assistance"]').on('click', function () {
+        if ($(this).val() == 'Yes') {
+            $("#Provided_by_Whom").show();
+        }
+        else {
+            $("#Provided_by_Whom").hide();
+        }
+    });
+    $('input[name="Enquiry"]').on('click', function () {
+        if ($(this).val() == 'Yes') {
+            $("#Police").show();
+            $("#Recovery_Vechicle").show();
+            $("#CID").show();
+            $("#Ambulance").show();
+            $("#Pol_Vechicle_Number").show();
+        }
+        else {
+            $("#Police").hide();
+            $("#Recovery_Vechicle").hide();
+            $("#CID").hide();
+            $("#Ambulance").hide();
+            $("#Pol_Vechicle_Number").hide();
+            $("#Amb_Number").hide();
+            $("#Injured_Person").hide();
+            $("#Sec_Address").hide();
+            $("#Sec_Age").hide();
+            $("#Sec_Witnesses").hide();
+            $(".Sec_Amb").prop('checked', false);
+        }
+    });
+    $('input[name="Damage"]').on('click', function () {
+        if ($(this).val() == 'Yes') {
+            $("#Detail_Damage").show();
+        }
+        else {
+            $("#Detail_Damage").hide();
+        }
+    });
+    $('input[name="Sec_Amb"]').on('click', function () {
+        if ($(this).val() == 'No') {
+            $("#Injured_Person").show();
+            $("#Sec_Address").show();
+            $("#Sec_Age").show();
+            $("#Sec_Witnesses").show();
+            $("#Amb_Number").hide();
+        }
+        else {
+            $("#Injured_Person").hide();
+            $("#Sec_Address").hide();
+            $("#Sec_Age").hide();
+            $("#Sec_Witnesses").hide();
+            $("#Amb_Number").show();
+        }
+    });
+    $('input[name="Escalation"]').on('click', function () {
+        if ($(this).val() == 'Yes') {
+            $("#Report_To_Show").show();
+            $("#Further_Axn").show();
+        }
+        else {
+            $("#Report_To_Show").hide();
+            $("#Further_Axn").hide();
+            $("#Assigned_To").hide();
+            $(".Further_Action").prop('checked', false);
+        }
+    });
+    $('input[name="Further_Action"]').on('click', function () {
+        if ($(this).val() == 'Yes') {
+            $("#Assigned_To").show();
+        }
+        else {
+            $("#Assigned_To").hide();
+        }
+    });
+    $("#Sec_Check_other_Doc").click(function () {
+        var other = $("#Sec_Check_other_Doc").is(":checked");
+        if (other == true) {
+            $("#Sec_Other_Document").show();
+        }
+        else {
+            $("#Sec_Other_Document").hide();
+        }
+    });
+
+    function Sec_Applicalbe_Documents_File(val, clsname, PhotoId) {
+        debugger;
+        alert(val + ' - ' + clsname + ' - ' + PhotoId);
+        readImage(val, clsname);
+        $("#" + PhotoId).hide();
+    }
+    function uploadFiles(inputId, UploadPhotoId) {
+        //debugger;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function readImage(input, clsname) {
+        debugger;
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoDataApplicableReports", "SecurityIncident")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    $("#Loaderbck").hide();
+                    $("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+    function Edit(id) {
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $(UI_Fields.ADD_SEC_INCIDENT).show(100);
+
+        $.post("@Url.Action("Sec_Inc_Report_GetByID", "SecurityIncident")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Sec_Inc_Report_Id);
+            $(UI_Fields.SEC_INCIDENT).append("<option value=" + data.Sec_Inc_Category_Id + ">" + data.Sec_Inc_Category_Name + "</option>");
+            $(UI_Fields.SERVERITY).val(data.Sec_Inc_Serverity);
+            $(UI_Fields.COMPLAINT).val(data.Sec_Inc_Complaint);
+            $(UI_Fields.METHOD).val(data.Sec_Inc_Method);
+            $(UI_Fields.M_ZONE).append("<option value=" + data.Zone_Id + ">" + data.Zone_Name + "</option>");
+            $(UI_Fields.COMMUNITY_ID).append("<option value=" + data.Community_Id + ">" + data.Community_Master_Name + "</option>");
+            $(UI_Fields.BUILDING_ID).append("<option value=" + data.Building_Id + ">" + data.Building_Name + "</option>");
+            $(UI_Fields.INC_OCCUR).val(data.Sec_Inc_Occur);
+            $("#inputPhoto").val(data.Photo_File_Path);
+            $("#VideoPhoto").val(data.Photo_File_Path);
+            $(UI_Fields.VIEW_EMPLOYEE).val("<option value=" + data.Employee_Identity_Id + ">" + data.First_Name + "</option>");
+            $(UI_Fields.ASSIGN_EMPLOYEE).val("<option value=" + data.Employee_Identity_Id + ">" + data.First_Name + "</option>");
+            $(UI_Fields.RELATED_INC).val(data.Sec_Related_Incident);
+            $(UI_Fields.SEC_ACTION).val(data.Sec_Action);
+            $(UI_Fields.SEC_COMMENT).val(data.Sec_Comments);
+            $(UI_Fields.INC_STATUS).val(data.Sec_Inc_Status);
+            $(UI_Fields.SEC_SEARCH).val(data.Sec_Search_key);
+            $("input[name=Assistance][value=" + data.Sec_Medical_Assistance + "]").attr('checked', 'checked');
+            //$(UI_Fields.MEDICAL).val(data.Sec_Medical_Assistance);
+            $(UI_Fields.SEC_PROVIDER).val(data.Sec_Provider);
+            $("input[name=Enquiry][value=" + data.Sec_Police_Enquire + "]").attr('checked', 'checked');
+            //$(UI_Fields.POLICE_ENQ).val(data.Sec_Police_Enquire);
+            $(UI_Fields.POLICE).val(data.Sec_Police);
+            $(UI_Fields.RECOVER_VECHICLE).val(data.Sec_Recovery_Vechicle);
+            $(UI_Fields.SEC_CID).val(data.Sec_CID);
+            $("input[name=Sec_Amb][value=" + data.Sec_Ambulance + "]").attr('checked', 'checked');
+            //$(UI_Fields.SEC_AMUBULANCE).val(data.Sec_Ambulance);
+            $(UI_Fields.SEC_INURED_PERSON).val(data.Sec_Injure_Person);
+            $(UI_Fields.SEC_ADDRESS).val(data.Sec_Address);
+            $(UI_Fields.SEC_AGE).val(data.Sec_Approxi_Age);
+            $(UI_Fields.SEC_WIT).val(data.Sec_Witnesses);
+            $("input[name=Demage][value=" + data.Sec_Demage + "]").attr('checked', 'checked');
+            //$(UI_Fields.SEC_DEMAGE).val(data.Sec_Demage);
+            $(UI_Fields.DETAIL_DEMAGE).val(data.Sec_Details_Demage);
+            $(UI_Fields.SEC_INC_TYPE).val(data.Sec_Inc_Type);
+        });
+    }
+    function Delete(id) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Sec_Inc_Report_Delete", "SecurityIncident"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    //Redirection Page
+    function FnSec_ActionTaken(id) {
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $.post("@Url.Action("ViewSecurityIncidentReport", "SecurityIncident")", { Sec_Inc_Report_Id: id }, function (data) {
+            $(UI_Fields.VIEW_SECURITY_INC_LIST).html('');
+            $(UI_Fields.VIEW_SECURITY_INC_LIST).html(data);
+        }).always(function () {
+            $(UI_Fields.SEC_INCIDENT_VIEW).show(100);
+        });
+    }
+    $(UI_Fields.FILTER_SUBMIT).click(function () {
+        debugger;
+        var ZoneId = $("#Drp_Zone").val();
+        var CommunityId = $("#Drp_Community").val();
+        var Building = $("#Drp_Building").val();
+        var Category = $("#Drp_Inc_Cate").val();
+        var SubCategory = $("#Drp_Dept_Sec").val();
+
+        if (ZoneId == null) {
+            ZoneId = '0';
+        }
+        if (CommunityId == null) {
+            CommunityId = '0';
+        }
+        if (Building == null) {
+            Building = '0';
+        }
+        if (Category == null) {
+            Category = '0';
+        }
+        if (SubCategory == null) {
+            SubCategory = '0';
+        }
+        $(UI_Fields.MAIN_TABLE).dataTable().fnDestroy();
+        $.post("@Url.Action("Get_Filter_Inc_Sec_List", "SecurityIncident")", { Zone_Id: ZoneId, Community_Id: CommunityId, Building_Id: Building, Sec_Inc_Category_Id: Category, Sec_Sub_Cat_Id: SubCategory }, function (data) {
+            $("#GetSecurityIncList").html('');
+            $("#GetSecurityIncList").html(data);
+        });
+
+    });
+</script>

@@ -1,0 +1,239 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Get_Insp_Leader_Request
+@if (Model != null)
+{
+    if (Model.Get_ById!.Status == "Request Rejected" || Model.Get_ById!.Status == "Request Approval Pending")
+    {
+        @if (Model.Get_ById!.Insp_Request_Reject_List!.Count > 0 && Model.Get_ById!.Insp_Request_Reject_List != null)
+        {
+         <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                               Reject List
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Reject ID</th>
+                                            <th>Reject Reason</th>
+                                            <th>Rejected By</th>
+                                            <th>Created Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Get_ById!.Insp_Request_Reject_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Unique_Id</td>
+                                                <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                <td align="left" valign="middle">@item.CreatedBy</td>
+                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        }
+    }
+    <div id="ViewNotification">
+        <div class="row">
+            @if (Model!.Get_ById != null)
+            {
+                DateTime StartDate = Convert.ToDateTime(Model!.Get_ById!.Inspection_Date);
+                var ViwDate = StartDate.ToString("dd-MMM-yyyy");
+                var Schedule_Type_Name = "";
+                var Other_Attendees = "";
+                @if (@Model!.Get_ById!.Other_Attendees == "")
+                {
+                    Other_Attendees = "NA";
+                }else{
+                    Other_Attendees = @Model!.Get_ById!.Other_Attendees;
+                }
+                @if (@Model!.Get_ById!.Schedule_Type == "semiannually")
+                {
+                    Schedule_Type_Name = "Semi Annually";
+                }
+                else
+                {
+                    Schedule_Type_Name = @Model!.Get_ById!.Schedule_Type;
+                }
+
+                <div class="row">
+                    <input type="hidden" class="form-control Insp_Request_Id" name="Insp_Request_Id" id="Insp_Request_Id" value="@Model!.Get_ById!.Insp_Request_Id">
+
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-firstname-input" class="form-label">
+                                Business Unit <span class="requ">*</span>
+                            </label>
+                            <textarea id="Business_Unit_Name" disabled value="@Model!.Get_ById!.Business_Unit_Name" class="form-control form-control-sm Business_Unit_Name" rows="1">@Model!.Get_ById!.Business_Unit_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Zone <span class="requ">*</span>
+                            </label>
+                            <textarea id="Zone_Name" disabled value="@Model!.Get_ById!.Zone_Name" class="form-control form-control-sm Zone_Name" name="Zone_Name" rows="1">@Model!.Get_ById!.Zone_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Community <span class="requ">*</span>
+                            </label>
+                            <textarea id="Community_Name" disabled value="@Model!.Get_ById!.Community_Name" class="form-control form-control-sm Community_Name" name="Community_Name" rows="1">@Model!.Get_ById!.Community_Name</textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-firstname-input" class="form-label">
+                                Building <span class="requ">*</span>
+                            </label>
+                            <textarea id="Building_Name" disabled value="@Model!.Get_ById!.Building_Name" class="form-control form-control-sm Building_Name" name="Building_Name" rows="1">@Model!.Get_ById!.Building_Name</textarea>
+                        </div>
+                    </div><!-- end col -->
+                </div>
+                <div class="row">
+                     <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Frequency <span class="requ">*</span>
+                            </label>
+                            <textarea id="Schedule_Type" value="@Model!.Get_ById!.Schedule_Type" disabled class="form-control form-control-sm Schedule_Type" name="Schedule_Type" rows="1">@Schedule_Type_Name</textarea>
+                        </div>
+                    </div>
+
+                    @if (@Model!.Get_ById!.Status == "Request Rejected")
+                    {
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Inspection Date <span class="requ">*</span>
+                                </label>
+                                <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                            </div>
+                        </div>
+
+                        <!-- end col -->
+                    }
+                    else if (@Model!.Get_ById!.Status == "Request Approval Pending")
+                    {
+                        if (@Model!.Get_ById!.Insp_Type_Id == "Inspection" && @Model!.Get_ById!.Insp_Category_Name == "Environmental")
+                        {
+                            if (LoginClass.Role_Id == "12" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "13")
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <input class=" form-control form-control-sm Inspection_Date" id="Inspection_Date" type="date" value="@Model!.Get_ById!.Inspection_Date" name="Inspection_Date">
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <input class=" form-control form-control-sm Inspection_Date" id="Inspection_Date" type="date" value="@Model!.Get_ById!.Inspection_Date" name="Inspection_Date">
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label for="basicpill-lastname-input" class="form-label">
+                                            Inspection Date <span class="requ">*</span>
+                                        </label>
+                                        <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+
+
+                        <!-- end col -->
+                    }
+                    else
+                    {
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Inspection Date <span class="requ">*</span>
+                                </label>
+                                <textarea id="Inspection_Date" value="@ViwDate" disabled class="form-control form-control-sm Inspection_Date" name="Inspection_Date" rows="1">@ViwDate</textarea>
+                            </div>
+                        </div>
+
+                        <!-- end col -->
+                    }
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Zone Director <span class="requ">*</span>
+                            </label>
+                            <textarea id="Zone_Director_Name" value="@Model!.Get_ById!.Zone_Director_Name" disabled class="form-control form-control-sm Zone_Director_Name" name="Zone_Director_Name" rows="1">@Model!.Get_ById!.Zone_Director_Name</textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                HSSE Director <span class="requ">*</span>
+                            </label>
+                            <textarea id="HSSE_Director_Name" value="@Model!.Get_ById!.HSSE_Director_Name" disabled class="form-control form-control-sm HSSE_Director_Name" name="HSSE_Director_Name" rows="1">@Model!.Get_ById!.HSSE_Director_Name</textarea>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function () {
+        let minDate = '@DateTime.Now.AddDays(10).ToString("yyyy-MM-dd")';
+        $('#Inspection_Date').attr('min', minDate);
+    });
+</script>

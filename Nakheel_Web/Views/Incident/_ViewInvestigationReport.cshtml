@@ -1,0 +1,2127 @@
+﻿@{
+    Layout = null;
+}
+
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@model Nakheel_Web.Models.IncidentReport.M_Investigation_Report;
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .form-check-input:checked {
+        background-color: #00263a;
+        border-color: #00263a;
+    }
+</style>
+@if (Model != null)
+{
+    <div class="" id="viewnotification">
+        <div class="row">
+            <div class="col-12">
+                <div class="">
+                    <div class="row">
+                        <input type="hidden" id="Investigation_Inc_Id" value="@Model.Inc_Id">
+                        <div class="col-md-4" style="display:none">
+                            <label class="form-label">Total Man Days</label>
+                            <input type="text" class="form-control" placeholder="" aria-label="Phone number" value="@Model.Total_Man_Days" readonly>
+                        </div>
+                        <div class="col-md-4" style="display:none">
+                            <label class="form-label">Involved Department Contractor</label>
+                            <input type="text" class="form-control" placeholder="" aria-label="Phone number" value="@Model.Involved_Department_Contractor" readonly>
+                        </div>
+                        <div class="col-md-12" style="display:none">
+                            <label for="example-number-input" class="col-md-6 col-form-label">Description of the Main Circumstances </label>
+                            <textarea class="form-control" readonly>@Model.Description_circumstances</textarea>
+                        </div>
+                    </div>
+                    @if (Model.L_M_Incident_Notification_Reject.Count > 1)
+                    {
+                        <div class="col-md-12">
+                            <label for="example-number-input" class="col-md-6 col-form-label">
+                                Investigation Reject
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive tblround" style="width:100%;font-size:13px">
+                                <thead>
+                                    <tr>
+                                        <th>Reject Reason Description</th>
+                                        <th>Rejected By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_M_Incident_Notification_Reject!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle"><textarea disabled rows="1" style="height: 82px;width: 100%;">@item.Reject_Reason_Description</textarea></td>
+                                            <td align="left" valign="middle">@item.Rejected_By</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="example-number-input" class="col-md-6 col-form-label">
+                                Applicable Reports
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Document Type</th>
+                                        <th>Yes/No</th>
+                                        <th>Justification / Comments </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Attachements!)
+                                    {
+                                        var extn = item.File_Path!.Split(".").Last();
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Title</td>
+                                            <td align="left" valign="middle">@item.Is_Attachements</td>
+                                            @if (item.Is_Attachements == "Yes")
+                                            {
+                                                @if (extn == "png" || extn == "jpeg")
+                                                {
+                                                    <td align="left" valign="middle"><a href="@item.File_Path" target="_blank"><img src='@item.File_Path' style="height:20px;width:20px" /></a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td align="left" valign="middle">
+                                                        <a href="@item.File_Path" target="_blank"><img src='~/assets/images/pdf.png' style="height:20px;width:20px" /></a>
+                                                    </td>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <td align="left" valign="middle">@item.Attachements_Description</td>
+                                            }
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="example-number-input" class="col-md-6 col-form-label">
+                                Other Parties Involved In The Incident
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Role/Position</th>
+                                        <th>Name</th>
+                                        <th>Contact Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Other_Parties_Involved!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Role_Position</td>
+                                            <td align="left" valign="middle">@item.Other_Name</td>
+                                            <td align="left" valign="middle">@item.Other_Contact_no</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                        <label for="" class="col-md-7 col-form-label">Immediate Cause (Unsafe Act)</label>
+                        <div class="col-md-12">
+                            <div class="row" style="margin-left: 0%;">
+                                <div id="InjuryTypesList" style="display: contents;">
+                                    @{
+                                        if (Model.L_Inves_Immediate_Cause_Unsafe_Act != null)
+                                        {
+                                            @foreach (var item in Model.L_Inves_Immediate_Cause_Unsafe_Act)
+                                            {
+                                                <div class="col-md-3">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                        <label class="form-check-label">@item.Remarks</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div><br />
+                    <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                        <label for="" class="col-md-7 col-form-label">Immediate Cause (Unsafe Conditions)</label>
+                        <div class="col-md-12">
+                            <div class="row" style="margin-left: 0%;">
+                                <div id="InjuryTypesList" style="display: contents;">
+                                    @{
+                                        if (Model.L_Inves_Immediate_Cause_Unsafe_Cond != null)
+                                        {
+                                            @foreach (var item in Model.L_Inves_Immediate_Cause_Unsafe_Cond)
+                                            {
+                                                <div class="col-md-3">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                        <label class="form-check-label">@item.Remarks</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div><br />
+                    <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                        <label for="" class="col-md-7 col-form-label">Root Causes (Personal Factor)</label>
+                        <div class="col-md-12">
+                            <div class="row" style="margin-left: 0%;">
+                                <div id="InjuryTypesList" style="display: contents;">
+                                    @{
+                                        if (Model.L_Inves_Root_Cause_PF != null)
+                                        {
+                                            @foreach (var item in Model.L_Inves_Root_Cause_PF)
+                                            {
+                                                <div class="col-md-3">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                        <label class="form-check-label">@item.Remarks</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div><br />
+                    <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                        <label for="" class="col-md-7 col-form-label">Root Causes (System Factor)</label>
+                        <div class="col-md-12">
+                            <div class="row" style="margin-left: 0%;">
+                                <div id="InjuryTypesList" style="display: contents;">
+                                    @{
+                                        if (Model.L_Inves_Root_Cause_SF != null)
+                                        {
+                                            @foreach (var item in Model.L_Inves_Root_Cause_SF)
+                                            {
+                                                <div class="col-md-3">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                        <label class="form-check-label">@item.Remarks</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div><br />
+
+                    @if (Model.Remarks == "Yes")
+                    {
+                        <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                            <label for="" class="col-md-7 col-form-label">Mechanism Of Injury/ Illness</label>
+                            <div class="col-md-12">
+                                <div class="row" style="margin-left: 0%;">
+                                    <div id="InjuryTypesList" style="display: contents;">
+                                        @{
+                                            if (Model.L_Inves_Mechanism_InjuryIllness != null)
+                                            {
+                                                @foreach (var item in Model.L_Inves_Mechanism_InjuryIllness)
+                                                {
+                                                    <div class="col-md-3">
+                                                        <div class="form-check mb-3">
+                                                            <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                            <label class="form-check-label">@item.Remarks</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div style="background: #f8f9fa;padding: 10px;border-radius: 10px;border: 2px solid #b2b2b2;">
+                            <label for="" class="col-md-7 col-form-label">Agency / Source Of Injury / Illness</label>
+                            <div class="col-md-12">
+                                <div class="row" style="margin-left: 0%;">
+                                    <div id="InjuryTypesList" style="display: contents;">
+                                        @{
+                                            if (Model.L_Inves_AgencySource_InjuryIllness != null)
+                                            {
+                                                @foreach (var item in Model.L_Inves_AgencySource_InjuryIllness)
+                                                {
+                                                    <div class="col-md-3">
+                                                        <div class="form-check mb-3">
+                                                            <input class="form-check-input clsInjury_Illness" checked type="radio">
+                                                            <label class="form-check-label">@item.Remarks</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="example-number-input" class="col-md-12 col-form-label">
+                                Actions Taken Immediately After The Incident
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround " style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Description Of The Actions</th>
+                                        <th>Action Taken By</th>
+                                        <th>Date Completed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Actions_Taken_Immediately!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Description_of_Actions</td>
+                                            <td align="left" valign="middle">@item.Action_Taken_By</td>
+                                            <td align="left" valign="middle">@item.Date_Completed</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="example-number-input" class="col-md-6 col-form-label">
+                                Incident Root Cause(s)
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Description Of Incident Root Cause(s)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Incident_Root_Cause!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Root_Cause_Description</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12" style="display:none">
+                            <label class="form-label">
+                                Declarations and Approvals
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Report Status</th>
+                                        <th>HSSE Representative</th>
+                                        <th>Department Representative</th>
+                                        <th>Other Representative</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Declarations_Approvals!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Report_Status</td>
+                                            <td align="left" valign="middle">@item.HSSE_Representative_Id</td>
+                                            <td align="left" valign="middle">@item.Department_Representative_Id</td>
+                                            <td align="left" valign="middle">@item.Other_Representative_Id</td>
+                                            <td align="left" valign="middle">@item.Date</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12" style="display:none">
+                            <label class="form-label">
+                                Attachments
+                            </label><br>
+                            <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Yes/No</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.L_Inves_Attachements!)
+                                    {
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@item.Title</td>
+                                            <td align="left" valign="middle">@item.Is_Attachements</td>
+                                            <td align="left" valign="middle">@item.Attachements_Description</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @if (Model.Lead_Investigator_Id == LoginClass.Employee_Identity_Id)
+                        {
+                            @if (Model.Status == "11")
+                            {
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-6 col-form-label">
+                                        Corrective Actions to prevent Recurrence
+                                    </label><br>
+                                    @foreach (var item in Model.L_Inves_Complete_Corrective_Actions!)
+                                    {
+                                        <div class="accordion-header" id="panelsStayOpen-@item.Inves_Corrective_Action_Id">
+                                            <div class="accordion-button" type="button" style="border-collapse: collapse;border-radius: 1em;overflow: hidden;">
+                                                <div class="col-lg-6" style="text-align:justify">
+                                                    @item.Description_Actions
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <span class="badge bg-warning" style="float: right;">@item.Priority</span>
+                                                </div>
+                                                <div class="col-lg-3" style="text-align: center;">
+                                                    <span class="">@item.Target_Date</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="panelsStayOpen-@item.Inves_Corrective_Action_Id">
+                                            <div class="accordion-body" style="border-bottom: 1px solid;border-left: 1px solid;border-right: 1px solid;border-radius: 7px;">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach (var evPhotos in item.Evidence_Upload_Photos!)
+                                                        {
+                                                            <strong>@evPhotos.Action_Taken_Description</strong>
+                                                            <br />
+                                                            <br />
+                                                            break;
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        @foreach (var evPhotos in item.Evidence_Upload_Photos!)
+                                                        {
+                                                            <div class="col-md-2">
+                                                                <a href="@evPhotos.Photo_File_Path" target="_blank"><img src='@evPhotos.Photo_File_Path' style="height:150px;width:150px" /></a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    @if (item.Remarks == "4")
+                                                    {
+                                                        <div class="row" id="btn_open_@item.Inves_Corrective_Action_Id">
+                                                            <div class="col-lg-6">
+                                                                <button type="button" onclick="btn_Submit_Action_Closure_Final('@item.Inves_Corrective_Action_Id','@item.Inc_Id','1')" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-lg-6">
+                                                                <button type="button" onclick="btn_Submit_Action_Closure_Final('@item.Inves_Corrective_Action_Id','@item.Inc_Id','1')" class="btn btn-danger waves-effect waves-light submit" style="cursor:pointer">
+                                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="row" id="btn_close_@item.Inves_Corrective_Action_Id">
+                                                            <div class="col-lg-6">
+                                                                <button type="button" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Closed
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-12">
+                                    <label for="example-number-input" class="col-md-6 col-form-label">
+                                        Corrective Actions To Prevent Recurrence
+                                    </label>
+                                    <br>
+                                    <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Required Action</th>
+                                                <th>Action Taken</th>
+                                                <th>Priority (High/Low/Medium)</th>
+                                                <th>Target Date / Completion Date</th>
+                                                <th>Upload Evidence</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.L_Inves_Corrective_Actions!)
+                                            {
+                                                var extn = "";
+                                                if (item.Upload_Evidence != null)
+                                                {
+                                                    extn = item.Upload_Evidence!.Split(".").Last();
+                                                }
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Description_Actions</td>
+                                                    <td align="left" valign="middle">@item.Action_Taken</td>
+                                                    <td align="left" valign="middle">@item.Priority</td>
+                                                    <td align="left" valign="middle">@item.Target_Date</td>
+                                                    @if (extn == "png" || extn == "jpeg")
+                                                    {
+                                                        @if (item.Upload_Evidence == "" || item.Upload_Evidence == null)
+                                                        {
+                                                            <td align="left" valign="middle">N/A</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td align="left" valign="middle"><a href="@item.Upload_Evidence" target="_blank"><img src='@item.Upload_Evidence' style="height:20px;width:20px" /></a></td>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (item.Upload_Evidence == "" || item.Upload_Evidence == null)
+                                                        {
+                                                            <td align="left" valign="middle">N/A</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td align="left" valign="middle">
+                                                                <a href="@item.Upload_Evidence" target="_blank"><img src='~/assets/images/pdf.png' style="height:20px;width:20px;cursor:pointer" /></a>
+                                                            </td>
+                                                        }
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-md-12">
+                                <label for="example-number-input" class="col-md-6 col-form-label">
+                                    Corrective Actions To Prevent Recurrence
+                                </label>
+                                <br>
+                                <table id="tblIncidentInjuredPartsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Required Action</th>
+                                            <th>Action Taken</th>
+                                            <th>Priority (High/Low/Medium)</th>
+                                            <th>Target Date / Completion Date</th>
+                                            <th>Upload Evidence</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.L_Inves_Corrective_Actions!)
+                                        {
+                                            var extn = "";
+                                            if (item.Upload_Evidence != null)
+                                            {
+                                                extn = item.Upload_Evidence!.Split(".").Last();
+                                            }
+
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Description_Actions</td>
+                                                <td align="left" valign="middle">@item.Action_Taken</td>
+                                                <td align="left" valign="middle">@item.Priority</td>
+                                                <td align="left" valign="middle">@item.Target_Date</td>
+                                                @if (extn == "png" || extn == "jpeg")
+                                                {
+                                                    @if (item.Upload_Evidence == "" || item.Upload_Evidence == null)
+                                                    {
+                                                        <td align="left" valign="middle">N/A</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td align="left" valign="middle"><a href="@item.Upload_Evidence" target="_blank"><img src='@item.Upload_Evidence' style="height:20px;width:20px" /></a></td>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @if (item.Upload_Evidence == "" || item.Upload_Evidence == null)
+                                                    {
+                                                        <td align="left" valign="middle">N/A</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td align="left" valign="middle">
+                                                            <a href="@item.Upload_Evidence" target="_blank"><img src='~/assets/images/pdf.png' style="height:20px;width:20px;cursor:pointer" /></a>
+                                                        </td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div><br>
+                </div>
+            </div>
+            @if (LoginClass.Role_Id == "9" ||  LoginClass.Role_Id == "11" || LoginClass.Role_Id == "2")
+            {
+                @if (Model.L_Incident_Update_History != null && Model.L_Incident_Update_History.Count != 0)
+                {
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="mt-xl-0 mt-4">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                                History Of Approval
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Employee Name</th>
+                                                            <th>Role</th>
+                                                            <th>Date and Time</th>
+                                                            <th>Approve Date</th>
+                                                            <th>Status</th>
+                                                            <th>Remarks</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="GettblIncidentHistory">
+                                                        @foreach (var item in Model.L_Incident_Update_History)
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td align="left" valign="middle">@item.Emp_Id</td>
+                                                                <td align="left" valign="middle">@item.Role_Id</td>
+                                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                <td align="left" valign="middle">@item.Status</td>
+                                                                <td align="left" valign="middle">@item.Remarks</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            @if (Model.Status == "6")
+            {
+                @if (LoginClass.Role_Id == "5")
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Approve_ServiceProvid(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" onclick="btn_Approve_ServiceProvid(2,@Model.Inc_Id)" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "13")
+            {
+
+                @if (LoginClass.Employee_Identity_Id == Model.Lead_Investigator_Id)
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="FN_ApproveHralth()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" onclick="btn_Reject__HSE(2,@Model.Inc_Id)" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "7")
+            {
+                @if (LoginClass.Role_Id == "9")
+                {
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Approve_Dir(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" onclick="btn_Approve_Dir(2,@Model.Inc_Id)" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "8")
+            {
+                @if (LoginClass.Role_Id == "2")
+                {
+                    <div class="col-md-12" style="display:none">
+                        <label class="form-label">
+                            HSE Director Approved?
+                        </label>
+                        <br>
+                        <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>Yes</span>
+                    </div>
+
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Approve_Super_Dir(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" onclick="btn_Approve_Super_Dir(2,@Model.Inc_Id)" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "14")
+            {
+                @if (LoginClass.Role_Id == "10")
+                {
+                    <div class="row col-md-8">
+                        <label>Health & Safety - Knowledge shared/ Lesson learned <span><a href="javascript:void(0);" data-bs-toggle="modal" id="btnaddkey" data-bs-target=".add-newhseteam">(Click here to edit the Knowledge shared)</a></span></label>
+                        <a onclick="Fn_Clouser_Report('@Model.Inc_Id','@Model.Unique_Id')" href="javascript:void(0);" title="Health & Safety - Knowledge shared/ Lesson learned" class="text-info" data-bs-original-title="Report" aria-label="Report">&nbsp;&nbsp;&nbsp;<i class="mdi mdi-file-account" style="color:green;font-size:60px;cursor:pointer"></i></a>
+                    </div>
+
+                    <div class="row">
+                        <label for="" style="color:black;" class="form-model">Knowledge Share Details Need to Provide for this Incident?</label>
+                        <label>
+                            <label for="KnowledgeYes"><input type="radio" name="Knowledge_Share_Incident_hse" value="Yes" /> Yes</label>  &nbsp;
+                            <label for="KnowledgeNo"> <input type="radio" name="Knowledge_Share_Incident_hse" value="No" /> No </label>
+                            <br /><label id="txtvalidknowledge" style="color:red"> </label>
+                        </label>
+                    </div>
+
+                    <div class="row col-md-12" style="display:none" id="Circulate_Knowledge">
+                        <label class="form-label">
+                            Circulate Knowledge Share to ?
+                        </label>
+                        <div class="col-md-4">
+                            <select class="form-control" id="KnowledgeZone" name="Zone" multiple>
+                            </select>
+                            <label id="txtvalidknowledgeCirculate" style="color:red"> </label>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Approve_manger_App(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="reset" onclick="btn_Approve_manger_App(2,@Model.Inc_Id)" class="btn btn-danger waves-effect waves-light" style="cursor:pointer;">
+                                    <i class="bx bx-block font-size-16 align-middle me-2"></i> Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "9")
+            {
+                @if (LoginClass.Role_Id == "5")
+                {
+                    <div class="row col-md-12">
+                        <div class="col-md-3" style="display:none">
+                            <label class="form-label">
+                                HSE Director Approved?
+                            </label>
+                            <br>
+                            <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>Yes</span>
+                        </div>
+
+                        <div class="col-md-4" style="display:none">
+                            <label class="form-label">
+                                Supervisor Line Manger Approved?
+                            </label>
+                            <br>
+                            <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub" value="Yes">&nbsp;<span>Yes</span>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">
+                                Assign Actions to?
+                            </label>
+                            <br>
+                            <input type="radio" name="Assign_Action" class="form-check-input" style="vertical-align:sub" value="Supervisor">&nbsp;<span>
+                                Assign Action to Zone Team
+                            </span>
+                            <input type="radio" name="Assign_Action" class="form-check-input" style="vertical-align:sub" value="Service_provider">&nbsp;<span>
+                                Assign action to Service provider
+                            </span>
+                            <br> <label id="txtvalidemailAssign_Action" style="color:red"> </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="tblAssign_Action" style="display:none">
+                        <label class="form-label">
+                            Assign Actions
+                        </label><br>
+                        <table id="tblIncidentInjuredAssignAction" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Required Action</th>
+                                   @* <th>Action Taken</th>*@
+                                    <th>Priority (High/Low/Medium)</th>
+                                    <th>Person Responsible</th>
+                                    <th>Target Date</th>
+                                   @* <th>Upload Evidence</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var i = 1;
+                                    foreach (var item in Model.L_Inves_Corrective_Actions!)
+                                    {
+                                        @if (item.Action_Taken == "" || item.Action_Taken == null)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle" class="Description_Actions">@item.Description_Actions</td>
+                                                <td align="left" valign="middle" class="Priority">@item.Priority</td>
+                                                <td id="Empname">
+                                                    <select class="form-control Action_Employee_Id" name="Action_Employee_Id" id="Action_Employee_Id_@i">
+                                                    </select>
+                                                </td>
+                                                <td align="left" valign="middle"><input type="date" class="form-control Target_Date" value="@item.Target_Date" /></td>
+                                            </tr>
+                                        }
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" onclick="btn_Submit_Action(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (Model.Status == "11")
+            {
+                @if (LoginClass.Employee_Identity_Id == Model.Lead_Investigator_Id)
+                {
+                    <br>
+                    <div class="col-md-12" style="display:none">
+                        <label class="form-label">
+                            Update action
+                            details on the
+                            investigation report
+                        </label>
+                        <textarea class="form-control" id="Update_action_remarks">sssss</textarea>
+                        <label id="txtvalidemailaction_remarks" style="color:red"> </label>
+                    </div>
+
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <br>
+                                <button type="button" onclick="btn_Submit_Inc_Closed(1,@Model.Inc_Id)" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+<div class="modal fade RejectResaon" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="F_AddKnowledgeShare_Reject" action="#" method="post" class="" novalidate="novalidate">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Reject_Reason_Id" id="Reject_Reason_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="" style="color:black;" class="form-model">Description</label><br />
+                                <textarea class="form-control" name="Reject_Reason" id="Reject_Reason" style="height: 140px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn_Reject_Reason" onclick="Fn_btnReject_Reason()"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="HealthModel" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Health & Safety Knowledge Share</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="F_AddKnowledgeShare" action="#" method="post" class="" novalidate="novalidate">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Knowledge_Share_Id" id="Knowledge_Share_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="row" style="display:none;">
+                            <label for="" style="color:black;" class="form-model">Knowledge Share Details Need to Provide for this Incident?</label>
+                            <label>
+                                <label for="KnowledgeYes"><input type="radio" name="Knowledge_Share_Incident" value="Yes" checked /> Yes</label>  &nbsp;
+                                <label for="KnowledgeNo"> <input type="radio" name="Knowledge_Share_Incident" value="No" /> No </label>
+                            </label>
+                        </div>
+                        <div id="Is_Knowledge_Share_Incident" style="display:none">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="" style="color:black;" class="form-model">Description</label><br />
+                                    <textarea class="form-control" name="KnowledgeDescription" id="KnowledgeDescription" style="height: 112px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label for="" style="color:black;" class="form-model">Title</label><br />
+                                    <input class="form-control" name="HealthSafetyKnowledge" id="txtHealthSafetyKnowledge" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="" style="color:black;" class="form-model">Incident Category</label>
+                                        <input type="text" class="form-control" id="KnowledgeInc_Category" readonly />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="" style="color:black;" class="form-model">Incident Type</label>
+                                        <input type="text" class="form-control" id="KnowledgeInc_Type" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <label for="" style="color:black;" class="form-model">Upload Photo</label>
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdnService_Appendix_A" class="hdncls_Vehicle_Documents_File APPENDIX_A_Viewhide" />
+                                <input id="Service_Appendix_A" class="form-control cls_Service_Appendix_A APPENDIX_A_Viewhide" onchange="Vehicle_Documents_File(this,'hdncls_Vehicle_Documents_File')" name="StudImage" type="file" accept=".jpg,.png,.jpeg" />
+                                <label id="ShowPDF"></label>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddKeypoits()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                </div>
+                            </div>
+                            <br />
+                            <table id="tblMKeypointsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Keypoints</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GetMasterCommList">
+                                    <tr><td><input type="text" class="form-control Keypoints" id="Keypoints" name="Keypoints" autocomplete="off" /></td></tr>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddRecommends()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                </div>
+                            </div>
+                            <br />
+                            <table id="tblRecommendationsList" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Recommendations</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="GetMasterCommList">
+                                    <tr><td><textarea class="form-control Recommendations" id="Recommendations" name="Recommendations"></textarea></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn_Knowledge"> Submit</button>
+                            <button type="button" class="btn btn-danger" id="btn_Preview"> Preview PDF</button>
+                            <button type="button" class="btn btn-success" id="btn_Knowledge_No" onclick="Fn_Knowledge_No()" style="display:none"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade add-newhseteam" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Health & Safety Knowledge Share</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (Model != null)
+                {
+                    @if (Model!.L_M_Incident_Knowledge_Share != null)
+                    {
+                        <form id="F_AddKnowledgeShare_Hse" action="#" method="post" class="" novalidate="novalidate">
+                            <div class="row">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Knowledge_Share_Id" id="Knowledge_Share_Id" value="@Model.L_M_Incident_Knowledge_Share!.KnowledgeInc_Type">
+                                    </div>
+                                </div>
+                                <div id="Is_Knowledge_Share_Incident">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="" style="color:black;" class="form-model">Description</label><br />
+                                            <textarea class="form-control" name="KnowledgeDescription" id="KnowledgeDescription_hse" style="height: 112px;">@Model!.L_M_Incident_Knowledge_Share.Knowledge_Description</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="" style="color:black;" class="form-model">Title</label><br />
+                                            <input class="form-control" name="HealthSafetyKnowledge" id="txtHealthSafetyKnowledge_hse" value="@Model!.L_M_Incident_Knowledge_Share.KnowledgeInc_Category" />
+                                        </div>
+                                    </div>
+
+                                    <label for="" style="color:black;" class="form-model">Photo</label>
+                                    <img src="@Model!.L_M_Incident_Knowledge_Share.File_Path" style="width:80px;height:80px;" /><br />
+                                    <div class="col-md-12">
+                                        <input type="hidden" id="hdnService_Appendix_A" class="hdncls_Vehicle_Documents_File_hse APPENDIX_A_Viewhide" value="@Model!.L_M_Incident_Knowledge_Share.File_Path" />
+                                        <input id="Service_Appendix_A" class="form-control cls_Service_Appendix_A APPENDIX_A_Viewhide" onchange="Vehicle_Documents_File(this,'hdncls_Vehicle_Documents_File_hse')" name="StudImage" type="file" accept=".jpg,.png,.jpeg" />
+                                        <label id="ShowPDF"></label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddKeypoits_hse()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <table id="tblMKeypointsList_hse" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Keypoints</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GetMasterCommList">
+                                            @*<tr><td><input type="text" class="form-control Keypoints" id="Keypoints" name="Keypoints" autocomplete="off" /></td></tr>*@
+                                            @{
+                                                foreach (var item in Model!.L_M_Incident_Knowledge_Share!.L_Inc_Knowledge_Share_Key_Points)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input type="text" class="form-control Keypoints" id="Keypoints" name="Keypoints" autocomplete="off" value="@item.Key_Point_Name" />
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger TblKeypointsDeleteButton_hse">Remove</button></td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <button type="button" id="btn_add_incident" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="AddRecommends_hse()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <table id="tblRecommendationsList_hse" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Recommendations</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GetMasterCommList">
+                                            @**@
+                                            @{
+                                                foreach (var item in Model!.L_M_Incident_Knowledge_Share!.L_Inc_Knowledge_Share_Recommendations)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <textarea class="form-control Recommendations" id="Recommendations" name="Recommendations">@item.Recommendations_Name</textarea>
+                                                        </td>
+                                                        <td><button type="button" class="btn btn-danger TblRecommendationsDeleteButton_hse">Remove</button></td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="">
+                                <div style="text-align:center;">
+                                    <button type="submit" class="btn btn-success" id="btn_Knowledge_hse"> Re-Submit</button>
+                                    <button type="button" class="btn btn-danger" id="btn_Preview_hse"> Preview PDF</button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                }
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script>
+    function FN_ApproveHralth() {
+        $('#HealthModel').appendTo("body").modal('show');
+        var txtin = $("#Des_Inc_Category_Id").val() + ' - ' + $("#Des_IncType_Id").val();
+        $("#KnowledgeInc_Category").val($("#Des_Inc_Category_Id").val());
+        $("#KnowledgeInc_Type").val($("#Des_IncType_Id").val());
+        $("#KnowledgeDescription").val($("#Des_Inc_Description").val());
+        $("#txtHealthSafetyKnowledge").val(txtin);
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        LOAD_ZONE();
+        $("#Is_Knowledge_Share_Incident").show();
+        ApplySelect2("#KnowledgeZone");
+        $("#tblMKeypointsList").on("click", '.TblKeypointsDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+        $("#tblRecommendationsList").on("click", '.TblRecommendationsDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblMKeypointsList_hse").on("click", '.TblKeypointsDeleteButton_hse', function () {
+            $(this).closest("tr").remove();
+        });
+        $("#tblRecommendationsList_hse").on("click", '.TblRecommendationsDeleteButton_hse', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $('input[name=Assign_Action]').change(function () {
+            var Role_Name = $('input[name=Assign_Action]:checked').val();
+            if (Role_Name == "Service_provider") {
+                $('#txtvalidemailAssign_Action').text('');
+                $("#tblAssign_Action").show();
+                Load_Emp_List(Role_Name);
+            }
+            else {
+                $('#txtvalidemailAssign_Action').text('');
+                $("#tblAssign_Action").show();
+                Load_Emp_List(Role_Name);
+            }
+        });
+
+        $("#btnaddkey").click(function () {
+            var txtin = $("#Des_Inc_Category_Id").val() + ' - ' + $("#Des_IncType_Id").val();
+            $("#KnowledgeInc_Category").val($("#Des_Inc_Category_Id").val());
+            $("#KnowledgeInc_Type").val($("#Des_IncType_Id").val());
+            $("#KnowledgeDescription").val($("#Des_Inc_Description").val());
+            $("#txtHealthSafetyKnowledge").val(txtin);
+        });
+    });
+
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $("#KnowledgeZone").empty();
+            //$("#KnowledgeZone").append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $("#KnowledgeZone").append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+</script>
+<script>
+    ApplySelect2CC(".Action_Employee_Id");
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Load_Emp_List(Role_Name) {
+        var Zone_Id = $(".Zone_Ids").val();
+        var Community_Id = $(".Community_Ids").val();
+        debugger
+        $.ajax({
+            url: '@Html.Raw(@Url.Action("LoadEmpbyRole", "CommonMaster"))',
+            type: "POST",
+            cache: false,
+            async: false,
+            data: { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id },
+            success: function (data) {
+                $(".Action_Employee_Id").empty();
+                $(".Action_Employee_Id").append("<option selected value='0' style='text-align:center' disabled> --Select Employee--</option>");
+                if (data) {
+                    $(data).each(function (i, e) {
+                        //ApplySelect2CC(".Action_Employee_Id_" + nn);
+                        $(".Action_Employee_Id").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                    });
+                    //$('#CC_Id').multiselect('rebuild');
+                }
+            },
+        });
+    }
+
+
+
+    function AddKeypoits() {
+        var htmlActionmarkup = "";
+        htmlActionmarkup += '<tr><td><input type="text" class="form-control Keypoints" id="Keypoints" required minlen="1"  autocomplete="off"/></td>';
+        htmlActionmarkup += '<td><button type="button" class="btn btn-danger TblKeypointsDeleteButton">Remove</button></td></tr>';
+        $("#tblMKeypointsList").append(htmlActionmarkup);
+    }
+
+    function AddRecommends() {
+        var htmlActionmarkup = "";
+        htmlActionmarkup += '<tr><td> <textarea class="form-control Recommendations" id="Recommendations" name="Recommendations" required minlen="1"></textarea></td>';
+        htmlActionmarkup += '<td><button type="button" class="btn btn-danger TblRecommendationsDeleteButton">Remove</button></td></tr>';
+        $("#tblRecommendationsList").append(htmlActionmarkup);
+    }
+
+    function AddKeypoits_hse() {
+        var htmlActionmarkup = "";
+        htmlActionmarkup += '<tr><td><input type="text" class="form-control Keypoints" id="Keypoints" required minlen="1"  autocomplete="off"/></td>';
+        htmlActionmarkup += '<td><button type="button" class="btn btn-danger TblKeypointsDeleteButton_hse">Remove</button></td></tr>';
+        $("#tblMKeypointsList_hse").append(htmlActionmarkup);
+    }
+
+    function AddRecommends_hse() {
+        var htmlActionmarkup = "";
+        htmlActionmarkup += '<tr><td> <textarea class="form-control Recommendations" id="Recommendations" name="Recommendations" required minlen="1"></textarea></td>';
+        htmlActionmarkup += '<td><button type="button" class="btn btn-danger TblRecommendationsDeleteButton_hse">Remove</button></td></tr>';
+        $("#tblRecommendationsList_hse").append(htmlActionmarkup);
+    }
+</script>
+<script>
+    $("#F_AddKnowledgeShare").validate({
+        rules: {
+            KnowledgeDescription: {
+                required: true,
+            },
+            Keypoints: {
+                required: true,
+            },
+            Recommendations: {
+                required: true,
+            },
+        },
+        messages: {
+            KnowledgeDescription: {
+                required: "Please Enter Description",
+            },
+            Keypoints: {
+                required: "Please Enter Keypoints",
+            },
+            Recommendations: {
+                required: "Please Enter Recommendations",
+            },
+        },
+        errorPlacement: function (label, element) {
+            label.addClass('mt-65 text-danger');
+            label.insertAfter(element);
+        },
+        highlight: function (element, errorClass) {
+            $(element).parent().addClass('has-danger')
+            $(element).addClass('form-control-danger')
+        },
+        submitHandler: function () {
+            debugger
+            var Key_Points = [];
+            var Recommendations = [];
+
+            $('#tblMKeypointsList tbody > tr').each(function () {
+                debugger
+                var varPoint_Name = $(this).closest('tr').find('.Keypoints').val();;
+
+                var data = {};
+                data.Key_Point_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Key_Point_Name = varPoint_Name;
+                Key_Points.push(data);
+            });
+
+            $('#tblRecommendationsList tbody > tr').each(function () {
+                debugger
+                var varRecommendations = $(this).closest('tr').find('.Recommendations').val();;
+
+                var data = {};
+                data.Recommendation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Recommendations_Name = varRecommendations;
+                Recommendations.push(data);
+            });
+
+            var Obj = {
+                Knowledge_Share_Id: "0",
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                File_Path: $(".hdncls_Vehicle_Documents_File").val(),
+                Knowledge_Description: $("#KnowledgeDescription").val(),
+                KnowledgeInc_Category: $("#txtHealthSafetyKnowledge").val(),
+                KnowledgeInc_Type: $("#KnowledgeInc_Type").val(),
+                Is_Preview: "No",
+                L_Inc_Knowledge_Share_Key_Points: Key_Points,
+                L_Inc_Knowledge_Share_Recommendations: Recommendations
+            };
+            $.ajax({
+                url: "/Incident/AddKnowledgeShare",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    });
+
+    $("#F_AddKnowledgeShare_Hse").validate({
+        rules: {
+            KnowledgeDescription: {
+                required: true,
+            },
+            Keypoints: {
+                required: true,
+            },
+            Recommendations: {
+                required: true,
+            },
+        },
+        messages: {
+            KnowledgeDescription: {
+                required: "Please Enter Description",
+            },
+            Keypoints: {
+                required: "Please Enter Keypoints",
+            },
+            Recommendations: {
+                required: "Please Enter Recommendations",
+            },
+        },
+        errorPlacement: function (label, element) {
+            label.addClass('mt-2 text-danger');
+            label.insertAfter(element);
+        },
+        highlight: function (element, errorClass) {
+            $(element).parent().addClass('has-danger')
+            $(element).addClass('form-control-danger')
+        },
+        submitHandler: function () {
+            debugger
+            var Key_Points = [];
+            var Recommendations = [];
+
+            $('#tblMKeypointsList_hse tbody > tr').each(function () {
+                debugger
+                var varPoint_Name = $(this).closest('tr').find('.Keypoints').val();;
+
+                var data = {};
+                data.Key_Point_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Key_Point_Name = varPoint_Name;
+                Key_Points.push(data);
+            });
+
+            $('#tblRecommendationsList_hse tbody > tr').each(function () {
+                debugger
+                var varRecommendations = $(this).closest('tr').find('.Recommendations').val();;
+
+                var data = {};
+                data.Recommendation_Id = "0";
+                data.Inc_Id = $("#Inv_Inc_Id").val();
+                data.Recommendations_Name = varRecommendations;
+                Recommendations.push(data);
+            });
+
+            var Obj = {
+                Knowledge_Share_Id: "0",
+                Inc_Id: $("#Inv_Inc_Id").val(),
+                File_Path: $(".hdncls_Vehicle_Documents_File_hse").val(),
+                Knowledge_Description: $("#KnowledgeDescription_hse").val(),
+                KnowledgeInc_Category: $("#txtHealthSafetyKnowledge_hse").val(),
+                KnowledgeInc_Type: $("#KnowledgeInc_Type").val(),
+                Is_Preview: "No",
+                L_Inc_Knowledge_Share_Key_Points: Key_Points,
+                L_Inc_Knowledge_Share_Recommendations: Recommendations
+            };
+            $.ajax({
+                url: "/Incident/AddKnowledgeShare",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            //window.location.reload();
+                            $('.add-newhseteam').modal('hide');
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    });
+
+    $("#btn_Preview").on("click", function () {
+        debugger
+        var Key_Points = [];
+        var Recommendations = [];
+
+        $('#tblMKeypointsList tbody > tr').each(function () {
+            debugger
+            var varPoint_Name = $(this).closest('tr').find('.Keypoints').val();;
+
+            var data = {};
+            data.Key_Point_Id = "0";
+            data.Inc_Id = $("#Inv_Inc_Id").val();
+            data.Key_Point_Name = varPoint_Name;
+            Key_Points.push(data);
+        });
+
+        $('#tblRecommendationsList tbody > tr').each(function () {
+            debugger
+            var varRecommendations = $(this).closest('tr').find('.Recommendations').val();;
+
+            var data = {};
+            data.Recommendation_Id = "0";
+            data.Inc_Id = $("#Inv_Inc_Id").val();
+            data.Recommendations_Name = varRecommendations;
+            Recommendations.push(data);
+        });
+
+        var Obj = {
+            Knowledge_Share_Id: "0",
+            Inc_Id: $("#Inv_Inc_Id").val(),
+            File_Path: $(".hdncls_Vehicle_Documents_File").val(),
+            Knowledge_Description: $("#KnowledgeDescription").val(),
+            KnowledgeInc_Category: $("#txtHealthSafetyKnowledge").val(),
+            KnowledgeInc_Type: $("#KnowledgeInc_Type").val(),
+            Is_Preview: "Yes",
+            L_Inc_Knowledge_Share_Key_Points: Key_Points,
+            L_Inc_Knowledge_Share_Recommendations: Recommendations
+        };
+        $.ajax({
+            url: "/Incident/AddKnowledgeShare",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Fn_Clouser_Report($("#Inv_Inc_Id").val(), $("#Inv_Inc_Id").val());
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+
+    $("#btn_Preview_hse").on("click", function () {
+        debugger
+        var Key_Points = [];
+        var Recommendations = [];
+
+        $('#tblMKeypointsList_hse tbody > tr').each(function () {
+            debugger
+            var varPoint_Name = $(this).closest('tr').find('.Keypoints').val();;
+
+            var data = {};
+            data.Key_Point_Id = "0";
+            data.Inc_Id = $("#Inv_Inc_Id").val();
+            data.Key_Point_Name = varPoint_Name;
+            Key_Points.push(data);
+        });
+
+        $('#tblRecommendationsList_hse tbody > tr').each(function () {
+            debugger
+            var varRecommendations = $(this).closest('tr').find('.Recommendations').val();;
+
+            var data = {};
+            data.Recommendation_Id = "0";
+            data.Inc_Id = $("#Inv_Inc_Id").val();
+            data.Recommendations_Name = varRecommendations;
+            Recommendations.push(data);
+        });
+
+        var Obj = {
+            Knowledge_Share_Id: "0",
+            Inc_Id: $("#Inv_Inc_Id").val(),
+            File_Path: $(".hdncls_Vehicle_Documents_File_hse").val(),
+            Knowledge_Description: $("#KnowledgeDescription_hse").val(),
+            KnowledgeInc_Category: $("#txtHealthSafetyKnowledge_hse").val(),
+            KnowledgeInc_Type: $("#KnowledgeInc_Type").val(),
+            Is_Preview: "Yes",
+            L_Inc_Knowledge_Share_Key_Points: Key_Points,
+            L_Inc_Knowledge_Share_Recommendations: Recommendations
+        };
+        $.ajax({
+            url: "/Incident/AddKnowledgeShare",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Fn_Clouser_Report($("#Inv_Inc_Id").val(), $("#Inv_Inc_Id").val());
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+
+    $('input[name=Knowledge_Share_Incident]').change(function () {
+        var value = $('input[name=Knowledge_Share_Incident]:checked').val();
+        if (value == "Yes") {
+            $("#Is_Knowledge_Share_Incident").show();
+            $("#btn_Preview").show();
+            $("#btn_Knowledge_No").hide();
+            $("#btn_Knowledge").show();
+        }
+        else {
+            $("#Is_Knowledge_Share_Incident").hide();
+            $("#btn_Preview").hide();
+            $("#btn_Knowledge").hide();
+            $("#btn_Knowledge_No").show();
+        }
+    });
+
+
+    $('input[name=Knowledge_Share_Incident_hse]').change(function () {
+        var value = $('input[name=Knowledge_Share_Incident_hse]:checked').val();
+        if (value == "Yes") {
+            $("#Circulate_Knowledge").show();
+            $("#txtvalidknowledge").text('');
+        }
+        else {
+            $("#Circulate_Knowledge").hide();
+            $("#txtvalidknowledge").text('');
+        }
+    });
+
+    $('select[id=KnowledgeZone]').change(function () {
+        $("#txtvalidknowledgeCirculate").text('');
+    });
+</script>
+<script>
+    function Vehicle_Documents_File(val, clsname) {
+        readImage(val, clsname);
+    }
+
+    function readImage(input, clsname) {
+        $("#Loader").show();
+        if (input.files && input.files[0]) {
+            var FR = new FileReader();
+            FR.onload = function (e) {
+                $.post("@Url.Action("FiletoData", "Incident")", { FileData: e.target.result }, function (data) {
+                    var cls = "." + clsname;
+                    $(cls).val(data);
+                }).always(function () {
+                    $("#Loaderbck").hide();
+                    $("#Loader").hide();
+                });
+            };
+            FR.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function Fn_Knowledge_No() {
+        var Obj = {
+            Inc_Id: $("#Inv_Inc_Id").val(),
+            Is_Preview: "No",
+        };
+        $.ajax({
+            url: "/Incident/AddKnowledgeShare_No",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Update Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>
+<script>
+    function btn_Approve_manger_App(btnid, IncId) {
+        if (btnid == "1") {
+            debugger
+            var ZONE_ARR = [];
+            //Name: Knowledge_Share_Incident_hse
+
+            if ($('input[name="Knowledge_Share_Incident_hse"]:checked').length == 0) {
+                $('#txtvalidknowledge').text("Select the Knowledge Share");
+                return false;
+            }
+
+            else {
+                var zone = $("#KnowledgeZone").val();
+                var valueKnowledge_Share = "";
+                $("input[type='radio'][name='Knowledge_Share_Incident_hse']").click(function () {
+                    valueKnowledge_Share = $(this).val();
+                });
+
+                if (valueKnowledge_Share == "Yes") {
+                    if ($.isEmptyObject(zone)) {
+                        $('#txtvalidknowledgeCirculate').text("Select the Circulate Knowledge Share to");
+                        return false;
+                    }
+                }
+
+
+                $(zone).each(function (i, b) {
+                    debugger;
+                    var item = {};
+                    item.Circulate_Knowledge_Id = "0",
+                        item.Inc_Id = $("#Investigation_Inc_Id").val(),
+                        item.Zone_Id = b,
+                        ZONE_ARR.push(item);
+                });
+            }
+
+
+            var Obj = {
+                Inc_Id: $("#Investigation_Inc_Id").val(),
+                Status: '7',
+                Remarks: "Investigation Approved by HSE Manager",
+                L_Circulate_Knowledge_Details: ZONE_ARR,
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        else {
+            $('.RejectResaon').appendTo("body").modal('show');
+        }
+    }
+
+    function btn_Reject__HSE(btnid, IncId) {
+        if (btnid == "1") {
+        }
+        else {
+            $('.RejectResaon').appendTo("body").modal('show');
+        }
+    }
+
+    function btn_Approve_ServiceProvid(btnid, IncId) {
+        if (btnid == "1") {
+            var Obj = {
+                Inc_Id: $("#Investigation_Inc_Id").val(),
+                Status: '13',
+                Remarks: "Investigation Approved by Supervisor",
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        else {
+            $('.RejectResaon').modal('show');
+        }
+    }
+
+    function btn_Approve_Dir(btnid, IncId) {
+        if (btnid == "1") {
+            var Obj = {
+                Inc_Id: $("#Investigation_Inc_Id").val(),
+                Status: '8',
+                Remarks: "Investigation Reviewed by HSE Line Manger",
+                Is_InsuranceClaim: $("#Is_InsuranceClaim").val(),
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        else {
+            $('.RejectResaon').modal('show');
+        }
+    }
+
+    function btn_Approve_Super_Dir(btnid, IncId) {
+        if (btnid == "1") {
+            var Obj = {
+                Inc_Id: $("#Investigation_Inc_Id").val(),
+                Status: '9',
+                Remarks: "Investigation Reviewed by Zone Line Manger",
+            };
+            $.ajax({
+                url: "/Incident/UpdateIncStatus",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+        else {
+            $('.RejectResaon').modal('show');
+        }
+    }
+
+    function btn_Submit_Action(btnid, IncId) {
+        debugger
+
+
+        var options = $('.Action_Employee_Id > option:selected').val();
+
+        if ($('input[name="Assign_Action"]:checked').length == 0) {
+            $('#txtvalidemailAssign_Action').text("Select Assign Action required");
+            return false;
+        }
+
+        if (options == 0) {
+            alert('Select Person Responsible');
+            return false;
+        }
+
+        else {
+            if (btnid == "1") {
+
+                var Assign_Actions = [];
+
+                $('#tblIncidentInjuredAssignAction tbody > tr').each(function () {
+                    var varDescription_Action = $(this).closest('tr').find('.Description_Actions').text();
+                    var varPriority = $(this).closest('tr').find('.Priority').text();
+                    var varPersonResponsible = $(this).closest('tr').find('.Action_Employee_Id').val();
+                    var varTargetDate = $(this).closest('tr').find('.Target_Date').val();
+                    var varInc_Id = $("#Investigation_Inc_Id").val();
+                    var varStatus = '1';
+                    var data = {};
+                    data.Description_Actions = varDescription_Action;
+                    data.Priority = varPriority;
+                    data.Person_Responsible_Id = varPersonResponsible;
+                    data.Target_Date = varTargetDate;
+                    data.Status = varStatus;
+                    data.Inc_Id = varInc_Id;
+                    Assign_Actions.push(data);
+                });
+
+                var Obj = {
+                    Inc_Id: $("#Investigation_Inc_Id").val(),
+                    L_Corrective_Assign_Action: Assign_Actions
+                };
+                $.ajax({
+                    url: "/Incident/AddCorrective_Assign_Action",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Update Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+    }
+
+    function btn_Submit_Inc_Closed(btnid, IncId) {
+        debugger
+        if ($("#Update_action_remarks").val() == "") {
+            $('#txtvalidemailaction_remarks').text("Enter Update action details on the investigation report");
+            return false;
+        }
+        else {
+            if (btnid == "1") {
+                var Obj = {
+                    Inc_Id: $("#Investigation_Inc_Id").val(),
+                    Status: '12',
+                    Remarks: "Investigation Closed by HSE Line Manager"
+                };
+                $.ajax({
+                    url: "/Incident/UpdateIncStatus",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify(Obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "200") {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Update Successfully',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function () {
+                                window.location.reload();
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'Error',
+                                title: 'Error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    },
+                });
+            }
+        }
+    }
+</script>
+<script>
+    function Fn_btnReject_Reason() {
+        debugger
+        var Obj = {
+            Reject_Inc_Id: $("#Investigation_Inc_Id").val(),
+            Reject_Reason_Stage: "Investigation Reject",
+            Status: '1',
+            Reject_Reason_Description: $("#Reject_Reason").val(),
+        };
+        $.ajax({
+            url: "/Incident/AddReject_Reason_Action",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Reject Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+</script>
+<script>
+    function btn_Submit_Action_Closure_Final(Corr_Id, Inc_Id, Status) {
+        debugger;
+        if (Status == "1") {
+            var Obj = {
+                Corrective_Action_Id: Corr_Id,
+                Inc_Id: Inc_Id,
+            };
+            $.ajax({
+                url: "/Incident/Update_Corrective_Assign_Status",
+                type: "POST",
+                cache: false,
+                data: JSON.stringify(Obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data == "200") {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Update Successfully',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(function () {
+                            $("#btn_close_" + Corr_Id).show();
+                            $("#btn_open_" + Corr_Id).hide();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'Error',
+                            title: 'Error',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+            });
+        }
+    }
+</script>

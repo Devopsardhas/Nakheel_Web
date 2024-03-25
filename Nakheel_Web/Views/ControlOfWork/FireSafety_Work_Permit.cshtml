@@ -1,0 +1,1362 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Fire & Safety Work permit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .pac-container {
+        z-index: 100000;
+    }
+
+
+    #search_input_1 {
+        font-size: 18px;
+        width: 330px;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: 311px !important;
+    }
+
+    #search_input {
+        font-size: 18px;
+        width: 46% !important;
+        height: 40px;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        font-family: 'Nakheel-Textregular';
+        left: -6px !important;
+    }
+
+
+    .m-txt-req {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_1 {
+        margin-top: 3px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+    }
+
+    .m-txt-req_11 {
+        margin-top: 33px !important;
+        position: absolute;
+        display: flex;
+        color: #ee5725;
+        font-size: 11px;
+        margin-left: 61%;
+    }
+</style>
+
+
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Fire & Safety Work Permit List</h4></div>
+                    @if (LoginClass.Role_Id == "16")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_add_Work" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> New Permit</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblFireSafety" class="table table-striped dt-responsive tblround" width="100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Business Unit</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Created By</th>
+                            <th>Created Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="GetFireSafety">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_FireSafety_Work_Permit" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Requestor Form</h4></div>
+
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                        <input class="form-control" type="hidden" value="" id="History_Id" name="History_Id">
+                        <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="Emp_Id" name="Emp_Id">
+                        <input class="form-control" type="hidden" value="@LoginClass.Role_Id" id="Role_Id" name="Role_Id">
+                        <input class="form-control" type="hidden" value="" id="His_Date_Time" name="His_Date_Time">
+                        <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" />
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="Form_FS_Permit" action="" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="col-form-label" name="FS_FireSafe_Id" id="FS_FireSafe_Id" value="0">
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+
+                    </div>
+                    <br />
+                    <br />
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">DMS Number</label>
+                            <div class="col-md-8">
+                                <select class="form-select" name="FireSaFeDms_Id" id="FireSaFeDms_Id" onchange="Fn_FireSafety(this.value)" required>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Community</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Community--" id="FS_Community_Id" name="FS_Community_Id" onchange="Fn_Community(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">Business Unit</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Business Unit--" name="FS_Business_Unit_Id" id="FS_Business_Unit_Id" onchange="FnBusiness_Unit()" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+                            <div class="col-md-8">
+                                <select class="form-control" disabled placeholder="--Select Building--" name="FS_Building_Id" id="FS_Building_Id">
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-4">
+
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-4 col-form-label">Zone</label>
+                            <div class="col-md-8">
+                                <select class="form-select" disabled placeholder="--Select Zone--" id="FS_Zone_Id" name="FS_Zone_Id">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Requestor Details & Submission </h4></div>
+                    <br />
+                    <br />
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-password-input" class="col-md-6 col-form-label">Manager Incharge</label>
+                            <div class="col-md-12">
+                                <input type="text" readonly class="form-control" id="Fs_Inchar" value="@LoginClass.First_Name" autocomplete="off" name="Fs_Incharge">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Competent Number</label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Comp_Number" value="" name="Comp_Number" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contract End Date<span class="requ"></span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" disabled id="FS_Con_End_Date" name="FS_Con_End_Date" @*placeholder=""*@>
+                            </div>
+
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-8 col-form-label" for="example-password-input">Isolation or Impairment Coordinator <span class="requ"></span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="FS_Isolation" name="FS_Isolation" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Company Name <span class="requ"></span></label>
+                            <div class="col-md-12">
+                                <input type="text" disabled class="form-control" id="FS_Company_Name" value="@LoginClass.Company_Name" name="FS_Company_Name" @*placeholder=""*@>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contractor Title/No <span class="requ"></span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="FS_Tittle_No" name="FS_Tittle_No" autocomplete="off" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">HSE Officer Name <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Hse_Name" value="" name="Hse_Name" autocomplete="off">
+                            </div>
+                        </div>
+                       
+
+                    </div>
+
+
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Competent Person <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <select class="form-select" id="FS_Competent" name="FS_Competent" disabled onchange="FS_Function_Competent(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">Contract Start Date <span class="requ"></span></label>
+                            <div class="col-md-12">
+                                <input type="text" disabled class="form-control" id="FS_Con_Start_Date" name="FS_Con_Start_Date">
+                            </div>
+                        </div>
+                         <div class="mb-3 row">
+                            <label class="col-md-6 col-form-label" for="example-password-input">HSE Mobile Number <span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <input type="text" class="form-control" id="Hse_Number" value="" name="Hse_Number" autocomplete="off">
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="mt-xl-0 mt-4">
+                                <div class="accordion" id="accordionExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingTwo">
+                                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height:30px;">
+                                                Required Documents
+                                            </button>
+                                        </h2>
+                                        <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-10 col-form-label" for="example-password-input">Method Statement<span class="requ">*</span></label>
+                                                            <div id="FS_Method_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Method_files" name="Method_files" type="file" accept=".pdf" multiple class="form-control" onchange="FS_Method_File_Upload('Method_files','MethodUploadPhotos','FS_Method_Pdf')" />
+                                                                <input type="hidden" class="MethodUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">Risk Assessment<span class="requ">*</span></label>
+                                                            <div id="FS_Risk_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Risk_files" name="Risk_files" type="file" accept=".pdf" multiple class="form-control" onchange="FS_Risk_File_Upload('Risk_files','RiskUploadPhotos','FS_Risk_Pdf')" />
+                                                                <input type="hidden" class="RiskUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">Emergency Plan<span class="requ">*</span></label>
+                                                            <div id="FS_Emr_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Emr_files" name="Emr_files" type="file" accept=".pdf" multiple class="form-control" onchange="FS_Emr_File_Upload('Emr_files','EmrUploadPhotos','FS_Emr_Pdf')" />
+                                                                <input type="hidden" class="EmrUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="">
+                                                            <label class="col-md-8 col-form-label" for="example-password-input">HSE Plan<span class="requ">*</span></label>
+                                                            <div id="FS_HSE_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Hse_files" name="Hse_files" type="file" accept=".pdf" multiple class="form-control" onchange="FS_HSE_File_Upload('Hse_files','HSEUploadPhotos','FS_HSE_Pdf')" />
+                                                                <input type="hidden" class="HSEUploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div>
+                                                            <label class="col-md-12 col-form-label" for="example-password-input">Staff Competency Document<span class="requ">*</span></label>
+                                                            <div id="FS_Staff_Pdf" style="display:none;"></div>
+                                                            <div class="">
+                                                                <input id="Competencyfiles" name="files" type="file" accept=".pdf" multiple class="form-control" onchange="FS_Staff_File_Upload('Competencyfiles','UploadPhotos','FS_Staff_Pdf')" />
+                                                                <input type="hidden" class="UploadPhotos">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none;">
+
+                        <div class="col-4">
+                            <div class="row">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Requested By</label>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Date and time</label>
+                                <div class="col-md-8">
+                                    <input type="datetime" class="form-control" id="FS_Date_Time" name="FS_Date_Time" placeholder="">
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Name & Role</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.First_Name" id="Fire_Safe_Name" name="Fire_Safe_Name">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label"> Position</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.Designation_Name" id="Fire_Position" name="Fire_Name_Position">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Email Id</label>
+                                <div class="">
+                                    <input type="email" readonly class="form-control" value="@LoginClass.Email_Id" id="Fire_Email_Id" name="Fire_Email_Id">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Contact</label>
+                                <div class="">
+                                    <input type="text" readonly class="form-control" value="@LoginClass.Mobile_Number" id="Fire_Contact" name="Fire_Contact">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4 class="card-title">Required Work Details </h4><br />
+                            <label for="example-number-input" class="col-md-6 col-form-label">Description Of Work To Be Performed And Purpose Of Entry</label>
+                            <textarea class="form-control" id="FS_Description" name="FS_Description" style="height: 223px;"></textarea>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="example-number-input" class="col-md-2 col-form-label">Exact Location</label>
+                                <div id="GoogleMapApi"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row-4">
+                            <table>
+                                <label for="" class="col-form-label">Type Of Isolation<span class="requ">*</span></label>
+
+                                <tbody style="display:contents">
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="Fire_Alarm_Id" class="FireAlarmId" value="1" name="Fire_Alarm_Id">
+                                            <label>Fire Alarm System</label> &nbsp;&nbsp;&nbsp;
+                                        </td>
+
+                                        <td>
+                                            <input type="checkbox" id="Fire_Pro_Id" class="FireProId" value="2" name="Fire_Pro_Id">
+                                            <label>Fire Protection System(sprinkler gas suppression System)</label>&nbsp;&nbsp;&nbsp;
+                                        </td>
+
+                                        <td>
+                                            <input type="checkbox" id="Pava_Id" class="cls_Pava" value="3" name="Pava_Id">
+                                            <label>PAVA</label>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row-4">
+                            <table>
+                                <label for="" class="col-form-label">Degree Of Isolation<span class="requ">*</span></label>
+
+                                <tbody style="display:contents">
+                                    <tr>
+                                        <td>
+                                            <input type="radio" class="Cls_Isolation" id="Isolation" name="Isolation" value="Completed">
+                                            <label>Completed</label>&nbsp;&nbsp;&nbsp;
+                                        </td>
+                                        <td>
+                                            <input type="radio" class="Cls_Isolation" id="Isolation" name="Isolation" value="Partial">
+                                            <label>Partial</label>
+                                        </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 ">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Reason For Isolation </label>
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="FS_Reason_Isolation" name="FS_Reason_Isolation"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="Add_Area" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_Areas_Affect()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br />
+                        <table id="tblAreaAffect" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Extent Of Areas Affected</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetAresAffectList">
+                                <tr>
+                                    <td>
+                                        <input type="text" required class="form-control AreaName" id="AreaName" name="AreaAffected" autocomplete="off" />
+                                        <label id="txtAreaAffected" style="color:red"></label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <button type="button" id="Add_Personnel" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_Personnel_Affect()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br />
+                        <table id="tblPersonnelAffect" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Extent Of Personnel Affected</th>
+                                    @*<th>Action</th>*@
+                                </tr>
+                            </thead>
+                            <tbody id="GetPersonnelAffectList">
+                                <tr>
+                                    <td>
+                                        <input type="text" required class="form-control Personnel_name" id="Personnel_name" name="Personnel_name" autocomplete="off" />
+                                        <label id="txtPersonnelAffected" style="color:red"></label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="">
+                        <div class="row">
+                            <div class="col-lg-10"> <h5 class="card-title">Equipment/Zones To Be Isolated </h5></div>
+                            <div class="col-lg-2">
+                                <button type="button" id="Add_Method" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FN_Add_Method_Isolation()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <br />
+                        <table id="tblMethodAffect" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Method Of Isolation</th>
+                                    @*<th>Action</th>*@
+                                </tr>
+                            </thead>
+                            <tbody id="GetMethodList">
+                                <tr>
+                                    <td>
+                                        <input type="text" required class="form-control Isolation_name" id="Isolation_name" name="Isolation_name" autocomplete="off" />
+                                        <label id="txtMethodAffected" style="color:red"></label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Contingency Measures To Be Put In Place </h4></div>
+                        <br />
+                        <br />
+                        <div class="col-6">
+                            <div class="mb-3 row">
+
+                                <label for="example-number-input" class="col-md-4 col-form-label">During Working Hours<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="During_Work_Hours" name="During_Work_Hours" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+
+                                <label for="example-number-input" class="col-md-4 col-form-label">Alterate FireFighting Option<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Alt_Fire_Fight" name="Alt_Fire_Fight" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+
+                                <label for="example-number-input" class="col-md-4 col-form-label">Out Working Hours<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Out_Work_Hours" name="Out_Work_Hours" autocomplete="off" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Fire Watcher Details 24*7 <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Fire_Watcher_Details" name="Fire_Watcher_Details" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        <label class="col-form-label">
+                            Alternate for Fire alarm Notification And PAVA
+                        </label>
+                        <table id="Tbl_FIRE_SAFETY" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Questionnaire</th>
+                                    <th>Yes</th>
+                                    <th>No</th>
+                                    <th>N/A</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody id="FireSafety_Ques" name="FireSafety_Ques">
+                            </tbody>
+                        </table>
+                        <br>
+                        <div class="row">
+                            <div class="mb-3 ">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Additional Precautions/Comments </label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="FS_Additional" name="FS_Additional"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-10"> <h4 class="card-title">Work Duration And Schedule</h4></div>
+                        <br />
+                        <br />
+                        <div class="col-6">
+                            <div class="mb-3 row">
+
+                                <label for="example-number-input" class="col-md-4 col-form-label">From Date & Time <span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="date" class="form-control" name="FS_Start_Date" id="FS_Start_Date" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+
+                                <label for="example-number-input" class="col-md-4 col-form-label">To Date & Time<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="date" class="form-control" name="FS_End_Date" id="FS_End_Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">Additional Feature Required</h4>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="example-number-input" class="col-md-12 col-form-label">Attach Service Provider's Permit Signed by HSE & Engineer/Supervisor</label>
+                                <div id="Signed_Pdf" style="display:none;"></div>
+                                <div class="col-md-6">
+                                    <input id="Signed_files" name="Signed_files" type="file" accept=".pdf" required multiple class="form-control" onchange="FS_Signed_File_Upload('Signed_files','SignedUploadPhotos','Signed_Pdf')" />
+                                    <input type="hidden" class="SignedUploadPhotos">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">Service Providers Declaration</h4>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="example-tel-input" class="col-md-12 col-form-label"><input type="checkbox" id="Declare_Chk" value="1" name="Declare_Chk" class="Declare_Chk" />&nbsp; We confirm that the high risk activity will be carried out as per method statement, risk assessment and permit requirements under the  supervision of competent supervisor and HSE staff. Additional permit for each shift shall be issued by the service provider.Accepted by </label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-2 row">
+                                <label for="example-tel-input" class="col-md-3 col-form-label">Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Accept_Name" value="" name="Accept_Name" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-2 row">
+                                <label for="example-tel-input" class="col-md-3 col-form-label">Designation</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="Accept_Desig" value="" name="Accept_Desig" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <br />
+                        </div>
+                        <div class="col-lg-10">
+                            <h4 class="card-title">NCM Declaration</h4>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="example-number-input" class="col-md-12 col-form-label">The NCM reviews the service providers document to ensure all safety precautions are provided. Its responsibility of the service provider to physically  verify all permit requirements are complied at the time of work and provide competent supervision  at all times.</label>
+                            </div>
+                        </div>
+                    </div>
+                    @if (LoginClass.Role_Id == "16")
+                    {
+                        <div class="row">
+                            <div class="col-md-5"></div>
+                            <div class="col-md-7">
+                                <button type="submit" class="btn btn-success waves-effect waves-light" id="Fire_Submit">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Add_Con_Location" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Fire & Safety Work Permit Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="GoogleMapApi" style="display:none"></div>
+                    <div id="map-canvas_view_Edit" style="display:none"></div>
+                </div>
+
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div id="Fire_Safety_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Requester form </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_View_FS_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="View_Fire_Safety_List">
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/js/controlofworkvalidation/confinedspacepermitofwork.js"></script>
+<script src="~/assets/js/controlofworkvalidation/serversidedatatablefiresafety.js"></script>
+
+<script>
+    var login = "";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#FS_Zone_Id",
+        COMMUNITY_ID: "#FS_Community_Id",
+        BUSINESS_ID: "#FS_Business_Unit_Id",
+        BUILDING_ID: "#FS_Building_Id",
+        LIST_VIEW: "#List_View",
+        MAINTABLE: "#tblFireSafety",
+        MAINTABLE_TBODY: "#GetFireSafety",
+        ADD_FIRESAFETY_PERMIT: "#Add_FireSafety_Work_Permit",
+        BTN_ADD_FIRE_SAFE: "#btn_add_Work",
+        BTN_BACK: "#btn_back",
+        ADD_MORE_AREA_AFFECTED: "#GetAresAffectList",
+        TBL_REMOVE_AFFECTED_AREA: ".TblAreaAffected_Remove",
+        AFFECTED_AREA: "#tblAreaAffect",
+        ADD_MORE_PERSONNEL: "#GetPersonnelAffectList",
+        TBL_REMOVE_PESONNEL: ".TblPersonnel_Remove",
+        PERSONNEL_AFFECTED: "#tblPersonnelAffect",
+        ADD_MORE_METHOD: "#GetMethodList",
+        TBL_REMOVE_METHOD: ".TblMethod_Remove",
+        METHOD_ISOLATION: "#tblMethodAffect",
+        FIRESAFE_QUESTION: "#FireSafety_Ques",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        EDIT_GOOGLE_MAP_API: "#map-canvas_view",
+        VIEW_FIRE_SAFETY_LIST: "#View_Fire_Safety_List",
+        FIRE_SAFETY_REQUEST_VIEW: "#Fire_Safety_View",
+        BTN_BACK_FS_VIEW: "#btn_View_FS_back"
+    });
+    $(document).ready(function () {
+        debugger
+        var Email_Login = '@LoginClass.Email_Id'
+        LOAD_ALL_BU();
+        LOAD_ZONE();
+        LOAD_CONTRACT_DRP(Email_Login);
+        LoadPTWfiresafetyQuestion();
+         login = '@LoginClass.Employee_Identity_Id';
+        Serversidetable_FireSafety(login);
+        FS_Load_GoogleMaps();
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#FS_Date_Time').val(today);
+
+        var Requestedname = '@LoginClass.First_Name' + '/' + '@LoginClass.Role_Name';
+        $("#Fire_Safe_Name").val(Requestedname);
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#FS_Building_Id");
+        ApplySelect2("#FS_Competent");
+        $(UI_Fields.LIST_VIEW).show(100);
+        $(UI_Fields.ADD_FIRESAFETY_PERMIT).hide(100);
+
+        $(UI_Fields.BTN_ADD_FIRE_SAFE).click(function () {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_FIRESAFETY_PERMIT).show(100);
+            $(UI_Fields.GOOGLE_MAP_API).show(100);
+            $(UI_Fields.EDIT_GOOGLE_MAP_API).hide(100);
+        });
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_FIRESAFETY_PERMIT).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields.BTN_BACK_FS_VIEW).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_FIRESAFETY_PERMIT).hide(100);
+            $(UI_Fields.FIRE_SAFETY_REQUEST_VIEW).hide(100);
+            window.location.reload();
+        })
+
+        $(UI_Fields.AFFECTED_AREA).on("click", UI_Fields.TBL_REMOVE_AFFECTED_AREA, function () {
+            $(this).closest("tr").remove();
+        });
+
+        $(UI_Fields.PERSONNEL_AFFECTED).on("click", UI_Fields.TBL_REMOVE_PESONNEL, function () {
+            $(this).closest("tr").remove();
+        });
+
+        $(UI_Fields.METHOD_ISOLATION).on("click", UI_Fields.TBL_REMOVE_METHOD, function () {
+            $(this).closest("tr").remove();
+        });
+
+        var e = '@DateTime.Now.ToString("dd-MM-yyyy HH:mm")';
+        $("#His_Date_Time").val(e);
+    });
+    function FS_Function_Competent(id) {
+        $.post("@Url.Action("Get_Competent_Number", "ControlOfWork")", { Work_Superviosor_Id: id }, function (data) {
+            if (data != null) {
+                $("#Comp_Number").empty();
+                $("#Comp_Number").val(data.Contact);
+            }
+        });
+    }
+    function FS_Load_GoogleMaps() {
+        var map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    function LOAD_ALL_BU(selectedValue) {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.BUSINESS_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+
+        });
+    }
+    function LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            FS_FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function FS_FnZone_Id(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+    @*// $(UI_Fields.BUILDING_ID).empty();*@
+            $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+                $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                });
+                if (Community_Id != null)
+                    $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+                //Fn_Community(Community_Id, Building_Id);
+
+            });
+
+    }
+    function Fn_Community(Community_Id, Building_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+
+    }
+    function LOAD_CONTRACT_DRP(Email) {
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: Email }, function (data) {
+            $("#FireSaFeDms_Id").empty();
+            $("#FireSaFeDms_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#FireSaFeDms_Id").append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+        });
+    }
+
+    var Areas_Data = 1;
+    function FN_Add_Areas_Affect() {
+        var Areas_Txt = "AreaName" + Areas_Data;
+        var html = "";
+        html += '<tr><td><input type="text" required class="form-control AreaName" name="AreaName" id="' + Areas_Txt + '" autocomplete="off" /></td><td><button type="button" class="btn btn-danger TblAreaAffected_Remove">Remove</button></td></tr>';
+        $(UI_Fields.ADD_MORE_AREA_AFFECTED).append(html);
+        Areas_Data++;
+    }
+
+    var Personnel_data = 1;
+    function FN_Add_Personnel_Affect() {
+        var Personel_Txt = "Personnel_name" + Personnel_data;
+        var html = "";
+        html += '<tr><td><input type="text" required class="form-control Personnel_name" id="' + Personel_Txt + '" name="Personnel_name" autocomplete="off" /></td><td><button type="button" class="btn btn-danger TblPersonnel_Remove">Remove</button></td></tr>';
+        $(UI_Fields.ADD_MORE_PERSONNEL).append(html);
+        Personnel_data++;
+    }
+
+    var Isolation_data = 1;
+    function FN_Add_Method_Isolation() {
+        var Isolation_txt = "Isolation_name" + Isolation_data;
+        var html = "";
+        html += '<tr><td><input type="text" required class="form-control Isolation_name" name="Isolation_name" id="' + Isolation_txt + '" autocomplete="off" /></td><td><button type="button" class="btn btn-danger TblMethod_Remove">Remove</button></td></tr>';
+        $(UI_Fields.ADD_MORE_METHOD).append(html);
+        Isolation_data++;
+    }
+
+    function Fn_FireSafety(Email) {
+        $("#FS_Tittle_No").empty();
+        $("#FS_Con_Start_Date").empty();
+        $("#FS_Con_End_Date").empty();
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: Email }, function (data) {
+            $("#C_Company_Name").val(data.Company_Name);
+            $("#FS_Tittle_No").val(data.Purchase_Order_Number);
+            $("#FS_Con_End_Date").val(data.Contract_End_Date);
+            $("#FS_Con_Start_Date").val(data.Contract_Start_Date);
+            FS_Get_Edit_Business_Unit("#FS_Business_Unit_Id", data.Business_Unit_Id);
+            FS_Get_Edit_Zone_Unit("#FS_Zone_Id", data.Zone_Id, data.Community_Id);
+
+            $("#FS_Building_Id").removeAttr('disabled');
+            $("#FS_Competent").empty();
+            $("#FS_Competent").removeAttr('disabled');
+            if (data._Competent_Person != null && data._Competent_Person.length > 0) {
+                $("#FS_Competent").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Competent_Person).each(function (i, e) {
+                    $("#FS_Competent").append("<option value=" + e.Work_Superviosor_Id + ">" + e.Name_Position + "</option>");
+                });
+            }
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $("#FS_Building_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $("#FS_Building_Id").append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+        });
+    }
+
+    var Data = 1;
+    function LoadPTWfiresafetyQuestion() {
+        $.post("@Url.Action("Load_Fire_Safety_Ques","ControlOfWork")", function (data) {
+            if (data != null) {
+                $(UI_Fields.FIRESAFE_QUESTION).empty();
+                $.each(data, function (key, value) {
+                    var varTopics = "Topics" + Data;
+                    var varcheck = "Check" + Data;
+                    var varCompliantName = "Check_Id" + Data;
+                    var varRemarks = "Remarks" + Data;
+                    var varmajorworkid = "HSE_Work_Id" + Data;
+                    var Datamarkup = "";
+                    Datamarkup = '<tr><input type="hidden" class="major_HSE_Work_Id" id="' + varmajorworkid + '" value="' + value.Major_HSE_Work_Id + '"/><td class="Question_Name"><label class="col-form-label" id="' + varTopics + '">' + value.Major_Questionnaires_Name + '</label></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="Yes" style="vertical-align: middle;"onclick="Fn_CheckHideFire($.this,' + "'" + varRemarks + "'" + ')"/></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="No" style="vertical-align: middle;" onclick="Fn_Check_Fire($.this,' + "'" + varRemarks + "'" + ')"/></td><td><input type="radio" name="' + varCompliantName + '" id="' + varcheck + '" class="Compliant required" value="NA" style="vertical-align: middle;" onclick="Fn_Check_Fire($.this,' + "'" + varRemarks + "'" + ')"/></td><td><textarea class="form-control Remarks required" name="' + varRemarks + '" id="' + varRemarks + '" style="width: 200px; height: 6px;display:none;"></textarea></td></tr>'
+                    $("#Tbl_FIRE_SAFETY").append(Datamarkup);
+                    Data++;
+                });
+            }
+        });
+
+    }
+    function FS_Get_Edit_Business_Unit(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields.BUSINESS_ID).empty();
+                $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+    function FS_Get_Edit_Zone_Unit(controlid, selectedValue, Community_Id, Building_Id) {
+        $(controlid).html("");
+        $(UI_Fields.BUILDING_ID).removeAttr('disabled');
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            FS_FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+    function Fn_CheckHideFire(Val, App_Id) {
+        $("#" + Val).hide();
+        $("#" + App_Id).hide();
+        $("#" + App_Id).val('');
+    }
+    function Fn_Check_Fire(Val, App_Id) {
+        $("#" + Val).show();
+        $("#" + App_Id).show();
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+
+    function FS_Staff_File_Upload(inputId, UploadPhotoId, Staff_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Staff_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_Method_File_Upload(inputId, UploadPhotoId, Method_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Method_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_Risk_File_Upload(inputId, UploadPhotoId, Risk_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Risk_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_Emr_File_Upload(inputId, UploadPhotoId, Emr_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Emr_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_HSE_File_Upload(inputId, UploadPhotoId, HSE_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + HSE_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_Signed_File_Upload(inputId, UploadPhotoId, Hse_Div) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("ConUploadFileUpload", "ControlOfWork")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Hse_Div).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function FS_Get_Edit_DMS_No_Edit(controlid, selectedValue) {
+        var loginemail = '@LoginClass.Email_Id';
+        $(controlid).html("");
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: loginemail }, function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function FS_Get_Comp_Person_Edit(controlid, selectedValue, DMS_ID, Build_Id, Selected_Build_Id) {
+        $(controlid).html("");
+        $(Build_Id).html("");
+        $(controlid).removeAttr('disabled');
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: DMS_ID }, function (data) {
+            $(controlid).empty();
+            $(Build_Id).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            if (data._Competent_Person != null && data._Competent_Person.length > 0) {
+                $(data._Competent_Person).each(function (i, e) {
+                    $(controlid).append("<option value=" + e.Work_Superviosor_Id + ">" + e.Name_Position + "</option>");
+                });
+            }
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $(Build_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $(Build_Id).append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            if (Selected_Build_Id != null)
+                $(Build_Id).val(Selected_Build_Id);
+        });
+    }
+</script>
+<script>
+    function Location() {
+        debugger;
+        // if HTML DOM Element that contains the map is found...
+        if (document.getElementById('map-canvas_view_Edit')) {
+            debugger;
+            var content;
+            var latitude = $("#Lat").val();
+            var longitude = $("#Long").val();
+            //alert(latitude + ' ' + longitude);
+            var map;
+            var marker;
+            navigator.geolocation.getCurrentPosition(loadMap);
+
+            function loadMap(location) {
+                if (location.coords) {
+                    latitude = $("#Lat").val();//location.coords.latitude;
+                    longitude = $("#Long").val();//location.coords.longitude;
+                }
+
+                // Coordinates to center the map
+                var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+                // Other options for the map, pretty much selfexplanatory
+                var mapOptions = {
+                    zoom: 12,
+                    center: myLatlng,//new google.maps.LatLng(latitude, longitude),
+                    mapTypeId: google.maps.MapTypeId.PLAN,
+                };
+
+                var image = '../assets/images/mappin.png';
+                // Attach a map to the DOM Element, with the defined settings
+                map = new google.maps.Map(document.getElementById("map-canvas_view_Edit"), mapOptions);
+
+                content = document.getElementById('information');
+                google.maps.event.addListener(map, 'click', function (e) {
+                    placeMarker(e.latLng);
+                });
+                marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    icon: image
+                });
+            }
+        }
+    }
+    function placeMarker(location) {
+        marker.setPosition(location);
+        map.setCenter(location)
+        //content.innerHTML="";
+        $("#Lat").val(location.lat());
+        $("#Long").val(location.lng());
+        content.innerHTML = "Lat: " + location.lat() + " / Long: " + location.lng();
+        google.maps.event.addListener(marker, 'click', function (e) {
+            new google.maps.InfoWindow({
+                content: "Lat: " + location.lat() + " / Long: " + location.lng()
+            }).open(map, marker);
+        });
+    }
+</script>
+

@@ -1,0 +1,299 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "HealthSafety Action Closure";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<style>
+    .Qns {
+        --bs-gutter-x: 0px !important;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+@model IReadOnlyCollection<Nakheel_Web.Models.HandOverInsMaster.M_Insp_HealthSafety_Assign_Team>;
+@*Grid View*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Health & Safety Action Closure List</h4></div>
+                    <div class="col-lg-2" style="display:none;">
+                        <button type="button" id="btn_add_Handover" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Handover</button>
+                    </div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblHealthSafetyActionClosure" class="table table-sm tblround table-striped dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Date of Inspection</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                    {
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle" style="display:none;">@item.Insp_HealthSafety_Id</td>
+                                        <td align="left" valign="middle">@item.Unique_Id</td>
+                                        <td align="left" valign="middle">@item.Role_Id</td>
+                                        <td align="left" valign="middle">@item.Responsible_Id</td>
+                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                        @if (item.Action_Taken == "Corrective Action Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-warning">@item.Action_Taken</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id, @item.Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id, @item.Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-warning" data-bs-original-title="Edit" aria-label="Edit"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Action_Taken == "Action Closure Pending")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-info">@item.Action_Taken</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id,@item.Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-info" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id,@item.Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-info" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                        @if (item.Action_Taken == "Completed")
+                                        {
+                                            <td align="left" valign="middle"><span class="badge bg-success">@item.Action_Taken</span> </td>
+                                            <td align="left">
+                                                <div class="d-flex gap-3">
+                                                    @if (LoginClass.Role_Id == "5")
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id, @item.Corrective_Action_Id)" href="javascript:void(0);" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a onclick="Closure_Edit(@item.Insp_HealthSafety_Id,@item.Corrective_Action_Id)" href="javascript:void(0);" title="Review" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="HealthSafety_Closure_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Health & Safety Closure</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewInspback_Ev" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewHealthSafetyList_Closure">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        //TBODY_TABLE_CA: "#GetAllCAList",
+        //MainTableCA: "#MainTableCA",
+        List_View_CA_Div: "#List_View",
+        Add_Insp_Finding_Closure_Div: "#HealthSafety_Closure_View",
+        Load_Add_Insp_Finding_Closure_Div: "#ViewHealthSafetyList_Closure",
+        //btn_back_View: ".btn_back_View",
+    });
+
+    $(document).ready(function () {
+        //var Zone_Id = $('#Zone_Id').val();
+        //var Community_Id = $('#Community_Id').val();
+
+        //ApplySelect2CC("#Re_Assign_Employee");
+
+        //$('select[id=Re_Assign_Employee]').change(function () {
+        //    $('#txtvalidemailaction_remarks').text('');
+        //});
+
+        //function ApplySelect2CC(id) {
+        //    $(id).select2({
+        //        placeholder: "--Select--",
+        //        theme: 'bootstrap-5',
+        //    });
+        //}
+
+        $("#tblHealthSafetyActionClosure").DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $("#tblHealthSafetyActionClosure").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf', 'colvis'],
+        });
+    });
+</script>
+<script>
+    $("#btn_ViewInspback_Ev").on('click', function () {
+        $("#List_View").show(100);
+        $("#HealthSafety_Closure_View").hide(100);
+    });
+    function Closure_Edit(val, Corrective_Action_Id) {
+        //alert(val);
+        debugger;
+        //$("#Inc_Observation_Id").val(val);
+        //$("#Obs_Corrective_Action_Id").val(Obs_Corrective_Action_Id);
+        //$("#Responsible_Id").val(Responsible_Id);
+        $("#List_View").hide(100);
+        $("#HealthSafety_Closure_View").show(100);
+        Hzurl = '/HandOverInspection/_ViewHealthSafetyBuilding';
+        Hzurl += '/?Insp_HealthSafety_Id=' + val;
+        $("#ViewHealthSafetyList_Report").load(Hzurl);
+
+        Hzurl = '/HandOverInspection/_GetHealthSafetyQnsView';
+        Hzurl += '/?Insp_HealthSafety_Id=' + val;
+        $("#ViewHealthSafetyList_Qns").load(Hzurl);
+
+        Hzurl = '/HandOverInspection/_ViewHealthSafetyClosureAction';
+        Hzurl += '/?Insp_HealthSafety_Id=' + val;
+        $("#ViewHealthSafetyList_Closure").load(Hzurl);
+    }
+    
+    $(".submit_CA").click(function () {
+        debugger
+        //var val = $("#hdn_Insp_HealthSafety_Id").val();
+        //var Corrective_Action_Id = $("#hdn_Corrective_Action_Id").val();
+        //alert(val)
+        var Obj = {
+            Insp_HealthSafety_Id: $("#hdn_Insp_HealthSafety_Id").val(),
+            Corrective_Action_Id: $("#hdn_Corrective_Action_Id").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/HealthSafety_Closure_Action_Approval",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+    $(".submit_CA_HSSE").click(function () {
+        debugger
+        //var val = $("#hdn_Insp_HealthSafety_Id").val();
+        //var Corrective_Action_Id = $("#hdn_Corrective_Action_Id").val();
+        //alert(val)
+        var Obj = {
+            Insp_HealthSafety_Id: $("#hdn_Insp_HealthSafety_Id").val(),
+            Corrective_Action_Id: $("#hdn_Corrective_Action_Id").val()
+        };
+        $.ajax({
+            url: "/HandOverInspection/HealthSafety_Closure_Action_Approval",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Updated Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    });
+</script>

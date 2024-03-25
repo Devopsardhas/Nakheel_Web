@@ -1,0 +1,1123 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Nakheel</title>
+    <link href="@Url.Content("~/assets/css/bootstrap.min.css")" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/assets/css/icons.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/assets/css/app.min.css")" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/assets/pages/datatables/css/datatables.bootstrap5.min.css")" rel="stylesheet">
+    <link href="@Url.Content("~/assets/libs/choices.js/public/assets/styles/choices.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/assets/libs/toastr/build/toastr.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/css/datatablebutt.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/fonts/nakheelfont.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/css/layout.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/js/multiselect/select_2.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/js/multiselect/select_2_b.css")" rel="stylesheet" />
+
+    <script type="text/javascript" src="@Url.Content("~/assets/pages/datatables/jquery.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simplebar/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/apexcharts/apexcharts.min.js")"></script>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.11&sensor=false&libraries=places&key=AIzaSyDmPNge2CFXcAkv2jbONq2T5yyE069N1Do"
+            type="text/javascript"></script>
+    <!-- Sweet Alert-->
+
+</head>
+<body data-sidebar="dark">
+    <div id="layout-wrapper">
+        <header id="page-topbar" class="isvertical-topbar">
+            <div class="navbar-header" style="background: #e8e8e8;border-radius: 30px;">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <button type="button" class="btn btn-sm px-3 font-size-16 header-item vertical-menu-btn topnav-hamburger">
+                        <div class="hamburger-icon open">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                    <div class="d-none d-sm-block ms-3 align-self-center">
+                        <h4 class="page-title" style="font-size:calc(80% + 0.75vw) !important;font-family: 'Nakheel-HeadlineBold';">@ViewData["Title"]</h4>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <input type="text" readonly class="form-control" id="Inc_Date_lay" name="Inc_Date_lay" style="background: #e8e8e8;font-family: 'Nakheel-HeadlineBold';border: none;" />
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item noti-icon" id="page-header-notifications-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="icon-sm" data-eva="bell-outline"></i>
+                            <span class="noti-dot bg-danger rounded-pill" id="NotificationCount">0</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                             aria-labelledby="page-header-notifications-dropdown">
+                            <div class="p-3" style="background: #00263a;border-radius: 6px;padding: 11px !important;">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h5 class="m-0 font-size-15" style="color: #fff !important;"> Notifications </h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-simplebar style="max-height: 250px;">
+                                <div id="NotificationBody"></div>
+                            </div>
+                            @* <div class="p-2 border-top d-grid">
+                            <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
+                            <i class="uil-arrow-circle-right me-1"></i> <span>View More..</span>
+                            </a>
+                            </div>*@
+                        </div>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item noti-icon right-bar-toggle" id="right-bar-toggle">
+                            <i class="icon-sm" data-eva="settings-outline"></i>
+                        </button>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item user text-start d-flex align-items-center" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="header-profile-user" src="~/assets/images/usericon.png"
+                                 alt="Header Avatar">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end pt-0">
+                            <div class="p-3 border-bottom">
+                                @*<h6 class="mb-0">@User.Identities.First().Name</h6>*@
+                                <h6 class="mb-0">@LoginClass.First_Name</h6>
+                                @*<p class="mb-0 font-size-11 text-muted">@User.Identities.First().Name</p>*@
+                                @if (LoginClass.Role_Id == "16")
+                                {
+                                    <p class="mb-0 font-size-11 text-muted">@LoginClass.Role_Name</p>
+                                }
+                                else
+                                {
+                                    <p class="mb-0 font-size-11 text-muted">@LoginClass.Designation_Name</p>
+                                }
+                            </div>
+                            <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
+                            <a class="dropdown-item" href="@Url.Action("Logout","Account")"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="vertical-menu">
+            <div class="navbar-brand-box">
+                <a href="@Url.Action("Index","Home")" class="logo logo-light">
+                    <span class="logo-lg">
+                        <img src="~/assets/images/Logo.png" alt="" height="22" style="height: 57px;">
+                    </span>
+                    <span class="logo-sm">
+                        <img src="~/assets/images/sidelogo.png" alt="" height="30">
+                    </span>
+                </a>
+            </div>
+
+            <button type="button" class="btn btn-sm px-3 header-item vertical-menu-btn topnav-hamburger">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            <div data-simplebar class="sidebar-menu-scroll">
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-li">
+                            <a asp-action="Index" asp-controller="Home">
+                                <i class="icon nav-icon" data-eva="home-outline"></i>
+                                <span class="menu-item" data-key="t-dashboards">Home</span>
+                            </a>
+                        </li>
+                        @if (LoginClass.Role_Id == "11" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "19" || LoginClass.Role_Id == "1")
+                        {
+                            <li class="menu-li">
+                                <a asp-action="MasterDashboard" asp-controller="Home">
+                                    <i class="icon nav-icon" data-eva="grid-outline"></i>
+                                    <span class="menu-item" data-key="t-dashboards">Management Dashboard</span>
+                                </a>
+                            </li>
+                        }
+                        @if (LoginClass.Role_Id == "19")
+                        {
+                            <li class="menu-li">
+                                <a href="javascript: void(0);" class="has-arrow">
+                                    <i class="icon nav-icon" data-eva="shopping-bag-outline"></i>
+                                    <span class="menu-item" data-key="t-ecommerce">Administration Master</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a asp-action="Department" asp-controller="Master" data-key="t-products">Department</a></li>
+                                    <li><a asp-action="Designation" asp-controller="Master" data-key="t-products">Designation</a></li>
+                                    <li><a asp-action="Business_Unit" asp-controller="Master" data-key="t-products">Business Unit</a></li>
+                                    <li><a asp-action="Zone_Management" asp-controller="Master" data-key="t-product-detail">Zone Management</a></li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Community Management</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a asp-action="Community_Management" asp-controller="Master" data-key="t-level-2.1">Community</a></li>
+                                            <li><a asp-action="Building_Management" asp-controller="Master" data-key="t-level-2.1">Building Management</a></li>
+                                            @*<li><a asp-action="Master_Community_Management" asp-controller="Master" data-key="t-level-2.2">Master Community Management</a></li>*@
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Employee_Management" asp-controller="Master" data-key="t-cart">Employee Management</a></li>
+                                    <li><a asp-action="Service_Provider_Contractor_Management" asp-controller="Master" data-key="t-checkout">Service Provider / Contractor Management</a></li>
+                                </ul>
+                            </li>
+                        }
+                        <li class="menu-li">
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i class="icon nav-icon" data-eva="email-outline"></i>
+                                <span class="menu-item" data-key="t-email">Incident Management</span>
+                            </a>
+
+                            <ul class="sub-menu" aria-expanded="false">
+
+                                @if (LoginClass.Role_Id == "19")
+                                {
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Master</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a asp-action="Incident_Category" asp-controller="Incident" data-key="t-level-2.1">Incident Category</a></li>
+                                            <li><a asp-action="Incident_Type" asp-controller="Incident" data-key="t-level-2.2">Incident Type</a></li>
+                                            <li><a asp-action="Injury_Type" asp-controller="Incident" data-key="t-level-2.2">Injury Type</a></li>
+                                            <li><a asp-action="Nature_Injury_Illness" asp-controller="Incident" data-key="t-level-2.2">Nature of Injury / illness</a></li>
+                                            <li><a asp-action="Unsafe_Act" asp-controller="Incident" data-key="t-read-email">Unsafe Act</a></li>
+                                            <li><a asp-action="Unsafe_Condition" asp-controller="Incident" data-key="t-read-email">Unsafe Condition</a></li>
+                                            <li><a asp-action="Personal_factor" asp-controller="Incident" data-key="t-read-email">Personal Factor</a></li>
+                                            <li><a asp-action="System_factor" asp-controller="Incident" data-key="t-read-email">System Factor</a></li>
+                                            <li><a asp-action="Mechanism_Of_Injury" asp-controller="Incident" data-key="t-read-email">Machanism Of Injury</a></li>
+                                            <li><a asp-action="Agency_Of_Injury" asp-controller="Incident" data-key="t-read-email">Agency of Injury</a></li>
+                                            <li><a asp-action="Health_Safety_Observation_Types" asp-controller="Incident" data-key="t-read-email">Health & Safety Observation Types</a></li>
+                                            <li><a asp-action="Environment_Observation_Types" asp-controller="Incident" data-key="t-read-email">Environment Observation Types</a></li>
+                                            <li><a asp-action="Types_of_Environmental_factor" asp-controller="Incident" data-key="t-read-email">Type of Environmental Factor</a></li>
+                                            <li><a asp-action="Classification" asp-controller="Incident" data-key="t-read-email">Classification</a></li>
+                                            <li><a asp-action="Types_of_Security_Incident" asp-controller="Incident" data-key="t-read-email">Type of Security Incident</a></li>
+                                            <li><a asp-action="Vehicle_Accident_Type" asp-controller="Incident" data-key="t-read-email">Vehicle Accident Type</a></li>
+                                            <li><a asp-action="Sec_Inc_Category" asp-controller="SecurityIncident" data-key="t-level-2.2">Security Incident Category</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">HSE Incident</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @* <li><a asp-action="IncidentDashboard" asp-controller="Incident" data-key="t-level-2.2">Dashboard</a></li>*@
+                                        @if (LoginClass.Role_Id == "1" || LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4"
+                                        || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" ||
+                                        LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" ||
+                                        LoginClass.Role_Id == "14" || LoginClass.Role_Id == "18" || LoginClass.Role_Id == "19")
+                                        {
+                                            <li><a asp-action="IncidentDashboardNew" asp-controller="Incident" data-key="t-level-2.2">Dashboard</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "11" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "18" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "2" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+                                        {
+                                            <li><a asp-action="IncidentReporting" asp-controller="Incident" asp-route-id="All" data-key="t-level-2.2">Report Incident</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "5")
+                                        {
+                                            <li><a asp-action="INC_Action_Closure" asp-controller="Incident" data-key="t-level-2.1">Action Closure Report</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "10")
+                                        {
+                                            <li><a asp-action="INC_Action_Approval" asp-controller="Incident" data-key="t-level-2.1">Action Closure Approval</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                        {
+                                            <li><a asp-action="IncidentInvestigation" asp-controller="Incident" data-key="t-read-email">Investigation of Incident</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Observation</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (LoginClass.Role_Id == "1" || LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4"
+                                        || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" ||
+                                        LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" ||
+                                        LoginClass.Role_Id == "14" || LoginClass.Role_Id == "18" || LoginClass.Role_Id == "19")
+                                        {
+                                            <li><a asp-action="ObservationDashboard" asp-controller="Incident" data-key="t-level-2.2">Dashboard</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                                        {
+                                            <li><a asp-action="ObservationReporting" asp-controller="Incident" asp-route-id="All" data-key="t-level-2.1">Report Observation</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                        {
+                                            <li><a asp-action="OBS_Action_Closure" asp-controller="Incident" data-key="t-level-2.1">Action Closure</a></li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Security Incident</a>
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        <li><a asp-action="Sec_Incident_Report" asp-controller="SecurityIncident" data-key="t-products">Security Incident Report</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="menu-li">
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i class="icon nav-icon" data-eva="layers"></i>
+                                <span class="menu-item" data-key="t-filemanager">Emergency Management</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                @if (LoginClass.Role_Id == "19")
+                                {
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Master</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a asp-action="Level_Master" asp-controller="Master" data-key="t-level-2.1">Level Master</a></li>
+                                            <li><a asp-action="Crisis_Master" asp-controller="Master" data-key="t-level-2.2">Crisis Management Team</a></li>
+                                            <li><a asp-action="Emergency_Category_Master" asp-controller="Master" data-key="t-level-2.2">Emergency Category</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Emergency Mitigation</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        <li><a asp-controller="EmergencyAlert" asp-action="Index" data-key="t-level-2.1">Hot-Spot Identification</a></li>
+                                        @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                        {
+                                            <li><a asp-action="TriggerAlert" asp-controller="TriggerAlert" data-key="t-level-2.1">Trigger Alert</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                                        {
+                                            <li><a asp-action="MigitationAction" asp-controller="MigitationAction" data-key="t-level-2.1">Emergency Action</a></li>
+                                        }
+                                        <li><a asp-action="MigitationReport" asp-controller="MigitationAction" data-key="t-level-2.1">Rain Mitigation Report</a></li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Drill Management</a>
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        @if (LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                        {
+                                            <li>
+                                                <a asp-controller="Emergency" asp-action="Schedule">
+                                                    Drill Schedule
+                                                </a>
+                                            </li>
+                                        }
+                                        <li>
+                                            <a asp-controller="DrillSchedule" asp-action="Index" asp-route-id="0">
+                                                Drill List
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a asp-controller="DrillAction" asp-action="Index">
+                                                Drill Closure Action
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12")
+                                {
+                                    <li><a asp-action="Emergency_Alert_Master" asp-controller="Emergencymitigation" data-key="t-level-2.2">Emergency Alert</a></li>
+                                }
+                                @if (LoginClass.Role_Id != "19" && LoginClass.Role_Id != "16")
+                                {
+                                    <li><a asp-action="Crisis_Master_Comm" asp-controller="Master" data-key="t-level-2.2">Crisis Management Team</a></li>
+                                }
+                                @if (LoginClass.Role_Id != "16" || LoginClass.Role_Id != "18" || LoginClass.Role_Id != "19")
+                                {
+                                    <li><a asp-action="Index" asp-controller="Emergencymitigation" data-key="t-level-2.1">Emergency Escalation</a></li>
+                                }
+                                @if (LoginClass.Role_Id != "16" || LoginClass.Role_Id != "18" || LoginClass.Role_Id != "19")
+                                {
+                                    <li>
+                                        <a asp-controller="Emergency" asp-action="Index" asp-route-id="0">
+                                            ERT
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
+                        <li class="menu-li">
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i class="icon nav-icon" data-eva="message-circle-outline"></i>
+                                <span class="menu-item" data-key="t-chat">Audit & Inspection</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                @if (LoginClass.Role_Id != "16")
+                                {
+                                    <li>
+                                        <a asp-action="Inspection_Dashboard" asp-controller="InspectionDashboard" data-key="t-read-email">Dashboard</a>
+                                    </li>
+                                }
+                                @if (LoginClass.Role_Id == "19")
+                                {
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Audit Master</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li>
+                                                <a asp-action="Audit_Category" asp-controller="Audit" data-key="t-read-email">Audit Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Audit_Topics" asp-controller="Audit" data-key="t-read-email">Audit Topics</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Audit_Sub_Topics" asp-controller="Audit" data-key="t-read-email">Audit Sub-Topics</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Audit_Questionnaires" asp-controller="Audit" data-key="t-read-email">Audit Questionnaires</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Audit_Findings" asp-controller="Audit" data-key="t-read-email">Audit Findings</a>
+                                            </li>
+                                            @* <li>
+                                        <a asp-action="AuditSchedule" asp-controller="Audit" data-key="t-read-email">Service Provider</a>
+                                        </li>*@
+                                            @* <li>
+                                        <a asp-action="Internal_Aud_Schedule" asp-controller="Audit" data-key="t-read-email">Internal Audit</a>
+                                        </li>*@
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Inspection Master</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li>
+                                                <a asp-action="Insp_Category" asp-controller="Inspection" data-key="t-read-email">Inspection Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Sub_Category" asp-controller="Inspection" data-key="t-read-email">Inspection Sub Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Type" asp-controller="Inspection" data-key="t-read-email">Inspection Type</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Topic" asp-controller="Inspection" data-key="t-read-email">Inspection Topic</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Questionnaires" asp-controller="Inspection" data-key="t-read-email">Inspection Questionnaires</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Observation" asp-controller="Inspection" data-key="t-read-email">Inspection Observation</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Landscap_Master" asp-controller="Inspection" data-key="t-read-email">Landscape Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_Landscap_Sub_Cat_GetAll" asp-controller="Inspection" data-key="t-read-email">Landscape Sub Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_SoftService_Master" asp-controller="Inspection" data-key="t-read-email">SoftService Category</a>
+                                            </li>
+                                            <li>
+                                                <a asp-action="Insp_SoftService_Sub_Cat_GetAll" asp-controller="Inspection" data-key="t-read-email">SoftService Sub Category</a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                }
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Inspection Form</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_Request" asp-controller="Inspection" data-key="t-read-email">Spot Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Joint_Insp_Request" asp-controller="Inspection" data-key="t-read-email">Joint Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Leader_Insp_Request" asp-controller="Inspection" data-key="t-read-email">Leadership Tour</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Handover_Building" asp-controller="HandoverInspection" data-key="t-read-email">Handover Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_HealthSafety_Building" asp-controller="HandoverInspection" data-key="t-read-email">Health & Safety Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_Service_Provider" asp-controller="HandoverInspection" data-key="t-read-email">Service Provider Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_FireLife_Safety" asp-controller="HandoverInspection" data-key="t-read-email">Fire & Life Safety Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="Landscape_Inspection" asp-controller="Inspection" data-key="t-read-email">Landscape Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li>
+                                                <a asp-action="SoftService_Inspection" asp-controller="Inspection" data-key="t-read-email">Soft Service Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "16")
+                                        {
+                                            <li style="display:none">
+                                                <a asp-action="Complaint_Register" asp-controller="Inspection" data-key="t-read-email">Complaint Register</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a asp-action="Insp_Safety_Violation" asp-controller="Inspection" asp-route-id="All" data-key="t-read-email">Safety Violation</a>
+                                </li>
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.3">Action Closure</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_Spot_Corrective_Action" asp-controller="Inspection" data-key="t-read-email">Spot Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_Joint_Corrective_Action" asp-controller="Inspection" data-key="t-read-email">Joint Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Insp_Leader_Corrective_Action" asp-controller="Inspection" data-key="t-read-email">Leadership Inspection</a>
+                                            </li>
+                                        }
+                                        <li>
+                                            <a asp-action="Insp_Safety_Vio_Corrective_Action" asp-controller="Inspection" data-key="t-read-email">Safety Violation</a>
+                                        </li>
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="HandOver_Action_Closure" asp-controller="HandoverInspection" data-key="t-read-email">Handover Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="HealthSafety_Action_Closure" asp-controller="HandoverInspection" data-key="t-read-email">Health & Safety Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="ServiceProvider_Action_Closure" asp-controller="HandoverInspection" data-key="t-read-email">Service Provider Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="FireLifeSafety_Action_Closure" asp-controller="HandoverInspection" data-key="t-read-email">Fire & Life Safety Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="Landscape_CA_Insp" asp-controller="Inspection" data-key="t-read-email">Landscape Inspection</a>
+                                            </li>
+                                        }
+                                        @if (LoginClass.Role_Id != "19")
+                                        {
+                                            <li>
+                                                <a asp-action="SoftService_CA_Insp" asp-controller="Inspection" data-key="t-read-email">SoftService Inspection</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Audit Form</a>
+                                    <ul class="sub-menu" aria-expanded="true">
+                                        @*  <li><a asp-action="Internal_Aud_Schedule" asp-controller="Audit" data-key="t-level-2.1">Internal Audit</a></li> *@
+                                       @*  <li style="display:none"><a asp-action="ObservationDashboard" asp-controller="Incident" data-key="t-level-2.2">Dashboard</a></li> *@
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                                        {
+                                            <li><a asp-action="Audit_Service_Provider" asp-controller="AuditSp" data-key="t-level-2.1">Service Provider Audit</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                                        {
+                                            <li><a asp-action="EnvironmentalAudit" asp-controller="AuditEnv" data-key="t-level-2.1">Environmental Audit</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                                        {
+                                            <li><a asp-action="Welfare_Aud_Schedule" asp-controller="Audit" data-key="t-level-2.1">Welfare Audit</a></li>
+                                        }
+                                        @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                                        {
+                                            <li><a asp-action="Internal_Audit" asp-controller="AuditInternal" data-key="t-level-2.1">Internal Audit</a></li>
+                                        }
+                                        <li><a asp-action="Audit_NCM_Form" asp-controller="AuditNCMForm" asp-route-id="All" data-key="t-level-2.2">Non-Conformance Report</a></li>
+                                    </ul>
+                                </li>
+                                @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                {
+                                    <li>
+                                        <a asp-action="Create_Audit_Insp_Sch" asp-controller="Inspection" data-key="t-read-email">Create Schedule</a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+
+                        <li class="menu-li">
+                            <a href="javascript: void(0);" class="has-arrow">
+                                <i class="icon nav-icon" data-eva="archive-outline"></i>
+                                <span class="menu-item" data-key="t-filemanager">Control of Work</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                @if (LoginClass.Role_Id != "16")
+                                {
+                                    <li><a asp-action="ServiceProvider_SignupDashboard" asp-controller="ServiceProviderSignup_Dashboard" data-key="t-level-2.2">Dashboard</a></li>
+                                }
+                                @if (LoginClass.Role_Id == "19")
+                                {
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" data-key="t-level-1.2">Master</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a asp-action="MajorHSERiskMaster" asp-controller="ControlOfWork" data-key="t-level-2.1">Major HSE Work</a></li>
+                                            <li><a asp-action="Major_HSE_Question" asp-controller="ControlOfWork" data-key="t-level-2.1">Major HSE Questionnaries</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                                @if (LoginClass.Role_Id == "2" || LoginClass.Role_Id == "3" || LoginClass.Role_Id == "4" || LoginClass.Role_Id == "5" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+                                {
+                                    <li><a asp-action="SP_Sign_Up_List" asp-controller="Master" asp-route-id="All" data-key="t-level-2.2">Service Providers</a></li>
+                                }
+
+                                @if (LoginClass.Role_Id == "16")
+                                {
+                                    <li><a asp-action="SP_Sign_Up_List_Email" asp-controller="Master" data-key="t-level-2.2">List Of Contracts</a></li>
+                                }
+                                <li><a asp-action="ServiceMonthly" asp-controller="ServiceMonthlyStatistics" data-key="t-level-2.2">HSE Monthly Statistics</a></li>
+                                <li><a asp-action="Confined_Space_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">Confined Space Work Clearance</a></li>
+                                <li><a asp-action="Electrical_Work_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">Electrical Work Permit</a></li>
+                                <li><a asp-action="FireSafety_Work_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">Fire & Safety Work permit</a></li>
+                                <li><a asp-action="Hot_Work_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">Hot Work Permit</a></li>
+                                <li><a asp-action="WorkAt_Height_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">Work at Height Permit</a></li>
+                                <li style="display:none"><a asp-action="third_Party_Permit" asp-controller="ControlOfWork" data-key="t-level-2.2">3rd Party Access Permit</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+        <header id="page-topbar" class="ishorizontal-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <div class="navbar-brand-box">
+                        <a href="@Url.Action("Index","Home")" class="logo logo-light">
+                            <span class="logo-sm">
+                                <img src="~/assets/images/sidelogo.png" alt="" height="30">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/assets/images/Logo.png" alt="" height="57">
+                            </span>
+                        </a>
+                    </div>
+
+                    <button type="button" class="btn btn-sm px-3 font-size-16 d-lg-none header-item" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+
+                    <div class="d-none d-sm-block ms-2 align-self-center">
+                        <h4 class="page-title">"@ViewData["Title"]"</h4>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <button type="button" class="btn header-item"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="icon-sm" data-eva="search-outline"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-md p-0">
+                            <form class="p-2">
+                                <div class="search-box">
+                                    <div class="position-relative">
+                                        <input type="text" class="form-control bg-light border-0" placeholder="Search...">
+                                        <i class="search-icon" data-eva="search-outline" data-eva-height="26" data-eva-width="26"></i>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item noti-icon right-bar-toggle" id="right-bar-toggle">
+                            <i class="icon-sm" data-eva="settings-outline"></i>
+                        </button>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                    </div>
+                </div>
+            </div>
+            <div class="topnav">
+                <div class="container-fluid">
+                    <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+
+                        <div class="collapse navbar-collapse" id="topnav-menu-content">
+                            <ul class="navbar-nav">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboard" role="button"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon nav-icon" data-eva="grid-outline"></i>
+                                        <span data-key="t-dashboards">Dashboards</span> <div class="arrow-down"></div>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <div class="preloader" style="display:none;">
+                        <img style="width: 10%;text-align: center;margin-left: 39%;margin-top: 10%;" src="/assets/images/Loader_new.gif">
+                    </div>
+                    @RenderBody()
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <script>document.write(new Date().getFullYear())</script> &copy;
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <div class="right-bar">
+        <div data-simplebar class="h-100">
+            <div class="rightbar-title d-flex align-items-center bg-dark p-3">
+                <h5 class="m-0 me-2 text-white">Settings</h5>
+                <a href="javascript:void(0);" class="right-bar-toggle-close ms-auto">
+                    <i class="mdi mdi-close noti-icon"></i>
+                </a>
+            </div>
+            <!-- Settings -->
+            <hr class="m-0" />
+        </div>
+    </div>
+    <div class="rightbar-overlay"></div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasActivity" aria-labelledby="offcanvasActivityLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 id="offcanvasActivityLabel">Offcanvas right</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            ...
+        </div>
+    </div>
+    <div class="modal fade changepassword" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="AddModule" method="post" class="row">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    @* <input type="hidden" name="User_Id" value="@LoginClass.User_Id" />*@
+                                    <label for="basicpill-oldpassword-input" class="form-label">Old Password</label>
+                                    @*<input type="password" class="form-control" placeholder="Enter Old Password" name="Old_Password" id="Old_Password" autocomplete="off" required minlen="1" value="@LoginClass.Password">*@
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-newpassword-input" class="form-label">New Password</label>
+                                    <input type="password" class="form-control" placeholder="Enter New Password" name="Password" id="New_Password" autocomplete="off" required minlen="1">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-confirmpassword-input" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" placeholder="Enter Password" name="Confirm_Password" id="Confirm_Password" autocomplete="off" required minlen="1">
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row mt-2">
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-danger me-1" data-bs-dismiss="modal"><i class="bx bx-x me-1"></i>Cancel</button>
+                                <button type="button" class="btn btn-success" id="btn-save-event" onclick="btn_changepassword()"><i class="bx bx-check me-1"></i>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade editprofile" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="MastersM" asp-action="EditProfile" method="post" class="row mt-4 pt-2" enctype="multipart/form-data">
+                        <input type="hidden" value="" name="User_Id" id="User_Id" />
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-firstname-input" class="form-label">First Name</label>
+                                    <input type="text" class="form-control alpha" placeholder="Enter First Name" name="First_Name" id="First_Name" autocomplete="off" required minlen="1" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-lastname-input" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control alpha" placeholder="Enter Last Name" name="Last_Name" id="Last_Name" autocomplete="off" required minlen="1" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-email-input" class="form-label">Email-Address</label>
+                                    <input type="text" class="form-control" placeholder="Enter E-mail" name="Email_ID" id="Email_ID" autocomplete="off" required minlen="1" readonly value="" onchange="FnEmail(this)">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-mobilenumber-input" class="form-label">Mobile Number</label>
+                                    <input type="text" class="form-control numbersonly" maxlength="12" placeholder="Enter Mobile Number" name="Mobile_No" id="Mobile_No" autocomplete="off" required minlen="1" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-address-input" class="form-label">Address</label>
+                                    <input type="text" class="form-control" placeholder="Enter Address" name="Address_1" id="Address_1" autocomplete="off" required minlen="1" value="">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="basicpill-location-input" class="form-label">Country</label>
+                                    @*<input type="text" class="form-control" name="Country" id="Country" autocomplete="off" required minlen="1" value="@LoginClass.CountryName" readonly>*@
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <img src="" id="ProfilePhoto" style="display:none" />
+                                    <input type="hidden" name="EditImageFile" value="" id="hdnimage" />
+                                    <div class="mb-3">
+                                        <label for="basicpill-profilephoto-input" class="form-label">Profile Photo</label>
+                                        @*<input type="file" class="form-control" name="FormFile" id="Profile_Photo" asp-for="@LoginClass.FormFile" accept=".jpg,.png,.jpeg">*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row mt-2">
+                            <div class="col-12 text-end">
+                                <div class="row mt-2">
+                                    <div class="col-12 text-end">
+                                        <button type="button" class="btn btn-danger me-1" data-bs-dismiss="modal"><i class="bx bx-x me-1"></i> Cancel</button>
+                                        <button type="submit" class="btn btn-success" id="Profile_btn-save-event"><i class="bx bx-check me-1"></i> Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="@Url.Content("~/assets/js/multiselect/select_2.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap4.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.select.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/metismenujs/metismenujs.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simplebar/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/eva-icons/eva.min.js")"></script>
+    @*<script src="@Url.Content("~/assets/libs/apexcharts/apexcharts.min.js")"></script>*@
+    <script src="@Url.Content("~/assets/js/pages/stock-prices.js")"></script>
+    <script src="@Url.Content("~/assets/libs/choices.js/public/assets/scripts/choices.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/swiper/swiper-bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.es5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/libs/toastr/build/toastr.min.js")"></script>
+    <script src="@Url.Content("~/assets/js/validation/jquery.validate.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js")"></script>
+    <script src="@Url.Content("~/assets/js/app.js")"></script>
+    <script>
+        "use strict";
+        const Fields = Object.freeze({
+            NOTIFICATION_COUNT: "#NotificationCount",
+            NOTIFICATION_BODY: "#NotificationBody",
+        });
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const d = new Date();
+        var dd = String(d.getDate()).padStart(2, '0');
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var yyyy = d.getFullYear();
+        var fullDate = + dd + " " + monthNames[d.getMonth()] + "," + " " + yyyy;
+        $('#Inc_Date_lay').val(fullDate);
+
+        $(".alpha").keypress(function (e) {
+            if (e.which == 163 || e.which == 164 || e.which == 167 || e.which == 168 || e.which == 180 || e.which == 189 || e.which == 197 || e.which == 198 || e.which == 216 || e.which == 229 || e.which == 230 || e.which == 248 || (e.which >= 33 && e.which <= 64) || (e.which >= 91 && e.which <= 96) || (e.which >= 123 && e.which <= 126)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        });
+
+        $(".numbersonly").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 9 && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 30 || e.which > 39)) {
+                //$(this).tooltip('show');
+                return false;
+            }
+            else {
+                //$(this).tooltip('hide');
+                return true;
+            }
+        });
+        let msg = '@TempData["AclEditprofile_msg"]';
+
+        if (msg != "") {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: msg,
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        $("#EditProfile").click(function () {
+
+            $("#ProfilePhoto").removeAttr('src');
+            var User_Id = '1';
+            $.post("@Url.Action("GetByID_AclUserAccess", "MastersM")", { ID: User_Id }, function (data) {
+                if (data.Status == "true") {
+                    $(".editprofile").modal('show');
+                    $("#User_Id").val(data.Get_ACLUser.User_Id);
+                    $("#Designation_Id").val(data.Get_ACLUser.Designation_Id);
+                    $("#First_Name").val(data.Get_ACLUser.First_Name);
+                    $("#Last_Name").val(data.Get_ACLUser.Last_Name);
+                    $("#Mobile_No").val(data.Get_ACLUser.Mobile_No);
+                    $("#Email_ID").val(data.Get_ACLUser.Email_ID);
+                    $("#Gender").val(data.Get_ACLUser.Gender);
+                    $("#DOB").val(data.Get_ACLUser.DOB);
+                    $("#Address_1").val(data.Get_ACLUser.Address_1);
+                    $("#Address_2").val(data.Get_ACLUser.Address_2);
+                    $("#City").val(data.Get_ACLUser.City);
+                    if (data.Get_ACLUser.Profile_Photo != "") {
+                        $('#ProfilePhoto').removeAttr('style');
+                        $('#ProfilePhoto').attr('style', 'height: 50px;width: 50px');
+                        $('#hdnimage').val(data.Get_ACLUser.Profile_Photo);
+                        if (data.Get_ACLUser.Profile_Photo != null) {
+                            $('#ProfilePhoto').attr('src', data.Get_ACLUser.Profile_Photo);
+                        }
+                        else {
+                            $('#ProfilePhoto').attr('src', '~/assets/images/user-icon.png');
+                        }
+                    }
+                    else {
+                        $('#ProfilePhoto').attr('src', '~/assets/images/user-icon.png');
+                    }
+                }
+
+            });
+        });
+
+        //$(document).bind('copy paste cut ', function (e) {
+        //    return false;
+        //});
+
+        var len = 0;
+        var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+        $(function () {
+            connection.start().then(function () {
+                BindNotification(false);
+                //InvokeNotification();
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+
+        connection.on("ReceivedNotification", function () {
+            BindNotification(true);
+        });
+
+        function BindNotification(flag) {
+            $.post("@Url.Action("GeBellNotification", "Account")", function (data) {
+                let lenval = len;
+                $(Fields.NOTIFICATION_COUNT).text(data.length);
+                if (!flag) {
+                    len = data.length;
+                }
+                $(Fields.NOTIFICATION_BODY).empty();
+                $.each(data, function (index, data) {
+                    let html = '';
+                    html += '<a href="' + data.Hyper_Link + '" onclick="ClearNotification(' + "'" + data.ANS_Notification_ID + "'" + ')"  class="text-reset notification-item"><div class="d-flex"><div class="avatar-xs me-3"><span class="avatar-title bg-info rounded-circle font-size-16"><i class="bx bx-mail-send"></i></span></div><div class="flex-grow-1"><h6 class="mb-1" key="t-shipped" style="color: #00263a !important;">' + data.ANS_Content_Title + '</h6><div class="font-size-12 text-muted"><p class="mb-1" key="t-grammer" style="color: #000 !important;">' + data.ANS_Content_Title_Description + '</p><p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span key="t-min-ago">' + data.Notification_Date + '</span></p></div></div></div></a>';
+                    $(Fields.NOTIFICATION_BODY).append(html);
+                });
+                if (flag) {
+                    if (data.length > lenval) {
+                        let len = (data.length) - 1;
+                        toastr["info"](data[len].ANS_Content_Title_Description);
+                    }
+                }
+            });
+        }
+
+        function btn_changepassword() {
+
+            var newpassword = $("#New_Password").val();
+            var confirmpassword = $("#Confirm_Password").val();
+            if (newpassword != confirmpassword) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: "New Password and Confirm Password not Matched !",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                $.post("@Url.Action("ChangePassword", "AccountsM")", { UserId: '1', Password: newpassword }, function (data) {
+                    if (data.Status == true) {
+                        $('.changepassword').modal('hide');
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: data.Message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Logout();
+                            }
+                            else {
+                                Logout();
+                            }
+                        })
+                    }
+                });
+            }
+        }
+
+        function ClearNotification(id) {
+            $.post("/Master/ClearNotification", { ID: id }, function (data) {
+                if (data.STATUS_CODE == "200") {
+                    if (id == "0") {
+                        BindNotification(false);
+                    }
+                    else {
+                        return true;
+                    }
+                }
+                else {
+                    toastr["error"]("Something went wrong! Please try Again.");
+                }
+            });
+        }
+
+        function ClearAll() {
+            $('input[type=checkbox]').prop('checked', false);
+            $('input[type=radio]').prop('checked', false);
+            $('input[type=text],textarea').each(function () {
+                $(this).val('');
+            });
+            $('input[type=email]').each(function () {
+                $(this).val('');
+            });
+            //$('select2element').val(null).trigger("change");
+        }
+        function FnEmail(Emailid) {
+
+            var Email_Id = Emailid.value;
+            $.post("@Url.Action("Verify_AclUserAccess", "MastersM")", { Email_Id: Email_Id }, function (data) {
+                if (data.Status == false) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: data.Message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $("#Email_ID").val('');
+                }
+                else if (data.Status == true) {
+                    if (Email_Id.length > 0) {
+                        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+                        if (!expr.test(Email_Id)) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'error',
+                                title: "Please enter valid emailid",
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $('#Email_ID').val('');
+                        }
+                        else {
+                        }
+                    }
+                }
+            });
+        }
+
+        function Datepicker(id) {
+            $(id).datepicker({
+                format: 'dd-M-yyyy',
+                startDate: new Date
+            });
+
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

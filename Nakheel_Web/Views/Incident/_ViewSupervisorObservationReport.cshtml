@@ -1,0 +1,210 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.IncidentReport.M_Observation_Corrective_Action;
+<div class="row">
+    <div class="col-12">
+        <!-- Contact detail -->
+        <div class="col-xxl-12 mb-5 mb-xxl-0">
+            @if (Model != null)
+            {
+                <div class="row">
+                    <input type="hidden" id="hdn_Corrective_Action_Id" value="@Model.Obs_Corrective_Action_Id" />
+                    <input type="hidden" id="hdn_Observation_Id" value="@Model.Inc_Observation_Id" />
+                    <input type="hidden" id="txtObservation_Type" value="@Model.Remarks" />
+                    <div class="col-md-6">
+                        <label class="form-label">Action Taken Description</label>
+                        <textarea class="form-control" readonly style="height: 160px;">@Model.Description_Action</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Evidence</label>
+                        <div class="col-md-12" style="height: 160px;overflow-y: scroll;">
+                            @foreach (var item in Model.L_Observation_Corrective_Action!)
+                            {
+                                <div class="col-md-3">
+                                    <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px;padding:10px;" /></a>
+                                </div>
+                                break;
+                            }
+                        </div>
+                    </div>
+                </div>
+                <br>
+                @if (Model.Status == "3")
+                {
+                    @if (LoginClass.Role_Id == "5")
+                    {
+                        <div class="" id="btnNotReassign">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_Action_Closure_Supervisor()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-new" style="cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                <!-- Approval By HSE Team -->
+                @if (Model!.Status == "4" && Model!.Remarks == "Health_Safety")
+                {
+                    @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                    {
+                        <div class="" id="HSE_Team">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="example-tel-input" class="col-md-4 col-form-label">Priority</label>
+                                    <select class="form-control" name="Priority" id="Priority">
+                                        <option value="0">-- Select Risk Level --</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_Action_Closure_HSE()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".add-reject" style="cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade add-reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Observation</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div style="display:none;">
+                                                <div class="form-group">
+                                                    <input class="form-control" name="Obs_Reject_Id" id="Obs_Reject_Id" value="0">
+                                                    <input class="form-control" name="Reject_Reason_Stage" id="Reject_Reason_Stage" value="Rejected By HSE">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject<span class="requ">*</span></label>
+                                                    <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Reason_Description" name="Reject_Reason_Description" required minlen="1"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="">
+                                            <div style="text-align:center;">
+                                                <button type="submit" class="btn btn-success" onclick="btn_Reject_Action_Closure_HSE()"> Submit</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div>
+                    }
+                }
+                <!-- Approval By S&E Team -->
+                @if (Model!.Status == "4" && Model!.Remarks == "Environment")
+                {
+                    @if (LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+                    {
+                        <div class="" id="SE_Team">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="example-tel-input" class="col-md-4 col-form-label">Priority<span class="requ">*</span></label>
+                                    <select class="form-control" name="Priority" id="Priority">
+                                        <option value="0">-- Select Risk Level --</option>
+                                        <option value="Low">Low</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button type="button" onclick="btn_Submit_Action_Closure_SE()" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approved
+                                    </button>
+                                </div>
+                                <div class="col-lg-6">
+                                    <button type="button" class="btn btn-danger waves-effect waves-light submit" data-bs-toggle="modal" id="btnadd" data-bs-target=".se-reject" style="cursor:pointer">
+                                        <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade se-reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Observation</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div style="display:none;">
+                                                <div class="form-group">
+                                                    <input class="form-control" name="Obs_Reject_Id" id="Obs_Reject_Id" value="0">
+                                                    <input class="form-control" name="Reject_Reason_Stage_SE" id="Reject_Reason_Stage_SE" value="Rejected By S&E">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject<span class="requ">*</span></label>
+                                                    <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Reason_Description_SE" name="Reject_Reason_Description_SE" required minlen="1"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="">
+                                            <div style="text-align:center;">
+                                                <button type="submit" class="btn btn-success" onclick="btn_Reject_Action_Closure_SE()"> Submit</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>
+@*<script>
+    $(document).ready(function () {
+        var Observation_Type = $("#txtObservation_Type").val();
+        alert(Observation_Type);
+        if (Observation_Type == "Environment") {
+            $("#HSE_Team").hide();
+        }
+        else if (Observation_Type == "Health_Safety") {
+            $("#SE_Team").hide();
+        }
+    });
+</script>*@

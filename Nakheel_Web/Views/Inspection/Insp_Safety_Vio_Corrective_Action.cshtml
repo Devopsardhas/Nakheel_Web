@@ -1,0 +1,514 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Safety Violation Corrective Action";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .m-100 {
+        margin-top: 0px !important;
+    }
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+
+
+<div class="row" id="List_Grid_Div_CA">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Safety Violation Corrective Action List</h4></div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTableCA" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Safety-Vio ID</th>
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Type</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetAllSafetyCAList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Safety_CA_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Safety Violation</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light btn_back_View" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <form id="F_Add_Insp_Safety_Violation_CA" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                <div class="card-body Load_Add_Safety_CA">
+                </div><!-- End Card Boby -->
+
+                <br />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Add-Reassign" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="Fm_Add_CA_Re_CA_Assign" action="#">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Assign Action To
+                                </label>
+                                <input type="hidden" id="Corrective_Action_Id_ReAssign" class="Corrective_Action_Id_ReAssign" />
+                                <label class="Counts"></label>
+                                <textarea id="Assignee_Type_ReAssign" disabled class="form-control Assignee_Type_ReAssign" name="Assignee_Type_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Re-Assign To<span class="requ">*</span>
+                                </label>
+                                <select class="form-control Responsibility_To_ReAssign" required name="Responsibility_To_ReAssign" id="Responsibility_To_ReAssign">
+                                </select>
+                                <label id="Responsibility_To_ReAssign-error" style="font-size: small;" class="error" for="Responsibility_To_ReAssign"></label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Target Date
+                                </label>
+                                <textarea id="Target_Date_ReAssign" disabled class="form-control Target_Date_ReAssign" name="Target_Date_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Description
+                                </label>
+                                <textarea id="Action_Description_ReAssign" disabled class="form-control Action_Description_ReAssign" name="Action_Description_ReAssign" rows="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-12">
+                                <label for="basicpill-lastname-input" class="form-label">
+                                    Re-Assign Reason<span class="requ">*</span>
+                                </label>
+                                <textarea id="Reason_ReAssign" required class="form-control Reason_ReAssign" name="Reason_ReAssign" rows="5"></textarea>
+                                <label id="Reason_ReAssign-error" style="font-size: small;" class="error" for="Reason_ReAssign_ReAssign"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="FnCAReAssignSubmit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade View_CA_Re_Asign_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Id" disabled class="form-control CA_View_Re_Assig_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_By" disabled class="form-control CA_View_Re_Assig_By" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned To <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_To" disabled class="form-control CA_View_Re_Assig_To" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Re-Assigned <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Date" disabled class="form-control CA_View_Re_Assig_Date" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-12">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Reason" disabled class="form-control CA_View_Re_Assig_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<div class="modal fade View_CA_Rej_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Unique_Id" disabled class="form-control CA_View_Unique_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Reject_Reason" disabled class="form-control CA_View_Reject_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Rejected <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedDate" disabled class="form-control CA_View_CreatedDate" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedBy" disabled class="form-control CA_View_CreatedBy" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script src="~/assets/js/validation/inspection_validation/inspsafetyviolationcaseverside.js"></script>
+
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        List_Grid_Div: "#List_Grid_Div_CA",
+        TBODY_TABLE: "#GetAllSafetyCAList",
+        MainTable: "#MainTableCA",
+        Add_Safety_CA_Div: "#Add_Safety_CA_Div",
+        Load_Add_Safety_CA: ".Load_Add_Safety_CA",
+        btn_back_View: ".btn_back_View",
+    });
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+        ServerSideTable_SafetyCA();
+    });
+
+    function Edit_Safety_Violation_CA(id) {
+        $(UI_Fields.List_Grid_Div).hide(100);
+        $(UI_Fields.Add_Safety_CA_Div).show(100);
+        $.post("@Url.Action("P_Safety_Violation_CA_GetbyId", "Inspection")", { ID: id }, function (data) {
+            $(UI_Fields.Load_Add_Safety_CA).html('');
+            $(UI_Fields.Load_Add_Safety_CA).html(data);
+        });
+    }
+
+    function FnActionClosureSubmit(Rowid) {
+        $('.FnActionClosureSubmit').prop('disabled', true);
+        var Photo_List = [];
+        var varSafety_Violation_Id = "";
+        varSafety_Violation_Id = $("#Safety_Violation_Id").val();
+        var trRowid = ".CA_Approval_tr_" + Rowid;
+        var RowDesc = "#Closure_Action_Description_" + Rowid + "-error";
+        var var_V_Main_UploadPhotos = $(trRowid).closest('tr').find('.UploadPhotos').val();
+        var varClosure_Action_Description = $(trRowid).closest('tr').find('.Closure_Action_Description').val();
+        var varSV_Corrective_Action_Id = $(trRowid).closest('tr').find('.SV_Corrective_Action_Id').val();
+        if (varClosure_Action_Description == "") {
+            $(RowDesc).text("This field is required");
+            $('.FnActionClosureSubmit').prop('disabled', false);
+            return false;
+        }
+
+        if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+            Photo_List = [];
+            var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+            var i;
+            for (i = 0; i < val_UploadPhotos.length; i++) {
+                var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                if (x != "/") {
+                    var Pdata = {};
+                    Pdata.File_Path = x;
+                    Pdata.Insp_SV_CA_Photo_Id = "0";
+                    Pdata.SV_Corrective_Action_Id = varSV_Corrective_Action_Id;
+                    Photo_List.push(Pdata);
+                }
+            }
+        }
+
+        var datas = {};
+        datas.Closure_Action_Description = varClosure_Action_Description;
+        datas.SV_Corrective_Action_Id = varSV_Corrective_Action_Id;
+        datas.Insp_SV_CA_Photo_List = Photo_List;
+
+        $.post("@Url.Action("Insp_Safety_Violation_Action_Closure_Add", "Inspection")", { model: datas }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.FnActionClosureSubmit').prop('disabled', false);
+                    Edit_Safety_Violation_CA(varSafety_Violation_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.FnActionClosureSubmit').prop('disabled', false);
+            }
+            $('.FnActionClosureSubmit').prop('disabled', false);
+        });
+    }
+    function FnViewRejectDetails(Unique_Id, Reject_Reason, CreatedDate, CreatedBy) {
+        $("#CA_View_Unique_Id").val("");
+        $("#CA_View_Reject_Reason").val("");
+        $("#CA_View_CreatedDate").val("");
+        $("#CA_View_CreatedBy").val("");
+        $("#CA_View_Unique_Id").val(Unique_Id);
+        $("#CA_View_Reject_Reason").val(Reject_Reason);
+        $("#CA_View_CreatedDate").val(CreatedDate);
+        $("#CA_View_CreatedBy").val(CreatedBy);
+    }
+    function FnReAssign(Rowid) {
+        $("#Assignee_Type_ReAssign").val("");
+        $("#Responsibility_To_ReAssign").val("");
+        $("#Target_Date_ReAssign").val("");
+        $("#Action_Description_ReAssign").val("");
+        $("#Corrective_Action_Id_ReAssign").val("");
+        $("#Reason_ReAssign").val("");
+        var Zone_Id = $(".Zone_Id").val();
+        var Community_Id = $(".Community_Id").val();
+        var Role_Name = "Supervisor";
+        EMP_DRP_DWN(Role_Name, "Responsibility_To_ReAssign", Zone_Id, Community_Id);
+        var trRowid = ".CA_Approval_tr_" + Rowid;
+        var varAssignee_Type = $(trRowid).closest('tr').find('.Assignee_Type').val();
+        var varResponsibility_To = $(trRowid).closest('tr').find('.Responsibility_To').val();
+        var varTarget_Date = $(trRowid).closest('tr').find('.Target_Date').val();
+        var varAction_Description = $(trRowid).closest('tr').find('.Action_Description').val();
+        var varCorrective_Action_Id = $(trRowid).closest('tr').find('.SV_Corrective_Action_Id').val();
+        $("#Assignee_Type_ReAssign").val(varAssignee_Type);
+        $("#Responsibility_To_ReAssign").val(varResponsibility_To);
+        $("#Target_Date_ReAssign").val(varTarget_Date);
+        $("#Action_Description_ReAssign").val(varAction_Description);
+        $("#Corrective_Action_Id_ReAssign").val(varCorrective_Action_Id);
+    }
+    function EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function FnCAReAssignSubmit() {
+        
+         let valid = $("#Fm_Add_CA_Re_CA_Assign").valid();
+        if (!valid) {
+            return false;
+        }
+        var varInsp_Request_Id = "";
+        varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var Responsibility_To = $("#Responsibility_To_ReAssign").val();
+        var Corrective_Action_Id = $("#Corrective_Action_Id_ReAssign").val();
+        var Reason_ReAssign = $("#Reason_ReAssign").val();
+        $.post("@Url.Action("Insp_SV_Corrective_Action_Reassign", "Inspection")", { SV_Corrective_Action_Id: Corrective_Action_Id, Remarks: Reason_ReAssign, Responsibility_To: Responsibility_To }, function (data) {
+            if (data.STATUS_CODE == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Updated Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $("#Reason_ReAssign").val("");
+                    $(".Add-Reassign").modal({ show: false });
+                    $(".Add-Reassign").modal("toggle");
+                    Edit_Safety_Violation_CA(data.Return_1)
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    function FnViewReAssignDetails(Unique_Id, Responsibility_To, Re_Assign_To, CreatedDate, Remarks) {
+        $("#CA_View_Re_Assig_Id").val("");
+        $("#CA_View_Re_Assig_By").val("");
+        $("#CA_View_Re_Assig_To").val("");
+        $("#CA_View_Re_Assig_Date").val("");
+        $("#CA_View_Re_Assig_Reason").val("");
+        $("#CA_View_Re_Assig_Id").val(Unique_Id);
+        $("#CA_View_Re_Assig_By").val(Responsibility_To);
+        $("#CA_View_Re_Assig_To").val(Re_Assign_To);
+        $("#CA_View_Re_Assig_Date").val(CreatedDate);
+        $("#CA_View_Re_Assig_Reason").val(Remarks);
+    }
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImagePdf", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+   
+</script>

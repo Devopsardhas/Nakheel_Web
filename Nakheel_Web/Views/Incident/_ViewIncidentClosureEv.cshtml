@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+
+
+@model IReadOnlyCollection<Nakheel_Web.Models.IncidentReport.Evidence_Upload_Photos>;
+
+<div class="row">
+    <div class="col-12">
+        <div class="">
+            <!-- Contact detail -->
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+
+                @if (Model != null)
+                {
+                    <div class="col-md-12">
+                        <label class="form-label">Action Taken description</label>
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <input type="hidden" id="hdn_Corrective_Action_Id" value="@item.Corrective_Action_Id" />
+                                <input type="hidden" id="hdn_Inc_Id" value="@item.Inc_Id" />
+                                <div class="col-md-12">
+                                    <textarea class="form-control" readonly>@item.Action_Taken_Description</textarea>
+                                </div>
+                                break;
+                            }
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label">Evidence Upload Photos</label>
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-md-2">
+                                    <a href="@item.Photo_File_Path" target="_blank"><img src='@item.Photo_File_Path' style="height:150px;width:150px" /></a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <br>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

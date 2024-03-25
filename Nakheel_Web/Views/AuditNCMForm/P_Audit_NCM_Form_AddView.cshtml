@@ -1,0 +1,3411 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.MAuditNCMForm.MAuditNCMForm
+<style>
+    .select2-selection__rendered {
+        width: 163px !important;
+    }
+</style>
+@if (Model != null)
+{
+    @if (Model.Status == "30")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                @if (@Model.Service_Provider_Id == @LoginClass.Employee_Identity_Id)
+                {
+                    <div id="Div_Root_Cause">
+                        <input type="hidden" name="Internal_Audit_Id" value="" id="Internal_Audit_Id" />
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tbl_Root_Cause_Analysis" class="table table-sm dt-responsive nowrap tblround" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Root Cause Analysis<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody_SP_Audit_Team_Emp">
+                                        <tr>
+                                            <td style="width: 70%;">
+                                                <div class="col-md-12">
+                                                    <textarea required name="Root_Cause_Analysis" id="Root_Cause_Analysis" class="form-control Root_Cause_Analysis"></textarea>
+                                                    <label id="Root_Cause_Analysis-error" style="font-size: small;" class="error" for="Root_Cause_Analysis"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tbl_Description_Root_Cause" class="table table-sm dt-responsive nowrap tblround" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Description of Root Cause<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody_Description_Root_Cause">
+                                        <tr>
+                                            <td style="width: 70%;">
+                                                <div class="col-md-12">
+                                                    <textarea required name="Description_Root_Cause" id="Description_Root_Cause" class="form-control Description_Root_Cause"></textarea>
+                                                    <label id="Description_Root_Cause-error" style="font-size: small;" class="error" for="Description_Root_Cause"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Div_CA">
+                        <div class="row">
+
+                            <div class="row">
+                                <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                    <div class="card-header" style="background-color:#032639;height: 28px;">
+                                        <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                        <button type="button" style="background-color: #032639;color:white;float: right;height: 27px;margin-top: -8px;margin-right: -3px;" class="btn btn" value="Add" onclick="Fn_Add_More_NCR_CA_Action()">+Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: -17px;">
+                                <form id="F_Add_Corrective_Action">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description<span class="requ">*</span></th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence<span class="requ">*</span></th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                    <tr>
+                                                        <td style="width: 850px;">
+                                                            <textarea id="Closure_Description" class="form-control Closure_Description" name="Closure_Description" rows="1" required></textarea>
+                                                            <label id="Closure_Description-error" style="font-size: small;" class="error" for="Closure_Description"></label>
+                                                        </td>
+                                                        <td style="width:200px;">
+                                                            <input id="file0" required class="form-control file" name="file0" onchange="UploadImage('file0','UploadPhotos0')" type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .xlsx, .docx">
+                                                            <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos0">
+                                                            <label id="file0-error" style="font-size: small;" class="error" for="file0"></label>
+                                                        </td>
+                                                        <td style="min-width:100px;text-align: center;">
+                                                            <a><i class="mdi mdi-delete-off font-size-18" style="color:red;"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <br />
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button onclick="Fn_Submit_NCR_CA_Action()" type="button" class="btn Fn_Submit_NCR_CA_Action btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+                }
+            </div>
+        </form>
+    }
+    else if (Model.Status == "25")
+    {
+        <form id="FM_NCR_Form_Report_Submit">
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                <table class="table table-sm tab ">
+                    @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                    {
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input required type="date" id="Target_Date" class=" form-control Target_Date_Validate Target_Date" name="Target_Date">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input required type="date" id="Target_Date" class=" form-control Target_Date_Validate Target_Date" name="Target_Date">
+                                </td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+                            </tr>
+                        </tbody>
+                    }
+
+                </table>
+                @if (@LoginClass.Employee_Identity_Id == Model.CreatedBy)
+                {
+                    <div id="Div_Audit_NCR_Form">
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Non-Conformity Description<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea required name="Non_Conformity_Description" id="Non_Conformity_Description" class="form-control Non_Conformity_Description" rows="5"></textarea>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartdsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Applicable Standard/Procedure Requirements<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea required name="AS_Procedure_Requirements" id="AS_Procedure_Requirements" class="form-control AS_Procedure_Requirements" rows="5"></textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+
+                    <div class="Add_Audit_NCR_Report_Div" id="Add_Audit_NCR_Report_Div">
+                        <div style="text-align:center;">
+                            <button type="button" class="btn btn-success Fn_Add_Audit_NCR_Report_Div" id="btn-save-event" onclick="Fn_Add_Audit_NCR_Report_Div()"> Submit</button>
+                        </div>
+                        <br />
+                    </div>
+                }
+                else
+                {
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+                }
+
+            </div>
+        </form>
+    }
+    else if (Model.Status == "1")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                @if (Model.Audit_NCM_CA_Rej_List != null)
+                {
+                    @if (Model.Audit_NCM_CA_Rej_List.Count > 0 && Model.Audit_NCM_CA_Rej_List != null)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo_1">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                        Reject List
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Reject ID</th>
+                                                        <th>Reject Reason</th>
+                                                        <th>Rejected By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Audit_NCM_CA_Rej_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Unique_Id</td>
+                                                            <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            <td align="left" valign="middle">@item.CreatedBy_Name</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Root Cause Analysis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Root_Cause_Analysis</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Description of Root Cause</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Description_Root_Cause</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="Div_CA">
+                    <div class="row">
+
+                        <div class="row">
+                            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                <div class="card-header" style="background-color:#032639;height: 28px;">
+                                    <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: -17px;">
+                            <form id="F_Add_Corrective_Action">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description</th>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                @if (Model.Audit_NCM_CA_List != null)
+                                                {
+                                                    @foreach (var item in Model.Audit_NCM_CA_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td style="width: 80%;font-size: small;" align="left" valign="middle">@item.Closure_Description</td>
+                                                            <td style="width: 20%;" align="left" valign="middle">
+                                                                @if (@item.File_Path != "" && @item.File_Path != null)
+                                                                {
+                                                                    var extn = @item.File_Path!.Split(".").Last();
+                                                                    <a href="@item.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "bmp")
+                                                                        {
+                                                                            <img target="_blank" src="@item.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else if (extn == "xlsx")
+                                                                        {
+                                                                            <img src='~/assets/images/excel.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else if (extn == "doc" || extn == "docx")
+                                                                        {
+                                                                            <img src='~/assets/images/docs.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <br />
+                </div>
+
+                @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                }
+
+                @if (@LoginClass.Employee_Identity_Id == Model.CreatedBy)
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".Approve-NCR-Lead-Auditor" class="btn btn-success waves-effect waves-light submit" id="btn-save-event" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button data-bs-toggle="modal" data-bs-target=".Reject-NCR-Lead-Auditor" type="button" class="btn btn-danger waves-effect waves-light submit" id="btn-save-event" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+    }
+    else if (Model.Status == "9")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                @if (Model.Audit_NCM_CA_Rej_List != null)
+                {
+                    @if (Model.Audit_NCM_CA_Rej_List.Count > 0 && Model.Audit_NCM_CA_Rej_List != null)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo_1">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                        Reject List
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Reject ID</th>
+                                                        <th>Reject Reason</th>
+                                                        <th>Rejected By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Audit_NCM_CA_Rej_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Unique_Id</td>
+                                                            <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            <td align="left" valign="middle">@item.CreatedBy_Name</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Root Cause Analysis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Root_Cause_Analysis</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Description of Root Cause</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Description_Root_Cause</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="Div_CA">
+                    <div class="row">
+
+                        <div class="row">
+                            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                <div class="card-header" style="background-color:#032639;height: 28px;">
+                                    <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: -17px;">
+                            <form id="F_Add_Corrective_Action">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description</th>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                @if (Model.Audit_NCM_CA_List != null)
+                                                {
+                                                    @foreach (var item in Model.Audit_NCM_CA_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td style="width: 80%;font-size: small;" align="left" valign="middle">@item.Closure_Description</td>
+                                                            <td style="width: 20%;" align="left" valign="middle">
+                                                                @if (@item.File_Path != "" && @item.File_Path != null)
+                                                                {
+                                                                    var extn = @item.File_Path!.Split(".").Last();
+                                                                    <a href="@item.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "bmp")
+                                                                        {
+                                                                            <img target="_blank" src="@item.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else if (extn == "xlsx")
+                                                                        {
+                                                                            <img src='~/assets/images/excel.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else if (extn == "doc" || extn == "docx")
+                                                                        {
+                                                                            <img src='~/assets/images/docs.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <br />
+                </div>
+
+                @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                }
+
+                @if (@LoginClass.Role_Id == "10")
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".Final-Approve-NCR-HSE-Manager" class="btn btn-success waves-effect waves-light submit" id="btn-save-event" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button data-bs-toggle="modal" data-bs-target=".Reject-NCR-HSE-Manager" type="button" class="btn btn-danger waves-effect waves-light submit" id="btn-save-event" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
+    }
+    else if (Model.Status == "2" || Model.Status == "10")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                @if (Model.Audit_NCM_CA_Rej_List != null)
+                {
+                    @if (Model.Audit_NCM_CA_Rej_List.Count > 0 && Model.Audit_NCM_CA_Rej_List != null)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo_1">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                        Reject List
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Reject ID</th>
+                                                        <th>Reject Reason</th>
+                                                        <th>Rejected By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Audit_NCM_CA_Rej_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Unique_Id</td>
+                                                            <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            <td align="left" valign="middle">@item.CreatedBy_Name</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                @if (@Model.Service_Provider_Id == @LoginClass.Employee_Identity_Id)
+                {
+                    <div id="Div_Root_Cause">
+                        <input type="hidden" name="Internal_Audit_Id" value="" id="Internal_Audit_Id" />
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tbl_Root_Cause_Analysis" class="table table-sm dt-responsive nowrap tblround" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Root Cause Analysis<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody_SP_Audit_Team_Emp">
+                                        <tr>
+                                            <td style="width: 70%;">
+                                                <div class="col-md-12">
+                                                    <textarea required name="Root_Cause_Analysis" value="@Model.Root_Cause_Analysis" id="Root_Cause_Analysis" class="form-control Root_Cause_Analysis">@Model.Root_Cause_Analysis</textarea>
+                                                    <label id="Root_Cause_Analysis-error" style="font-size: small;" class="error" for="Root_Cause_Analysis"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tbl_Description_Root_Cause" class="table table-sm dt-responsive nowrap tblround" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Description of Root Cause<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody_Description_Root_Cause">
+                                        <tr>
+                                            <td style="width: 70%;">
+                                                <div class="col-md-12">
+                                                    <textarea required value="@Model.Description_Root_Cause" name="Description_Root_Cause" id="Description_Root_Cause" class="form-control Description_Root_Cause">@Model.Description_Root_Cause</textarea>
+                                                    <label id="Description_Root_Cause-error" style="font-size: small;" class="error" for="Description_Root_Cause"></label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Div_CA">
+                        <div class="row">
+
+                            <div class="row">
+                                <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                    <div class="card-header" style="background-color:#032639;height: 28px;">
+                                        <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                        <button type="button" style="background-color: #032639;color:white;float: right;height: 27px;margin-top: -8px;margin-right: -3px;" class="btn btn" value="Add" onclick="Fn_Add_More_NCR_CA_Action_Rej()">+Add More</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: -17px;">
+                                <form id="F_Add_Corrective_Action">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description<span class="requ">*</span></th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence</th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Uploaded Evidence</th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                    @if (Model.Audit_NCM_CA_List != null)
+                                                    {
+                                                        var S_Count = 1;
+                                                        @foreach (var item in Model.Audit_NCM_CA_List)
+                                                        {
+                                                            <tr>
+                                                                <td style="width: 850px;">
+                                                                    <textarea id="Closure_Description_@S_Count" class="form-control Closure_Description" value="@item.Closure_Description" name="Closure_Description_@S_Count" rows="1" required>@item.Closure_Description</textarea>
+                                                                    <label id="Closure_Description_@S_Count-error" style="font-size: small;" class="error" for="Closure_Description_@S_Count"></label>
+                                                                </td>
+                                                                <td style="width:200px;">
+                                                                    <input id="file_@S_Count" class="form-control file_@S_Count" name="file_@S_Count" onchange="Upload_Picture_Rej('file_@S_Count','UploadPhotos_@S_Count','Uploaded_Evidance_@S_Count')" type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .xlsx, .docx">
+                                                                    <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos_@S_Count" id="UploadPhotos_@S_Count">
+                                                                    <input type="hidden" value="@item.File_Path" class="UploadPhotosEdit" name="UploadPhotosEdit_@S_Count" id="UploadPhotosEdit_@S_Count">
+                                                                    <label id="file0-error" style="font-size: small;" class="error" for="file0"></label>
+                                                                </td>
+                                                                <td style="width: 20%;" align="left" valign="middle">
+                                                                    @if (@item.File_Path != "" && @item.File_Path != null)
+                                                                    {
+                                                                        var extn = @item.File_Path!.Split(".").Last();
+                                                                        <a id="Uploaded_Evidance_@S_Count" href="@item.File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "bmp")
+                                                                            {
+                                                                                <img target="_blank" src="@item.File_Path" width="30" height="30">
+                                                                            }
+                                                                            else if (extn == "xlsx")
+                                                                            {
+                                                                                <img src='~/assets/images/excel.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                            else if (extn == "doc" || extn == "docx")
+                                                                            {
+                                                                                <img src='~/assets/images/docs.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                                @if (S_Count == 1)
+                                                                {
+                                                                    <td style="min-width:100px;text-align: center;">
+                                                                        <a><i class="mdi mdi-delete-off font-size-18" style="color:red;"></i></a>
+                                                                    </td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td style="min-width:100px;text-align: center;">
+                                                                        <a><i class="mdi mdi-delete font-size-18" style="color:red;"></i></a>
+                                                                    </td>
+                                                                }
+
+                                                            </tr>
+                                                            S_Count++;
+                                                        }
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <br />
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button onclick="Fn_Submit_NCR_CA_Rej_Action()" type="button" class="btn Fn_Submit_NCR_CA_Rej_Action btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div id="Div_Audit_NCR_Form">
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Root Cause Analysis</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@Model.Root_Cause_Analysis</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Description of Root Cause</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">@Model.Description_Root_Cause</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Div_CA">
+                        <div class="row">
+
+                            <div class="row">
+                                <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                    <div class="card-header" style="background-color:#032639;height: 28px;">
+                                        <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: -17px;">
+                                <form id="F_Add_Corrective_Action">
+                                    <div class="col-lg-12">
+                                        <div class="table-responsive">
+                                            <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description</th>
+                                                        <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                    @if (Model.Audit_NCM_CA_List != null)
+                                                    {
+                                                        @foreach (var item in Model.Audit_NCM_CA_List)
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td style="width: 80%;font-size: small;" align="left" valign="middle">@item.Closure_Description</td>
+                                                                <td style="width: 20%;" align="left" valign="middle">
+                                                                    @if (@item.File_Path != "" && @item.File_Path != null)
+                                                                    {
+                                                                        var extn = @item.File_Path!.Split(".").Last();
+                                                                        <a href="@item.File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "bmp")
+                                                                            {
+                                                                                <img target="_blank" src="@item.File_Path" width="30" height="30">
+                                                                            }
+                                                                            else if (extn == "xlsx")
+                                                                            {
+                                                                                <img src='~/assets/images/excel.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                            else if (extn == "doc" || extn == "docx")
+                                                                            {
+                                                                                <img src='~/assets/images/docs.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label>NA</label>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <br />
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+                }
+            </div>
+        </form>
+    }
+    else if (Model.Status == "3")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Root Cause Analysis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Root_Cause_Analysis</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Description of Root Cause</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Description_Root_Cause</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="Div_CA">
+                    <div class="row">
+
+                        <div class="row">
+                            <div class="card" style="border-radius: 0rem !important;box-shadow: 0 0px 0px #e4e8f0;border: 0px solid #eff0f2;">
+                                <div class="card-header" style="background-color:#032639;height: 28px;">
+                                    <h5 class="card-title" style="color:white;font-size:13px;">Corrective Action</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: -17px;">
+                            <form id="F_Add_Corrective_Action">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table id="tbl_NCR_CA_Action" class="table-bordered table-sm" style="width:100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Description</th>
+                                                    <th style="font-size: small;color:black;background:white;" scope="col" class="table-responsive">Evidence</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbody_NCR_CA_Action" class="tbody_NCR_CA_Action">
+                                                @if (Model.Audit_NCM_CA_List != null)
+                                                {
+                                                    @foreach (var item in Model.Audit_NCM_CA_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td style="width: 80%;font-size: small;" align="left" valign="middle">@item.Closure_Description</td>
+                                                            <td style="width: 20%;" align="left" valign="middle">
+                                                                @if (@item.File_Path != "" && @item.File_Path != null)
+                                                                {
+                                                                    var extn = @item.File_Path!.Split(".").Last();
+                                                                    <a href="@item.File_Path" target="_blank">
+                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "bmp")
+                                                                        {
+                                                                            <img target="_blank" src="@item.File_Path" width="30" height="30">
+                                                                        }
+                                                                        else if (extn == "xlsx")
+                                                                        {
+                                                                            <img src='~/assets/images/excel.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else if (extn == "doc" || extn == "docx")
+                                                                        {
+                                                                            <img src='~/assets/images/docs.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label>NA</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <br />
+                </div>
+
+                @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                }
+            </div>
+        </form>
+    }
+    else if (Model.Status == "5" || Model.Status == "7")
+    {
+        <form id="F_NCR_CA_Action_Submit">
+            <div class="row">
+                @if (Model.Audit_NCM_Form_Rej_List != null)
+                {
+                    @if (Model.Audit_NCM_Form_Rej_List.Count > 0 && Model.Audit_NCM_Form_Rej_List != null)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo_1">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                        Reject List
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Reject ID</th>
+                                                        <th>Reject Reason</th>
+                                                        <th>Rejected By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Audit_NCM_Form_Rej_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Unique_Id</td>
+                                                            <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            <td align="left" valign="middle">@item.CreatedBy_Name</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+
+                @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table class="table table-sm tab ">
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Target_Date</td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+                <div id="Div_Audit_NCR_Form">
+                    <div class="row col-lg-12">
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsLists" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Non-Conformity Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.Non_Conformity_Desc</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-lg-6">
+                            <table id="tblIncidentInjuredPartsListss" class="table table-sm tblround" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Applicable Standard/Procedure Requirements</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clstr">
+                                        <td align="left" valign="middle">@Model.AS_Procedure_Require</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                }
+
+                @if (@LoginClass.Role_Id == "10" && Model.Status == "5")
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".Approve-NCR-Form-HSE-Manager" class="btn btn-success waves-effect waves-light submit" id="btn-save-event" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button data-bs-toggle="modal" data-bs-target=".Reject-NCR-Form-HSE-Manager" type="button" class="btn btn-danger waves-effect waves-light submit" id="btn-save-event" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                }
+                else if (@LoginClass.Role_Id == "9" && Model.Status == "7")
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".Approve-NCR-Form-HSE-Dir" class="btn btn-success waves-effect waves-light submit" id="btn-save-event" style="float: right;cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button data-bs-toggle="modal" data-bs-target=".Reject-NCR-Form-Dir-Manager" type="button" class="btn btn-danger waves-effect waves-light submit" id="btn-save-event" style="cursor:pointer">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </form>
+    }
+    else if (Model.Status == "6" || Model.Status == "8")
+    {
+        DateTime StartDates = Convert.ToDateTime(Model.Audit_Date);
+        var Ta_Date = StartDates.ToString("yyyy-MM-dd");
+        <form id="FM_NCR_Form_Report_Submit">
+            <div class="row">
+                @if (Model.Audit_NCM_Form_Rej_List != null)
+                {
+                    @if (Model.Audit_NCM_Form_Rej_List.Count > 0 && Model.Audit_NCM_Form_Rej_List != null)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo_1">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                        Reject List
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Reject ID</th>
+                                                        <th>Reject Reason</th>
+                                                        <th>Rejected By</th>
+                                                        <th>Created Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Audit_NCM_Form_Rej_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Unique_Id</td>
+                                                            <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                            <td align="left" valign="middle">@item.CreatedBy_Name</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                    }
+                }
+            </div>
+
+            <div class="row">
+                <input class="form-control Am_Sp_NCR_Id" type="hidden" value="@Model.Am_Sp_NCR_Id" id="Am_Sp_NCR_Id">
+                <table class="table table-sm tab ">
+                    @if (Model.Walk_In_Insp_Name == "Walk_In_Audit")
+                    {
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+                            </tr>
+                            <tr>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input required value="@Ta_Date" type="date" id="Target_Date" class=" form-control Target_Date_Validate Target_Date" name="Target_Date">
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>
+                                <td><b class="font-bold">NCR ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Unique_Id</td>
+
+                                <td><b class="font-bold">Audit ID</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Unique_Id</td>
+
+                                <td><b class="font-bold">Reported By</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.CreatedBy_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Audit_Date</td>
+
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Zone_Name</td>
+
+
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Community_Name</td>
+
+                                <td><b class="font-bold">Building/ Area</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Building_Name</td>
+
+
+                                <td><b class="font-bold">Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model.Service_Provider_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Target Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input required value="@Ta_Date" type="date" id="Target_Date" class=" form-control Target_Date_Validate Target_Date" name="Target_Date">
+                                </td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+
+                                <td></td>
+                                <td></td>
+                                <td class="tdtxt"></td>
+                            </tr>
+                        </tbody>
+                    }
+
+                </table>
+
+                @if (Model.CreatedBy == LoginClass.Employee_Identity_Id)
+                {
+                    <div id="Div_Audit_NCR_Form">
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Non-Conformity Description<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea required value="@Model.Non_Conformity_Desc" name="Non_Conformity_Description" id="Non_Conformity_Description" class="form-control Non_Conformity_Description" rows="5">@Model.Non_Conformity_Desc</textarea>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartdsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Applicable Standard/Procedure Requirements<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea required value="@Model.AS_Procedure_Require" name="AS_Procedure_Requirements" id="AS_Procedure_Requirements" class="form-control AS_Procedure_Requirements" rows="5">@Model.AS_Procedure_Require</textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+
+                    <div class="Add_Audit_NCR_Report_Div" id="Add_Audit_NCR_Report_Div">
+                        <div style="text-align:center;">
+                            <button type="button" class="btn btn-success Fn_Add_Audit_NCR_Report_Div" id="btn-save-event" onclick="Fn_Add_Audit_NCR_Report_Div()"> Submit</button>
+                        </div>
+                        <br />
+                    </div>
+                }
+                else
+                {
+                    <div id="Div_Audit_NCR_Form">
+                        <div class="row col-lg-12">
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Non-Conformity Description<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea disabled value="@Model.Non_Conformity_Desc" name="Non_Conformity_Description" id="Non_Conformity_Description" class="form-control Non_Conformity_Description" rows="5">@Model.Non_Conformity_Desc</textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-6">
+                                <table id="tblIncidentInjuredPartdsLisst" class="table table-sm dt-responsive nowrap tblround" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Applicable Standard/Procedure Requirements<span class="requ">*</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="clstr">
+                                            <td align="left" valign="middle">
+                                                <textarea disabled value="@Model.AS_Procedure_Require" name="AS_Procedure_Requirements" id="AS_Procedure_Requirements" class="form-control AS_Procedure_Requirements" rows="5">@Model.AS_Procedure_Require</textarea>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Am_Sp_NCR_History_Approval_List != null && Model.Am_Sp_NCR_History_Approval_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:100%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                            <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Employee Name</th>
+                                                        <th>Role</th>
+                                                        <th>Assigned/ Created Date</th>
+                                                        <th>Action Taken Date</th>
+                                                        <th>Prev.Status</th>
+                                                        <th>Cur.Status</th>
+                                                        <th>Next Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="GettblIncidentHistory">
+                                                    @foreach (var item in Model.Am_Sp_NCR_History_Approval_List)
+                                                    {
+                                                        <tr class="clstr">
+                                                            <td align="left" valign="middle">@item.Emp_Name</td>
+                                                            <td align="left" valign="middle">@item.Role_Name</td>
+                                                            <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                            <td align="left" valign="middle">@item.CreatedDate</td>
+                                                            <td align="left" valign="middle">@item.Status</td>
+                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                            <td align="left" valign="middle">@item.Next_Action</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                        </div>
+                    }
+                }
+
+            </div>
+        </form>
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        ApplySelect2(".Drop_Search");
+        //let minDate = '@TempData["Msg_Audit_Sp_Date"]';
+        //$('.Target_Date_Validate').attr('min', minDate);
+
+        let minDate = '@TempData["Msg_NCR_Report_Sp_Date"]';
+        $('.Target_Date_Validate').attr('min', minDate);
+
+        $("#tbl_Internal_Audit_Team").on("click", ".Int_Audit_tblDeleteButton", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tbl_NCR_CA_Action").on("click", ".NCR_CA_Action_tblDelete", function () {
+            $(this).closest("tr").remove();
+        });
+
+
+    });
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function UploadImage_AddMore(inputIds, UploadPhotoIds) {
+        debugger
+        var inputId = inputIds.id;
+        var UploadPhotoId = UploadPhotoIds.id;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImage", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+
+    function UploadImage(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImage", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+
+    function Upload_Picture_Addmore(inputIds, UploadPhotoIds) {
+        debugger;
+        var inputId = inputIds.id;
+        var UploadPhotoId = UploadPhotoIds.id;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function Upload_Picture(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+
+    function Upload_Picture_Rej(inputId, UploadPhotoId, Uploaded_Evidances) {
+        debugger;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImage", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                $("#" + Uploaded_Evidances).hide();
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+
+    var countCa = 500;
+    function Fn_Add_More_NCR_CA_Action() {
+        debugger;
+        var html = "";
+        var file = "file0_" + countCa;
+        var UploadPhotos = "UploadPhotos0_" + countCa;
+        html += '<tr><td style="width: 850px;"><textarea id="Closure_Description_' + countCa + '" class="form-control Closure_Description" name="Closure_Description_' + countCa + '" rows="1" required></textarea><label id="Closure_Description-error_' + countCa + '" style="font-size: small;" class="error" for="Closure_Description_' + countCa + '"></label></td>'
+        html += '<td style="width:200px;"><input name="' + file + '" id="' + file + '" class="form-control file" onchange="UploadImage_AddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .xlsx, .docx" required><input type="hidden" value="" class="UploadPhotos" name="' + UploadPhotos + '" id="' + UploadPhotos + '"><label name="file0_' + countCa + '" id="file0_' + countCa + '-error" style="font-size: small;" class="error" for="file0_' + countCa + '"></label></td>'
+        html += '<td style="min-width:100px;text-align: center;"><a><i class="mdi NCR_CA_Action_tblDelete mdi-delete font-size-18" style="color:red;"></i></a></td></tr>'
+        $("#tbl_NCR_CA_Action").append(html);
+        countCa++;
+    }
+
+
+    var countCaRej = 500;
+    function Fn_Add_More_NCR_CA_Action_Rej() {
+        debugger;
+        var html = "";
+        var file = "file0_" + countCaRej;
+        var UploadPhotos = "UploadPhotos0_" + countCaRej;
+        html += '<tr><td style="width: 850px;"><textarea id="Closure_Description_' + countCaRej + '" class="form-control Closure_Description" name="Closure_Description_' + countCaRej + '" rows="1" required></textarea><label id="Closure_Description-error_' + countCaRej + '" style="font-size: small;" class="error" for="Closure_Description_' + countCaRej + '"></label></td>'
+        html += '<td style="width:200px;"><input name="' + file + '" id="' + file + '" class="form-control file" onchange="UploadImage_AddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .xlsx, .docx" required><input type="hidden" value="" class="UploadPhotos" name="' + UploadPhotos + '" id="' + UploadPhotos + '"><label name="file0_' + countCaRej + '" id="file0_' + countCaRej + '-error" style="font-size: small;" class="error" for="file0_' + countCaRej + '"></label></td> <td style="width: 20%;" align="left" valign="middle"></td>'
+        html += '<td style="min-width:100px;text-align: center;"><a><i class="mdi NCR_CA_Action_tblDelete mdi-delete font-size-18" style="color:red;"></i></a></td></tr>'
+        $("#tbl_NCR_CA_Action").append(html);
+        countCaRej++;
+    }
+
+    function Fn_Submit_NCR_CA_Action() {
+        $('.Fn_Submit_NCR_CA_Action').attr('disabled', 'disabled');
+        let valid = $("#F_NCR_CA_Action_Submit").valid();
+        if (!valid) {
+            $('.Fn_Submit_NCR_CA_Action').removeAttr('disabled');
+            return false;
+        }
+
+        var NCR_Action_List = [];
+
+        $('#tbl_NCR_CA_Action tbody tr').each(function () {
+            var var_Closure_Description = $(this).closest('tr').find('.Closure_Description').val();
+            var var_V_Main_UploadPhotos = $(this).closest('tr').find('.UploadPhotos').val();
+
+            if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+                var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        var_V_Main_UploadPhotos = x;
+                    }
+                }
+            }
+
+            var data = {};
+            data.NCR_Form_CA_Id = "0";
+            data.Closure_Description = var_Closure_Description;
+            data.File_Path = var_V_Main_UploadPhotos;
+            NCR_Action_List.push(data);
+        });
+
+        var Obj = {
+            Am_Sp_NCR_Id: $("#Am_Sp_NCR_Id").val(),
+            Root_Cause_Analysis: $("#Root_Cause_Analysis").val(),
+            Description_Root_Cause: $("#Description_Root_Cause").val(),
+            Audit_NCM_CA_List: NCR_Action_List,
+        };
+
+        $.ajax({
+            url: "/AuditNCMForm/Audit_NCM_CA_Action_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $('.Fn_Submit_NCR_CA_Action').removeAttr('disabled');
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+
+    }
+
+    function Fn_Submit_NCR_CA_Rej_Action() {
+        $('.Fn_Submit_NCR_CA_Rej_Action').attr('disabled', 'disabled');
+        let valid = $("#F_NCR_CA_Action_Submit").valid();
+        if (!valid) {
+            $('.Fn_Submit_NCR_CA_Rej_Action').removeAttr('disabled');
+            return false;
+        }
+
+        var NCR_Action_List = [];
+
+        $('#tbl_NCR_CA_Action tbody tr').each(function () {
+            var var_Closure_Description = $(this).closest('tr').find('.Closure_Description').val();
+            var var_V_Main_UploadPhotos = $(this).closest('tr').find('.UploadPhotos').val();
+            var var_V_Main_EditUploadPhotos = $(this).closest('tr').find('.UploadPhotosEdit').val();
+
+            if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+                var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        var_V_Main_UploadPhotos = x;
+                    }
+                }
+            } else {
+                var_V_Main_UploadPhotos = var_V_Main_EditUploadPhotos
+            }
+
+            var data = {};
+            data.NCR_Form_CA_Id = "0";
+            data.Closure_Description = var_Closure_Description;
+            data.File_Path = var_V_Main_UploadPhotos;
+            NCR_Action_List.push(data);
+        });
+
+        var Obj = {
+            Am_Sp_NCR_Id: $("#Am_Sp_NCR_Id").val(),
+            Root_Cause_Analysis: $("#Root_Cause_Analysis").val(),
+            Description_Root_Cause: $("#Description_Root_Cause").val(),
+            Audit_NCM_CA_List: NCR_Action_List,
+        };
+
+        $.ajax({
+            url: "/AuditNCMForm/Audit_NCM_CA_Action_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $('.Fn_Submit_NCR_CA_Rej_Action').removeAttr('disabled');
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+
+    }
+
+    function Fn_Add_Audit_NCR_Report_Div() {
+        $('.Fn_Add_Audit_NCR_Report_Div').attr('disabled', 'disabled');
+        let valid = $("#FM_NCR_Form_Report_Submit").valid();
+        if (!valid) {
+            $('.Fn_Add_Audit_NCR_Report_Div').removeAttr('disabled');
+            return false;
+        }
+
+        var Obj = {
+            Am_Sp_NCR_Id: $("#Am_Sp_NCR_Id").val(),
+            Non_Conformity_Desc: $("#Non_Conformity_Description").val(),
+            AS_Procedure_Require: $("#AS_Procedure_Requirements").val(),
+            Target_Date: $("#Target_Date").val(),
+        };
+
+        $.ajax({
+            url: "/AuditNCMForm/Audit_NCM_Report_Form_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    $('.Fn_Add_Audit_NCR_Report_Div').removeAttr('disabled');
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+</script>

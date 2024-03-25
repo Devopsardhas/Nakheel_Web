@@ -1,0 +1,166 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Hot-Spot Identification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .tblround {
+            border-collapse: collapse;
+            border-radius: 1em;
+            overflow: hidden
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="List_View">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Hot-Spot Identification List</h4></div>
+                        @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "6" || LoginClass.Role_Id == "7" || LoginClass.Role_Id == "8")
+                        {
+                            <div class="col-lg-2">
+                                <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add / Edit</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-2" style="padding:13px"></div>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tbl_Alert" class="table table-striped tblround table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Alert ID</th>
+                                    <th>Zone</th>
+                                    <th>Community</th>
+                                    <th>Building</th>
+                                    <th>Created By</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_Alert">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="MainAddSpot_Div" class="row" style="display:none;">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Add Hot-Spot</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" id="Btnback" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i> Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="AddSpot_Div">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="Emr_Alert_View" style="display:none">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-lg-10"> <h4 class="card-title">Hot-Spot Details</h4></div>
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_View_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="View_Emr_Alert_List">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/assets/js/emr_common/common.js"></script>
+    <script src="~/assets/js/emergency/serversidedatatableemr_alert.js"></script>
+
+    <script>
+        var login = "";
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            FRM_SCH: "#Frm_Drill_Schedule",
+            LIST_VIEW: "#List_View",
+            TBL_ALERT: "#tbl_Alert",
+            TBODY_ALERT: "#tbody_Alert",
+            BTN_ADD: "#btnAdd",
+            BTN_BACK: "#Btnback",
+            ADD_SPOT_DIV: "#AddSpot_Div",
+            MAIN_ADD_SPOT_DIV: "#MainAddSpot_Div",
+            GOOGLE_MAP_API: "#GoogleMapApi",
+            SPOT_ADD: "#SpotAdd",
+            TBL_LOC: "#tbl_loc",
+            TBODY_LOC: "#tbody_loc",
+            LAT_DYNAMIC: "#lat_dynamic",
+            LONG_DYNAMIC: "#Long_dynamic",
+            SEARCH_INPUT: "#search_input",
+            SEARCH_INPUT_1: "#search_input_1",
+            DEL_BTN: ".TblDeleteButton",
+            REASON_TXT: "#Reason_Txt",
+            VIEW_EMR_ALERT_LIST: "#View_Emr_Alert_List",
+            EMR_ALERT_VIEW: "#Emr_Alert_View",
+            BTN_VIEW_BACK: "#btn_View_back",
+        });
+
+        $(function () {
+            login = '@LoginClass.Employee_Identity_Id'
+            Emer_Alert_ServerTable(login);
+            $(UI_Fields.BTN_ADD).on('click', AddSopt);
+            $(UI_Fields.BTN_BACK).on('click', BTN_BACK);
+            $(UI_Fields.BTN_VIEW_BACK).on('click', BTN_VIEW_BACK);
+        });
+        function BTN_BACK() {
+            $(UI_Fields.MAIN_ADD_SPOT_DIV).hide(100);
+            $(UI_Fields.LIST_VIEW).show(100);
+            window.location.reload();
+        }
+
+        function BTN_VIEW_BACK() {
+            $(UI_Fields.MAIN_ADD_SPOT_DIV).hide(100);
+            $(UI_Fields.EMR_ALERT_VIEW).hide(100);
+            $(UI_Fields.LIST_VIEW).show(100);
+            window.location.reload();
+        }
+
+        function AddSopt() {
+            $(UI_Fields.LIST_VIEW).hide(100);
+            let model = {
+                Drill_Schedule_ID: "1",
+            };
+            AjaxAsynHTML('/EmergencyAlert/AddAlert', { _Param: model }, UI_Fields.ADD_SPOT_DIV);
+            $(UI_Fields.MAIN_ADD_SPOT_DIV).show(100);
+        }
+    </script>
+</body>

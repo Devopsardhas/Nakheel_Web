@@ -1,0 +1,643 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Handover Inspection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+
+@model IReadOnlyCollection<Nakheel_Web.Models.HandOverInsMaster.M_HandOver_Insp_Model>;
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    #GoogleMapApi {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+    .Qns {
+    --bs-gutter-x: 0px !important;
+    }
+</style>
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+@*Grid View*@
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Handover Inspection List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_Handover" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i>Create Schedule</button>
+                    </div>
+                    <div class="col-lg-2" style="padding:13px"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblInsHandoverBuilding" class="table table-sm table-striped dt-responsive tblround nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Handover ID</th>
+                            @*<th>Business Unit</th>*@
+                            <th>Handover Type</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Date of Audit</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="GetHandoverBuildingList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="AddPage_Handover_Building" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add Handover Inspection</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                        <input class="form-control" type="hidden" value="" id="Lat" name="Lat">
+                        <input class="form-control" type="hidden" value="" id="Long" name="Long">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Handover_Building" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Insp_HndOver_Building_Id">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Company Name</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="NCM" id="Company_Name" name="Company_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-search-input" class="col-md-4 col-form-label">Inspected By<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" value="@LoginClass.First_Name" id="Inspected_By_Name" name="Inspected_By_Name" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Business_Unit" id="Business_Unit" onchange="FnBusiness_Unit()">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Community<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Community" id="Community_Id" onchange="Fn_Community(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" style="display:none">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Master Community</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Master_Community_Id" id="Master_Community_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="Fn_Business_Unit_Type" style="display:none">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Business Unit Type</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="Hnd_Business_Unit_Type" name="Obs_Business_Unit_Type">
+                                        <option value="" style='text-align:center'>--Select--</option>
+                                        <option value="Party">JOP 3rd Party</option>
+                                        <option value="JOP_Common">JOP-Common Area</option>
+                                        <option value="Master_Community">Master Community</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-email-input" class="col-md-4 col-form-label">Date of Audit/Inspection<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="date" id="Date_of_Audit" name="Date_of_Audit" />
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Zone Representative<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Emp" id="Zone_Emp">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Consultant Name</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" id="Consultant_Name" name="Consultant_Name">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Main Contractor Name</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" id="Contractor_Name" name="Contractor_Name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Zone<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Zone_Id" id="Zone_Id" onchange="Fn_Zone(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Building_Id" id="Building_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Type<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="HandOver_Type" name="HandOver_Type" onchange="FnCheckList_Change(this.value)">
+                                        <option disabled selected="selected" style='text-align:center'>--Select--</option>
+                                        <option value="1">Building</option>
+                                        <option value="2">Infrastructure</option>
+                                        <option value="3">Others</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 row" id="Fn_HandOver_Type_List" style="display:none">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Handover Type List</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="HandOver_Type_List" name="HandOver_Type_List">
+                                        <option value="0" style='text-align:center'>--Select--</option>
+                                        <option value="1">Master Community</option>
+                                        <option value="2">Traffic Lights</option>
+                                        <option value="3">Park & Play Area</option>
+                                        <option value="4">Roads & Bridges</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="" class="col-md-4 col-form-label">Service Provider Attended?</label>
+                                <div class="col-md-3 col-form-label">
+                                    <div id="SP_Attended_Yes" onclick="FnService_Provider_Attended('1')">
+                                        <label for="Yes"> <input id="SP_Attended" class="SP_Attended" name="SP_Attended" type="radio" value="Yes" />&nbsp;Yes</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-form-label" >
+                                    <div id="SP_Attended_No" class="floatBlock" onclick="FnService_Provider_Attended('2')">
+                                        <label for="No"> <input id="SP_Attended" class="SP_Attended" name="SP_Attended" type="radio" value="No" />&nbsp;No</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="div_Service_Provider_Id" style="display:none">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Service Provider</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Service_Provider" id="Service_Provider">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row" id="div_Service_Provider_Others" style="display:none">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Others</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" id="Others_SP" name="Others_SP">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Consultant No</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" id="Consultant_MNo" name="Consultant_MNo">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Contractor No</label>
+                                <div class="col-md-8">
+                                    <input class="form-control" type="text" id="Contractor_MNo" name="Contractor_MNo">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 ">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Description</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="Description" name="Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit Button --> 
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="reset" class="btn btn-danger waves-effect waves-light">
+                                <i class="bx bx-block font-size-16 align-middle me-2"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- HandOver Building List -->
+<div id="HandOver_Building_View" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Handover Inspection</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewHndOverBack" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+                <div id="ViewHandOver_BuildingList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Questionnaires List -->
+<div class="row Qns" id="divViewHandOverQns" style=" display:none;">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="col-lg-9">
+                    <h4 class="d-flex align-items-center mb-3">Handover Inspection Questionnaires</h4>
+                </div>
+                <div class="col-md-3" id="Back_Div" style="display:none;">
+                    <div>
+                        <button class="btn btn-primary waves-effect waves-light" onclick="BackButton()" style="float: right;" id="BtnBack">
+                            <i class="bx bx-arrow-back"></i>&nbsp;Back
+                        </button>
+                    </div>
+                </div>
+                <hr />
+                <div id="GetQuestionnaireList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade Add_HOCA_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject HandOver Inspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_HOCA_Reject" action="#">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" name="Ho_Reject_Id" id="Ho_Reject_Id" value="0">
+                                <input type="hidden" class="form-control hdn_HoCorrective_Action_Id" name="hdn_HoCorrective_Action_Id" id="hdn_HoCorrective_Action_Id">
+                                <input type="hidden" class="form-control" name="Reject_Stage" id="Reject_Stage" value="Rejected By HSE Team">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                <textarea class="form-control" rows="1" cols="100" style="height: 150px;" id="Reject_Reason" name="Reject_Reason" required minlen="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success submit_HOHSECA" onclick="Fn_HOCA_Reject_Submit()"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- Handover Inspection Reject -->
+<div class="modal fade Add_HO_Insp_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Handover Inspection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_HO_Insp_Reject" action="#">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input type="hidden" class="form-control hdn_Ho_Insp_Id" name="hdn_Ho_Insp_Id" id="hdn_Ho_Insp_Id">
+                                <input type="hidden" class="form-control" name="Ho_Reject_Stage" id="Ho_Reject_Stage" value="Rejected By HSE Manager">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                                <textarea class="form-control" rows="1" cols="100" style="height: 150px;" id="Ho_Reject_Reason" name="Ho_Reject_Reason" required minlen="1"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div style="text-align:center;">
+                            <button type="submit" class="btn btn-success submit_HO_Insp_Rej" onclick="Fn_HO_Insp_Reject_Submit()"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script src="~/assets/js/validation/inspection_validation/inspformchecklistseverside.js"></script>
+<script src="~/assets/js/validation/inspection_validation/inspformchecklistvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ADD_HANDOVER_BUILDING: "#AddPage_Handover_Building",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblInsHandoverBuilding",
+        TBODY_TABLE: "#GetHandoverBuildingList",
+        BTN_ADD_HANDOVER: "#btn_add_Handover",
+        BTN_VIEW_HANDOVER_BACK: "#btn_ViewHndOverBack",
+        M_BUSINESS_UNIT: "#Business_Unit",
+        M_ZONE: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        BUSINESS_UNIT_TYPE: "#Fn_Business_Unit_Type",
+        DIV_VIEWHANDOVER_BUILDING: "#HandOver_Building_View",
+        VIEWHANDOVER_BUILDINGLIST: "#ViewHandOver_BuildingList",
+        VIEW_HANDOVER_QNS_LIST: "#divViewHandOverQns",
+        GET_QUESTIONNAIRE_LIST: "#GetQuestionnaireList",
+    });
+
+    $(document).ready(function () {
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#Date_of_Audit').val(today);
+
+        ApplySelect2("#Business_Unit");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ApplySelect2("#Zone_Emp");
+        ApplySelect2("#Service_Provider");
+
+        ServerSideTable_HandOverBuilding();
+        $(UI_Fields.BTN_ADD_HANDOVER).click(function () {
+            LOAD_BUSINESS_UNIT();
+            LOAD_ZONE();
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_HANDOVER_BUILDING).show(100);
+            $(UI_Fields.VIEW_HANDOVER_QNS_LIST).hide(100);
+        });
+        $(UI_Fields.BTN_VIEW_HANDOVER_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_HANDOVER_BUILDING).hide(100);
+            $(UI_Fields.DIV_VIEWHANDOVER_BUILDING).hide(100);
+            $(UI_Fields.VIEW_HANDOVER_QNS_LIST).hide(100);
+            $(UI_Fields.VIEW_HANDOVER_CLOSURE_ACTION).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_HANDOVER_BUILDING).hide(100);
+            $(UI_Fields.DIV_VIEWHANDOVER_BUILDING).hide(100);
+            $(UI_Fields.VIEW_HANDOVER_QNS_LIST).hide(100);
+            $(UI_Fields.VIEW_HANDOVER_CLOSURE_ACTION).hide(100);
+            window.location.reload(); //ClearAll();
+        });
+    })
+</script>
+<script>
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function FnService_Provider_Attended(val) {
+        //debugger
+        var spaname = $('input[name="SP_Attended"]:checked').val();
+        //alert(spaname)
+        if (spaname == "Yes") {
+            $("#div_Service_Provider_Id").show();
+            $("#div_Service_Provider_Others").hide();
+        }
+        else {
+            $("#div_Service_Provider_Id").hide();
+            $("#div_Service_Provider_Others").show();
+        }
+    }
+    function LOAD_BUSINESS_UNIT() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.M_BUSINESS_UNIT).empty();
+            $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.M_ZONE).empty();
+            $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                //alert(Zone_Id + ' ' + Community_Id);
+                ZONE_EMP_DRP_DWN('Supervisor', Zone_Id, Community_Id);
+                SERVICE_EMP_DRP_DWN('Service_Provider', Zone_Id, Community_Id);
+            });
+        });
+    }
+    function FnBusiness_Unit(val) {
+        var buname = $("#Business_Unit option:selected").text();
+        if (buname == "NCM") {
+            $("#Fn_Business_Unit_Type").show();
+        }
+        else {
+            $("#Fn_Business_Unit_Type").hide();
+        }
+    }
+    function FnHandOver_Type(val) {
+        var buname = $("#HandOver_Type option:selected").text();
+        if (buname == "Handover Infrastructure") {
+            $("#Fn_HandOver_Type_List").show();
+        }
+        else {
+            $("#Fn_HandOver_Type_List").hide();
+        }
+    }
+    function ZONE_EMP_DRP_DWN(Role_Name, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Zone_Emp").empty();
+            $("#Zone_Emp").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Zone_Emp").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function SERVICE_EMP_DRP_DWN(Role_Name, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Service_Provider").empty();
+            $("#Service_Provider").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Service_Provider").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function Fn_CA_Reject_HO(rowid) {
+        $("#hdn_HoCorrective_Action_Id").val("");
+        $("#hdn_HoCorrective_Action_Id").val(rowid);
+    }
+    function Fn_HOCA_Reject_Submit() {
+        var varInsp_HndOver_HSEId = "";
+        varInsp_HndOver_HSEId = $("#Insp_HndOver_BId").val();
+        var Rowid = $("#hdn_HoCorrective_Action_Id").val();
+        var Stage = $("#Reject_Stage").val();
+        var Description = $("#Reject_Reason").val();
+        let valid = $("#Fm_HOCA_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("HandOver_Closure_Action_Reject", "HandOverInspection")", { Corrective_Action_Id: Rowid, Insp_HndOver_Building_Id: varInsp_HndOver_HSEId, Reject_Stage: Stage, Reject_Reason: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $("#Reject_Reason").val("");
+                    $(".Add_HOCA_Reject").modal('toggle');
+                    FnHO_CA_ApprovalReject(varInsp_HndOver_HSEId);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    //Redirect from Approvel to Same Page
+    function FnHO_CA_ApprovalReject(id) {
+        $(UI_Fields.LIST_VIEW).hide(100);
+        $.post("@Url.Action("_ViewHndOverBldgQuestionnairs", "HandOverInspection")", { Insp_HndOver_Building_Id: id }, function (data) {
+            $(UI_Fields.GET_QUESTIONNAIRE_LIST).html('');
+            $(UI_Fields.GET_QUESTIONNAIRE_LIST).html(data);
+        }).always(function () {
+            $(UI_Fields.VIEW_HANDOVER_QNS_LIST).show(100);
+        });
+    }
+    function Fn_HO_Insp_Reject(rowid) {
+        $("#hdn_Ho_Insp_Id").val("");
+        $("#hdn_Ho_Insp_Id").val(rowid);
+    }
+    function Fn_HO_Insp_Reject_Submit() {
+        var varInsp_HealthSafety_Id = "";
+        Insp_HndOver_Building_Id = $("#hdn_Ho_Insp_Id").val();
+        var Rowid = $("#hdn_Ho_Insp_Id").val();
+        var Stage = $("#Ho_Reject_Stage").val();
+        var Description = $("#Ho_Reject_Reason").val();
+        let valid = $("#Fm_HO_Insp_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("Handover_Insp_Reject", "HandOverInspection")", { Insp_HndOver_Building_Id: Insp_HndOver_Building_Id, Reject_Stage: Stage, Reject_Reason: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+</script>

@@ -1,0 +1,954 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.Crisis_Team_Master>;
+@{
+    ViewData["Title"] = "Crisis Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .btn-success-Crisis {
+        color: #fff;
+        background-color: #01a3f9;
+        border-color: #04a5f9;
+        cursor: pointer;
+        border-radius: 11px;
+    }
+</style>
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Crisis Master List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnCrisisAdd" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive nowrap tblround" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Crisis Id</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Zone</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Community</th>
+                            <th style="text-align:left;"><i class="bx bxs-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Zone_Id</td>
+                                    <td align="left" valign="middle">@item.Community_Id</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            @*<a onclick="Edit(@item.Crisis_Master_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>*@
+                                            <a onclick="Delete(@item.Crisis_Master_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            <a onclick="Fn_View(@item.Crisis_Master_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="View" aria-label="Delete"><i class="mdi mdi-eye font-size-18"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*/*ADD PAGE*/*@
+
+<div class="row" id="Add_CrisisTeam_List" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Crisis Management Team</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        <input type="hidden" id="bckval" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" style="padding: 0.25rem 1.25rem !important;">
+                <input type="hidden" id="CrisisManagement_Id" value="0" />
+                <div class="row">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="Crisis_Master_Id" id="Crisis_Master_Id" value="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3 row">
+                            <label for="example-url-input" class="">Zone<span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <select class="form-control" id="Zone_Id" name="Zone_Id" onchange="Fn_Zone(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="">Community<span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <select class="form-control required" id="Community_Id" name="Community">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table id="" class="table dt-responsive nowrap" style="width:100%">
+                    <tr>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';text-align: end;">Gold</th>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66">Gold</th>
+                        <th style="background: #014d66;color: #014d66"><button class="btn-success-Crisis" style="width: 100px;float: inline-end;" onclick="btn_Add_Gold()">Add More</button></th>
+                    </tr>
+                    <tr>
+                        <th style="background: #dbdbdb;"></th>
+                        <th style="background: #dbdbdb;text-align: center;color: black;font-family: 'Nakheel-HeadlineBold';">PRIMARY CONTACT</th>
+                        <th style="background: #dbdbdb;"></th>
+                        <th style="background: #dbdbdb;"></th>
+                        <th style="background: #7fc0d9;"></th>
+                        <th style="background: #7fc0d9;"></th>
+                        <th style="background: #7fc0d9;width: 10%;"></th>
+                        <th style="background: #7fc0d9;color: black;font-family: 'Nakheel-HeadlineBold';">ALTERNATE CONTACT</th>
+                    </tr>
+                </table>
+                <table id="tblGold" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                    <thead>
+                        <tr>
+                            <th style="background: #dbdbdb;color: black;text-align: center;">Role</th>
+                            <th style="background: #dbdbdb;color: black;text-align: center;">Position</th>
+                            <th style="background: #dbdbdb;color: black;text-align: center;">Name</th>
+                            <th style="background: #dbdbdb;color: black;text-align: center;">Mobile </th>
+                            <th style="background: #7fc0d9;color: black;text-align: center;">Role</th>
+                            <th style="background: #7fc0d9;color: black;text-align: center;">Position</th>
+                            <th style="background: #7fc0d9;color: black;text-align: center;">Name</th>
+                            <th style="background: #7fc0d9;color: black;text-align: center;">Mobile </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control C_G_Role" id="G_Role" name="G_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Gold Commander">Gold Commander</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_G_Position" id="G_Position" name="G_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="CEO">CEO</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_G_Name" id="G_Name" name="G_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_G_Mobile" id="G_Mobile" name="G_Mobile" maxlength="10"></td>
+
+                            <td>
+                                <select class="form-control C_GA_Role" id="GA_Role" name="GA_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Gold Alternate">Gold Command Alternate</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_GA_Position" id="GA_Position" name="GA_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="CEO">CCMO</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_GA_Name" id="GA_Name" name="GA_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_GA_Mobile" id="GA_Mobile" name="GA_Mobile" maxlength="10"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table id="" class="table dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                    <tr>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';width: 62%;">Silver</th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"><button class="btn-success-Crisis" style="width: 100px;float: inline-end;" onclick="btn_Add_Silver()">Add More</button></th>
+                    </tr>
+                </table>
+                <table id="tblSilver" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control C_S_Role" id="S_Role" name="S_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Silver Commander">Silver Commander</option>
+                                    <option value="Silver CCOE">CCOE</option>
+                                    <option value="Silver Security">Security</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_S_Position" id="S_Position" name="S_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="CCMO">CCMO</option>
+                                    <option value="Senior Director">Senior Director</option>
+                                    <option value="Director">Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_S_Name" id="S_Name" name="S_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_S_Mobile" id="S_Mobile" name="S_Mobile" maxlength="10"></td>
+
+                            <td>
+                                <select class="form-control C_SA_Role" id="SA_Role" name="SA_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Silver Commander-Alternate">Silver Commander-Alternate  </option>
+                                    <option value="Silver Operations">Operations</option>
+                                     <option value="Silver HSSE">HSSE</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_SA_Position" id="SA_Position" name="SA_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="Senior Director">Senior Director CCOE</option>
+                                    <option value="Senior Director">Senior Director</option>
+                                    <option value="HSSE Director">CCOE - HSSE Director</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_SA_Name" id="SA_Name" name="SA_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_SA_Mobile" id="SA_Mobile" name="SA_Mobile" maxlength="10"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table id="" class="table dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                    <tr>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';width: 62%;">Bronze</th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"><button class="btn-success-Crisis" style="width: 100px;float: inline-end;" onclick="btn_Add_Bronze()">Add More</button></th>
+                    </tr>
+                </table>
+                <table id="tblBronze" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control C_B_Role" id="B_Role" name="B_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Bronze Commander">Bronze Commander</option>
+                                    <option value="Bronze Operations">Operations</option>
+                                    <option value="Bronze Security">Security</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_B_Position" id="B_Position" name="B_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="Director – Zone">Director – Zone</option>
+                                    <option value="Manager Buildings">Manager Buildings</option>
+                                    <option value="Manager Community">Security Manager</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_B_Name" id="B_Name" name="B_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_B_Mobile" id="B_Mobile" name="B_Mobile" maxlength="10"></td>
+                            <td>
+                                <select class="form-control C_BA_Role" id="BA_Role" name="BA_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Bronze Commander-Alternate">Bronze Commander-Alternate</option>
+                                    <option value="Bronze HSSE">HSSE</option>
+                                    <option value="Bronze Logistics">Logistics</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_BA_Position" id="BA_Position" name="BA_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="Senior Manager - Infrastructure">Senior Manager - Infrastructure</option>
+                                    <option value="Senior Manager">Senior Manager</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_BA_Name" id="BA_Name" name="BA_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_BA_Mobile" id="BA_Mobile" name="BA_Mobile" maxlength="10"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table id="" class="table dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                    <tr>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="text-align: center;background: #014d66;color: white;font-size: 16px;font-family: 'Nakheel-HeadlineBold';">Crisis Management Support Team</th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"></th>
+                        <th style="background: #014d66;"><button class="btn-success-Crisis" style="width: 100px;float: inline-end;" onclick="btn_Add_SupportTeam()">Add More</button></th>
+                    </tr>
+                </table>
+                <table id="tblSupportTeam" class="table table-striped dt-responsive nowrap" style="width:100%;margin-top: -16px;">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control C_ST_Role" id="ST_Role" name="ST_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Hard Service- TCOE">Hard Service- TCOE</option>
+                                    <option value="Soft Service - TCOE">Soft Service - TCOE</option>
+                                    <option value="STP-TCOE">STP-TCOE</option>
+                                    <option value="Communication">Communication</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_ST_Position" id="ST_Position" name="ST_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="Hard Service Senior Manager">Hard Service Senior Manager </option>
+                                    <option value="Associate Director Soft Service">Associate Director Soft Service </option>
+                                    <option value="Senior Financial Controller">Senior Financial Controller</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Manager MEP">Director - Customer Care</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_ST_Name" id="ST_Name" name="ST_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_ST_Mobile" id="ST_Mobile" name="ST_Mobile" maxlength="10"></td>
+                            <td>
+                                <select class="form-control C_STA_Role" id="STA_Role" name="STA_Role">
+                                    <option value="0">--Select--</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="MEP">MEP</option>
+                                    <option value="HSSE">HSSE</option>
+                                    <option value="HSSE">Authority Coordination</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_STA_Position" id="STA_Position" name="STA_Position">
+                                    <option value="0">--Select--</option>
+                                    <option value="Senior Financial Controller">Senior Financial Controller</option>
+                                    <option value="Manager MEP">Manager MEP</option>
+                                    <option value="Senior Manager">H&S Assistant Manager</option>
+                                    <option value="Assistant Manager">Assistant Manager Compliance</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-control C_STA_Name" id="STA_Name" name="STA_Name">
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control numbersonly C_STA_Mobile" id="STA_Mobile" name="STA_Mobile" maxlength="10"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="">
+                    <div class="col-12" style="text-align:center;">
+                        <button type="button" class="btn btn-success" id="btn-save-event" onclick="Fn_CrisisSubmit() "> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="Inc_Crisis" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Crisis </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewCrisisList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/service_signup/signupvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Crisis_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        BUSINESS_ID: "#Business_Unit_Id",
+        ZONE_ID: "#Zone_Id",
+        LEVELM_ID: "#LevelM_Id",
+        ZONE_NAME: "#Zone_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#Listview",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        EMP_ID: "#Emp_Id",
+        INC_CRISIS: "#Inc_Crisis",
+        VIEW_CRISIS_LIST: "#ViewCrisisList",
+        BTN_VIEWINVES_BACK: "#btn_ViewIncback",
+        COMMUNITY_ID: "#Community_Id",
+    });
+
+    $(document).ready(function () {
+
+        LOAD_EMPFILTERS_EM_GOLD();
+        LOAD_EMPFILTERS_EM_SILVER();
+        ApplySelect2("#LevelM_Id");
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Emp_Id");
+        ApplySelect2("#Community_Id");
+
+
+
+        //ApplySelect2("#G_Name");
+        //ApplySelect2("#GA_Name");
+        //ApplySelect2("#S_Name");
+        //ApplySelect2("#SA_Name");
+
+        LOAD_ALL_BU();
+        LOAD_ZONE();
+        LOAD_LEVELM();
+
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        $(UI_Fields.BTN_VIEWINVES_BACK).click(function () {
+            //$(UI_Fields.LIST_VIEW).show(100);
+            window.location.reload();
+        });
+
+
+        $("#btnCrisisAdd").click(function () {
+            $("#Listview").hide(100);
+            $("#Add_CrisisTeam_List").show(100);
+        });
+
+        $("#btn_back").click(function () {
+            window.location.reload();
+        });
+
+        $("#tblGold").on("click", '.TblGoldDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblSilver").on("click", '.TblSilverDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblSupportTeam").on("click", '.TblSupportTeamDeleteButton', function () {
+            $(this).closest("tr").remove();
+        });
+    });
+
+    function LOAD_ALL_BU() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.BUSINESS_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' disabled> --Select Business Unit-- </option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_LEVELM() {
+        $.post("@Url.Action("Load_Level_Master", "CommonMaster")", function (data) {
+            $(UI_Fields.LEVELM_ID).empty();
+            $(UI_Fields.LEVELM_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Level--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.LEVELM_ID).append("<option value=" + e.LevelM_Id + ">" + e.LevelM_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONE_ID).empty();
+            $(UI_Fields.ZONE_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONE_ID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_EMPFILTERS_EM(Zone_Id) {
+        $.post("@Url.Action("LoadEmpMasterFilter_Bronze", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#B_Name").empty();
+            $("#BA_Name").empty();
+            $("#B_Name").append("<option selected value='0' disabled> --Select-- </option>");
+            $("#BA_Name").append("<option selected value='0' disabled> --Select-- </option>");
+            $(data).each(function (i, e) {
+                $("#B_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#BA_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_EMPFILTERS_EM_GOLD() {
+        $.post("@Url.Action("LoadEmpMasterFilter_Gold", "CommonMaster")", function (data) {
+            $("#G_Name").empty();
+            $("#GA_Name").empty();
+
+            $("#G_Name").append("<option selected value='0' disabled> --Select-- </option>");
+            $("#GA_Name").append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#G_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#GA_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_EMPFILTERS_EM_SILVER() {
+        $.post("@Url.Action("LoadEmpMasterFilter_Silver", "CommonMaster")", function (data) {
+            $("#S_Name").empty();
+            $("#SA_Name").empty();
+
+            $("#ST_Name").empty();
+            $("#STA_Name").empty();
+
+            $("#S_Name").append("<option selected value='0' disabled> --Select-- </option>");
+            $("#SA_Name").append("<option selected value='0' disabled> --Select-- </option>");
+
+            $("#ST_Name").append("<option selected value='0' disabled> --Select-- </option>");
+            $("#STA_Name").append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#S_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#SA_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+
+                $("#ST_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#STA_Name").append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function Edit(id) {
+        $(".add-new").modal('show');
+        $.post("@Url.Action("ZONE_GetByID", "Master")", { ID: id }, function (data) {
+            $(UI_Fields.MODULE_ID).val(data.Zone_Id);
+            $(UI_Fields.BUSINESS_ID).val(data.Business_Unit_Id);
+            $(UI_Fields.ZONE_NAME).val(data.Zone_Name);
+            $(UI_Fields.DESCRIPTION).val(data.Description);
+            if (data.Is_Community == "1") {
+                $(UI_Fields.IS_COMMUNITY).prop('checked', true);
+            }
+            if (data.Is_Master_Community == "1") {
+                $(UI_Fields.IS_MASTER_COMMUNITY).prop('checked', true);
+            }
+            //$(UI_Fields.IS_COMMUNITY).val(data.Is_Community);
+            //$(UI_Fields.IS_MASTER_COMMUNITY).val(data.Is_Master_Community);
+        });
+    }
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Crisis_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == true) {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    function Fn_View(id) {
+        debugger;
+        $(UI_Fields.LIST_VIEW).hide();
+        var Hzurl = "";
+        $(UI_Fields.INC_CRISIS).show(100);
+        Hzurl = '/Master/_View_Crisis_Master_list';
+        Hzurl += '/?Crisis_Master_Id=' + id;
+        $(UI_Fields.VIEW_CRISIS_LIST).load(Hzurl);
+    }
+
+    function Fn_Zone(Zone_Id, Community_Id, Building_Id) {
+        LOAD_EMPFILTERS_EM(Zone_Id);
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+    var goldkey = 1;
+    function btn_Add_Gold() {
+        debugger;
+        var Gold_Name = "G_Name_" + goldkey;
+        var Gold_A_Name = "GA_Name_" + goldkey;
+        var html = "";
+        html += '<tr><td><select class="form-control C_G_Role" id="G_Role" name="G_Role"><option value="0">--Select--</option><option value="Gold Commander">Gold Commander</option><option value="Gold Alternate">Gold Alternate</option></select></td>';
+        html += '<td><select class="form-control C_G_Position" id="G_Position" name="G_Position"><option value="0">--Select--</option><option value="CEO">CEO</option></select></td>';
+        html += '<td><select class="form-control C_G_Name" id="' + Gold_Name + '" name="G_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_G_Mobile" id="G_Mobile" name="G_Mobile" maxlength="10"></td>';
+        html += '<td><select class="form-control C_GA_Role" id="GA_Role" name="GA_Role"><option value="0">--Select--</option><option value="Gold Commander">Gold Commander</option><option value="Gold Alternate">Gold Alternate</option></select></td>';
+        html += '<td><select class="form-control C_GA_Position" id="GA_Position" name="GA_Position"><option value="0">--Select--</option><option value="CEO">CEO</option></select></td>';
+        html += '<td><select class="form-control C_GA_Name" id="' + Gold_A_Name + '" name="GA_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_GA_Mobile" id="GA_Mobile" name="GA_Mobile" maxlength="10"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblGoldDeleteButton">Remove</button></td></tr>';
+        $("#tblGold").append(html);
+        LOAD_ADD_EMPFILTERS_GOLD(Gold_Name, Gold_A_Name);
+        goldkey++;
+    }
+
+    var silverkey = 1;
+    function btn_Add_Silver() {
+        debugger;
+        var Silver_Name = "S_Name_" + silverkey;
+        var Silver_A_Name = "SA_Name_" + silverkey;
+        var html = "";
+        html += '<tr><td><select class="form-control C_S_Role" id="S_Role" name="S_Role"><option value="0">--Select--</option><option value="Silver Commander">Silver Commander</option> <option value="Silver Commander-Support">Silver Commander-Support </option> <option value="Silver Commander-Alternate">Silver Commander-Alternate </option></select></td>';
+        html += '<td><select class="form-control C_S_Position" id="S_Position" name="S_Position"><option value="0">--Select--</option><option value="CCMO">CCMO</option> <option value="Director Operations">Director Operations</option> <option value="HSSE Director">HSSE Director</option></select></td>';
+        html += '<td><select class="form-control C_S_Name" id="' + Silver_Name + '" name="S_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_S_Mobile" id="S_Mobile" name="S_Mobile" maxlength="10"></td>';
+        html += '<td><select class="form-control C_SA_Role" id="SA_Role" name="SA_Role"><option value="0">--Select--</option><option value="Silver Commander">Silver Commander</option> <option value="Silver Commander-Support">Silver Commander-Support </option> <option value="Silver Commander-Alternate">Silver Commander-Alternate </option></select></td>';
+        html += '<td><select class="form-control C_SA_Position" id="SA_Position" name="SA_Position"><option value="0">--Select--</option><option value="CCMO">CCMO</option> <option value="Director Operations">Director Operations</option> <option value="HSSE Director">HSSE Director</option></select></td>';
+        html += '<td><select class="form-control C_SA_Name" id="' + Silver_A_Name + '" name="SA_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_SA_Mobile" id="SA_Mobile" name="SA_Mobile" maxlength="10"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblSilverDeleteButton">Remove</button></td></tr>';
+        $("#tblSilver").append(html);
+        LOAD_ADD_EMPFILTERS_SILVER(Silver_Name, Silver_A_Name);
+        silverkey++;
+    }
+
+
+    var bronzekey = 1;
+    function btn_Add_Bronze() {
+        debugger;
+        var Bronze_Name = "B_Name_" + bronzekey;
+        var Bronze_A_Name = "BA_Name_" + bronzekey;
+        var html = "";
+        html += '<tr><td><select class="form-control C_B_Role" id="B_Role" name="B_Role"><option value="0">--Select--</option><option value="Bronze Commander">Bronze Commander</option> <option value="Bronze Commander-Support">Bronze Commander-Support</option> <option value="Bronze Commander-Alternate">Bronze Commander-Alternate</option></select></td>';
+        html += '<td><select class="form-control C_B_Position" id="B_Position" name="B_Position"><option value="0">--Select--</option><option value="Director – Zone">Director – Zone</option> <option value="Manager Buildings">Manager Buildings</option> <option value="Manager Community">Manager Community</option></select></td>';
+        html += '<td><select class="form-control C_B_Name" id="' + Bronze_Name + '" name="B_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_B_Mobile" id="B_Mobile" name="B_Mobile" maxlength="10"></td>';
+        html += '<td><select class="form-control C_BA_Role" id="BA_Role" name="BA_Role"><option value="0">--Select--</option><option value="Bronze Commander">Bronze Commander</option> <option value="Bronze Commander-Support">Bronze Commander-Support</option> <option value="Bronze Commander-Alternate">Bronze Commander-Alternate</option></select></td>';
+        html += '<td><select class="form-control C_BA_Position" id="BA_Position" name="BA_Position"><option value="0">--Select--</option><option value="Director – Zone">Director – Zone</option> <option value="Manager Buildings">Manager Buildings</option> <option value="Manager Community">Manager Community</option></select></td>';
+        html += '<td><select class="form-control C_BA_Name" id="' + Bronze_A_Name + '" name="BA_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_BA_Mobile" id="BA_Mobile" name="BA_Mobile" maxlength="10"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblSilverDeleteButton">Remove</button></td></tr>';
+        $("#tblBronze").append(html);
+        LOAD_ADD_EMPFILTERS_BRONZE(Bronze_Name, Bronze_A_Name);
+        bronzekey++;
+    }
+
+
+    var supportteamkey = 1;
+    function btn_Add_SupportTeam() {
+        debugger;
+        var Support_Team_Name = "ST_Name_" + supportteamkey;
+        var Support_Team_A_Name = "STA_Name_" + supportteamkey;
+        var html = "";
+        html += '<tr><td><select class="form-control C_ST_Role" id="ST_Role" name="ST_Role"><option value="0">--Select--</option><option value="Hard Service- TCOE">Hard Service- TCOE</option> <option value="Soft Service - TCOE">Soft Service - TCOE</option> <option value="STP-TCOE">STP-TCOE</option> <option value="Finance">Finance</option> <option value="MEP">MEP</option> <option value="HSSE">HSSE</option></select></td>';
+        html += '<td><select class="form-control C_ST_Position" id="ST_Position" name="ST_Position"><option value="0">--Select--</option><option value="Hard Service Senior Manager">Hard Service Senior Manager </option> <option value="Associate Director Soft Service">Associate Director Soft Service </option> <option value="Senior Financial Controller">Senior Financial Controller</option> <option value="Manager MEP">Manager MEP</option> <option value="Senior Manager">Senior Manager</option> <option value="Assistant Manager">Assistant Manager</option></select></td>';
+        html += '<td><select class="form-control C_ST_Name" id="' + Support_Team_Name + '" name="ST_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_ST_Mobile" id="ST_Mobile" name="ST_Mobile" maxlength="10"></td>';
+        html += '<td><select class="form-control C_STA_Role" id="STA_Role" name="STA_Role"><option value="0">--Select--</option><option value="Hard Service- TCOE">Hard Service- TCOE</option> <option value="Soft Service - TCOE">Soft Service - TCOE</option> <option value="STP-TCOE">STP-TCOE</option> <option value="Finance">Finance</option> <option value="MEP">MEP</option> <option value="HSSE">HSSE</option></select></td>';
+        html += '<td><select class="form-control C_STA_Position" id="STA_Position" name="STA_Position"><option value="0">--Select--</option><option value="Hard Service Senior Manager">Hard Service Senior Manager </option> <option value="Associate Director Soft Service">Associate Director Soft Service </option> <option value="Senior Financial Controller">Senior Financial Controller</option> <option value="Manager MEP">Manager MEP</option> <option value="Senior Manager">Senior Manager</option> <option value="Assistant Manager">Assistant Manager</option></select></td>';
+        html += '<td><select class="form-control C_STA_Name" id="' + Support_Team_A_Name + '" name="STA_Name"></select></td>';
+        html += '<td><input type="text" class="form-control numbersonly C_STA_Mobile" id="STA_Mobile" name="STA_Mobile" maxlength="10"></td>';
+        html += '<td><button type="button" class="btn btn-danger TblSupportTeamDeleteButton">Remove</button></td></tr>';
+        $("#tblSupportTeam").append(html);
+        LOAD_ADD_EMPFILTERS_SILVER(Support_Team_Name, Support_Team_A_Name);
+        supportteamkey++;
+    }
+
+    function LOAD_EMPFILTERS_Gold(Name, A_Name) {
+        debugger;
+        var Zone_Id = $("#Zone_Id").val();
+        var Community_Id = $("#Community_Id").val();
+
+        $.post("@Url.Action("LoadEmpMasterFilter", "CommonMaster")", { Emp_Community_Id: Community_Id, Zone_Id: Zone_Id }, function (data) {
+            $("#" + Name).empty();
+            $("#" + A_Name).empty();
+
+            $("#" + Name).append("<option selected value='0' disabled> --Select-- </option>");
+            $("#" + A_Name).append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#" + A_Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+
+
+    function Fn_CrisisSubmit() {
+        //var tblCr_Gold_List = [];
+        //var tblCr_Silver_List = [];
+        //var tblCr_Bronze_List = [];
+        //var tblCr_SupportTeam_List = [];
+        var tblCrisis_Team_List = [];
+
+        $('#tblGold tbody > tr').each(function () {
+            debugger
+            var varLevel_Id = "1";
+            var varG_Role = $(this).closest('tr').find('.C_G_Role').val();
+            var varG_Position = $(this).closest('tr').find('.C_G_Position').val();
+            var varG_Name = $(this).closest('tr').find('.C_G_Name').val();
+            var varG_Mobile = $(this).closest('tr').find('.C_G_Mobile').val();
+            var varGA_Role = $(this).closest('tr').find('.C_GA_Role').val();
+            var varGA_Position = $(this).closest('tr').find('.C_GA_Position').val();
+            var varGA_Name = $(this).closest('tr').find('.C_GA_Name').val();
+            var varGA_Mobile = $(this).closest('tr').find('.C_GA_Mobile').val();
+            var data = {};
+            data.Level_Id = varLevel_Id;
+            data.Role = varG_Role;
+            data.Position = varG_Position;
+            data.Name = varG_Name;
+            data.Mobile = varG_Mobile;
+            data.A_Role = varGA_Role;
+            data.A_Position = varGA_Position;
+            data.A_Name = varGA_Name;
+            data.A_Mobile = varGA_Mobile;
+            tblCrisis_Team_List.push(data);
+        });
+
+        $('#tblSilver tbody > tr').each(function () {
+            debugger
+            var varLevel_Id = "2";
+            var varS_Role = $(this).closest('tr').find('.C_S_Role').val();
+            var varS_Position = $(this).closest('tr').find('.C_S_Position').val();
+            var varS_Name = $(this).closest('tr').find('.C_S_Name').val();
+            var varS_Mobile = $(this).closest('tr').find('.C_S_Mobile').val();
+            var varSA_Role = $(this).closest('tr').find('.C_SA_Role').val();
+            var varSA_Position = $(this).closest('tr').find('.C_SA_Position').val();
+            var varSA_Name = $(this).closest('tr').find('.C_SA_Name').val();
+            var varSA_Mobile = $(this).closest('tr').find('.C_SA_Mobile').val();
+            var data = {};
+            data.Level_Id = varLevel_Id;
+            data.Role = varS_Role;
+            data.Position = varS_Position;
+            data.Name = varS_Name;
+            data.Mobile = varS_Mobile;
+            data.A_Role = varSA_Role;
+            data.A_Position = varSA_Position;
+            data.A_Name = varSA_Name;
+            data.A_Mobile = varSA_Mobile;
+            tblCrisis_Team_List.push(data);
+        });
+
+        $('#tblBronze tbody > tr').each(function () {
+            debugger
+            var varLevel_Id = "3";
+            var varB_Role = $(this).closest('tr').find('.C_B_Role').val();
+            var varB_Position = $(this).closest('tr').find('.C_B_Position').val();
+            var varB_Name = $(this).closest('tr').find('.C_B_Name').val();
+            var varB_Mobile = $(this).closest('tr').find('.C_B_Mobile').val();
+            var varBA_Role = $(this).closest('tr').find('.C_BA_Role').val();
+            var varBA_Position = $(this).closest('tr').find('.C_BA_Position').val();
+            var varBA_Name = $(this).closest('tr').find('.C_BA_Name').val();
+            var varBA_Mobile = $(this).closest('tr').find('.C_BA_Mobile').val();
+            var data = {};
+            data.Level_Id = varLevel_Id;
+            data.Role = varB_Role;
+            data.Position = varB_Position;
+            data.Name = varB_Name;
+            data.Mobile = varB_Mobile;
+            data.A_Role = varBA_Role;
+            data.A_Position = varBA_Position;
+            data.A_Name = varBA_Name;
+            data.A_Mobile = varBA_Mobile;
+            tblCrisis_Team_List.push(data);
+        });
+
+        $('#tblSupportTeam tbody > tr').each(function () {
+            debugger
+            var varLevel_Id = "4";
+            var varST_Role = $(this).closest('tr').find('.C_ST_Role').val();
+            var varST_Position = $(this).closest('tr').find('.C_ST_Position').val();
+            var varST_Name = $(this).closest('tr').find('.C_ST_Name').val();
+            var varST_Mobile = $(this).closest('tr').find('.C_ST_Mobile').val();
+            var varSTA_Role = $(this).closest('tr').find('.C_STA_Role').val();
+            var varSTA_Position = $(this).closest('tr').find('.C_STA_Position').val();
+            var varSTA_Name = $(this).closest('tr').find('.C_STA_Name').val();
+            var varSTA_Mobile = $(this).closest('tr').find('.C_STA_Mobile').val();
+            var data = {};
+            data.Level_Id = varLevel_Id;
+            data.Role = varST_Role;
+            data.Position = varST_Position;
+            data.Name = varST_Name;
+            data.Mobile = varST_Mobile;
+            data.A_Role = varSTA_Role;
+            data.A_Position = varSTA_Position;
+            data.A_Name = varSTA_Name;
+            data.A_Mobile = varSTA_Mobile;
+            tblCrisis_Team_List.push(data);
+        });
+
+        var Obj = {
+            Crisis_Master_Id: $("#Crisis_Master_Id").val(),
+            Zone_Id: $("#Zone_Id").val(),
+            Community_Id: $("#Community_Id").val(),
+            L_M_Crisis_Team_Details: tblCrisis_Team_List,
+        };
+
+        $.ajax({
+            url: "/Master/AddCrisis_Master",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function LOAD_ADD_EMPFILTERS_GOLD(Name, A_Name) {
+        $.post("@Url.Action("LoadEmpMasterFilter_Gold", "CommonMaster")", function (data) {
+            $("#" + Name).empty();
+            $("#" + A_Name).empty();
+
+            $("#" + Name).append("<option selected value='0' disabled> --Select-- </option>");
+            $("#" + A_Name).append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#" + A_Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_ADD_EMPFILTERS_SILVER(Name, A_Name) {
+        $.post("@Url.Action("LoadEmpMasterFilter_Silver", "CommonMaster")", function (data) {
+            $("#" + Name).empty();
+            $("#" + A_Name).empty();
+
+            $("#" + Name).append("<option selected value='0' disabled> --Select-- </option>");
+            $("#" + A_Name).append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#" + A_Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+
+
+    function LOAD_ADD_EMPFILTERS_BRONZE(Name, A_Name) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadEmpMasterFilter_Bronze", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#" + Name).empty();
+            $("#" + A_Name).empty();
+
+            $("#" + Name).append("<option selected value='0' disabled> --Select-- </option>");
+            $("#" + A_Name).append("<option selected value='0' disabled> --Select-- </option>");
+
+            $(data).each(function (i, e) {
+                $("#" + Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+                $("#" + A_Name).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+</script>
+
+
+

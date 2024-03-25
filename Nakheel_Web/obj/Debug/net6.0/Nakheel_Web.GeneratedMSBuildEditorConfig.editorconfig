@@ -1,0 +1,931 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Nakheel_Web
+build_property.RootNamespace = Nakheel_Web
+build_property.ProjectDir = D:\Gobi_Files\Nakheel\WEB\Nakheel_Web\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = D:\Gobi_Files\Nakheel\WEB\Nakheel_Web
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Account/ServiceProviderDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTZXJ2aWNlUHJvdmlkZXJEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Account/Service_Provider_Sign_Up.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxTZXJ2aWNlX1Byb3ZpZGVyX1NpZ25fVXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Account/UpdateService_Provider_Sign_Up.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxVcGRhdGVTZXJ2aWNlX1Byb3ZpZGVyX1NpZ25fVXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Account/_View_ServiceProvider_list.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxfVmlld19TZXJ2aWNlUHJvdmlkZXJfbGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditEnv/EnvironmentalAudit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRFbnZcRW52aXJvbm1lbnRhbEF1ZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditEnv/_ViewEnv_Aud_Sch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRFbnZcX1ZpZXdFbnZfQXVkX1NjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditInternal/Internal_Audit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRJbnRlcm5hbFxJbnRlcm5hbF9BdWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditInternal/P_Audit_Internal_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRJbnRlcm5hbFxQX0F1ZGl0X0ludGVybmFsX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditNCMForm/Audit_NCM_Form.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXROQ01Gb3JtXEF1ZGl0X05DTV9Gb3JtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditNCMForm/P_Audit_NCM_Form_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXROQ01Gb3JtXFBfQXVkaXRfTkNNX0Zvcm1fQWRkVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditNCMForm/P_Create_Audit_NCM_Form.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXROQ01Gb3JtXFBfQ3JlYXRlX0F1ZGl0X05DTV9Gb3JtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditSp/Audit_Service_Provider.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRTcFxBdWRpdF9TZXJ2aWNlX1Byb3ZpZGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/AuditSp/P_Audit_Sp_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRTcFxQX0F1ZGl0X1NwX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/AuditSch_ServiceProvider.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRTY2hfU2VydmljZVByb3ZpZGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Audit_Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRfQ2F0ZWdvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Audit_Findings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRfRmluZGluZ3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Audit_Questionnaires.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRfUXVlc3Rpb25uYWlyZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Audit_Sub_Topics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRfU3ViX1RvcGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Audit_Topics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcQXVkaXRfVG9waWNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Env_Aud_Schedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcRW52X0F1ZF9TY2hlZHVsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Internal_Aud_Schedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcSW50ZXJuYWxfQXVkX1NjaGVkdWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/LoadAll_CheckList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcTG9hZEFsbF9DaGVja0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/P_Audit_Welfare_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcUF9BdWRpdF9XZWxmYXJlX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/Welfare_Aud_Schedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcV2VsZmFyZV9BdWRfU2NoZWR1bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/_ViewInternalAud.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcX1ZpZXdJbnRlcm5hbEF1ZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Audit/_ViewInternalAudNcrForm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXVkaXRcX1ZpZXdJbnRlcm5hbEF1ZE5jckZvcm0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/CommonMaster/_LoadGoogleMap.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbW9uTWFzdGVyXF9Mb2FkR29vZ2xlTWFwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/CommonMaster/_Load_View_GoogleMap.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbW9uTWFzdGVyXF9Mb2FkX1ZpZXdfR29vZ2xlTWFwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/Confined_Space_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xDb25maW5lZF9TcGFjZV9QZXJtaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/Electrical_Work_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xFbGVjdHJpY2FsX1dvcmtfUGVybWl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/FireSafety_Work_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xGaXJlU2FmZXR5X1dvcmtfUGVybWl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/General_WorkPermit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xHZW5lcmFsX1dvcmtQZXJtaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/Hot_Work_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xIb3RfV29ya19QZXJtaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/MajorHSERiskMaster.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xNYWpvckhTRVJpc2tNYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/Major_HSE_Question.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xNYWpvcl9IU0VfUXVlc3Rpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/third_Party_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1x0aGlyZF9QYXJ0eV9QZXJtaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/WorkAt_Height_Permit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xXb3JrQXRfSGVpZ2h0X1Blcm1pdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_EditConfinedSpace.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfRWRpdENvbmZpbmVkU3BhY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_Edit_Load_Google_Map.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfRWRpdF9Mb2FkX0dvb2dsZV9NYXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_ViewConfinedSpace.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfVmlld0NvbmZpbmVkU3BhY2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_ViewElectricalWork.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfVmlld0VsZWN0cmljYWxXb3JrLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_ViewFireSafety.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfVmlld0ZpcmVTYWZldHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_ViewHotWork.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfVmlld0hvdFdvcmsuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ControlOfWork/_ViewWorkHeight.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29udHJvbE9mV29ya1xfVmlld1dvcmtIZWlnaHQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillAction/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxBY3Rpb25cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillAction/Schedule_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxBY3Rpb25cU2NoZWR1bGVfQWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/Drill.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxEcmlsbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/DrillForms.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxEcmlsbEZvcm1zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/FireDrill.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxGaXJlRHJpbGwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/FireDrillObsr.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxGaXJlRHJpbGxPYnNyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/IMP_Actions.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxJTVBfQWN0aW9ucy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/DrillSchedule/Schedule_Report.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpbGxTY2hlZHVsZVxTY2hlZHVsZV9SZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/EmergencyAlert/AddAlert.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5QWxlcnRcQWRkQWxlcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/EmergencyAlert/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5QWxlcnRcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/EmergencyAlert/_EmrLoadGoogleMap.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5QWxlcnRcX0VtckxvYWRHb29nbGVNYXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/EmergencyAlert/_View_Emr_Alert.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5QWxlcnRcX1ZpZXdfRW1yX0FsZXJ0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergencymitigation/Emergency_Alert_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5bWl0aWdhdGlvblxFbWVyZ2VuY3lfQWxlcnRfTWFzdGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergencymitigation/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5bWl0aWdhdGlvblxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergencymitigation/ViewEmer_Mitigation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5bWl0aWdhdGlvblxWaWV3RW1lcl9NaXRpZ2F0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergencymitigation/_View_Emergency_Alert_list.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5bWl0aWdhdGlvblxfVmlld19FbWVyZ2VuY3lfQWxlcnRfbGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XERhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/Index - Copy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XEluZGV4IC0gQ29weS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/Schedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XFNjaGVkdWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/ScheduleTbl.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XFNjaGVkdWxlVGJsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/_GetERT_Team_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XF9HZXRFUlRfVGVhbV9NYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Emergency/_View_ERTTeam_list.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRW1lcmdlbmN5XF9WaWV3X0VSVFRlYW1fbGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/FireLifeSafety_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEZpcmVMaWZlU2FmZXR5X0FjdGlvbl9DbG9zdXJlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/HandOver_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEhhbmRPdmVyX0FjdGlvbl9DbG9zdXJlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/HandOver_Building.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEhhbmRPdmVyX0J1aWxkaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/HealthSafety_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEhlYWx0aFNhZmV0eV9BY3Rpb25fQ2xvc3VyZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/Insp_FireLife_Safety.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEluc3BfRmlyZUxpZmVfU2FmZXR5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/Insp_HealthSafety_Building.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEluc3BfSGVhbHRoU2FmZXR5X0J1aWxkaW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/Insp_Service_Provider.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXEluc3BfU2VydmljZV9Qcm92aWRlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/ServiceProvider_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXFNlcnZpY2VQcm92aWRlcl9BY3Rpb25fQ2xvc3VyZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_GetFireLifeSafetyQnsView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9HZXRGaXJlTGlmZVNhZmV0eVFuc1ZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_GetHealthSafetyQnsView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9HZXRIZWFsdGhTYWZldHlRbnNWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_GetServiceProviderQnsView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9HZXRTZXJ2aWNlUHJvdmlkZXJRbnNWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewBuildingQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3QnVpbGRpbmdRdWVzdGlvbm5haXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewFireLifeSafetyClosureAction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3RmlyZUxpZmVTYWZldHlDbG9zdXJlQWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewFireLifeSafetyCSQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3RmlyZUxpZmVTYWZldHlDU1F1ZXN0aW9ubmFpcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewFireLifeSafetyQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3RmlyZUxpZmVTYWZldHlRdWVzdGlvbm5haXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewFireLifeSafetySchedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3RmlyZUxpZmVTYWZldHlTY2hlZHVsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHandOverBuilding.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGFuZE92ZXJCdWlsZGluZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHandOverInfrastructureQns.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGFuZE92ZXJJbmZyYXN0cnVjdHVyZVFucy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHandOver_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGFuZE92ZXJfQ2xvc3VyZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHealthSafetyBuilding.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGVhbHRoU2FmZXR5QnVpbGRpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHealthSafetyClosureAction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGVhbHRoU2FmZXR5Q2xvc3VyZUFjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHealthSafetyMCQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGVhbHRoU2FmZXR5TUNRdWVzdGlvbm5haXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHealthSafetyQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SGVhbHRoU2FmZXR5UXVlc3Rpb25uYWlycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewHndOverBldgQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3SG5kT3ZlckJsZGdRdWVzdGlvbm5haXJzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewServiceProviderClosureAction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3U2VydmljZVByb3ZpZGVyQ2xvc3VyZUFjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewServiceProviderCSQnsObs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3U2VydmljZVByb3ZpZGVyQ1NRbnNPYnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewServiceProviderQuestionnairs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3U2VydmljZVByb3ZpZGVyUXVlc3Rpb25uYWlycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/HandOverInspection/_ViewServiceProviderSchedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSGFuZE92ZXJJbnNwZWN0aW9uXF9WaWV3U2VydmljZVByb3ZpZGVyU2NoZWR1bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Home/MasterDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxNYXN0ZXJEYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Agency_Of_Injury.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcQWdlbmN5X09mX0luanVyeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Classification.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcQ2xhc3NpZmljYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Environment_Observation_Types.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcRW52aXJvbm1lbnRfT2JzZXJ2YXRpb25fVHlwZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/GetInvestigation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcR2V0SW52ZXN0aWdhdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Health_Safety_Observation_Types.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSGVhbHRoX1NhZmV0eV9PYnNlcnZhdGlvbl9UeXBlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/IncidentDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnREYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/IncidentDashboardNew.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnREYXNoYm9hcmROZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/IncidentInvestigation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnRJbnZlc3RpZ2F0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/IncidentReporting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnRSZXBvcnRpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Incident_Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnRfQ2F0ZWdvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Incident_Type.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5jaWRlbnRfVHlwZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/INC_Action_Approval.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSU5DX0FjdGlvbl9BcHByb3ZhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/INC_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSU5DX0FjdGlvbl9DbG9zdXJlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Injury_Type.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcSW5qdXJ5X1R5cGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Mechanism_Of_Injury.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcTWVjaGFuaXNtX09mX0luanVyeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Nature_Injury_Illness.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcTmF0dXJlX0luanVyeV9JbGxuZXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/ObservationDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcT2JzZXJ2YXRpb25EYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/ObservationReporting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcT2JzZXJ2YXRpb25SZXBvcnRpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/OBS_Action_Closure.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcT0JTX0FjdGlvbl9DbG9zdXJlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Personal_factor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcUGVyc29uYWxfZmFjdG9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/System_factor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcU3lzdGVtX2ZhY3Rvci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Types_of_Environmental_factor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcVHlwZXNfb2ZfRW52aXJvbm1lbnRhbF9mYWN0b3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Types_of_Security_Incident.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcVHlwZXNfb2ZfU2VjdXJpdHlfSW5jaWRlbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Unsafe_Act.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcVW5zYWZlX0FjdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Unsafe_Condition.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcVW5zYWZlX0NvbmRpdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/Vehicle_Accident_Type.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcVmVoaWNsZV9BY2NpZGVudF9UeXBlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewBodyParts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdCb2R5UGFydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewIncidentClosureEv.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdJbmNpZGVudENsb3N1cmVFdi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewIncidentReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdJbmNpZGVudFJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewIncidentReportApproveProcess.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdJbmNpZGVudFJlcG9ydEFwcHJvdmVQcm9jZXNzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewInvestigationReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdJbnZlc3RpZ2F0aW9uUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewObservationReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdPYnNlcnZhdGlvblJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Incident/_ViewSupervisorObservationReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5jaWRlbnRcX1ZpZXdTdXBlcnZpc29yT2JzZXJ2YXRpb25SZXBvcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/InspectionDashboard/Inspection_Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvbkRhc2hib2FyZFxJbnNwZWN0aW9uX0Rhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Complaint_Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxDb21wbGFpbnRfUmVnaXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Create_Audit_Insp_Sch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxDcmVhdGVfQXVkaXRfSW5zcF9TY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX0NhdGVnb3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Joint_Corrective_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX0pvaW50X0NvcnJlY3RpdmVfQWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Landscap_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX0xhbmRzY2FwX01hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Landscap_Sub_Cat_GetAll.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX0xhbmRzY2FwX1N1Yl9DYXRfR2V0QWxsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Leader_Corrective_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX0xlYWRlcl9Db3JyZWN0aXZlX0FjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Observation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX09ic2VydmF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Questionnaires.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1F1ZXN0aW9ubmFpcmVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Request.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1JlcXVlc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Safety_Violation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1NhZmV0eV9WaW9sYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Safety_Vio_Corrective_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1NhZmV0eV9WaW9fQ29ycmVjdGl2ZV9BY3Rpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_SoftService_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1NvZnRTZXJ2aWNlX01hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_SoftService_Sub_Cat_GetAll.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1NvZnRTZXJ2aWNlX1N1Yl9DYXRfR2V0QWxsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Spot_Corrective_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1Nwb3RfQ29ycmVjdGl2ZV9BY3Rpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Sub_Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1N1Yl9DYXRlZ29yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Topic.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1RvcGljLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Insp_Type.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxJbnNwX1R5cGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Joint_Insp_Request.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxKb2ludF9JbnNwX1JlcXVlc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Landscape_CA_Insp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxMYW5kc2NhcGVfQ0FfSW5zcC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Landscape_Inspection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxMYW5kc2NhcGVfSW5zcGVjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/Leader_Insp_Request.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxMZWFkZXJfSW5zcF9SZXF1ZXN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Complaint_Register_Add_View.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0NvbXBsYWludF9SZWdpc3Rlcl9BZGRfVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Create_Safety_Violation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0NyZWF0ZV9TYWZldHlfVmlvbGF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Edit_CA_Landscape_Insp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0VkaXRfQ0FfTGFuZHNjYXBlX0luc3AuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Edit_CA_SoftService_Insp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0VkaXRfQ0FfU29mdFNlcnZpY2VfSW5zcC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Edit_Landscape_Inspection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0VkaXRfTGFuZHNjYXBlX0luc3BlY3Rpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Edit_SoftService_Inspection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0VkaXRfU29mdFNlcnZpY2VfSW5zcGVjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Joint_CA_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfSm9pbnRfQ0FfR2V0YnlJZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Joint_Find_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfSm9pbnRfRmluZF9BZGRWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Leader_CA_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfTGVhZGVyX0NBX0dldGJ5SWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Leader_Find_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfTGVhZGVyX0ZpbmRfQWRkVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Leader_Find_Walkin_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfTGVhZGVyX0ZpbmRfV2Fsa2luX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Leader_Request_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfTGVhZGVyX1JlcXVlc3RfR2V0YnlJZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Request_Add_View.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfUmVxdWVzdF9BZGRfVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Request_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfUmVxdWVzdF9HZXRieUlkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Spot_CA_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfU3BvdF9DQV9HZXRieUlkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Spot_Find_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfU3BvdF9GaW5kX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Insp_Spot_Find_Walkin_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0luc3BfU3BvdF9GaW5kX1dhbGtpbl9BZGRWaWV3LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Joint_Insp_Request_Add_View.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0pvaW50X0luc3BfUmVxdWVzdF9BZGRfVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Joint_Insp_Request_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0pvaW50X0luc3BfUmVxdWVzdF9HZXRieUlkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Landscape_Inspection_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0xhbmRzY2FwZV9JbnNwZWN0aW9uX0FkZFZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Leader_Insp_Request_Add_View.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX0xlYWRlcl9JbnNwX1JlcXVlc3RfQWRkX1ZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Safety_Violation_Add_View.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX1NhZmV0eV9WaW9sYXRpb25fQWRkX1ZpZXcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_Safety_Violation_CA_GetbyId.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX1NhZmV0eV9WaW9sYXRpb25fQ0FfR2V0YnlJZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/P_SoftService_Inspection_AddView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxQX1NvZnRTZXJ2aWNlX0luc3BlY3Rpb25fQWRkVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/SoftService_CA_Insp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxTb2Z0U2VydmljZV9DQV9JbnNwLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Inspection/SoftService_Inspection.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zcGVjdGlvblxTb2Z0U2VydmljZV9JbnNwZWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/LoginM/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5NXExvZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Building_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEJ1aWxkaW5nX01hbmFnZW1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Business_Unit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEJ1c2luZXNzX1VuaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Community_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENvbW11bml0eV9NYW5hZ2VtZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Crisis_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyaXNpc19NYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Crisis_Master_Comm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXENyaXNpc19NYXN0ZXJfQ29tbS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Department.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXERlcGFydG1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Designation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXERlc2lnbmF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Emergencychecklist.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEVtZXJnZW5jeWNoZWNrbGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Emergency_Category_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEVtZXJnZW5jeV9DYXRlZ29yeV9NYXN0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Employee_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEVtcGxveWVlX01hbmFnZW1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Get_Employee_Filter.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEdldF9FbXBsb3llZV9GaWx0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Get_SP_Sign_Up_List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEdldF9TUF9TaWduX1VwX0xpc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Hse_Bulletin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXEhzZV9CdWxsZXRpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Level_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXExldmVsX01hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Location_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXExvY2F0aW9uX01hc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Master_Community_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXE1hc3Rlcl9Db21tdW5pdHlfTWFuYWdlbWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Role_Master.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFJvbGVfTWFzdGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Service_Provider_Contractor_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFNlcnZpY2VfUHJvdmlkZXJfQ29udHJhY3Rvcl9NYW5hZ2VtZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/SP_Sign_Up_List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFNQX1NpZ25fVXBfTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/SP_Sign_Up_List_Email.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFNQX1NpZ25fVXBfTGlzdF9FbWFpbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/Zone_Management.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXFpvbmVfTWFuYWdlbWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/_ViewUserReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXF9WaWV3VXNlclJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Master/_View_Crisis_Master_list.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFzdGVyXF9WaWV3X0NyaXNpc19NYXN0ZXJfbGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/MigitationAction/Get_Mitigation_Report_List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlnaXRhdGlvbkFjdGlvblxHZXRfTWl0aWdhdGlvbl9SZXBvcnRfTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/MigitationAction/MigitationAction.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlnaXRhdGlvbkFjdGlvblxNaWdpdGF0aW9uQWN0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/MigitationAction/MigitationReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlnaXRhdGlvbkFjdGlvblxNaWdpdGF0aW9uUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/MigitationAction/_View_Mitigation_Action.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWlnaXRhdGlvbkFjdGlvblxfVmlld19NaXRpZ2F0aW9uX0FjdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/Get_Filter_Inc_Sec_List.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxHZXRfRmlsdGVyX0luY19TZWNfTGlzdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/Sec_Incident_Report.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxTZWNfSW5jaWRlbnRfUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/Sec_Incident_Type.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxTZWNfSW5jaWRlbnRfVHlwZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/Sec_Inc_Category.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxTZWNfSW5jX0NhdGVnb3J5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/Sub_Security_Incident.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxTdWJfU2VjdXJpdHlfSW5jaWRlbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/SecurityIncident/ViewSecurityIncidentReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VjdXJpdHlJbmNpZGVudFxWaWV3U2VjdXJpdHlJbmNpZGVudFJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ServiceMonthlyStatistics/Get_Service_Monthly_Statics.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VydmljZU1vbnRobHlTdGF0aXN0aWNzXEdldF9TZXJ2aWNlX01vbnRobHlfU3RhdGljcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ServiceMonthlyStatistics/Get_Service_Monthly_Statics_Filter.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VydmljZU1vbnRobHlTdGF0aXN0aWNzXEdldF9TZXJ2aWNlX01vbnRobHlfU3RhdGljc19GaWx0ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ServiceMonthlyStatistics/ServiceMonthly.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VydmljZU1vbnRobHlTdGF0aXN0aWNzXFNlcnZpY2VNb250aGx5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/ServiceProviderSignup_Dashboard/ServiceProvider_SignupDashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2VydmljZVByb3ZpZGVyU2lnbnVwX0Rhc2hib2FyZFxTZXJ2aWNlUHJvdmlkZXJfU2lnbnVwRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/TriggerAlert/TriggerAlert.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJpZ2dlckFsZXJ0XFRyaWdnZXJBbGVydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/TriggerAlert/_View_Mitigation_Report.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJpZ2dlckFsZXJ0XF9WaWV3X01pdGlnYXRpb25fUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/TriggerAlert/_View_Trigger_Alert.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJpZ2dlckFsZXJ0XF9WaWV3X1RyaWdnZXJfQWxlcnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Gobi_Files/Nakheel/WEB/Nakheel_Web/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-87akhl1a11

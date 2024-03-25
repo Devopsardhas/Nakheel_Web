@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+
+@model IReadOnlyCollection<Nakheel_Web.Models.SecurityIncidentReport.M_Sec_Incident_Report>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr class="clstr">
+            <td align="left" valign="middle">@item.Unique_Id</td>
+            <td align="left" valign="middle">@item.Zone_Name</td>
+            <td align="left" valign="middle">@item.Community_Name</td>
+            <td align="left" valign="middle">@item.Building_Name</td>
+            <td align="left" valign="middle">@item.Sec_Inc_Category_Name</td>
+@*            <td align="left" valign="middle">@item.Sec_Sub_Cat_Id</td>
+*@            <td align="left" valign="middle">@item.CreatedDate</td>
+
+            @if (item.Status == "Zone Supervisor Approval Pending")
+            {
+                <td align="left" valign="middle"><span class="badge bg-warning">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View(@item.Sec_Inc_Report_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "HSE Staff/HSE Team Approval Pending")
+            {
+                <td align="left" valign="middle"><span class="badge bg-primary">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View_Incident(@item.Sec_Inc_Report_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+            @if (item.Status == "Incident Closed")
+            {
+                <td align="left" valign="middle"><span class="badge bg-success">@item.Status</span> </td>
+                <td align="left">
+                    <div class="d-flex gap-3">
+                        <a onclick="Fn_View_Incident(@item.Sec_Inc_Report_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>
+                    </div>
+                </td>
+            }
+        </tr>
+    }
+}
+
+<script>
+    $("#tblSecurityIncident").DataTable({
+        "order": [[0, "desc"]],
+        "initComplete": function (settings, json) {
+            $("#tblSecurityIncident").wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+        },
+        dom: 'lBfrtip',
+        buttons: ['excel', 'pdf', 'print'],
+    });
+</script>

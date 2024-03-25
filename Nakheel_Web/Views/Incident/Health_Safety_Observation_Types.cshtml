@@ -1,0 +1,217 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.IncidentMaster.HEALTH_SAFETY_OBSERVATION>;
+@{
+    ViewData["Title"] = "Health & Safety Observation Types";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*/*GRID VIEW*/  *@
+
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Health & Safety  Types List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblIncident" class="table table-striped dt-responsive nowrap" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Health & Safety ID</th>
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Health & Safety Types</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Created Date</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody> @*id="GetIncidentList">*@
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Health_Safety_Type_Name</td>
+                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Edit(@item.Health_Safety_Type_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+                                            <a onclick="Delete(@item.Health_Safety_Type_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a>
+                                            @*<a onclick="View(@item.Designation_Id)" href="javascript:void(0);" title="" class="text-info" data-bs-original-title="View" aria-label="View"><i class="mdi mdi-eye font-size-18"></i></a>*@
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*/*ADD PAGE*/*@
+<form id="AddModule_div" asp-controller="Incident" asp-action="AddHealthSafety" method="post">
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Health_Safety_Type_Id" id="Health_Safety_Type_Id" value="0">
+                            </div>
+                        </div>
+                    <div class="col-md-6">
+                        <div class="mb-4 ">
+                            <label for="example-search-input" class="form-model" style="color:black;">Health & Safety Types</label>
+                                <input class="form-control" type="text" name="Health_Safety_Type_Name" id="Health_Safety_Type_Name" required minlen="1">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-model" style="color:black;" for="AddOrder-Billing-Name">Description</label>
+                                <textarea class="form-control" name="Description" id="Description" rows="1" cols="40" required minlen="1"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="">
+                    <div @*class="col-12 text-end"*@ style="text-align:center;">
+
+                        <button type="submit" class="btn btn-success"  id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+</form>
+
+<script>
+    debugger
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#Health_Safety_Type_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        ADD_INCIDENT_LIST: "#Add_Incident_List",
+        HEALTH_SAFETY_TYPE_NAME: "#Health_Safety_Type_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#List_View",
+        BTN_BACK: "#btn_back",
+        MAIN_TABLE: "#tblIncident",
+        TBODY_TABLE: "#GetIncidentList",
+        BTN_ADD_INC: "#btn_add_incident",
+    });
+
+    $(document).ready(function () {
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+           
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).show(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_INCIDENT_LIST).hide(100);
+        })
+    })
+    
+    function Edit(id) {
+        $(".add-new").modal('show');
+        $.post("@Url.Action("HealthSafety_GetByID", "Incident")", { ID: id }, function (data) {
+            debugger
+            $(UI_Fields.MODULE_ID).val(data.Health_Safety_Type_Id);
+            $(UI_Fields.HEALTH_SAFETY_TYPE_NAME).val(data.Health_Safety_Type_Name);
+            $(UI_Fields.DESCRIPTION).val(data.Description);
+        });
+    }
+
+    function Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("HealthSafety_Delete", "Incident"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == "true") {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    $(document).ready(function () {
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+    });
+
+    $("#btnAdd").click(function () {
+        $(UI_Fields.MODULE_ID).val('0');
+        $(UI_Fields.HEALTH_SAFETY_TYPE_NAME).val('');
+        $(UI_Fields.DESCRIPTION).val('');
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+</script>
+

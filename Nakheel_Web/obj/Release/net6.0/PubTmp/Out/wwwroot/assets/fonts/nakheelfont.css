@@ -1,0 +1,26 @@
+@font-face {
+    font-family: 'Nakheel-HeadlineBold';
+    src: url('../fonts/Nakheel-HeadlineBold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Nakheel-HeadlineRegular';
+    src: url('../fonts/Nakheel-HeadlineRegular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nakheel-TextBold';
+    src: url('../fonts/Nakheel-TextBold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nakheel-Textregular';
+    src: url('../fonts/Nakheel-TextRegular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}

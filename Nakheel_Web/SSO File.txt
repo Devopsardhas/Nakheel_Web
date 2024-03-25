@@ -1,0 +1,139 @@
+using System.Net.Http.Headers;
+using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Identity.Web;
+using Nakheel_Web.Notification.Hubs;
+using Nakheel_Web.Notification.SubscribeTableDependencies;
+using ServiceCollectionExtensions = Microsoft.Identity.Web.UI.ServiceCollectionExtensions;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.AddMvc();
+MicrosoftIdentityWebAppAuthenticationBuilderExtensions.AddMicrosoftIdentityWebApp(builder.Services.AddAuthentication("OpenIdConnect"), (IConfiguration)builder.Configuration, "AzureAd", "OpenIdConnect", "Cookies", false, (string)null);
+builder.Services.AddControllersWithViews().AddJsonOptions(delegate (JsonOptions options)
+{
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
+builder.Services.AddControllersWithViews(delegate (MvcOptions options)
+{
+    AuthorizationPolicy policy2 = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    options.Filters.Add(new AuthorizeFilter(policy2));
+});
+ServiceCollectionExtensions.AddMicrosoftIdentityUI(builder.Services.AddRazorPages(delegate (RazorPagesOptions options)
+{
+    options.Conventions.AllowAnonymousToPage("/account/ServiceProviderDetails");
+    options.Conventions.AllowAnonymousToPage("/account/Login");
+    options.Conventions.AllowAnonymousToPage("/Incident/IncidentReporting");
+    options.Conventions.AllowAnonymousToPage("/Incident/INC_Action_Closure");
+    options.Conventions.AllowAnonymousToPage("/Incident/IncidentInvestigation");
+    options.Conventions.AllowAnonymousToPage("/Incident/ObservationReporting");
+    options.Conventions.AllowAnonymousToPage("/Incident/OBS_Action_Closure");
+    options.Conventions.AllowAnonymousToPage("/ServiceMonthlyStatistics/ServiceMonthly");
+    options.Conventions.AllowAnonymousToPage("/ControlOfWork/Confined_Space_Permit");
+    options.Conventions.AllowAnonymousToPage("/ControlOfWork/Electrical_Work_Permit");
+    options.Conventions.AllowAnonymousToPage("/ControlOfWork/Hot_Work_Permit");
+    options.Conventions.AllowAnonymousToPage("/ControlOfWork/WorkAt_Height_Permit");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Request");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Joint_Insp_Request");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Leader_Insp_Request");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Safety_Violation");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Spot_Corrective_Action");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Joint_Corrective_Action");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Leader_Corrective_Action");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Insp_Safety_Vio_Corrective_Action");
+    options.Conventions.AllowAnonymousToPage("/EmergencyAlert/Index");
+    options.Conventions.AllowAnonymousToPage("/TriggerAlert/Index");
+    options.Conventions.AllowAnonymousToPage("/Inspection/Landscape_Inspection");
+    options.Conventions.AllowAnonymousToPage("/Emergency/Schedule");
+    options.Conventions.AllowAnonymousToPage("/Master/Employee_Management");
+    options.Conventions.AllowAnonymousToPage("/ServiceProviderSignup_Dashboard/ServiceProvider_SignupDashboard");
+    options.Conventions.AllowAnonymousToPage("/Incident/IncidentDashboardNew");
+
+}).AddMvcOptions(delegate (MvcOptions options)
+{
+    AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}));
+
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>(); // Add this line
+
+builder.Services.AddSession(delegate (SessionOptions options)
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(40);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddAuthorization(delegate (AuthorizationOptions options)
+{
+    options.FallbackPolicy = options.DefaultPolicy;
+});
+builder.Services.AddAntiforgery(delegate (AntiforgeryOptions options)
+{
+    options.HeaderName = "RequestVerificationToken";
+});
+builder.Services.AddMvcCore().AddDataAnnotations();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<NotificationHub>();
+builder.Services.AddSingleton<SubscribeNotificationTableDependency>();
+builder.Services.Configure(delegate (CookiePolicyOptions options)
+{
+    options.CheckConsentNeeded = (HttpContext context) => false;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.Secure = CookieSecurePolicy.Always;
+});
+builder.Services.AddHttpClient("API", (provider, c) =>
+{
+    string connString = builder.Configuration.GetConnectionString("DefaultConnection");
+    c.BaseAddress = new Uri(connString);
+    c.DefaultRequestHeaders.Accept.Clear();
+    c.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+    var jwtToken = httpContextAccessor.HttpContext?.Session.GetString("JWT");
+
+    if (!string.IsNullOrEmpty(jwtToken))
+    {
+        c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+    }
+});
+WebApplication webApplication = builder.Build();
+string connectionString = webApplication.Configuration.GetConnectionString("NotificationConnection");
+if (webApplication.Environment.IsDevelopment())
+{
+    webApplication.UseDeveloperExceptionPage();
+}
+else
+{
+    webApplication.UseExceptionHandler("/Home/Error");
+    webApplication.UseHsts();
+}
+webApplication.UseHttpsRedirection();
+webApplication.UseStaticFiles();
+webApplication.UseAuthentication();
+webApplication.UseRouting();
+webApplication.UseSession();
+webApplication.UseAuthorization();
+webApplication.MapHub<NotificationHub>("/notificationHub");
+webApplication.Use(async delegate (HttpContext context, Func<Task> next)
+{
+    context.Response.Headers.Remove("Server");
+    context.Response.Headers.Remove("X-Powered-By");
+    context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+    await next();
+});
+webApplication.MapControllerRoute("default", "{controller=LoginM}/{action=AzureLogin}/{id?}");
+webApplication.UseCookiePolicy();
+webApplication.Run();

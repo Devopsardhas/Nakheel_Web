@@ -1,0 +1,498 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model IReadOnlyCollection<Nakheel_Web.Models.HandOverInsMaster.M_Insp_FireLifeSafety_Questionnaires>;
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <!-- Contact Detail -->
+            <div class="col-xxl-12 mb-5 mb-xxl-0">
+                <div class="table-responsive" style="height:500px; overflow-y: scroll;">
+                    <br />
+                    <table id="tblFireLifeSafetyInspQns" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:130%">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th style="width:20%;">Questionnaire</th>
+                                <th>Action</th>
+                                <th style="width:10%;">Photo</th>
+                                <th>Details of Evidence</th>
+                                <th>Risk Level</th>
+                                <th>Risk Description</th>
+                                <th>Description of Action/Observation</th>
+                                <th>Category</th>
+                                <th>Sub Category</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblFireLifeSafetyQns">
+                            @if (Model != null)
+                            {
+                                var subSno = 1;
+                                foreach (var Question in Model!)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" value="@Question.Insp_Topic_Id" class="Insp_Topic_Id" />
+                                            <input type="hidden" value="@Question.Insp_Questionnaires_Id" class="Insp_Question_Id" />
+                                            <b>@subSno</b>
+                                        </td>
+                                        <td>
+                                            <b disabled class="Questionaire_Id" asp-for="@Question.Insp_Questionnaires_Name">@Question.Insp_Questionnaires_Name </b>
+                                        </td>
+                                        <td>
+                                            <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="Yes" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','Yes')" />&nbsp;Yes<br />
+                                            <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="No" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','No')" />&nbsp;No<br />
+                                            <input type="radio" name="Action_@subSno" id="Action_Qns_@subSno" class="Qns_Action" value="NA" style="vertical-align: middle;" onclick="Fn_ActionCheck('@subSno','NA')" checked />&nbsp;NA
+                                        </td>
+                                        <td>
+                                            <input id="Qnfile_@subSno" class="form-control file InputPhoto" onchange="uploadFiles('Qnfile_@subSno','QnPhoto_@subSno')" type="file" accept=".png, .jpg, .jpeg">
+                                            <input type="hidden" value="" class="QnPhoto" name="QnPhoto" id="QnPhoto_@subSno">
+                                        </td>
+                                        <td>
+                                            <textarea type="file" required name="Details_of_Evidence" id="Details_of_Evidence_@subSno" class="form-control Details_of_Evidence" style="overflow-y:scroll;"></textarea>
+                                        </td>
+                                        <td>
+                                            <select class="form-control Insp_Risk" required id="Insp_Risk_@subSno" name="Insp_Risk" style='text-align:center;'>
+                                                <option value="">--Select--</option>
+                                                <option value="Low">Low</option>
+                                                <option value="Medium">Medium</option>
+                                                <option value="High">High</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <textarea type="file" required name="Risk_Description" id="Risk_Description_@subSno" class="form-control Risk_Description" style="overflow-y:scroll;"></textarea>
+                                        </td>
+                                        <td>
+                                            <textarea type="file" required name="QnDescription" id="QnDescription_@subSno" class="form-control QnDescription" style="overflow-y:scroll;"></textarea>
+                                        </td>
+                                        <td>
+                                            <select onchange="SubCategoryList(this.value, @subSno)" class="form-select Insp_Category" id="Insp_Category_@subSno">
+                                                <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                <option value="1">Health & Safety</option>
+                                                <option value="2">Fire & Life Safety</option>
+                                                <option value="3">Environmental</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-select Sub_Category" name="Sub_Category" id="Sub_Category_@subSno">
+                                                <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    subSno++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="col-lg-9">
+                        <h4 class="d-flex align-items-center mb-3">Other Observations</h4>
+                    </div>
+                    <div class="mb-6">
+                        <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -34px;" class="btn" value="Add" onclick="Fn_Add_More_Finding()">+Add More</button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table id="tbl_Temp_Insp_Obser_FL" class="table tblround table-sm table-striped" style="width:200%">
+                    <thead>
+                        <tr>
+                            <th>Observations</th>
+                            <th>Hazard & Risk</th>
+                            <th>Requirements</th>
+                            <th>Description of Action Required</th>
+                            <th>Category</th>
+                            <th>Observation Type</th>
+                            <th>Risk Level</th>
+                            <th>Evidence</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input class="form-control Insp_HSObs_Id" value="0" type="hidden" id="Insp_HSObs_Id">
+                                <textarea id="HS_Observations" name="HS_Observations" class="form-control HS_Observations" placeholder="Enter Observations" rows="1"></textarea>
+                            </td>
+                            <td>
+                                <textarea id="HS_HazardRisk" name="HS_HazardRisk" class="form-control HS_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea>
+                            </td>
+                            <td>
+                                <textarea id="HS_Requirements" name="HS_Requirements" class="form-control HS_Requirements" placeholder="Enter Requirements" rows="1"></textarea>
+                            </td>
+                            <td>
+                                <textarea id="HS_ActionRequired" name="HS_ActionRequired" class="form-control HS_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea>
+                            </td>
+                            <td style="width: 150px;">
+                                <select onchange="SuCat(this.value)" class="form-select HS_Category" id="HS_Category">
+                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                </select>
+                            </td>
+                            <td style="width: 200px;">
+                                <select class="form-select HS_SubCategory" name="HS_SubCategory" id="HS_SubCategory">
+                                    <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="form-select HS_RiskLevel" name="HS_RiskLevel" id="HS_RiskLevel">
+                                    <option value="" disabled selected="selected">--Select--</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </td>
+                            <td style="width: 180px;">
+                                <input id="file0" class="form-control file InputPhoto" onchange="uploadFiles('file0','UploadPhotos0')" type="file" accept=".png, .jpg, .jpeg" multiple>
+                                <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos0">
+                            </td>
+                            <td>
+                                <label>
+                                    <i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;">
+                                    </i>
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    ApplySelect2("#Insp_Category");
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    var Action_Check = $(".Qns_Action").val();
+    if (Action_Check == "Yes" || Action_Check == "NA") {
+        $(".Details_of_Evidence").attr('disabled', 'disabled');
+        $(".Insp_Risk").attr('disabled', 'disabled');
+        $(".Risk_Description").attr('disabled', 'disabled');
+        //$(".QnDescription").attr('disabled', 'disabled');
+        $(".Insp_Category").attr('disabled', 'disabled');
+        $(".Sub_Category").attr('disabled', 'disabled');
+    }
+    function Fn_ActionCheck(rowval, status) {
+       @* if (status == "NA") {
+            $("#Details_of_Evidence_" + rowval).val('');
+            $("#Insp_Risk_" + rowval).prop('selectedIndex', 0);
+            $("#Risk_Description_" + rowval).val('');
+            $("#QnDescription_" + rowval).val('');
+            $("#Insp_Category_" + rowval).prop('selectedIndex', 0);
+            $("#Sub_Category_" + rowval).prop('selectedIndex', 0);
+            $("#Details_of_Evidence_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_Risk_" + rowval).attr('disabled', 'disabled');
+            $("#Risk_Description_" + rowval).attr('disabled', 'disabled');
+            $("#QnDescription_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_Category_" + rowval).attr('disabled', 'disabled');
+            $("#Sub_Category_" + rowval).attr('disabled', 'disabled');
+        } else *@
+        if (status == "Yes" || status == "NA") {
+            $("#Details_of_Evidence_" + rowval).val('');
+            $("#Insp_Risk_" + rowval).prop('selectedIndex', 0);
+            $("#Risk_Description_" + rowval).val('');
+            $("#QnDescription_" + rowval).val('');
+            $("#Insp_Category_" + rowval).prop('selectedIndex', 0);
+            $("#Sub_Category_" + rowval).prop('selectedIndex', 0);
+            $("#Details_of_Evidence_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_Risk_" + rowval).attr('disabled', 'disabled');
+            $("#Risk_Description_" + rowval).attr('disabled', 'disabled');
+            $("#Insp_Category_" + rowval).attr('disabled', 'disabled');
+            $("#Sub_Category_" + rowval).attr('disabled', 'disabled');
+            $("#QnDescription_" + rowval).removeAttr('disabled');
+        }
+        else {
+            $("#Details_of_Evidence_" + rowval).removeAttr('disabled');
+            $("#Insp_Risk_" + rowval).removeAttr('disabled');
+            $("#Risk_Description_" + rowval).removeAttr('disabled');
+            $("#QnDescription_" + rowval).removeAttr('disabled');
+            $("#Insp_Category_" + rowval).removeAttr('disabled');
+            $("#Sub_Category_" + rowval).removeAttr('disabled');
+        }
+    }
+    function SubCategoryList(Value, rowval) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#Sub_Category_" + rowval).empty();
+            $(data).each(function (i, e) {
+                $("#Sub_Category_" + rowval).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function Qns_Category_Master(HtmlFind) {
+        var Main_Category = "#Main_Category_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(Main_Category).empty();
+            $(Main_Category).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(Main_Category).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Qns_Sub_Category(Value, HtmlFind) {
+        var Main_SubCategory = "#Main_SubCategory_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(Main_SubCategory).empty();
+            $(data).each(function (i, e) {
+                $(Main_SubCategory).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+</script>
+<script>
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    Cat_Master();
+    function Cat_Master() {
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $("#HS_Category").empty();
+            $("#HS_Category").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#HS_Category").append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function SuCat(Value) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#HS_SubCategory").empty();
+            $(data).each(function (i, e) {
+                $("#HS_SubCategory").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    var HtmlFind = 1;
+    function Fn_Add_More_Finding() {
+        var Datamarkups = "";
+        var file = "file_" + HtmlFind;
+        var UploadPhotos = "UploadPhotos_" + HtmlFind;
+        Add_More_Cat_Master(HtmlFind);
+            Datamarkups = '<tr><td><input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id_' + HtmlFind + '"><textarea id="HS_Observations_' + HtmlFind + '" name="HS_Observations_' + HtmlFind + '" class="form-control HS_Observations" placeholder="Enter Observations" rows="1" ></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_HazardRisk_' + HtmlFind + '" name="HS_HazardRisk_' + HtmlFind + '"  class="form-control HS_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_Requirements_' + HtmlFind + '" name="HS_Requirements_' + HtmlFind + '"  class="form-control HS_Requirements" placeholder="Enter Requirements" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="HS_ActionRequired_' + HtmlFind + '" name="HS_ActionRequired_' + HtmlFind + '" class="form-control HS_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea></td>',
+            Datamarkups += '<td><select onchange="Add_More_SuCat(this.value,' + HtmlFind + ')" name="HS_Category_' + HtmlFind + '" class="form-select HS_Category" id="HS_Category_' + HtmlFind + '" ><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select HS_SubCategory" name="HS_SubCategory_' + HtmlFind + '" id="HS_SubCategory_' + HtmlFind + '" ><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select HS_RiskLevel" name="HS_RiskLevel_' + HtmlFind + '" id="HS_RiskLevel_' + HtmlFind + '"><option value="" disabled selected="selected">--Select--</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></td>',
+            Datamarkups += '<td><input id="file_' + HtmlFind + '" class="form-control file" onchange="uploadFilesAddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg" multiple><input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos_' + HtmlFind + '"></td>',
+            Datamarkups += '<td><label><i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;"></i></label></td>',
+            Datamarkups += '</tr>'
+        $('#tbl_Temp_Insp_Obser_FL').append(Datamarkups);
+        HtmlFind++;
+    }
+    function Add_More_Cat_Master(HtmlFind) {
+        var HS_Category = "#HS_Category_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(HS_Category).empty();
+            $(HS_Category).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(HS_Category).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Add_More_SuCat(Value, HtmlFind) {
+        var HS_SubCategory = "#HS_SubCategory_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(HS_SubCategory).empty();
+            $(data).each(function (i, e) {
+                $(HS_SubCategory).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    $("#tbl_Temp_Insp_Obser_FL").on("click", ".TblDeleteButton", function () {
+        $(this).closest("tr").remove();
+    });
+</script>
+<script>
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Upload_Picture", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function uploadFilesAddMore(inputId, UploadPhotoId) {
+        //debugger;
+        var input_test = inputId.id;
+        var Upload_test = UploadPhotoId.id;
+        inputId = input_test;
+        UploadPhotoId = Upload_test;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Upload_Picture", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>
+@*<script>
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function uploadFilesAddMore(inputId, UploadPhotoId) {
+        var test = inputId.id;
+        var test1 = UploadPhotoId.id;
+        inputId = test;
+        UploadPhotoId = test1;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "HandOverInspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+</script>*@

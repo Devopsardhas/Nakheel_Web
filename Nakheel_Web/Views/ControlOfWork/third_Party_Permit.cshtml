@@ -1,0 +1,315 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "Third Party Access Permit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .modal-dialog-centered {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }
+
+    /*  #rejectform1 {
+                            position: relative;
+                            display: flex;
+                            justify-content: center;
+                        }*/
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Third Party Access Permit</h4></div>
+                    @* @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                    {*@
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_Work" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Security Incident</button>
+                    </div>
+                    @* }
+                    else
+                    {
+                    <div class="col-lg-2" style="padding:13px"></div>
+                    }*@
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblSecurityIncident" class="table table-striped dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th> ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Building</th>
+                            <th>Category</th>
+                            <th>Created Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="GetSecurityIncList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@if (LoginClass.Role_Id == "17")
+{
+    <div class="row" id="Add_Third_Party_Permit">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Third Party Access Permit</h4></div>
+
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+
+                        </div>
+                    </div>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <form id="" action="FireSafety_Work_Permit" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="col-form-label" name="Contractor_Id" id="Contractor_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="row">
+                                <br />
+                                <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+
+                            </div>
+                            <br />
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <br />
+                                    <label class="col-form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                                    <select class="form-select" placeholder="--Select Business Unit--" name="Business_Unit_Id" id="Business_Unit_Id" required>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <br />
+                                    <div style="display:none;">
+                                    </div>
+                                    <label for="" class="col-form-label">Zone<span class="requ">*</span></label>
+                                    <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <br />
+                                <label for="" class="col-form-label">Community</label>
+                                <select class="form-select" placeholder="--Select Community--" id="Community_Id" name="Community_Id">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Requestor Details & Submission </h4></div>
+                            <br />
+                            <br />
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Email_Id">Company Name <span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Con_Name" name="Con_Name" @*placeholder=""*@>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Email_Id">Contractor Tittle/No <span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Con_Name" name="Con_Name" @*placeholder=""*@>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Email_Id">Competent Person <span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="Con_Name" name="Con_Name" @*placeholder=""*@>
+                                </div>
+                            </div>
+                            <br />
+
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Requested By</h4></div>
+                            <br />
+                            <br>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Country">Name & Position </label>
+                                    <input type="text" class="form-control" value="@LoginClass.First_Name" id="Po_Num" name="Po_Num">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Pin_Code">Contact</label>
+                                    <input type="text" class="form-control" value="@LoginClass.Mobile_Number" id="DMS_Num" name="DMS_Num">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Pin_Code">Email Id</label>
+                                    <input type="email" class="form-control" value="@LoginClass.Email_Id" id="DMS_Num" name="DMS_Num">
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="example-number-input" class="col-form-label">Date and time<span class="requ">*</span></label>
+                                    <input type="datetime" class="form-control" id="Hse_Officer_Mail" name="Hse_Officer_Mail" placeholder="">
+                                </div>
+                            </div>
+
+                            <br>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Required Work Details  </h4></div>
+                            <br>
+                            <br>
+                            <div class="row">
+                                <div class="mb-3 ">
+                                    <label for="example-number-input" class="col-md-4 col-form-label">Description of Work to be Performed and Purpose of Entry</label>
+                                    <div class="col-md-12">
+                                        <textarea class="form-control" id="Sec_Comment" name="Sec_Comment"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="" class="col-form-label" id="Medical">Approve Method Statement<span class="requ">*</span></label><br />
+                                    <label for="No1"><input type="radio" value="No1" name="Assistance" class="Assistance" id="No1">Yes</label>
+                                    <label for="No1"><input type="radio" value="Yes1" name="Assistance" class="Assistance" id="Yes1">No</label>
+                                </div>
+
+                            </div>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Work Duration and Schedule</h4></div>
+                            <br />
+
+                            <div class="col-md-4">
+                                <div class="mb-3 ">
+                                    <label for="" class="form-model">From Date & Time <span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="Con_Start_Date" id="Con_Start_Date" placeholder="">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="form-model">To Date & Time<span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="Con_End_Date" id="Con_End_Date" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label for="" class="form-model" id="Medical">Night Schedule<span class="requ">*</span></label><br />
+                                    <label for="No1"><input type="radio" value="No1" name="Assistance" class="Assistance" id="No1">No</label>
+                                    <label for="No1"><input type="radio" value="Yes1" name="Assistance" class="Assistance" id="Yes1">Yes</label>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="form-model">Permit Validity(One Year)<span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="Con_End_Date" id="Con_End_Date" placeholder="">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" align="center">
+                                <button type="submit" class="btn btn-success waves-effect waves-light">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div><!-- End Card Boby -->
+            </div>
+        </div>
+    </div>
+}
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUSINESS_ID: "#Business_Unit_Id",
+        IS_MASTER_COMMUNITY: "#Is_Master_Community",
+        LIST_VIEW: "#List_View",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        ADD_THIRD_PARTY_PERMIT: "#Add_Third_Party_Permit",
+        BTN_ADD_INC: "#btn_add_Work",
+        BTN_BACK: "#btn_back",
+    });
+    $(document).ready(function () {
+        debugger
+        $(UI_Fields.LIST_VIEW).show(100);
+        $(UI_Fields.ADD_THIRD_PARTY_PERMIT).hide(100);
+        LOAD_ALL_BU();
+        LOAD_ALL_ZONE_IS_COMMUNITY();
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            debugger
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_THIRD_PARTY_PERMIT).show(100);
+            //window.location.reload();
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            debugger
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_THIRD_PARTY_PERMIT).hide(100);
+        });
+
+    });
+</script>
+
+<script>
+    function LOAD_ALL_BU() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.MODULE_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' disabled> --Select Business Unit-- </option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+
+
+    function LOAD_ALL_ZONE_IS_COMMUNITY() {
+        $.post("@Url.Action("LoadAllZoneIsCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' disabled>--Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function FnZone_Id(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+
+</script>

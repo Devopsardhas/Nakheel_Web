@@ -1,0 +1,1494 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "HSE Monthly Statistics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .approval {
+        background-color: #3CB371;
+    }
+
+    .tdtxt {
+        color: #00617F;
+    }
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">HSE Monthly Statistics List</h4></div>
+                    @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" id="btn_add_Request" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Data</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-lg-2">
+                        <label>Zone</label>
+                        <select class="form-select rounded-pill InputField" id="Service_Drp_Zone" onchange="Filter_Zone_Id(this.value)">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Community</label>
+                        <select class="form-select rounded-pill InputField" id="Service_Drp_Community" onchange="Filter_Community(this.value)">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Building</label>
+                        <select class="form-select rounded-pill InputField" id="Service_Drp_Building">
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <label>Year</label>
+                        <select class="form-select InputField" id="Service_Drp_Year">
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2">
+                        <label>Month</label>
+                        <select class="form-select InputField" id="Service_Drp_Month">
+                            <option value="0">--Select--</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-2 pull-right">
+                        <br />
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Service_Submit_Filter">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                        </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="Service_Clr_Filter">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="Service_Month_Tbl" class="table table-striped tblround table-sm" style="width:100%">
+
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">&nbsp;Service Provider</th>
+                            <th style="text-align:left;">&nbsp;DMS Number</th>
+                            <th style="text-align:left;">&nbsp;Year</th>
+                            <th style="text-align:left;">&nbsp;Month</th>
+                            <th style="text-align:left;">&nbsp;Business Unit</th>
+                            <th style="text-align:left;">&nbsp;Zone</th>
+                            <th style="text-align:left;">&nbsp;Community</th>
+                            <th style="text-align:left;">&nbsp;Average Daily Man Power</th>
+                            <th style="text-align:left;">&nbsp;Total Man Hours</th>
+                            <th style="text-align:left;">&nbsp;Status</th>
+                            <th style="text-align:left;">&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Service_Month_Tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Page_Service" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Add HSE Monthly Statistics</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back_Service" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="F_Service_Monthly" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <input class="form-control" type="hidden" value="0" id="Service_Monthly_Id">
+                    <input class="form-control" type="hidden" value="@LoginClass.Employee_Identity_Id" id="CreatedBy" name="CreatedBy" readonly>
+                    <div class="row" style="display:none;" id="Div_Reject">
+                        <table id="Tbl_Reject_Service" class="table-sm table-striped dt-responsive nowrap tblround" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Unique Id</th>
+                                    <th>Reason</th>
+                                    <th>Rejected By</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Tbody_Reject_Service">
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">DMS Number</label>
+                                <div class="col-md-8">
+                                    <select class="form-select" name="Contractor_Id" id="Contractor_Id" onchange="Fn_Contractor_Load(this.value)" required>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Community</label>
+                                <div class="col-md-8">
+                                    <select class="form-select" disabled placeholder="--Select Community--" id="Community_Id" name="Community_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-text-input" class="col-md-4 col-form-label">Year<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Year_Id" id="Year_Id">
+                                        <option value="" style='text-align:center'>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            @* <div class="mb-3 row">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Training Conducted<span class="requ">*</span></label>
+                            <div class="col-md-8">
+                            <input type="text" class="form-control" id="Tr_Conduct" name="Tr_Conduct" autocomplete="off" />
+                            </div>
+                            </div>*@
+
+
+
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Business Unit</label>
+                                <div class="col-md-8">
+                                    <select class="form-select" disabled placeholder="--Select Business Unit--" name="Business_Unit_Id" id="Business_Unit_Id" onchange="FnBusiness_Unit()" required>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Building<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" placeholder="--Select Building--" name="Building_Id" id="Building_Id">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Average Daily Man Power<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text"  class="form-control numbersonly" id="Emp_ID" name="Emp_ID" autocomplete="off" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-4">
+                            <div class="mb-3 row">
+                                <label for="example-password-input" class="col-md-4 col-form-label">Zone</label>
+                                <div class="col-md-8">
+                                    <select class="form-select" disabled placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="example-tel-input" class="col-md-4 col-form-label">Month<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <select class="form-control" name="Month_Id" id="Month_Id">
+                                        <option value="" style='text-align:center'>--Select--</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3 row">
+                                <label for="example-number-input" class="col-md-4 col-form-label">Total Man Hours<span class="requ">*</span></label>
+                                <div class="col-md-8">
+                                    <input type="text"  class="form-control numbersonly" id="Tot_Work" name="Tot_Work" autocomplete="off" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Legal Compliance Tracker <span class="requ">*</span></label>
+                            <div id="Legal_Pdf" style="display:none;"></div>
+                            <div class="col-md-8">
+                                <input id="Legal_Files" name="Legal_Files" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Legal_Attach('Legal_Files','UploadLegal_Files','Legal_Pdf')" />
+                                <input type="hidden" class="UploadLegal_Files" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Other Attachments <span class="requ">*</span></label>
+                            <div id="Other_Pdf" style="display:none;"></div>
+                            <div class="col-md-8">
+                                <input id="Other_Files" name="Other_Files" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Other_Attach('Other_Files','UploadOther_Files','Other_Pdf')" />
+                                <input type="hidden" class="UploadOther_Files" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <button type="button" id="btn_add" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FnAddTraining()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <hr />
+                    <table id="tblTrainingList" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Training Name</th>
+                                <th>Remarks</th>
+                                <th>Attachments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="GetTrainingCount">
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <input required type="text" class="form-control Training_Name" id="Training_Name" name="Training_Name" autocomplete="off" />
+                                        <label style="font-size: small;" class="error text-danger" for="Training_Name"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input required type="text" class="form-control Training_Remarks" id="Training_Remarks" name="Training_Remarks" autocomplete="off" />
+                                        <label style="font-size: small;" class="error text-danger" for="Training_Remarks"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <input required id="Training_Files" name="Training_Files" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach('Training_Files','UploadTraining_Files')" />
+                                        <input type="hidden" class="UploadTraining_Files" />
+                                        <label style="font-size: small;" class="error text-danger" for="Training_Files"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-lg-10"> <h4 class="card-title">Other Attachments</h4></div>
+                            <div class="col-lg-2">
+                                <button type="button" id="btn_add_Other" class="btn btn-success waves-effect waves-light" style="float: right;" onclick="FnAddTrainingOther()"><i class="mdi mdi-plus me-1"></i> Add</button>
+                            </div>
+                        </div>
+                        <hr />
+                        <table id="tblTrainingListOther" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Description Of The File</th>
+                                    <th>Remarks</th>
+                                    <th>Attachments</th>
+                                </tr>
+                            </thead>
+                            <tbody id="GetTrainingCountOther">
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <input required type="text" class="form-control Training_Des" id="Training_Des" name="Training_Des" autocomplete="off" />
+                                            <label style="font-size: small;" class="error text-danger" for="Training_Des"></label>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input required type="text" class="form-control Other_Remarks" id="Other_Remarks" name="Other_Remarks" autocomplete="off" />
+                                            <label style="font-size: small;" class="error text-danger" for="Other_Remarks"></label>
+
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input required id="Training_Files_Other" name="Training_Files_Other" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach_Other('Training_Files_Other','UploadTraining_FilesOther')" />
+                                            <input type="hidden" class="UploadTraining_FilesOther" />
+                                            <label style="font-size: small;" class="error text-danger" for="Training_Files_Other"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-success waves-effect waves-light" style="float: right;">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="View_Page_Service" style="display:none;">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">HSE Monthly Statistics</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_back_View" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <input class="form-control" type="hidden" value="" id="View_Service_Monthly_Id">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">DMS Number</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_DMS_Number"></label>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Community</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Community"></label>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Month</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Month_Id"></label>
+                            </div>
+                        </div>
+                        @*  <div class="mb-3 row">
+                        <label for="example-number-input" class="col-md-4 col-form-label">Training Conducted</label>
+                        <div class="col-md-8">
+                        <label class="form-control" id="View_Tr_Conduct"></label>
+                        </div>
+                        </div>*@
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">Business Unit</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Business_Unit"></label>
+
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-tel-input" class="col-md-4 col-form-label">Building</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Building_Id"></label>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Average Daily Man Power</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Emp_ID"></label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">Zone</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Zone_Id"></label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">Year</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Year_Id"></label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="example-number-input" class="col-md-4 col-form-label">Total Man Hours</label>
+                            <div class="col-md-8">
+                                <label class="form-control" id="View_Tot_Work"></label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="example-number-input" class="col-md-4 col-form-label">Legal Compliance Tracker</label>
+                        <div id="View_Legal_Pdf" style="display:none;"></div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <label for="example-number-input" class="col-md-4 col-form-label">Other Attachments</label>
+                        <div id="View_Other_Pdf" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <br />
+                    <table id="ViewtblTrainingList" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Training Name</th>
+                                <th>Remarks</th>
+                                <th>Attachments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ViewGetTrainingCount">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Other Attachments</h4></div>
+                    <div class="col-lg-2" style="padding:15px;">
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+
+                    <table id="ViewtblTrainingListOther" class="table table-striped dt-responsive nowrap tblround table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Description of the File</th>
+                                <th>Remarks</th>
+                                <th>Attachments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ViewGetTrainingCountOther">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row col-md-6" style="display:none" id="div_Approve">
+                    <label for="example-number-input" class="col-md-4 col-form-label">Approved Comments</label>
+                    <textarea readonly class="form-control tdtxt" id="View_Approved_Txt"></textarea>
+                </div>
+
+                <div class="row" id="Div_App_Rej" style="display:none;">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-7">
+                        <button type="button" class="btn btn-success waves-effect waves-light approval" data-bs-toggle="modal" data-bs-target=".Hse_Approve">
+                            <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Approve
+                        </button>
+                        <button class="btn btn-danger waves-effect waves-light submit" type="button" data-bs-toggle="modal" data-bs-target=".Hse_Reject">
+                            Reject <i class="bx bx-list-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade Hse_Approve" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">HSE Monthly Statistics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label for="example-search-input" class="form-model" style="color:black;">Approval Comments</label>
+                            <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Approve_Txt" name="Approve_Txt" required minlen="1"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-7">
+                        <button type="submit" class="btn btn-success" onclick="Hse_Btn_Approve()"> Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade Hse_Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject HSE Monthly Statistics</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="HseRejectId" id="HseRejectId" value="0">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <label for="example-search-input" class="form-model" style="color:black;">Reason For Reject</label>
+                            <textarea class="form-control" rows="1" cols="40" style="height: 150px;" id="Reject_Txt" name="Reject_Txt" required minlen="1"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-7">
+                        <button type="submit" class="btn btn-success" onclick="Hse_Btn_Reject()"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<script src="~/assets/js/validation/service_monthly/servicemontlyvalidation.js"></script>
+
+<script>
+    var Role_Id = '';
+    "use strict";
+    const UI_Fields = Object.freeze({
+        LIST_VIEW: "#List_View",
+        ADD_PAGE_SERVICE: "#Add_Page_Service",
+        BTN_BACK: "#btn_back",
+        BTN_ADD_REQUEST: "#btn_add_Request",
+        YEAR_ID: "#Year_Id",
+        MONTH_ID: "#Month_Id",
+        EMPLOYEE_ID: "#Emp_ID",
+        TOTAL_WORK: "#Tot_Work",
+        TRAINING_CONDUCTED: "#Tr_Conduct",
+        BTN_BACK: "#btn_back_Service",
+        VIEW_BTN_BACK: "#btn_back_View",
+        SERVICE_MONTH_TBL: "#Service_Month_Tbl",
+        SERVICE_MONTH_TBODY: "#Service_Month_Tbody",
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUSINESS_ID: "#Business_Unit_Id",
+        BUILDING_ID: "#Building_Id",
+        VIEW_PAGE_SERVICE: "#View_Page_Service",
+        FILTER_SUBMIT: "#Service_Submit_Filter",
+    });
+    var Month_Field = "";
+    $(document).ready(function () {
+        var Email = '@LoginClass.Email_Id'
+        var login = '@LoginClass.Employee_Identity_Id'
+        Role_Id = '@LoginClass.Role_Id';
+        LOAD_GRID_SERVICE(login);
+        LOAD_BUSINESS_UNIT();
+        LOAD_ZONE();
+        FILTER_LOAD_ZONE();
+        HSSE_LOAD_CONTRACT_DRP(Email);
+        var ddlYears = $("#Year_Id");
+        var filter_Year = $("#Service_Drp_Year");
+        Month_Field = $("#Month_Id");
+        //Determine the Current Year.
+        var currentYear = (new Date()).getFullYear();
+        $(filter_Year).append("<option selected value='0'style='text-align:center'>--Select--</option>");
+        //Loop and add the Year values to DropDownList.
+        for (var i = 2023; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            ddlYears.append(option);
+        }
+
+        for (var i = 2023; i <= currentYear; i++) {
+            var option = $("<option />");
+            option.html(i);
+            option.val(i);
+            filter_Year.append(option);
+        }
+
+
+        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        var today = new Date();
+        var d;
+        var month;
+
+        for (var i = 0; i >= -1; i--) {
+            d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+            month = monthNames[d.getMonth()];
+            $("#Month_Id").append("<option value=" + (d.getMonth() + 1) + ">" + month + "</option>");
+        }
+
+        ApplySelect2("#Service_Drp_Zone");
+        ApplySelect2("#Service_Drp_Community");
+        ApplySelect2("#Service_Drp_Building");
+        ApplySelect2("#Service_Drp_Year");
+        ApplySelect2("#Service_Drp_Month");
+
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+
+
+        $(UI_Fields.BTN_ADD_REQUEST).click(function () {
+            LOAD_ZONE();
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_PAGE_SERVICE).show(100);
+            $(UI_Fields.VIEW_PAGE_SERVICE).hide(100);
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_PAGE_SERVICE).hide(100);
+            $(UI_Fields.VIEW_PAGE_SERVICE).hide(100);
+            window.location.reload();
+        });
+
+        $(UI_Fields.VIEW_BTN_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.VIEW_PAGE_SERVICE).hide(100);
+            window.location.reload();
+        });
+
+        $("#Service_Clr_Filter").click(function () {
+            window.location.reload();
+        });
+
+        $(UI_Fields.FILTER_SUBMIT).click(function () {
+            var Createdby = '@LoginClass.Employee_Identity_Id';
+            var ZoneId = $("#Service_Drp_Zone").val();
+            var CommunityId = $("#Service_Drp_Community").val();
+            var Building = $("#Service_Drp_Building").val();
+            var VarYear = $("#Service_Drp_Year").val();
+            var VarMonth = $("#Service_Drp_Month").val();
+            if (ZoneId == null) {
+                ZoneId = '0';
+            }
+            if (CommunityId == null) {
+                CommunityId = '0';
+            }
+            if (Building == null) {
+                Building = '0';
+            }
+            if (VarYear == null) {
+                VarYear = '0';
+            }
+            if (VarMonth == null) {
+                VarMonth = '0';
+            }
+            $(UI_Fields.SERVICE_MONTH_TBL).dataTable().fnDestroy();
+            $.post("@Url.Action("Get_Service_Monthly_Statics_Filter", "ServiceMonthlyStatistics")", { Zone_Id: ZoneId, Community_Id: CommunityId, Building_Id: Building, CreatedBy: Createdby, Service_Year: VarYear, Service_Month: VarMonth }, function (data) {
+                $("#Service_Month_Tbody").html('');
+                $("#Service_Month_Tbody").html(data);
+            });
+
+        });
+
+        $("#tblTrainingList").on("click", "#DataDeleteTools", function () {
+            $(this).closest("tr").remove();
+        });
+
+        $("#tblTrainingListOther").on("click", "#DataDeleteTr_Other", function () {
+            $(this).closest("tr").remove();
+        });
+
+    });
+
+    function Hse_Btn_Approve() {
+         var varApprove_HSE = $("#Approve_Txt").val();
+        if (varApprove_HSE == "" || varApprove_HSE == null) {
+            toastr.error("Please Enter The Approval Comments!", "Error");
+            $("#Approve_Txt").focus();
+            return false;
+        }
+        var Obj = {
+            Service_Monthly_Id: $("#View_Service_Monthly_Id").val(),
+            Remarks: varApprove_HSE,
+            Status: "2",
+        };
+        $.ajax({
+            url: "/ServiceMonthlyStatistics/Service_Monthly_Statics_Approve",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        })
+    }
+
+    function Hse_Btn_Reject() {
+        var varReject_HSE = $("#Reject_Txt").val();
+        if (varReject_HSE == "" || varReject_HSE == null) {
+            toastr.error("Please Enter The Reject Reason!", "Error");
+            $("#Reject_Txt").focus();
+            return false;
+        }
+
+        var Obj = {
+            Service_Monthly_Id: $("#View_Service_Monthly_Id").val(),
+            HSE_Reject_Id: $("#HseRejectId").val(),
+            Rejected_By: '@LoginClass.Employee_Identity_Id',
+            Status: "3",
+            Remarks: varReject_HSE,
+        };
+        $.ajax({
+            url: "/ServiceMonthlyStatistics/Service_Monthly_Statics_Reject",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+
+    function Files_Attach(inputId, UploadPhotoId, Cls_pdf_icon) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Training_Attachments", "ServiceMonthlyStatistics")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("." + Cls_pdf_icon).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function Files_Attach_Other(inputId, UploadPhotoId, Cls_pdf_icon) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Training_Attachments", "ServiceMonthlyStatistics")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("." + Cls_pdf_icon).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function Other_Attach(inputId, UploadPhotoId, Cls_pdf_icon) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Training_OtherAttachments", "ServiceMonthlyStatistics")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Cls_pdf_icon).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    function Legal_Attach(inputId, UploadPhotoId, Cls_pdf_icon) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Training_LegalAttachments", "ServiceMonthlyStatistics")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("." + UploadPhotoId).val(data)
+                }
+            });
+            $("#" + Cls_pdf_icon).hide();
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("." + UploadPhotoId).val("");
+            Swal.fire({
+                position: 'top-end',
+                icon: 'Error',
+                title: 'Maximum Allowed 5 Files',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+
+    var addcount = 1;
+    function FnAddTraining() {
+        var varTraining_Name = "Training_Name" + addcount;
+        var varTraining_Remarks = "Training_Remarks" + addcount;
+        var varClosure_Files = "Training_Files" + addcount;
+        var varClosure_Upload = "UploadTraining_Files" + addcount;
+        var html = "";
+        html = '<tr><td><input type="text" class="form-control Training_Name" id="' + varTraining_Name + '" name="' + varTraining_Name + '" autocomplete="off" required /> <label style="font-size: small;" class="error text-danger" for="' + varTraining_Name + '"></label></td><td><input type="text" class="form-control Training_Remarks" id="' + varTraining_Remarks + '" name="' + varTraining_Remarks + '" autocomplete="off" required /> <label style="font-size: small;" class="error text-danger" for="' + varTraining_Remarks + '"></label></td><td><input required id="' + varClosure_Files + '" name="' + varClosure_Files + '" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach(' + "'" + varClosure_Files + "'" + ',' + "'" + varClosure_Upload + "'" + ')" /><input type="hidden" class="UploadTraining_Files ' + varClosure_Upload + '" /> <label style="font-size: small;" class="error text-danger" for="' + varClosure_Files + '"></label></td><td><button class="btn btn-primary" id="DataDeleteTools" onclick="" value="Remove">Remove</button></td></tr>'
+        $("#GetTrainingCount").append(html);
+        addcount++;
+    }
+
+    var AddOther = 1;
+    function FnAddTrainingOther() {
+        var varTraining_Name = "Training_Des" + AddOther;
+        var varTraining_Remarks = "Other_Remarks" + AddOther;
+        var varClosure_Files = "Training_Files_Other" + AddOther;
+        var varClosure_Upload = "UploadTraining_FilesOther" + AddOther;
+        var html = "";
+        html = '<tr><td><input type="text" class="form-control Training_Des" id="' + varTraining_Name + '" name="' + varTraining_Name + '" autocomplete="off" required /> <label style="font-size: small;" class="error text-danger" for="' + varTraining_Name + '"></label></td><td><input type="text" class="form-control Other_Remarks" id="' + varTraining_Remarks + '" name="' + varTraining_Remarks + '" autocomplete="off" required /> <label style="font-size: small;" class="error text-danger" for="' + varTraining_Remarks + '"></label></td><td><input required id="' + varClosure_Files + '" name="' + varClosure_Files + '" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach_Other(' + "'" + varClosure_Files + "'" + ',' + "'" + varClosure_Upload + "'" + ')" /><input type="hidden" class="UploadTraining_FilesOther ' + varClosure_Upload + '" /> <label style="font-size: small;" class="error text-danger" for="' + varClosure_Files + '"></label></td><td><button class="btn btn-primary" id="DataDeleteTr_Other" onclick="" value="Remove">Remove</button></td></tr>'
+        $("#GetTrainingCountOther").append(html);
+        AddOther++;
+    }
+
+    function FILTER_LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $("#Service_Drp_Zone").empty();
+            $("#Service_Drp_Zone").append("<option selected value='0' style='text-align:center'> --Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Service_Drp_Zone").append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            Filter_Zone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+    function Filter_Zone_Id(Zone_Id, Community_Id, Building_Id) {
+        $("#Service_Drp_Community").empty();
+        $("#Service_Drp_Building").empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $("#Service_Drp_Community").append("<option selected value='0'style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Service_Drp_Community").append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $("#Service_Drp_Community").val(Community_Id);
+            Filter_Community(Community_Id, Building_Id);
+
+        });
+
+    }
+    function Filter_Community(Community_Id, Building_Id) {
+        var Zone_Id = $("#Service_Drp_Zone").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#Service_Drp_Building").empty();
+            $("#Service_Drp_Building").append("<option selected value='0'style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Service_Drp_Building").append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $("#Service_Drp_Building").val(Building_Id);
+        });
+
+    }
+    function View(Id) {
+        debugger;
+        $(UI_Fields.ADD_PAGE_SERVICE).hide();
+        $(UI_Fields.LIST_VIEW).hide();
+        $(UI_Fields.VIEW_PAGE_SERVICE).show();
+        $.post("@Url.Action("Edit_Service_Monthly_Statics", "ServiceMonthlyStatistics")", { Service_Monthly_Id: Id }, function (data) {
+            debugger;
+            if (data != null) {
+                $("#View_Service_Monthly_Id").val(Id);
+                if (Role_Id == "9" || Role_Id == "10" || Role_Id == "11") {
+                    if (data.Status == "1") {
+                        $("#Div_App_Rej").show(100);
+                    }
+                    else {
+                        $("#Div_App_Rej").hide(100);
+                    }
+                }
+                if (data.Remarks != null) {
+                    $("#div_Approve").show();
+                    $("#View_Approved_Txt").text(data.Remarks);
+                } else {
+                    $("#div_Approve").hide();
+                }
+                $("#View_DMS_Number").text(data.Purchase_Order_Number);
+                $("#View_Business_Unit").text(data.Business_Unit_Name);
+                $("#View_Zone_Id").text(data.Zone_Name);
+                $("#View_Community").text(data.Community_Name);
+                $("#View_Building_Id").text(data.Building_Name);
+                if (data.Business_Unit_Type != "") {
+                    $("#Div_View_Business_Unit_Type").show();
+                    $("#View_Business_Unit_Type").text(data.Business_Unit_Type);
+                } else {
+                    $("#Div_View_Business_Unit_Type").hide();
+                }
+
+                $("#View_Year_Id").text(data.Service_Year);
+                $("#View_Tot_Work").text(data.Service_Man_of_Hours);
+                $("#View_Tr_Conduct").text(data.Service_Training_Conducted);
+                $("#View_Emp_ID").text(data.Service_Total_Employees);
+                $("#View_Month_Id").text(data.Service_Month_Name);
+
+                if (data._Legal_Files != null) {
+                    $("#View_Legal_Pdf").show();
+                    $.each(data._Legal_Files, function (i, e) {
+                        $("#View_Legal_Pdf").append([
+                            '<input type="hidden" value="' + e.TR_Legal_File_Id + '" class="TR_Legal_File_Id" />',
+                            '<input type = "hidden" value = "' + e.Legal_File_Path + '" class= "Legal_File_Path" />',
+                            '<a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Legal_File_Path + '" target="_blank"></a>'
+                        ]);
+                    });
+                }
+
+                if (data._Other_Files != null) {
+                    $("#View_Other_Pdf").show();
+                    $.each(data._Other_Files, function (i, e) {
+                        $("#View_Other_Pdf").append([
+                            '<input type="hidden" value="' + e.TR_Other_File_Id + '" class="TR_Other_File_Id" />',
+                            '<input type = "hidden" value = "' + e.Other_File_Path + '" class= "Other_File_Path" />',
+                            '<a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Other_File_Path + '" target="_blank"></a>'
+                        ]);
+                    });
+                }
+
+                if (data._Training_List.length != 0) {
+                    var count = 1;
+                    $("#ViewGetTrainingCount").empty();
+                    $.each(data._Training_List, function (key, value) {
+                        var html = "";
+                        html += '<tr>'
+                        html += '<td><input type="text" readonly class="form-control Training_Name" name="Training_Name"  autocomplete="off" value="' + value.Service_Training_Name + '"/></td>'
+                        html += '<td><input type="text" readonly class="form-control Training_Remarks" name="Training_Remarks" autocomplete="off" value="' + value.Service_Remarks + '"/></td>'
+                        html += '<td>'
+                        $.each(value._Training_Files, function (i, e) {
+                            html += '<input type="hidden" value="' + e.TR_File_Id + '" class="TR_Other_File_Id" /><input type = "hidden" value = "' + e.Training_File_Path + '"  class= "UploadTraining_Files_PDF" /><a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Training_File_Path + '" target="_blank"></a>'
+                        });
+                        html += '</td>'
+
+                        html += '</tr>'
+                        $("#ViewtblTrainingList").append(html);
+                        count++;
+
+                    });
+                }
+                else {
+                    $("#ViewtblTrainingList").hide();
+                }
+
+                if (data._Training_Other_List.length != 0) {
+                    var count = 1;
+                    $("#ViewGetTrainingCountOther").empty();
+                    $.each(data._Training_Other_List, function (key, value) {
+                        var html = "";
+                        html += '<tr>'
+                        html += '<td><input type="text" readonly class="form-control Training_Name" name="Training_Name"  autocomplete="off" value="' + value.Service_Other_Training_Name + '"/></td>'
+                        html += '<td><input type="text" readonly class="form-control Training_Remarks" name="Training_Remarks" autocomplete="off" value="' + value.Service_Other_Remarks + '"/></td>'
+                        html += '<td>'
+                        $.each(value._Training_Other_Files, function (i, e) {
+                            html += '<input type="hidden" value="' + e.TR_Other_File_Id + '" class="TR_Other_File_Id" /><input type = "hidden" value = "' + e.Training_Other_File_Path + '"  class= "UploadTraining_Files_PDF" /><a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Training_Other_File_Path + '" target="_blank"></a>'
+                        });
+                        html += '</td>'
+
+                        html += '</tr>'
+                        $("#ViewtblTrainingListOther").append(html);
+                        count++;
+
+                    });
+                }
+                else {
+                    $("#ViewtblTrainingListOther").hide();
+                }
+            }
+        });
+    }
+
+    function Edit(Id) {
+        $(UI_Fields.ADD_PAGE_SERVICE).show();
+        $(UI_Fields.LIST_VIEW).hide();
+        $(UI_Fields.VIEW_PAGE_SERVICE).hide();
+        $.post("@Url.Action("Edit_Service_Monthly_Statics", "ServiceMonthlyStatistics")", { Service_Monthly_Id: Id }, function (data) {
+            if (data != null) {
+                $("#Service_Monthly_Id").val(Id);
+                SM_Edit_Business_Unit("#Business_Unit_Id", data.Business_Unit_Id);
+                SM_Edit_Zone_Unit("#Zone_Id", data.Zone_Id, data.Community_Id, data.Building_Id);
+                SM_Edit_DMS_No_Edit("#Contractor_Id", data.DMS_Number_Id);
+                Get_Building_Edit("#Building_Id", data.Building_Id, data.DMS_Number_Id,);
+                $("#Emp_ID").val(data.Service_Total_Employees);
+                $("#Tot_Work").val(data.Service_Man_of_Hours);
+                $("#Month_Id").val(data.Service_Month);
+                $("#Year_Id").val(data.Service_Year);
+
+                $("#Legal_Files").removeAttr('required');
+                $("#Legal_Files").removeAttr('name');
+
+                $("#Other_Files").removeAttr('required');
+                $("#Other_Files").removeAttr('name');
+
+                if (data._Legal_Files != null) {
+                    $("#Legal_Pdf").show();
+                    $.each(data._Legal_Files, function (i, e) {
+                        $("#Legal_Pdf").append([
+                            '<input type="hidden" value="' + e.TR_Legal_File_Id + '" class="TR_Legal_File_Id" />',
+                            '<input type = "hidden" value = "' + e.Legal_File_Path + '" class= "Legal_File_Path" />',
+                            '<a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Legal_File_Path + '" target="_blank"></a>'
+                        ]);
+                    });
+                }
+
+                if (data._Other_Files != null) {
+                    $("#Other_Pdf").show();
+                    $.each(data._Other_Files, function (i, e) {
+                        $("#Other_Pdf").append([
+                            '<input type="hidden" value="' + e.TR_Other_File_Id + '" class="TR_Other_File_Id" />',
+                            '<input type = "hidden" value = "' + e.Other_File_Path + '" class= "Other_File_Path" />',
+                            '<a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Other_File_Path + '" target="_blank"></a>'
+                        ]);
+                    });
+                }
+
+                if (data._Training_List.length != 0) {
+                    var count = 1;
+                    $("#GetTrainingCount").empty();
+                    $.each(data._Training_List, function (key, value) {
+                        var varTraining_Id = "Service_Training_Id" + addcount;
+                        var varTraining_Name = "Training_Name" + addcount;
+                        var varTraining_Remarks = "Training_Remarks" + addcount;
+                        var varClosure_Files = "Training_Files" + addcount;
+                        var varClosure_Upload = "UploadTraining_Files" + addcount;
+                        var varClosure_Pdf = "UploadTraining_FilesPdf" + addcount;
+                        var html = "";
+                        html += '<tr>'
+                        html += '<td><input type="hidden" value="' + value.Service_Training_Id + '" id="' + varTraining_Id + '" class="Service_Training_Id" /><input type="text" class="form-control Training_Name" name="Training_Name" id="' + varTraining_Name + '" autocomplete="off" value="' + value.Service_Training_Name + '"/></td>'
+                        html += '<td><input type="text" class="form-control Training_Remarks" name="Training_Remarks" id="' + varTraining_Remarks + '" autocomplete="off" value="' + value.Service_Remarks + '"/></td>'
+                        html += '<td>'
+                        $.each(value._Training_Files, function (i, e) {
+                            html += '<input type="hidden" value="' + e.TR_File_Id + '" class="TR_Other_File_Id" /><input type="hidden" value="' + e.Training_File_Path + '" class="TR_File_Upload_Pdf" /><a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Training_File_Path + '" target="_blank"></a>'
+                        });
+                        html += '<input id="' + varClosure_Files + '" name="' + varClosure_Files + '" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach(' + "'" + varClosure_Files + "'" + ',' + "'" + varClosure_Upload + "'" + ')" /><input type="hidden" class="UploadTraining_Files ' + varClosure_Upload + '" />'
+                        html += '</td>'
+                        //html += '<td><input id="' + varClosure_Files + '" name="' + varClosure_Files + '" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control required" onchange="Closure_File_Upload(' + "'" + varClosure_Files + "'" + ',' + "'" + varClosure_Upload + "'" + ')" /><input type="hidden" class="UploadTraining_Files ' + varClosure_Upload + '" /></td>'
+                        if (count != "1") {
+                            html += '<td><button class="btn btn-primary" id="DataDeleteTools" onclick="" value="Remove">Remove</button></td>'
+                        }
+                        html += '</tr>'
+                        $("#tblTrainingList").append(html);
+                        count++;
+                        addcount++;
+
+                    });
+                }
+                else {
+                    $("#tblTrainingList").hide();
+                }
+
+                if (data._Training_Other_List.length != 0) {
+                    var count = 1;
+                    $("#GetTrainingCountOther").empty();
+                    $.each(data._Training_Other_List, function (key, value) {
+                        var varTraining_Id = "Service_Other_Training_Id" + AddOther;
+                        var varTraining_Name = "Training_Des" + AddOther;
+                        var varTraining_Remarks = "Other_Remarks" + AddOther;
+                        var varClosure_Files = "Training_Files_Other" + AddOther;
+                        var varClosure_Upload = "UploadTraining_FilesOther" + AddOther;
+                        var varClosure_Pdf = "UploadTraining_FilesPdfOther" + AddOther;
+                        var html = "";
+                        html += '<tr>'
+                        html += '<td><input type="hidden" value="' + value.Service_Other_Training_Id + '" id="' + varTraining_Id + '" class="Service_Other_Training_Id" /><input type="text" class="form-control Training_Des" name="Training_Des" id="' + varTraining_Id + '" autocomplete="off" value="' + value.Service_Other_Training_Name + '"/></td>'
+                        html += '<td><input type="text" class="form-control Other_Remarks" name="Other_Remarks" id="' + varTraining_Remarks + '" autocomplete="off" value="' + value.Service_Other_Remarks + '"/></td>'
+                        html += '<td>'
+                        $.each(value._Training_Other_Files, function (i, e) {
+                            html += '<input type="hidden" value="' + e.TR_Other_File_Id + '" class="TR_Other_File_Id" /><input type="hidden" value="' + e.Training_Other_File_Path + '" class="TR_File_Upload_Pdf_Other" /><a class="Method_Pdf_Files mdi mdi-file-pdf" style="color: red;font-size: 20px" href="' + e.Training_Other_File_Path + '" target="_blank"></a>'
+                        });
+                        html += '<input id="' + varClosure_Files + '" name="' + varClosure_Files + '" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple class="form-control" onchange="Files_Attach_Other(' + "'" + varClosure_Files + "'" + ',' + "'" + varClosure_Upload + "'" + ')" /><input type="hidden" class="UploadTraining_FilesOther ' + varClosure_Upload + '" />'
+                        html += '</td>'
+                        if (count != "1") {
+                            html += '<td><button class="btn btn-primary" id="DataDeleteTr_Other" onclick="" value="Remove">Remove</button></td>'
+                        }
+                        html += '</tr>'
+                        $("#tblTrainingListOther").append(html);
+                        count++;
+                        AddOther++;
+
+                    });
+                }
+                else {
+                    $("#tblTrainingListOther").hide();
+                }
+
+                if (data._Reject_List.length != 0) {
+                    $("#Div_Reject").show();
+                    var count = 1;
+                    $("#Tbody_Reject_Service").empty();
+                    $.each(data._Reject_List, function (key, value) {
+                        var html = "";
+                        html += '<tr>'
+                        html += '<td>' + value.Unique_Id + '</td>'
+                        html += '<td>' + value.Remarks + '</td>'
+                        html += '<td>' + value.Rejected_By + '</td>'
+                        html += '</td>'
+
+                        html += '</tr>'
+                        $("#Tbody_Reject_Service").append(html);
+                        count++;
+
+                    });
+                }
+                else {
+                    $("#Div_Reject").hide();
+                }
+            }
+        });
+    }
+    function Get_Building_Edit(controlid, selectedValue, DMS_ID) {
+        $(controlid).html("");
+        $(controlid).removeAttr('disabled');
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: DMS_ID }, function (data) {
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $(controlid).append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function SM_Edit_Business_Unit(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields.BUSINESS_ID).empty();
+                $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function SM_Edit_Zone_Unit(controlid, selectedValue, Community_Id, Building_Id) {
+        $(controlid).html("");
+        $(UI_Fields.BUILDING_ID).removeAttr('disabled');
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function SM_Edit_DMS_No_Edit(controlid, selectedValue) {
+        var loginemail = '@LoginClass.Email_Id';
+        $(controlid).html("");
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: loginemail }, function (data) {
+            $(controlid).empty();
+            $(controlid).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+        });
+    }
+
+    function HSSE_LOAD_CONTRACT_DRP(Email) {
+        $.post("@Url.Action("Get_Con_Pur_Drp", "ControlOfWork")", { Official_Email_Id: Email }, function (data) {
+            $("#Contractor_Id").empty();
+            $("#Contractor_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Contractor_Id").append("<option value=" + e.SignUp_Id + ">" + e.Purchase_Order_Number + "</option>");
+            });
+        });
+    }
+
+    function Fn_Contractor_Load(Email) {
+
+        $.post("@Url.Action("Get_Contractor_Load", "ControlOfWork")", { SignUp_Id: Email }, function (data) {
+
+            Edit_Business_Unit("#Business_Unit_Id", data.Business_Unit_Id);
+            Edit_Zone_Unit("#Zone_Id", data.Zone_Id, data.Community_Id);
+
+            if (data._Competent_Person != null && data._Competent_Person.length > 0) {
+                $("#C_Competent").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Competent_Person).each(function (i, e) {
+                    $("#C_Competent").append("<option value=" + e.Work_Superviosor_Id + ">" + e.Name_Position + "</option>");
+                });
+            }
+
+            if (data._Building_List != null && data._Building_List.length > 0) {
+                $("#Building_Id").append("<option value='' style='text-align:center'>--Select--</option>");
+                $(data._Building_List).each(function (i, e) {
+                    $("#Building_Id").append("<option value=" + e.M_Service_Provider_Bu_Id + ">" + e.Building_Name + "</option>");
+                });
+            }
+        });
+    }
+
+    function Edit_Business_Unit(controlid, selectedValue) {
+        $(controlid).html("");
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            if (data != null) {
+                $(UI_Fields.BUSINESS_ID).empty();
+                $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $.each(data, function (index, item) {
+                    $(controlid).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(controlid).val(selectedValue);
+            }
+        }).always(function () {
+
+        });
+    }
+
+    function Edit_Zone_Unit(controlid, selectedValue, Community_Id) {
+        $(controlid).html("");
+        $(UI_Fields.BUILDING_ID).removeAttr('disabled');
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $("#Zone_Id").empty();
+            $("#Zone_Id").append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(controlid).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(controlid).val(selectedValue);
+            FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+    function FnZone_Id(Zone_Id, Community_Id, Building_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        //$(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+            if (Community_Id != null)
+                $(UI_Fields.COMMUNITY_ID).val(Community_Id);
+            //Fn_Community(Community_Id, Building_Id);
+
+        });
+
+    }
+
+
+</script>
+
+<script>
+
+    function LOAD_GRID_SERVICE(login) {
+        $(UI_Fields.ADD_PAGE_SERVICE).hide();
+        $(UI_Fields.LIST_VIEW).show();
+        $(UI_Fields.VIEW_PAGE_SERVICE).hide(100);
+        $(UI_Fields.SERVICE_MONTH_TBL).dataTable().fnDestroy();
+        if (msg != "") {
+            toastr["info"](msg);
+        }
+        $.post("@Url.Action("Get_Service_Monthly_Statics","ServiceMonthlyStatistics")", { CreatedBy: login }, function (data) {
+            $(UI_Fields.SERVICE_MONTH_TBODY).html('');
+            $(UI_Fields.SERVICE_MONTH_TBODY).html(data);
+        });
+    }
+
+    function FnBusiness_Unit(val) {
+        var buname = $("#Business_Unit option:selected").text();
+        if (buname == "NCM") {
+            $("#Fn_Business_Unit_Type").show();
+        }
+        else {
+            $("#Fn_Business_Unit_Type").hide();
+        }
+    }
+
+
+    function LOAD_BUSINESS_UNIT(selectedValue) {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.BUSINESS_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.BUSINESS_ID).val(selectedValue);
+        });
+    }
+    function LOAD_ZONE(selectedValue, Community_Id, Building_Id) {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+            if (selectedValue != null)
+                $(UI_Fields.ZONEID).val(selectedValue);
+            FnZone_Id(selectedValue, Community_Id, Building_Id)
+        });
+    }
+
+    function Fn_Community(Community_Id, Building_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+            if (Building_Id != null)
+                $(UI_Fields.BUILDING_ID).val(Building_Id);
+        });
+
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+</script>

@@ -1,0 +1,320 @@
+﻿@model IReadOnlyCollection<Nakheel_Web.Models.Masters.Emergency_Alert_Master>;
+@{
+    ViewData["Title"] = "Emergency Alert";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+<div class="row" id="Listview">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Emergency Alert List</h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" class="btn btn-success waves-effect waves-light" id="btnAdd" style="float: right;" data-bs-toggle="modal" data-bs-target=".add-new"><i class="mdi mdi-plus me-1"></i> Add New </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table table-striped dt-responsive tblround" style="width:100%;">
+                    <thead>
+                        <tr class="TR_Color">
+                            <th style="text-align:left;"><i class="mdi mdi-table-key"></i>&nbsp;Emergency Alert ID</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Category Name</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Alert Description</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Alert Date</th>
+                            <th style="text-align:left;"><i class="bx bx-notepad"></i>&nbsp;Status</th>
+                            <th style="text-align:left;"><i class="bx bxs-zap"></i>&nbsp;Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="clstr">
+                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                    <td align="left" valign="middle">@item.Emergency_Category_Id</td>
+                                    <td align="left" valign="middle">@item.Description</td>
+                                    <td align="left" valign="middle">@item.Emergency_Date</td>
+                                    @if (item.Status == "1")
+                                    {
+                                        @if (DateTime.Parse(item.Emergency_Date) < DateTime.Now.Date)
+                                        {
+                                            <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-danger">Expired</span> </td>
+                                        }
+                                        else
+                                        {
+                                            <td align="left" valign="middle" style="text-align: center;"><span class="badge bg-success">Active</span> </td>
+                                        }
+                                       
+                                    }
+                                    <td align="left">
+                                        <div class="d-flex gap-3">
+                                            <a onclick="Fn_View(@item.Emergency_Alert_Id)" href="javascript:void(0);" title="" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-eye font-size-18"></i></a>
+                                            @* <a onclick="Fn_Delete(@item.Emergency_Alert_Id)" href="javascript:void(0);" title="" class="text-danger" data-bs-original-title="Delete" aria-label="Delete"><i class="mdi mdi-delete font-size-18"></i></a> *@
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*/*ADD PAGE*/*@
+<form id="F_AddEmergencyAlert" action="#" method="post" class="" novalidate="novalidate">
+    <div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myExtraLargeModalLabel">Add New </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div style="display:none;">
+                            <div class="form-group">
+                                <input class="form-control" name="Emergency_Alert_Id" id="Emergency_Alert_Id" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="example-search-input" style="color:black;" class="form-model">Emergency Category<span class="requ">*</span></label>
+                            <div class="col-md-12">
+                                <select class="form-control SelIncident_Type required" id="Emergency_Category_Id" name="Emergency_Category_Id">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 row">
+                                <label for="example-url-input" class="">Zone<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <select class="form-control required" id="Zone_Id" name="Zone_Id" multiple>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3 row">
+                                <label for="example-url-input" class="">Alert Description<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control required" rows="1" cols="40" name="Description" id="Description" required style="height: 150px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3 row">
+                                <label for="example-url-input" class="">Emergency Alert Date<span class="requ">*</span></label>
+                                <div class="col-md-12">
+                                    <input class="form-control required" type="date" name="Emergency_Alert_Date" id="Emergency_Alert_Date" required autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="col-12 text-end" style="text-align:center;">
+                            <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="Inc_Emergency" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">View Emergency Alert </h4></div>
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_ViewIncback" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="ViewEmergencyList">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/validation/service_signup/signupvalidation.js"></script>
+<script>
+    "use strict";
+    const UI_Fields = Object.freeze({
+        MODULE_ID: "#LevelM_Id",
+        ADD_MODULE_DIV: "#AddModule_div",
+        EMERGENCY_CATEGORY_ID: "#Emergency_Category_Id",
+        ZONE_ID: "#Zone_Id",
+        LEVELM_NAME: "#LevelM_Name",
+        DESCRIPTION: "#Description",
+        LIST_VIEW: "#Listview",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        VIEW_EMERGENCY_LIST: "#ViewEmergencyList",
+        INC_EMERGENCY: "#Inc_Emergency",
+        BTN_VIEWINC_BACK: "#btn_ViewIncback"
+    });
+
+    $(document).ready(function () {
+        LOAD_CATEGORY_M();
+        LOAD_ZONE();
+        ApplySelect2("#Emergency_Category_Id");
+        ApplySelect2("#Zone_Id");
+        let msg = '@TempData["Zonemsg"]';
+        if (msg != "") {
+            debugger
+            if (msg == "Added Successful" || msg == "Updated Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+        $(UI_Fields.MAINTABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAINTABLE).wrap("<div class='tableFixHead' style='overflow:auto;min-height:auto;max-height:430px; width:100%;position:relative;'></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#Emergency_Alert_Date').val(today);
+        $('#Emergency_Alert_Date').attr('min', today);
+
+        $(UI_Fields.BTN_VIEWINC_BACK).click(function () {
+            $(UI_Fields.LIST_VIEW).show();
+            $(UI_Fields.INC_EMERGENCY).hide();
+        });
+    });
+
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+
+    function LOAD_CATEGORY_M() {
+        $.post("@Url.Action("Load_Emergency_Category_Master", "CommonMaster")", function (data) {
+            $(UI_Fields.EMERGENCY_CATEGORY_ID).empty();
+            $(UI_Fields.EMERGENCY_CATEGORY_ID).append("<option selected value='0' style='text-align:center' disabled> --Select Category--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.EMERGENCY_CATEGORY_ID).append("<option value=" + e.Emergency_Category_Id + ">" + e.Emergency_Category_Name + "</option>");
+            });
+        });
+    }
+
+    function LOAD_ZONE() {
+        $.post("@Url.Action("LoadAllZone", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONE_ID).empty();
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONE_ID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+
+
+    $("#btnAdd").click(function () {
+        $(UI_Fields.MODULE_ID).val('0');
+        $(UI_Fields.LEVELM_NAME).val('');
+        $(UI_Fields.DESCRIPTION).val('');
+    });
+
+    function Fn_Edit(id) {
+        $(".add-new").modal('show');
+        $.post("@Url.Action("Level_Master_GetByID", "Master")", { ID: id }, function (data) {
+            $(UI_Fields.MODULE_ID).val(data.LevelM_Id);
+            $(UI_Fields.LEVELM_NAME).val(data.LevelM_Name);
+            $(UI_Fields.DESCRIPTION).val(data.Description);
+        });
+    }
+
+    function Fn_Delete(id) {
+        debugger
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                debugger
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Level_Master_Delete", "Master"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { ID: id },
+                        dataType: "json",
+                        success: function (data) {
+                            debugger
+                            if (data == true) {
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                window.location.reload();
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                            }
+                        },
+                    });
+                }
+            });
+    }
+
+    function Fn_View(id) {
+        debugger;
+        $(UI_Fields.LIST_VIEW).hide();
+        var Hzurl = "";
+        $(UI_Fields.INC_EMERGENCY).show(100);
+        Hzurl = '/Emergencymitigation/_View_Emergency_Alert_list';
+        Hzurl += '/?Emergency_Alert_Id=' + id;
+        $(UI_Fields.VIEW_EMERGENCY_LIST).load(Hzurl);
+    }
+</script>
+
+

@@ -1,0 +1,918 @@
+﻿@{
+    Layout = null;
+}
+@model Nakheel_Web.Models.AccountsMaster.ServiceProviderSignUp;
+<link href="@Url.Content("~/assets/css/bootstrap.min.css")" id="bootstrap-style" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/css/icons.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/css/app.min.css")" id="app-style" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/pages/datatables/css/datatables.bootstrap5.min.css")" rel="stylesheet">
+<link href="@Url.Content("~/assets/libs/choices.js/public/assets/styles/choices.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/libs/flatpickr/flatpickr.min.css")" rel="stylesheet">
+<link href="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/assets/libs/toastr/build/toastr.min.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/css/datatablebutt.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/fonts/nakheelfont.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/css/layout.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/js/multiselect/select_2.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/js/multiselect/select_2_b.css")" rel="stylesheet" />
+<link href="@Url.Content("~/assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/pages/datatables/jquery.min.js")"></script>
+
+<link href="~/assets/libs/fileupload/fileinput.min.css" rel="stylesheet" />
+<script src="~/assets/libs/fileupload/fileinput.min.js"></script>
+<style>
+    #page-topbar {
+        position: inherit;
+        top: 0;
+        right: 0;
+        left: 255px;
+        z-index: 1005;
+        background-color: #fff;
+        -webkit-transition: all .2s;
+        transition: all .2s;
+    }
+
+    #page-topbar {
+        border: 0px solid #f1f3f7;
+        border-top: 0px solid #f1f3f7;
+        border-bottom: 0px solid #f1f3f7;
+        border-radius: 0px;
+    }
+
+    .page-content {
+        padding: calc(-13px + 24px) calc(24px / 2) 0 calc(24px / 2);
+    }
+
+    .tblround {
+        border-collapse: collapse !important;
+        border-radius: 1em;
+        overflow: hidden
+    }
+
+    .file-preview {
+        display: none !important;
+    }
+
+    table {
+        caption-side: bottom;
+        border-collapse: inherit !important;
+    }
+</style>
+
+<body data-sidebar="dark">
+    <div id="layout-wrapper">
+        <header id="page-topbar" class="isvertical-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <div class="dropdown d-inline-block">
+                        @*                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                        *@
+                        <button type="button" class="btn header-item user text-start d-flex align-items-center" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="" src="~/assets/images/maillogo.jpg" alt="Header Avatar" height="30px">
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-end pt-0">
+                            <a class="dropdown-item" href="#"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
+                            <a class="dropdown-item d-flex align-items-center" href="#"><i class="mdi mdi-cog-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
+                            <a class="dropdown-item" href="@Url.Action("Login","Account")"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="">
+        </div>
+        <!-- Left Sidebar End -->
+        <header id="page-topbar" class="ishorizontal-topbar">
+            <div class="topnav">
+                <div class="container-fluid">
+                    <nav class="navbar navbar-light navbar-expand-lg topnav-menu">
+
+                        <div class="collapse navbar-collapse" id="topnav-menu-content">
+                            <ul class="navbar-nav">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-dashboard" role="button"
+                                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="icon nav-icon" data-eva="grid-outline"></i>
+                                        <span data-key="t-dashboards">Dashboards</span> <div class="arrow-down"></div>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div class="">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <div class="row" id="Add_Provider_SignUp">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <br />
+                                        <div class="col-lg-10"> <h4 class="card-title">Service Provider Document Submission </h4></div>
+                                        <div class="col-lg-2">
+                                        </div>
+                                    </div>
+                                </div><!-- end card header -->
+                                <div class="card-body">
+                                    <form id="UpdateSignUpForm" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                                        <div style="display:none;">
+                                            <div class="form-group">
+                                                <input class="form-control" name="Contractor_Id" id="SignUp_Id" value="@Model.SignUp_Id">
+                                                <input class="form-control" name="Company_Id" id="Company_Details" value="@Model.Company_Id">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @if (Model.L_M_Service_Provider_Update_History != null && Model.L_M_Service_Provider_Update_History.Count != 0)
+                                            {
+                                                <div class="row">
+                                                    <div class="col-xl-12">
+                                                        <div class="mt-xl-0 mt-4">
+                                                            <div class="accordion" id="accordionExample">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header" id="headingTwo">
+                                                                        <button class="accordion-button fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                                                            Reject Reason
+                                                                        </button>
+                                                                    </h2>
+                                                                    <div id="collapseTwo" class="accordion-collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                                        <div class="accordion-body">
+                                                                            <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Employee Name</th>
+                                                                                        <th>Role</th>
+                                                                                        <th>Reject Date</th>
+                                                                                        <th>Remarks</th>
+                                                                                        <th>Comments</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody id="GettblIncidentHistory">
+                                                                                    @foreach (var item in Model.L_M_Service_Provider_Update_History)
+                                                                                    {
+                                                                                        <tr class="clstr">
+                                                                                            <td align="left" valign="middle">@item.Emp_Id</td>
+                                                                                            <td align="left" valign="middle">@item.Role_Id</td>
+                                                                                            <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                                                            <td align="left" valign="middle">@item.Remarks</td>
+                                                                                            <td align="left" valign="middle">@item.Remarks1</td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="row">
+                                                <br />
+                                                <div class="col-lg-10"> <h4 class="card-title">Location Details</h4></div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <br />
+                                                    <label class="form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                                                    <select class="form-control" name="Business_Unit" id="Business_Unit_Id" onchange="FnBusiness_Unit()" value="@Model.Building_Id">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <br />
+                                                    <div style="display:none;">
+                                                    </div>
+                                                    <label for="" class="form-model">Zone<span class="requ">*</span></label>
+                                                    <select class="form-control" id="Zone_Id" name="Zone" onchange="Fn_Zone(this.value)">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <br />
+                                                <label for="" class="form-model">Community<span class="requ">*</span></label>
+                                                <select class="form-control" id="Community_Id" name="Community" onchange="Fn_Community(this.value)">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <br />
+                                                <label for="example-tel-input" class="form-label">Building<span class="requ">*</span></label>
+                                                <select class="form-control" placeholder="--Select Building--" name="Building" id="Building_Id" multiple>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <br />
+                                            <div class="col-lg-10"> <h4 class="card-title">Contractor Details </h4></div>
+                                            <br />
+                                            <br />
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="Email_Id">Company Name <span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="Company_Name" name="Con_Name" value="@Model.Company_Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="Email_Id">Manager Incharge <span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="Manager_Incharge" name="Manager_Inc" value="@Model.Manager_Incharge">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="">Designation<span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="Designation" name="Designation" value="@Model.Designation">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="AddOrder-Billing-Name">Mobile No<span class="requ">*</span></label>
+                                                    <input type="text" class="form-control numbersonly" id="Mobile_No" name="Manager_Num" maxlength="10" value="@Model.Mobile_No">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="AddOrder-Billing-Name">Official Email Id<span class="requ">*</span></label>
+                                                    <input type="email" class="form-control" id="Official_Email_Id" name="OfficialEmail_ID" value="@Model.Official_Email_Id">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="Country">Purchase Order Number / DMS Number <span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="Purchase_Order_Number" name="Po_Num" value="@Model.Purchase_Order_Number">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3 ">
+                                                    <label for="" class="form-model">Contract Start Date<span class="requ">*</span></label>
+                                                    <input type="date" class="form-control" name="Con_Start_Date" id="Contract_Start_Date" value="@Model.Contract_Start_Date">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">Contract End Date<span class="requ">*</span></label>
+                                                    <input type="date" class="form-control" name="Con_End_Date" id="Contract_End_Date" value="@Model.Contract_End_Date">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">Permit Validity(One Year)<span class="requ">*</span></label>
+                                                    <input type="date" class="form-control" name="W_Permit_Validity" id="W_Permit_Validity" value="@Model.W_Permit_Validity">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">HSE Officer<span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="HSE_Officer" name="HSE_Office" value="@Model.HSE_Officer">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">HSE Officer Email<span class="requ">*</span></label>
+                                                    <input type="email" class="form-control" id="HSE_Officer_Email" name="Hse_Officer_Mail" value="@Model.HSE_Officer_Email">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3 ">
+                                                    <label for="" class="form-model">HSE Officer Mobile Number<span class="requ">*</span></label>
+                                                    <input type="tel" class="form-control numbersonly" id="HSE_Officer_Mobile_Number" name="Hse_Mob_Num" maxlength="10" value="@Model.HSE_Officer_Mobile_Number">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">Scope of Work<span class="requ">*</span></label>
+                                                    <select class="form-control" placeholder="--Select Scope of Work--" name="Scope_of_work" id="Scope_of_work">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="Country">Project Title<span class="requ">*</span></label>
+                                                    <input type="text" class="form-control" id="Project_Title" name="Project_Title" autocomplete="off" value="@Model.W_Name_Position">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label for="" class="form-model">Permit Type<span class="requ">*</span></label>
+                                                    <select class="form-control" placeholder="--Select Permit Type--" name="Contract_Type" id="Contract_Type">
+                                                        <option value="Long Term">Long Term</option>
+                                                        <option value="Short Term">Short Term</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-10"> <h4 class="card-title">Required Work Details  </h4></div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="example-number-input" class="col-md-4 col-form-label">Work Description</label>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" id="W_Work_Description" style="height: 150px" name="G_Work_Description">@Model.W_Work_Description</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="example-number-input" class="col-md-4 col-form-label">Specific Requirements</label>
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control" id="W_Specific_Requirements" style="height: 150px" name="G_Specific_Requirements">@Model.W_Specific_Requirements</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-10" style="padding: 10px"> <h4 class="card-title">Major HSE Risk</h4></div>
+                                                <br>
+                                                <div class="row" style="margin-left: 0%;padding: 28px;">
+                                                    <div id="Major_HSE_Work_List" style="display: contents;">
+                                                    </div>
+                                                </div>
+                                                <br />
+                                            </div>
+                                            <br>
+                                            <div class="row">
+                                                <div class="col-lg-10"> <h4 class="card-title">Competency Person</h4></div><br><br>
+                                                <table id="tbl_Corrective_Action" class="table table-striped dt-responsive nowrap tblround">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name & Position</th>
+                                                            <th>Contact</th>
+                                                            <th>Email Id </th>
+                                                            <th>Action</th>
+                                                            <th>
+                                                                <button type="button" class="waves-effect waves-light" style="float:right;color: #fff; background-color: #05a9ff; border-color: #00263A;border-radius: 0.75rem;" id="Int_Service_Prov" onclick="Work_SuperviosorCP_AddMore();">
+                                                                    <i class="mdi mdi-plus"></i>Add More
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="tbody_Corrective_Action_Emp">
+                                                        @if (Model.L_M_Work_Superviosor_List != null)
+                                                        {
+                                                            foreach (var item in Model.L_M_Work_Superviosor_List)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <div class="col-md-12">
+                                                                            <input type="text" class="form-control Name_Position" id="Name_Position" name="Name_Position" autocomplete="off" required value="@item.Name_Position">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="col-md-12">
+                                                                            <input type="text" class="form-control Contact numbersonly" id="Contact" name="Contact" autocomplete="off" maxlength="10" value="@item.Contact" required>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="col-md-12">
+                                                                            <input type="email" class="form-control Email_Id" id="Email_Id" name="Email_Id" autocomplete="off" value="@item.Email_Id" required>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td><button type="button" class="btn btn-danger Int_Corrective_Action_DelProv">Remove</button></td>
+                                                                </tr>
+                                                            }
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div><br />
+                                            <div class="col-lg-10"> <h4 class="card-title">Required Documents<span class="requ">*</span></h4></div>
+                                            <br>
+                                            <br>
+                                            <table id="tblRequiredAttachments" class="table table-striped dt-responsive nowrap tblround" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Document Type</th>
+                                                        <th>Upload Documents</th>
+                                                        <th>Description</th>
+                                                        <th>Expiry Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="Document_upload">
+                                                    @foreach (var item in Model.L_M_RequiredAttachments_List!)
+                                                    {
+                                                        if (item.Document_Type == "Workmen’s Compensation Insurance")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Workmen’s Compensation Insurance<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="Workmen’s Compensation Insurance" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Insurance_Details_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Insurance_Details_Documents_File')" name="" accept=".pdf" multiple>
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td>
+                                                                    <input type="date" class="form-control ExpiryDate" name="Doc_Date4" value="@item.Expiry_Date" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "Third Party Liability Insurance")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Third Party Liability Insurance<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="Third Party Liability Insurance" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Third_partyInsurance_Details_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="liability_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Third_partyInsurance_Details_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td>
+                                                                    <input type="date" class="form-control ExpiryDate" name="Doc_Date6" value="@item.Expiry_Date" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "HSE Plan")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>HSE Plan<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="HSE Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_HSE_Plan_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_HSE_Plan" onchange="Applicalbe_Documents_File(this,'hdncls_HSE_Plan_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;">
+                                                                    <input type="date" class="form-control ExpiryDate" name="Doc_Date" value="@item.Expiry_Date" />
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "Risk Assessments")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Risk Assessments<span class="requ">*</span></td>
+                                                                <td style="display:none;" id=""><input type="hidden" value="Risk Assessments" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Risk_Assessments_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="MedicalReport2">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_MedicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Risk_Assessments_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;"><input type="date" id="Max_Date" class="form-control ExpiryDate" name="Doc_Date1" value="@item.Expiry_Date" /></td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "Method Statement")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Method Statement<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="TechnicalReport1"><input type="hidden" value="Method Statement" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Method_Statement_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="TechnicalReport2">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_TechnicalReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Method_Statement_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;"><input type="date" class="form-control ExpiryDate" name="Doc_Date2" value="@item.Expiry_Date" /></td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "Emergency Plan")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Emergency Plan <span class="requ">*</span></td>
+                                                                <td style="display:none;" id="DCDReport1"><input type="hidden" value="Emergency Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Emergency_Plan_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="DCDReport2">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_Emergency_Plan_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;"><input type="date" class="form-control ExpiryDate" name="Doc_Date3" value="@item.Expiry_Date" /></td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "Worker Welfare Plan")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>Worker Welfare Plan<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="WitnessReport1"><input type="hidden" value="Worker Welfare Plan" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Insurance_Details_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="WitnessReport2">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="example_Witness2" onchange="Applicalbe_Documents_File(this,'hdncls_Insurance_Details_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;"><input type="date" class="form-control ExpiryDate" name="Doc_Date4" value="@item.Expiry_Date" /></td>
+                                                            </tr>
+                                                        }
+                                                        if (item.Document_Type == "HSE Officer CV")
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td>HSE Officer CV<span class="requ">*</span></td>
+                                                                <td style="display:none;" id="WitnessReport1"><input type="hidden" value="HSE Officer CV" class="clsTitle" /><input type="hidden" id="hdnService_Appendix_A" class="hdncls_HSE_Officer_CV_Documents_File APPENDIX_A_Viewhide" value="@item.Required_File_Path" /></td>
+                                                                <td id="WitnessReport2">
+                                                                    <a href="@item.Required_File_Path" target="_blank">
+                                                                        <img width="20px" height="20px" border="0" src="~/assets/images/pdf.png" />
+                                                                    </a>
+                                                                    <input type="file" class="form-control" placeholder="" id="HSE_Officer_CV_DCDReport2" onchange="Applicalbe_Documents_File(this,'hdncls_HSE_Officer_CV_Documents_File')" name="" accept=".pdf">
+                                                                </td>
+                                                                <td><textarea class="form-control clsDesc">@item.Description</textarea></td>
+                                                                <td style="display:none;"><input type="date" class="form-control ExpiryDate" name="Doc_Date4" value="@item.Expiry_Date" /></td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                    <tr class="clstr">
+                                                        <td><input class="form-check-input OtherDocument" style="vertical-align: sub;" type="checkbox" id="Check_other_Doc" /> Other Document</td>
+                                                    </tr>
+                                                    <tr class="clstr" id="Other_Document" style="display:none">
+                                                        <td><input type="text" class="form-control clsTitle" id="OtherDoc" name="OtherDoc"><span class=""></span></td>
+                                                        <td style="display:none;" id="WitnessReport1"><input type="hidden" id="hdnService_Appendix_A" class="hdncls_Another_Doc_Documents_File APPENDIX_A_Viewhide" /></td>
+                                                        <td id="WitnessReport1"><input type="file" class="form-control" placeholder="" id="example_Witness1" onchange="Applicalbe_Documents_File(this,'hdncls_Another_Doc_Documents_File')" name="" accept=".pdf"></td>
+                                                        <td style="display:none;"><input type="date" class="form-control ExpiryDate" name="Doc_Date5" /></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" align="center">
+                                                <button type="submit" class="btn btn-success waves-effect waves-light" id="Sign_Submit">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                                                </button>
+                                                <button type="submit" class="btn btn-danger  waves-effect waves-light">
+                                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div><!-- End Card Boby -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <script>document.write(new Date().getFullYear())</script> &copy;
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/assets/js/validation/Service_SignUp/SignUpValidation.js"></script>
+
+    <script>
+        "use strict";
+        const UI_Fields = Object.freeze({
+            ADD_INCIDENT_LIST: "#Add_Incident_List",
+            LIST_VIEW: "#List_View",
+            BTN_BACK: "#btn_back",
+            MAIN_TABLE: "#tblIncident",
+            TBODY_TABLE: "#GetIncidentList",
+            BTN_ADD_INC: "#btn_add_incident",
+            INJURED_PERSON_LIST: "#GetInjuredPersonList",
+            TBL_DELETE_BUTTON: ".TblDeleteButton",
+            ASSIGN_TABLE: "#tblIncidentInjuredPerson",
+            INJURY_TYPES_LIST: "#InjuryTypesList",
+            NATURE_INJURY_TYPES_LIST: "#NatureInjuryTypesList",
+            VECHICLE_ACCIDENT_LIST: "#Vechicle_Accident_List",
+            INCIDENT_CATEGORY: ".SelIncident_Category",
+            INCIDENT_TYPE: ".SelIncident_Type",
+            INC_DETAILS_VIEW: "#Inc_View",
+            BTN_VIEW_INC_BACK: "#btn_ViewIncback",
+            VIEW_INCIDENT_LIST: "#ViewIncidentList",
+            M_BUSINESS_UNIT: "#Business_Unit_Id",
+            M_ZONE: "#Zone_Id",
+            COMMUNITY_ID: "#Community_Id",
+            BUILDING_ID: "#Building_Id",
+            MASTER_COMMUNITY_ID: "#Master_Community_Id",
+            VIEW_BODY_PARTS: "#viewbodyparts",
+            VIEW_EMPLOYEE: "#Employee_Id",
+            MAP_LAT: "#Lat",
+            MAP_LONG: "#Long",
+            GOOGLE_MAP_API: "#GoogleMapApi",
+            VIEW_INVESTIGATION_LIST_APPR: "#ViewInvestigationListAppr",
+            DATEPICKER: ".datepicker",
+            SCOPE_OF_WORK: "#Scope_of_work",
+            PERMIT_TYPE: "#Contract_Type",
+            MAJOR_HSE_WORK_LIST: "#Major_HSE_Work_List",
+            TBL_CORRECTIVE_ACTION_EMP: "#tbody_Corrective_Action_Emp",
+        });
+
+        var varHse_Major = [];
+        var varBuilding_Id = [];
+        $(document).ready(function () {
+            debugger;
+
+            var varBusiness_Unit_Id = JSON.parse('@Html.Raw(Json.Serialize(Model!.Business_Unit_Id))');
+            var varZone_Id = JSON.parse('@Html.Raw(Json.Serialize(Model!.Zone_Id))');
+            var varCommunity_Id = JSON.parse('@Html.Raw(Json.Serialize(Model!.Community_Id))');
+            varBuilding_Id = JSON.parse('@Html.Raw(Json.Serialize(Model!.L_M_Building_List))');
+            var varInc_Business_Unit_Type = JSON.parse('@Html.Raw(Json.Serialize(Model!.Inc_Business_Unit_Type))');
+            var varScope_of_work = JSON.parse('@Html.Raw(Json.Serialize(Model!.W_Scope_of_work))');
+            var varPermit_Type = JSON.parse('@Html.Raw(Json.Serialize(Model!.W_Contact))');
+            varHse_Major = JSON.parse('@Html.Raw(Json.Serialize(Model!.L_M_Major_HSE_Risk_List))');
+
+            LOAD_BUSINESS_UNIT(varBusiness_Unit_Id, varInc_Business_Unit_Type);
+            LOAD_ZONE(varZone_Id, varCommunity_Id, '0');
+            LOAD_SCOPE_OF_WORK(varScope_of_work);
+            LOAD_PERMIT_TYPE(varPermit_Type);
+            LoadMajorRisk();
+            ApplySelect2("#Business_Unit_Id");
+            ApplySelect2("#Zone_Id");
+            ApplySelect2("#Community_Id");
+            ApplySelect2("#Building_Id");
+            ApplySelect2("#Master_Community_Id");
+            ApplySelect2("#Scope_of_work");
+
+            $(".numbersonly").keypress(function (e) {
+                if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57) && e.which != 9 && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 37 || e.which > 40) && (e.which < 30 || e.which > 39)) {
+                    //$(this).tooltip('show');
+                    return false;
+                }
+                else {
+                    //$(this).tooltip('hide');
+                    return true;
+                }
+            });
+
+            $("#tbl_Corrective_Action").on("click", '.Int_Corrective_Action_DelProv', function () {
+                $(this).closest("tr").remove();
+            });
+        });
+
+        function ApplySelect2(id) {
+            $(id).select2({
+                placeholder: "--Select--",
+                theme: 'bootstrap-5',
+            });
+        }
+        var index = 1;
+        function Work_SuperviosorCP_AddMore() {
+            var html = "";
+            var var_namepostion = "Name_Position" + index;
+            var var_contact = "Contact" + index;
+            var var_emailId = "Email_Id" + index;
+            var var_Int_Corrective_Actionid = "#Int_Corrective_Action" + index;
+            html += '<tr><td><div class="col-md-12"><input type="text" class="form-control Name_Position" id="' + var_namepostion + '" name="' + var_namepostion + '" autocomplete="off" required></div></td> <td><div class="col-md-12"><input type="text" class="form-control Contact numbersonly" id="' + var_contact + '" name="' + var_contact + '" autocomplete="off" required  maxlength="10"></div></td><td><div class="col-md-12"><input type="email" class="form-control Email_Id" id="' + var_emailId + '" name="' + var_emailId + '" autocomplete="off" required></div></td>'
+            html += '<td><button type="button" class="btn btn-danger Int_Corrective_Action_DelProv">Remove</button></td>< /tr>'
+            $(UI_Fields.TBL_CORRECTIVE_ACTION_EMP).append(html);
+            index++;
+        }
+
+        function LoadMajorRisk() {
+            $.post("@Url.Action("Load_Master_Major_HSE_Risk","Account")", function (data) {
+                if (data != null) {
+                    var html = "";
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).empty();
+                    $.each(data, function (key, value) {
+                        html += '<div class="col-md-2">';
+                        html += '<div class="form-check mb-3">';
+                        html += '<input class="form-check-input clsMajor_HSE_Work" type="checkbox" name="Risk_Major_List" value="' + value.Major_HSE_Work_Id + '" id="HST_' + value.Major_HSE_Work_Id + '">';
+                        html += '<label class="form-check-label" for="HST_' + value.Major_HSE_Work_Id + '">' + value.Major_HSE_Work_Name + '</label>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+
+
+                    $.each(varHse_Major, function (x, y) {
+                        //$("[value=" + y.M_Unsafe_Act_Id + "]").prop('checked', true);
+                        $("input[name=Risk_Major_List][value=" + y.Major_HSE_Work_Id + "]").prop('checked', true);
+                    });
+                }
+                else {
+                    var html = "";
+                    $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+                }
+            });
+        }
+
+        function LOAD_PERMIT_TYPE(selectedValue) {
+            if (selectedValue != null)
+                $(UI_Fields.PERMIT_TYPE).val(selectedValue);
+        }
+
+        function LOAD_SCOPE_OF_WORK(selectedValue) {
+            $.post("@Url.Action("LoadAllScope_of_Work", "Account")", function (data) {
+                $(UI_Fields.SCOPE_OF_WORK).empty();
+                $(UI_Fields.SCOPE_OF_WORK).append("<option selected value='' style='text-align:center' disabled> --Select Zone--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.SCOPE_OF_WORK).append("<option value=" + e.Scope_of_Work_Id + ">" + e.Scope_of_Work + "</option>");
+                });
+                if (selectedValue != null)
+                    $(UI_Fields.SCOPE_OF_WORK).val(selectedValue);
+            });
+        }
+
+        function LOAD_BUSINESS_UNIT(selectedValue, varInc_Business_Unit_Type) {
+            debugger
+            $.post("@Url.Action("LoadAllBusinessUnit", "Account")", function (data) {
+                $(UI_Fields.M_BUSINESS_UNIT).empty();
+                $(UI_Fields.M_BUSINESS_UNIT).append("<option selected value='0' style='text-align:center' disabled> --Select Business Unit--</option>");
+                $(data).each(function (index, item) {
+                    //$(UI_Fields.M_BUSINESS_UNIT).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+                    $(UI_Fields.M_BUSINESS_UNIT).append(new Option(item.Business_Unit_Name, item.Business_Unit_Id));
+                });
+                if (selectedValue != null)
+                    $(UI_Fields.M_BUSINESS_UNIT).val(selectedValue);
+                LOAD_BUSINESS_UNIT_TYPE(varInc_Business_Unit_Type);
+            });
+        }
+
+        function LOAD_ZONE(selectedValue, varCommunity_Id, varBuilding_Id) {
+            LOAD_COMMUNITY(selectedValue, varCommunity_Id, varBuilding_Id);
+            $.post("@Url.Action("LoadAllZone", "Account")", function (data) {
+                $(UI_Fields.M_ZONE).empty();
+                $(UI_Fields.M_ZONE).append("<option selected value='0' style='text-align:center' disabled> --Select Zone--</option>");
+                $(data).each(function (index, item) {
+                    // $(UI_Fields.M_ZONE).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+                    $(UI_Fields.M_ZONE).append(new Option(item.Zone_Name, item.Zone_Id));
+                });
+                if (selectedValue != null)
+                    $(UI_Fields.M_ZONE).val(selectedValue);
+            });
+        }
+
+        function LOAD_COMMUNITY(Zone_Id, selectedValue, Building_Id) {
+            LOAD_BUILDING(Zone_Id, selectedValue, Building_Id)
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $.post("@Url.Action("LoadAllCommunitybyZone", "Account")", { Zone_Id: Zone_Id }, function (data) {
+                $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (index, item) {
+                    //$(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                    $(UI_Fields.COMMUNITY_ID).append(new Option(item.Community_Master_Name, item.Community_Master_Id));
+                });
+                if (selectedValue != null)
+                    $(UI_Fields.COMMUNITY_ID).val(selectedValue);
+            });
+        }
+
+        function LOAD_BUILDING(Zone_Id, Community_Id, selectedValue) {
+            debugger;
+            $.post("@Url.Action("LoadAllBuildingbyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.BUILDING_ID).empty();
+                $(data).each(function (index, item) {
+                    //$(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                    $(UI_Fields.BUILDING_ID).append(new Option(item.Building_Name, item.Sub_Building_Id));
+                });
+                 var Options = [];
+                if (varBuilding_Id != null) {
+                    $(varBuilding_Id).each(function (i, e) {
+                        $("#Building_Id").append(new Option(e.SignUp_Id, e.Building_Id, true, true));
+                    });
+                     $("#Building_Id").trigger('change');
+                }
+            });
+        }
+
+        function LOAD_BUSINESS_UNIT_TYPE(selectedValue) {
+            debugger
+            var buname = $("#Business_Unit_Id option:selected").text();
+            if (buname == "NCM") {
+                $("#Fn_Business_Unit_Type").show();
+                $("#Inc_Business_Unit_Type").val(selectedValue);
+            }
+            else {
+                $("#Fn_Business_Unit_Type").hide();
+            }
+        }
+
+        function Fn_Zone(Zone_Id) {
+            debugger;
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.BUILDING_ID).empty();
+            //$(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $.post("@Url.Action("LoadAllCommunitybyZone", "Account")", { Zone_Id: Zone_Id }, function (data) {
+                $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+                });
+            });
+
+            $.post("@Url.Action("LoadAllMasterCommunitybyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+                });
+            });
+
+        }
+
+        function Fn_Community(Community_Id) {
+            var Zone_Id = $("#Zone_Id").val();
+            $.post("@Url.Action("LoadAllBuildingbyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.BUILDING_ID).empty();
+                $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+                });
+            });
+
+            $.post("@Url.Action("LoadAllMasterCommunitybyZone", "Account")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+                $(data).each(function (i, e) {
+                    $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+                });
+            });
+        }
+
+        function FnBusiness_Unit(val) {
+            var buname = $("#Business_Unit_Id option:selected").text();
+            if (buname == "NCM") {
+                $("#Fn_Business_Unit_Type").show();
+            }
+            else {
+                $("#Fn_Business_Unit_Type").hide();
+            }
+        }
+
+        $("#Check_other_Doc").click(function () {
+
+            var other = $("#Check_other_Doc").is(":checked");
+            if (other == true) {
+                $("#Other_Document").show();
+            }
+            else {
+                $("#Other_Document").hide();
+            }
+        });
+
+    </script>
+
+
+    <script>
+        function Applicalbe_Documents_File_EX(clsname, keyname) {
+            debugger;
+            var $el1 = $("#" + clsname);
+            $el1.fileinput({
+                uploadUrl: '/Account/UploadPhotoFiles' + '?Keyname=' + keyname,
+                uploadAsync: false,
+                showRemove: false,
+                showUpload: false, // hide upload button
+                overwriteInitial: false, // append files to initial preview
+                minFileCount: 1,
+                maxFileCount: 5,
+                browseOnZoneClick: true,
+                initialPreviewAsData: true,
+            }).on("filebatchselected", function (event, files) {
+                $el1.fileinput("upload");
+            });
+        }
+
+    </script>
+
+    <script>
+        function Applicalbe_Documents_File(val, clsname) {
+            readImage(val, clsname);
+        }
+        function readImage(input, clsname) {
+            if (input.files && input.files[0]) {
+                var FR = new FileReader();
+                FR.onload = function (e) {
+                    $.post("@Url.Action("FiletoDataApplicableReports", "Account")", { FileData: e.target.result }, function (data) {
+                        var cls = "." + clsname;
+                        $(cls).val(data);
+                    }).always(function () {
+                        //$("#Loaderbck").hide();
+                        //$("#Loader").hide();
+                    });
+                };
+                FR.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+
+    <script src="@Url.Content("~/assets/js/multiselect/select_2.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/jquery.datatables.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap4.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.select.min.js")"></script>
+    <script src="@Url.Content("~/assets/pages/datatables/js/datatables.bootstrap5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/bootstrap/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/metismenujs/metismenujs.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simplebar/simplebar.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/eva-icons/eva.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/apexcharts/apexcharts.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/choices.js/public/assets/scripts/choices.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/swiper/swiper-bundle.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/sweetalert2/sweetalert2.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/simonwep/pickr/pickr.es5.min.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/libs/toastr/build/toastr.min.js")"></script>
+    <script src="@Url.Content("~/assets/js/validation/jquery.validate.js")"></script>
+    <script src="@Url.Content("~/assets/libs/signalr/dist/browser/signalr.js")"></script>
+    <script src="@Url.Content("~/assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+    <script src="@Url.Content("~/assets/js/app.js")"></script>
+</body>

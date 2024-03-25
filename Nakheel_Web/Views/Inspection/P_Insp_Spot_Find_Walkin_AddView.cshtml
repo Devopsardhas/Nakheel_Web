@@ -1,0 +1,912 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Request
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    b {
+        font-family: 'Nakheel-Textregular' !important;
+    }
+
+   /* .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-results > .select2-results__options {
+        width: 252px !important;
+        background-color: white !important;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        width: 252px !important;
+    }*/
+    .fontsize{
+        font-size: 14px !important;
+    }
+</style>
+
+
+@if (Model != null)
+{
+    <form id="Form_Add_Insp_Findings_Walk">
+        <div class="row"> </div>
+        <div class="row">
+            <input class="form-control Insp_Request_Id" value="0" type="hidden" id="Insp_Request_Id">
+            <input class="form-control Insp_Finding_Id" value="0" type="hidden" id="Insp_Finding_Id">
+        </div>
+        <div class="table-responsive">
+        <table class="table table-sm">
+            <tbody id="">
+                <tr>
+                    <td><b class="font-bold">Business Unit</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Business_Unit_Id" asp-for="Business_Unit_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Business_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Zone</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Zone_Id" asp-for="Zone_Id" onchange="Fn_Zone_Walk_In(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Zone_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Community</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Community_Id" asp-for="Community_Id" onchange="Fn_Community(this.value)" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Community_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                        <span asp-validation-for="Community_Id" class="m-100 text-danger"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b class="font-bold">Building</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control Drop_Search" name="Building_Id" asp-for="Building_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Building_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Category</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-control" name="Category_Id" asp-for="Category_Id" asp-items="@(new SelectList(Model.Inc_Comman_Master_List!.Insp_Category_Master_List,"Value","Text"))">
+                            <option value="" style="text-align:left;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">Inspection Date</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <input disabled asp-for="Inspection_Date" asp-items="@Model.Inspection_Date" class=" form-control Inspection_Date" type="date" name="Inspection_Date" required>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><b class="font-bold">Description</b></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <textarea id="Req_Description" asp-for="Req_Description" class="form-control Req_Description" placeholder="Enter Description" rows="1"></textarea>
+                    </td>
+
+                    <td><b class="font-bold">NCM Supervisor</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <select required class="form-select Drop_Search NCM_Supervisor" name="NCM_Supervisor" id="NCM_Supervisor">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td><b class="font-bold">NCM Community Manager</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <input type="text" name="NCM_CommunityManager" class="form-control NCM_CommunityManager" placeholder="NCM Community Manager" id="NCM_CommunityManager" required />
+                    </td>
+                </tr>
+                 <tr>
+                    <td><b class="font-bold">Zone Representative Attended?</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <label for="Yes"> <input id="Zone_Rep_Yes" class="Zone_Rep" name="Zone_Rep" type="radio" value="Yes" required>&nbsp;Yes</label>
+                        <label for="No"> <input id="Zone_Rep_No" class="Zone_Rep" name="Zone_Rep" type="radio" value="No" required>&nbsp;No</label>
+                    </td>
+
+                    <td><b class="font-bold">Service Provider Attended?</b><span class="requ">*</span></td>
+                    <td>:</td>
+                    <td class="tdtxt">
+                        <label for="ServiceYes"> <input id="Service_Provider_Yes" class="Service_Provider" name="Service_Provider" type="radio" value="Yes" required>&nbsp;Yes</label>
+                        <label for="ServiceNo"> <input id="Service_Provider_No" class="Service_Provider" name="Service_Provider" type="radio" value="No" required>&nbsp;No</label>
+                    </td>
+
+                    <td class="Div_Zone_Rep"><b class="font-bold">Zone Representative</b><span class="requ">*</span></td>
+                    <td class="Div_Zone_Rep">:</td>
+                    <td class="tdtxt Div_Zone_Rep">
+                        <select required name="Zone_Representative_Emp" class="form-select Drop_Search Zone_Representative_Emp" id="Zone_Rep_Id">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                        <td class="Div_SP"><b class="font-bold">Name of the Service Provider</b><span class="requ">*</span></td>
+                    <td class="Div_SP">:</td>
+                    <td class="tdtxt Div_SP">
+                        <select name="Service_Provider_ID" required class="form-select Drop_Search Service_Provider_ID" id="Service_Provider_ID">
+                            <option value="" style="text-align:center;">--Select--</option>
+                        </select>
+                    </td>
+
+                    <td class="Div_SP"><b class="font-bold">Service Provider Representative Name</b><span class="requ">*</span></td>
+                    <td class="Div_SP">:</td>
+                    <td class="tdtxt Div_SP">
+                        <textarea id="S_P_Representative_Name" name="S_P_Representative_Name" class="form-control S_P_Representative_Name" placeholder="Enter Name" rows="1" required></textarea>
+                    </td>
+                    <td class="Div_SP"></td>
+                    <td class="Div_SP"></td>
+                    <td class="Div_SP"></td>
+                </tr>
+            </tbody>
+        </table>
+         </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-6">
+                        </div>
+                        <div class="mb-6">
+                            <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;" class="btn" value="Add" onclick="Fn_Add_More_Finding()">+Add More</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 1px;">
+                    <div class="table-responsive">
+                        <table id="tbl_Temp_Insp_Find" class="table table-sm table-striped" style="width:200%">
+                            <thead>
+                                <tr>
+                                    <th class="fontsize">Observations<span class="requ">*</span></th>
+                                    <th class="fontsize">Hazard & Risk<span class="requ">*</span></th>
+                                    <th class="fontsize">Requirements<span class="requ">*</span></th>
+                                    <th class="fontsize">Description of Action Required<span class="requ">*</span></th>
+                                    <th class="fontsize">Category<span class="requ">*</span></th>
+                                    <th class="fontsize">Observation Type<span class="requ">*</span></th>
+                                    <th class="fontsize">Risk Level<span class="requ">*</span></th>
+                                    <th class="fontsize">Evidence</th>
+                                    <th class="fontsize">Pin Location in the Map</th>
+                                    <th class="fontsize">Location Address</th>
+                                    <th class="fontsize">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id">
+                                        <input class="form-control Lat_Insp" type="hidden" value="" id="Lat_Insp">
+                                        <input class="form-control Long_Insp" type="hidden" value="" id="Long_Insp">
+                                        <textarea id="Main_Observations" name="Main_Observations" required class="form-control Main_Observations" placeholder="Enter Observations" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_HazardRisk" name="Main_HazardRisk" required class="form-control Main_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_Requirements" name="Main_Requirements" required class="form-control Main_Requirements" placeholder="Enter Requirements" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_ActionRequired" name="Main_ActionRequired" required class="form-control Main_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea>
+                                    </td>
+                                    <td style="width: 190px;">
+                                        <select onchange="SuCat(this.value)" class="form-select Main_Category" id="Main_Category" required>
+                                            <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                        </select>
+                                    </td>
+                                    <td style="width: 250px;">
+                                        <select class="form-select Main_SubCategory" name="Main_SubCategory" id="Main_SubCategory" required>
+                                            <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select Main_RiskLevel" required name="Main_RiskLevel" id="Main_RiskLevel">
+                                            <option value="" disabled selected="selected">--Select--</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </td>
+                                    <td style="width: 190px;">
+                                        <input id="file0" class="form-control file" onchange="Upload_Picture('file0','UploadPhotos0')" type="file" accept=".png, .jpg, .jpeg">
+                                        <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos0">
+                                    </td>
+                                    <td style="width: 150px;">
+                                        <img id="MapLoad" class="MapLoad" onclick="FnMapLoad()" data-bs-toggle="modal" data-bs-target=".Add-Loc-Map" style="height: 30px;width: 30px;margin-left: 42px;margin-top: -10px;" src="~/assets/images/location.png" />
+                                    </td>
+                                    <td style="width: 140px;">
+                                        <textarea disabled id="Location_Address" value="" name="Location_Address" class="form-control Location_Address" rows="1"></textarea>
+                                        <textarea style="display:none" disabled id="Exact_Location_Address" value="" name="Exact_Location_Address" class="form-control Exact_Location_Address" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <i class="mdi mdi-delete-off TblDeleteButtonNot font-size-18" style="color:red;">
+                                            </i>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-4 row">
+                        <label for="example-text-input" class="col-md-3 col-form-label">Raise the Safety Violation Notice ?<span class="requ">*</span></label>
+                        <div class="col-md-8" style="margin-top: 10px;">
+                            <label for="Safety_Violation_Yes"> <input required id="Safety_Violation_Yes" class="Safety_Violation" name="Safety_Violation" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                            <label for="Safety_Violation_No"> <input required id="Safety_Violation_No" class="Safety_Violation" name="Safety_Violation" type="radio" value="No">&nbsp;No</label>
+                        </div>
+                    </div>
+
+                    @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+                    {
+                        <div class="accordion" id="accordionExample" style="margin-top: -23px;">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 35px;width:103%;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Date and Time</th>
+                                                    <th>Approve Date</th>
+                                                    <th>Status</th>
+                                                    <th>Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-lg-6">
+                        <button onclick="Fn_Temp_Final_Walk_In_Submit()" type="button" class="btn Fn_Temp_Final_Walk_In_Submit btn-success eva-plus-circle-outline icon nav-icon" style="float: right;margin-top: -17px;width: 68px;">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        ApplySelect2(".Drop_Search");
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        minDate_valid = minDate;
+        $('.Target_Date').attr('min', minDate);
+
+        var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+        if (rowCount > 0) {
+            $(".tbl_Temp_Insp_Find_Hide_Show").show();
+        } else {
+            $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+        }
+        Cat_Master();
+        $("input[name='Zone_Rep']").click(function () {
+            var test = $(this).val();
+            if (test == "Yes") {
+                $(".Div_Zone_Rep").show();
+            } else {
+                $("#Zone_Rep_Id").val("");
+                $(".Div_Zone_Rep").hide();
+            }
+        });
+        $("input[name='Safety_Violation']").click(function () {
+            var test = $(this).val();
+            if (test == "Yes") {
+                $(".Fn_Temp_Final_Walk_In_Submit").text("Next");
+            } else {
+                $(".Fn_Temp_Final_Walk_In_Submit").text("Submit");
+            }
+        });
+        $("input[name='Service_Provider']").click(function () {
+            var tests = $(this).val();
+            if (tests == "Yes") {
+                $(".Div_SP").show();
+            } else {
+                $(".Div_SP").hide();
+                $("#Service_Provider_ID").val("");
+                $("#S_P_Representative_Name").val("");
+            }
+        });
+        $("#tbl_Temp_Insp_Find").on("click", ".mdi-pencil", function () {
+            var test01 = $("#Main_Observations").val();
+            var test02 = $("#Main_HazardRisk").val();
+            var test03 = $("#Main_Requirements").val();
+            var test04 = $("#Main_ActionRequired").val();
+            if (test01 != "" || test02 != "" || test03 != "" || test04 != "") {
+                toastr.error("please complete the exiting from details", "Error");
+                return false;
+            } else {
+                $(this).closest("tr").remove();
+            }
+
+        });
+
+        $(".Sub_ActionTable").on("click", ".btn_Action_Delete_Button", function () {
+            var rowCount = $('.Sub_ActionTable tbody > tr').length;
+            if (rowCount > 1) {
+                $(this).closest("tr").remove();
+            }
+        });
+
+        $('input[name=AssignActionTo]').change(function () {
+            var Role_Name = $('input[name=AssignActionTo]:checked').val();
+            var Zone_Id = $("#Zone_Id").val();
+            var Community_Id = $("#ECommunity_Id").val();
+            if (Role_Name == "Service_Provider") {
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+            else {
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+        });
+
+
+        $("#tbl_Temp_Insp_Find").on("click", ".TblDeleteButton", function () {
+            var removeRow = $(this).closest("tr");
+            var varInj = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+            if (varInj == "" || varInj == "0") {
+                Swal.fire(
+                    {
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning", showCancelButton: !0,
+                        confirmButtonColor: "#34c38f",
+                        cancelButtonColor: "#f46a6a",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then(function (t) {
+                        if (t.isConfirmed) {
+                            removeRow.remove();
+                            var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                            if (rowCount > 0) {
+                                $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                            } else {
+                                $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                            }
+                            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                        }
+                    });
+
+            } else {
+                Swal.fire(
+                    {
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning", showCancelButton: !0,
+                        confirmButtonColor: "#34c38f",
+                        cancelButtonColor: "#f46a6a",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then(function (t) {
+                        if (t.isConfirmed) {
+                            $.ajax({
+                                url: '@Html.Raw(@Url.Action("Insp_Sub_Finding_Delete", "Inspection"))',
+                                type: "POST",
+                                cache: false,
+                                async: false,
+                                data: { Insp_Sub_Finding_Id: varInj },
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data == "200") {
+                                        removeRow.remove();
+                                        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                    }
+                                    else {
+                                        Swal.fire("Failed!", "Something went wrong", "error");
+                                    }
+                                },
+                            });
+                        }
+                    });
+            }
+
+            var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+            if (rowCount > 0) {
+                $(".tbl_Temp_Insp_Find_Hide_Show").show();
+            } else {
+                $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+            }
+        });
+    });
+
+</script>
+<script>
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Cat_Master() {
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $("#Main_Category").empty();
+            $("#Main_Category").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Main_Category").append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function SuCat(Value) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#Main_SubCategory").empty();
+            $(data).each(function (i, e) {
+                $("#Main_SubCategory").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function SuCat_Dynamic(Value, id) {
+        var ids = "#Main_SubCategory_" + id;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(ids).empty();
+            $(data).each(function (i, e) {
+                $(ids).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function Fn_Spot_Find_Approval(Name) {
+        if (Name == "Approve") {
+            var Remarks = $("#Find_Reject_Details").val();
+            var Insp_Finding_Id = $("#Insp_Finding_Id").val();
+
+            var Status = "3";
+            $.post("@Url.Action("Insp_Find_ApprovalReject", "Inspection")", { Insp_Finding_Id: Insp_Finding_Id, Remarks: Remarks, Status: Status }, function (data) {
+                if (data == "200") {
+                    let msg = '@TempData["msg"]';
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        var Safety_Violation = $('input[name="Safety_Violation"]:checked').val();
+                        if (Safety_Violation == "Yes") {
+                            var url = "/Inspection/Insp_Safety_Violation";
+                            window.location.href = url;
+                        } else {
+                            window.location.reload();
+                        }
+
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        } else {
+            var Remarks = $("#Find_Reject_Details").val();
+            var Insp_Finding_Id = $("#Insp_Finding_Id").val();
+            var Status = "2";
+            $.post("@Url.Action("Insp_Find_ApprovalReject", "Inspection")", { Insp_Finding_Id: Insp_Finding_Id, Remarks: Remarks, Status: Status }, function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        }
+    }
+    function Reject_Datas(Insp_Sub_Finding_Id) {
+        var test1 = $("#Main_Observations").val();
+        var test2 = $("#Main_HazardRisk").val();
+        var test3 = $("#Main_Requirements").val();
+        var test4 = $("#Main_ActionRequired").val();
+        if (test1 != "" || test2 != "" || test3 != "" || test4 != "") {
+            return false;
+        } else {
+            $(this).closest("tr").remove();
+            $(".preloader").show(50);
+            $("#Main_Observations").val("");
+            $("#UploadPhotos").val("");
+            $("#Main_HazardRisk").val("");
+            $("#Main_Requirements").val("");
+            $("#Main_ActionRequired").val("");
+            $("#Main_Category").empty();
+            $('#file').val('');
+            $('#Main_SubCategory').empty();
+            $("#search_input").val("");
+            $("#Main_RiskLevel").val("");
+            $("#Lat").val("");
+            $("#Long").val("");
+            $("#Location_Address").val("");
+            $(".Image_Bind_Div_Show_Hide").hide();
+            $(".Fn_Temp_Final_Submit_Div").hide();
+            $.post("@Url.Action("P_Insp_Spot_Find_Rej_Edit", "Inspection")", { Insp_Sub_Finding_Id: Insp_Sub_Finding_Id }, function (data) {
+                if (data != null) {
+                    var Sub_Cat_Selected_List = [];
+                    var LatLong = "";
+                    $(data.Insp_Spot_Category_Master_List).each(function (i, e) {
+                        $("#Main_Category").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                    });
+                    $(data.Insp_Spot_Sub_Category_Master_List).each(function (i, e) {
+                        $("#Main_SubCategory").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                    });
+                    $("#Insp_Sub_Finding_Id").val(data.Insp_Sub_Finding_Id);
+                    $("#Main_Observations").val(data.Observations);
+                    $("#Main_HazardRisk").val(data.Hazard_Risk);
+                    $("#Main_Requirements").val(data.Requirements);
+                    $("#Main_ActionRequired").val(data.Action_Required);
+                    $("#Main_Category").val(data.Category);
+                    $("#Main_RiskLevel").val(data.Risk_Level);
+                    $("#Lat").val(data.Latitude);
+                    $("#Long").val(data.Longitude);
+                    $("#Location_Address").val(data.Location_Address);
+                    $(data.Insp_Spot_Find_Sub_Category_List).each(function (i, e) {
+                        Sub_Cat_Selected_List.push(e.Insp_Sub_Category_Id);
+                    });
+                    $("#Main_SubCategory").val(Sub_Cat_Selected_List);
+                    $(".Div_Bind_Images").empty();
+                    if (data.Insp_Spot_Find_Sub_Photo_List != null) {
+                        $(".Image_Bind_Div_Show_Hide").show();
+                        $(data.Insp_Spot_Find_Sub_Photo_List).each(function (i, e) {
+                            var class_Name = "Div_image-container" + i;
+                            var htmlActionmarkup = "";
+                            htmlActionmarkup = '<div class="Div_Bind_Images col-md-3"><div class="' + class_Name + '"><div class="image-container"><button type="button" onclick="Rej_Photo_Del(' + e.Insp_Sub_Photo_Id + ',' + "'" + class_Name + "'" + ')" class="close-button">&times;</button><a href="' + e.File_Path + '" target = "_blank" ><img width = "179" height = "179" src = "' + e.File_Path + '" / > </a></div></div></div>',
+                                $(".Image_Bind_Div").append(htmlActionmarkup);
+                        });
+                    }
+                    map_edit(data.Latitude, data.Longitude);
+                    var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                    if (rowCount > 0) {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                    } else {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                    }
+
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                    if (rowCount > 0) {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                    } else {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                    }
+                }
+            }).always(function () {
+                $('html, body').animate({ scrollTop: "150" })
+                $(".preloader").hide(50);
+            });
+        }
+    }
+    function Rej_Photo_Del(Insp_Sub_Photo_Id, Class_Name) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Sub_Find_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Insp_Sub_Photo_Id: Insp_Sub_Photo_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = "." + Class_Name;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    var Html = 500;
+    function Fn_Add_More_Action(subSno) {
+        var MainID = subSno + '' + Html;
+        Datamarkup = '<tr><td style="min-width:150px;"><input class="form-control Corrective_Action_Id" value="0" type="hidden" id="Corrective_Action_Id' + MainID + '"><select onchange="FnAssignActionTo_More(' + "'" + subSno + "'" + ',' + "'" + MainID + "'" + ')" class="form-control Assignee_Type" required name="Assignee_Type_' + MainID + '" id="Assignee_Type_' + MainID + '"><option value="" disabled selected="selected">-- Select Action to --</option><option value="Zone_Team">Zone Team</option><option value="Service_Provider">Service Provider</option></select><label id="Assignee_Type_' + MainID + '-error" class="error" style="font-size: small;" for="Assignee_Type_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><select class="form-control Drop_Search Responsibility_To" required name="Responsibility_To_' + MainID + '" id="Responsibility_To_' + MainID + '"></select><label id="Responsibility_To_' + MainID + '-error" class="error" style="font-size: small;" for="Responsibility_To_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><input id="Target_Date_' + MainID + '" class="form-control Target_Date" type="date" name="Target_Date_' + MainID + '" required><label id="Target_Date_' + MainID + '-error" class="error" style="font-size: small;" for="Target_Date_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><textarea id="Action_Description_' + MainID + '" class="form-control Action_Description" name="Action_Description_' + MainID + '" rows="1" required></textarea><label id="Action_Description_' + MainID + '-error" class="error" style="font-size: small;" for="Action_Description_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:100px;text-align: center;"><a><i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i></a></td>',
+            Datamarkup += '</tr>'
+
+        $('#Sub_ActionTable_' + subSno + '').append(Datamarkup);
+        var Target_Date_Valid = "#Target_Date_" + MainID;
+        var dtToday = new Date();
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if (month < 10)
+            month = '0' + month.toString();
+        if (day < 10)
+            day = '0' + day.toString();
+        var minDate = year + '-' + month + '-' + day;
+        $(Target_Date_Valid).attr('min', minDate);
+        ApplySelect2(".Drop_Search");
+        Html++;
+    }
+    function Fn_Action_Assign_Submit() {
+        let valid = $("#F_Add_Corrective_Action").valid();
+        if (!valid) {
+            return false;
+        }
+        $(".Add_Insp_Finding_Div").hide();
+        $(".preloader").show(50);
+
+        var ActionArr = [];
+
+        var subSno = 1;
+        $('#tbl_Temp_Insp_Find_CA tbody > tr.MainTR').each(function (c) {
+            var var_V_Insp_Finding_Id = $(this).closest('tr').find('.Insp_Finding_Id').val();
+            var var_V_Insp_Request_Id = $(this).closest('tr').find('.Insp_Request_Id').val();
+            var var_V_Insp_Sub_Finding_Id = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+
+            var ActionTable = "#Sub_ActionTable_" + subSno;
+
+            $('' + ActionTable + ' tbody > tr').each(function () {
+                var varCorrective_Action_Id = $(this).closest('tr').find('.Corrective_Action_Id').val();
+                var varAssignee_Type = $(this).closest('tr').find('.Assignee_Type').val();
+                var varResponsibility_To = $(this).closest('tr').find('.Responsibility_To').val();
+                var varTarget_Date = $(this).closest('tr').find('.Target_Date').val();
+                var varAction_Description = $(this).closest('tr').find('.Action_Description').val();
+
+                var data = {};
+                data.Corrective_Action_Id = varCorrective_Action_Id;
+                data.Assignee_Type = varAssignee_Type;
+                data.Responsibility_To = varResponsibility_To;
+                data.Target_Date = varTarget_Date;
+                data.Action_Description = varAction_Description;
+                data.Insp_Finding_Id = var_V_Insp_Finding_Id;
+                data.Insp_Request_Id = var_V_Insp_Request_Id;
+                data.Insp_Sub_Finding_Id = var_V_Insp_Sub_Finding_Id;
+                ActionArr.push(data);
+            });
+            subSno++;
+        });
+
+        $.post("@Url.Action("Insp_Spot_Corrective_Action_Add", "Inspection")", { model: ActionArr }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $(".preloader").hide(100);
+                    $(".Add_Insp_Finding_Div").show();
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            $(".preloader").hide(100);
+            $(".Add_Insp_Finding_Div").show();
+        });
+    }
+
+    function FnAssignActionTo(id) {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To_" + id;
+        Role_Name = $('#Assignee_Type_' + id + '').val();
+        var Zone_Id = $('#Zone_Id_' + id + '').val();
+        var Community_Id = $('#Community_Id_' + id + '').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+    function FnAssignActionTo_More(id, Main_Id) {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To_" + Main_Id;
+        Role_Name = $('#Assignee_Type_' + Main_Id + '').val();
+        var Zone_Id = $('#Zone_Id_' + id + '').val();
+        var Community_Id = $('#Community_Id_' + id + '').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+    function EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function Fn_CA_Approval_Submit(Rowid, Class_Name, Status) {
+        var varInsp_Request_Id = "";
+        varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var trRowid = ".CA_Approval_tr_" + Rowid;
+        $.post("@Url.Action("Insp_Spot_CA_Approval_Add", "Inspection")", { Corrective_Action_Id: Rowid, Remarks: Class_Name, Status: Status, Description: "NA" }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Approved Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    Finding(varInsp_Request_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+
+    var HtmlFind = 1;
+    function Fn_Add_More_Finding() {
+        var Datamarkups = "";
+        var file = "file_" + HtmlFind;
+        var UploadPhotos = "UploadPhotos_" + HtmlFind;
+        Add_More_Cat_Master(HtmlFind);
+        Datamarkups = '<tr><td><input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id_' + HtmlFind + '"><input class="form-control Lat_Insp" value="0.00" type="hidden" value="" id="Lat_Insp' + HtmlFind + '"><input class="form-control Long_Insp" value="0.00" type="hidden" id="Long_Insp' + HtmlFind + '"><textarea id="Main_Observations_' + HtmlFind + '" name="Main_Observations_' + HtmlFind + '" required class="form-control Main_Observations" placeholder="Enter Observations" rows="1" required></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_HazardRisk_' + HtmlFind + '" name="Main_HazardRisk_' + HtmlFind + '" required class="form-control Main_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_Requirements_' + HtmlFind + '" name="Main_Requirements_' + HtmlFind + '" required class="form-control Main_Requirements" placeholder="Enter Requirements" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_ActionRequired_' + HtmlFind + '" name="Main_ActionRequired_' + HtmlFind + '" required class="form-control Main_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea></td>',
+            Datamarkups += '<td><select onchange="Add_More_SuCat(this.value,' + HtmlFind + ')" name="Main_Category_' + HtmlFind + '" class="form-select Main_Category" id="Main_Category_' + HtmlFind + '" required><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select Main_SubCategory" name="Main_SubCategory_' + HtmlFind + '" id="Main_SubCategory_' + HtmlFind + '" required><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select Main_RiskLevel" required name="Main_RiskLevel_' + HtmlFind + '" id="Main_RiskLevel_' + HtmlFind + '"><option value="" disabled selected="selected">--Select--</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></td>',
+            Datamarkups += '<td><input id="file_' + HtmlFind + '" class="form-control file" onchange="uploadPictureAddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg"><input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos_' + HtmlFind + '"></td>',
+            Datamarkups += '<td><img id="MapLoad_' + HtmlFind + '" class="MapLoad" onclick="FnMapLoad_Addmore(' + HtmlFind + ')" data-bs-toggle="modal" data-bs-target=".Add-Loc-Map" style="height: 30px;width: 30px;margin-left: 42px;margin-top: -10px;" src="/assets/images/location.png" /></td>',
+            Datamarkups += '<td><textarea style="display:none" disabled id="Exact_Location_Address' + HtmlFind + '" value="" name="Exact_Location_Address' + HtmlFind + '" class="form-control Exact_Location_Address" rows="1"></textarea><textarea disabled id="Location_Address' + HtmlFind + '" value="" name="Location_Address" class="form-control Location_Address" rows="1"></textarea></td>',
+            Datamarkups += '<td><label><i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;"></i></label></td>',
+            Datamarkups += '</tr>'
+        $('#tbl_Temp_Insp_Find').append(Datamarkups);
+        ApplySelect2(".Drop_Search");
+        HtmlFind++;
+    }
+
+    function Add_More_Cat_Master(HtmlFind) {
+        var Main_Category = "#Main_Category_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(Main_Category).empty();
+            $(Main_Category).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(Main_Category).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Add_More_SuCat(Value, HtmlFind) {
+        var Main_SubCategory = "#Main_SubCategory_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(Main_SubCategory).empty();
+            $(data).each(function (i, e) {
+                $(Main_SubCategory).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+
+</script>
+

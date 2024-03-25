@@ -1,0 +1,655 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@{
+    ViewData["Title"] = "General Work Permit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .modal-dialog-centered {
+        
+        position: relative;
+        display: flex;
+        justify-content: center;
+       
+    
+    }
+
+  /*  #rejectform1 {
+        position: relative;
+        display: flex;
+        justify-content: center;
+    }*/
+</style>
+<div class="row" id="List_View">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">General Work Permit List</h4></div>
+                    @* @if (LoginClass.Role_Id == "15" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "17" || LoginClass.Role_Id == "18")
+                    {*@
+                    <div class="col-lg-2">
+                        <button type="button" id="btn_add_Work" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-plus me-1"></i> Add Security Incident</button>
+                    </div>
+                    @* }
+                    else
+                    {
+                    <div class="col-lg-2" style="padding:13px"></div>
+                    }*@
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="tblGeneralWork" class="table table-striped dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th> ID</th>
+                            <th>Zone</th>
+                            <th>Community</th>
+                            <th>Building</th>
+                            <th>Category</th>
+                            <th>Created Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="GetGeneralWork">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@*Add Provider*@
+@if (LoginClass.Role_Id == "17"){
+<div class="row" id="Add_GeneralWork" >
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h3 class="card-title">Requester Form </h3></div>
+
+                    <div class="col-lg-2">
+                            <button type="button" id="btn_back" class="btn btn-success waves-effect waves-light" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                    <form id="" action="General_WorkPermit" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                                <input class="form-control" name="G_WorkPermit_Id" id="G_WorkPermit_Id" value="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                         <div class="row">
+                      <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+                  
+                        </div>
+                   <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <br />
+                                    <label class="col-form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                                <select class="form-select" placeholder="--Select Business Unit--" name="Business_Unit_Id" id="Business_Unit_Id" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <br />
+                                <div style="display:none;">
+                                  
+                                </div>
+                                    <label for="" class="col-form-label">Zone<span class="requ">*</span></label>
+                                <select class="form-select" placeholder="--Select Zone--" id="Zone_Id" name="Zone_Id" onchange="FnZone_Id(this.value)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <br />
+                                <label for="" class="col-form-label">Community</label>
+                            <select class="form-select" placeholder="--Select Community--" id="Community_Id" name="Community_Id">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Requestor Details & Submission </h4></div>
+                        <br />
+                        <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label class="col-form-label" for="Email_Id">Company Name <span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="G_Com_Name" name="G_Com_Name" @*placeholder=""*@>
+                            </div>
+                        </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Email_Id">Contractor Tittle/No <span class="requ">*</span></label>
+                                    <input type="text" class="form-control" id="G_Tittle_No" name="G_Tittle_No" @*placeholder=""*@>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Work Superviosor(CP) </h4></div>
+                            <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label class="col-form-label" for="AddOrder-Billing-Name">Name & Position</label>
+                                    <input type="text" class="form-control" id="G_Name_Position" name="G_Name_Position" @*placeholder="Enter Business Unit Name"*@>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label class="col-form-label" for="AddOrder-Billing-Name">Contact </label>
+                                    <input type="tel" class="form-control" id="G_Contact" name="G_Contact" @*placeholder="Enter Business Unit Name"*@>
+                            </div>
+                        </div>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Requested By</h4></div>
+                            <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label class="col-form-label" for="Country">Name & Position </label>
+                                    <input type="text" class="form-control" value="@LoginClass.First_Name" id="G_NamePos" name="G_NamePos">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label class="col-form-label" for="Pin_Code">Contact</label>
+                                    <input type="text" class="form-control" value="@LoginClass.Mobile_Number" id="G_ConNo" name="G_ConNo">
+                            </div>
+                        </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="col-form-label" for="Pin_Code">Email Id</label>
+                                    <input type="email" class="form-control" value="@LoginClass.Email_Id" id="G_EmailId" name="G_EmailId">
+                                </div>
+                            </div>
+                      
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label for="" class="col-form-label">Date and time<span class="requ">*</span></label>
+                                    <input type="datetime" class="form-control" value="" id="G_Date_Time" name="G_Date_Time" placeholder="">
+                            </div>
+                        </div>
+                        
+                            <br>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Required Work Details  </h4></div>
+                            <br>
+                            <br>
+                            <div class="row">
+                                @*<div class="mb-3 ">*@
+                                <label for="example-number-input" class="col-md-4 col-form-label">Work Description</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="G_Work_Describe" name="G_Work_Describe"></textarea>
+                                </div>
+                                @*</div>*@
+                            </div>
+                            <div class="row">
+                                @*<div class="mb-3 ">*@
+                                <label for="example-number-input" class="col-md-4 col-form-label">Specific Requirements</label>
+                                <div class="col-md-12">
+                                    <textarea class="form-control" id="G_Specific_require" name="G_Specific_require"></textarea>
+                                </div>
+                                @*</div>*@
+                            </div>
+                            <label for="" class="col-form-label">Major HSE Risk <span class="requ">*</span></label>
+                            <div class="row" style="margin-left: 0%;">
+                                <div id="Major_HSE_Work_List" style="display: contents;">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Work Duration and Schedule</h4></div>
+                            <br />
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                    <label for="" class="col-form-label">From Date<span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="G_From_Date" id="G_From_Date" placeholder="">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                    <label for="" class="col-form-label">To date<span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="G_To_Date" id="G_To_Date" placeholder="">
+                            </div>
+                        </div>
+                           <div class="col-md-3">
+                            <div class="mb-3">
+                                    <label for="" class="col-form-label" id="Medical">Night Schedule<span class="requ">*</span></label><br />
+                                    <label for="No1"><input type="radio" value="No1" name="G_Night_Shedule" class="G_Night_Shedule" id="No1">No</label>
+                                    <label for="No1"><input type="radio" value="Yes1" name="G_Night_Shedule" class="G_Night_Shedule" id="Yes1">Yes</label>
+                            </div>
+
+                        </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="" class="col-form-label">Permit Validity(One Year)<span class="requ">*</span></label>
+                                    <input type="date" class="form-control" name="G_Valid_Date" id="G_Valid_Date" placeholder="">
+                                </div>
+                            </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12" align="center">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                            </button>
+                            
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+}
+@*View Provider*@
+@if (LoginClass.Role_Id == "5")
+{
+    <div class="row" id="View_Provider_SignUp" >
+        <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <br />
+                    <div class="col-lg-10"> <h4 class="card-title">Service Provider SignUp Page </h4></div>
+                    <div class="col-lg-2">
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <form id="" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div style="display:none;">
+                        <div class="form-group">
+                            <input class="form-control" name="Contractor_Id" id="Contractor_Id" value="0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Date and Time of Provider<span class="requ">*</span></label>
+                                <input type="date" class="form-control"  id="View_Date_Time" placeholder="" disabled>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">Location Details </h4></div>
+
+                        </div>
+                        <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <br />
+                                <label class="form-label" for="AddOrder-Billing-Name">Business Unit <span class="requ">*</span></label>
+                                <select class="form-select"  id="Business_Unit_Id" disabled>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <br />
+                                <div style="display:none;">
+                                </div>
+                                <label for="" class="form-model">Zone<span class="requ">*</span></label>
+                                <select class="form-select" id="View_Zone_Id"  disabled>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <br />
+                            <label for="" class="form-model">Community</label>
+                            <select class="form-select" id="View_Community_Id"  disabled>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Contractor Details </h4></div>
+                        <br />
+                        <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="Email_Id">Name <span class="requ">*</span></label>
+                                <input type="text" class="form-control" id="View_Con_Name"   disabled >
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="">Manager</label>
+                                <select class="form-control" placeholder="--Select Zone Category--" id="Zone" disabled>
+                                    <option value="">--Select Manager--</option>
+                                    <option value="1">Manager 1</option>
+                                    <option value="2">Manager 2</option>
+                                    <option value="3">Manager 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Manager Mobile</label>
+                                <input type="tel" class="form-control" id="View_Manager_Num" disabled @*placeholder="Enter Business Unit Name"*@>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="AddOrder-Billing-Name">Email </label>
+                                <input type="email" class="form-control" id="View_Email_ID" disabled @*placeholder="Enter Business Unit Name"*@>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="Country">Po Number </label>
+                                <input type="text" class="form-control" id="View_Po_Num" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label" for="Pin_Code">DMS Number</label>
+                                <input type="text" class="form-control" id="View_DMS_Num" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">HSE Officer<span class="requ">*</span></label>
+                                <select class="form-control" placeholder="" id="Zone" disabled>
+                                    <option value="">--Select Hse Officer--</option>
+                                    <option value="1">Officer 1</option>
+                                    <option value="2">Officer 2</option>
+                                    <option value="3">Officer 3</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">HSE Officer Email<span class="requ">*</span></label>
+                                <input type="email" class="form-control" id="V_Hse_Officer_Mail" disabled placeholder="Hse Officer@gmail.com">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                <div style="display:none;">
+                                    <div class="form-group">
+                                        <input class="form-control" name="Role_Id" id="Role_Id">
+                                    </div>
+                                </div>
+                                <label for="" class="form-model">HSE Officer Mobile Number<span class="requ">*</span></label>
+                                <input type="tel" class="form-control" id="V_Hse__Mob_Num" disabled placeholder="0987654321">
+                            </div>
+                        </div>
+                        <br>
+                            <br />
+                            <div class="col-lg-10"> <h4 class="card-title">HSE Plan Document </h4></div>
+                            <br>
+                            <br>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+
+                                <label for="" class="form-model">Document Valid Date<span class="requ">*</span></label>
+                                <input type="date" class="form-control" disabled id="V_Doc_Valid_Date" placeholder="--Select Employee Type--">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+
+                                <label for="" class="form-model">Document Expired Date<span class="requ">*</span></label>
+                                <input type="date" class="form-control" disabled id="V_Doc_Expire_Date" placeholder="">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+
+                                <label for="" class="form-model">Upload Document <span class="requ">*</span></label>
+                                <input type="file" id="V_myfile"  multiple disabled><br><br>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 ">
+                                <label for="" class="form-model">Contract Start Date<span class="requ">*</span></label>
+                                <input type="date" class="form-control" id="V_Con_Start_Date" disabled placeholder="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Contract End Date<span class="requ">*</span></label>
+                                <input type="date" class="form-control" disabled id="V_Con_End_Date" placeholder="">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <br />
+                        <div class="col-lg-10"> <h4 class="card-title">Verification Details </h4></div>
+                        <br />
+                        <br />
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Name<span class="requ">*</span></label>
+                                <input type="text" class="form-control" Name="Super_Name" id="Super_Name" placeholder="Supervisor">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Designation<span class="requ">*</span></label>
+                                <input type="text" class="form-control" Name="Designation" id="Designation" placeholder="Employee">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Date and Time<span class="requ">*</span></label>
+                                <input type="date" class="form-control" Name="Date_And_Time" id="Date_And_Time" placeholder="Dubai">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="" class="form-model">Status of Contractor<span class="requ">*</span></label><br />
+                                    <label><input type="radio" name="approval1" id="Approve2">Approve</label>
+                                    <label><input type="radio" name="approval1" id="Reject2" data-bs-toggle="modal" data-bs-target=".add-new-order">Reject</label>
+                            </div>
+                        </div>
+
+                    </div>
+                        <div class="modal fade add-new-order" tabindex="-1" style="display:none;" role="dialog" modal-backdrop.fade aria-labelledby="myExtraLargeModalLabel" id="rejectform" aria-hidden="true">
+                            <div class="modal-dialog modal-lg  modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Remarks </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="F_AddBuilding" action="#" method="post" class="" novalidate="novalidate">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <textarea rows="3" cols="50" maxlength="30" class="form-control">
+
+                                        </textarea>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="row mt-6">
+                                                <div class="col-12" style="text-align:center;">
+                                                    <button type="submit" class="btn btn-success" id="btn-save-event"> Submit</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-md-12" align="center">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i>Submit
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div><!-- End Card Boby -->
+        </div>
+    </div>
+</div>
+}
+@*Final Approve*@
+
+
+<script>
+    "Use strict";
+    const UI_Fields = Object.freeze({
+        ZONEID: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUSINESS_ID: "#Business_Unit_Id",
+        IS_MASTER_COMMUNITY: "#Is_Master_Community",
+        LIST_VIEW: "#List_View",
+        MAINTABLE: "#MainTable",
+        MAINTABLE_TBODY: "#MainTable_TBODY",
+        ADD_GENERAL_WORK: "#Add_GeneralWork",
+        BTN_ADD_INC:"#btn_add_Work",
+        BTN_BACK: "#btn_back",
+        MAJOR_HSE_WORK_LIST: "#Major_HSE_Work_List"
+    });
+    $(document).ready(function () {
+        debugger
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#G_Date_Time').val(today);
+
+        $(function () {
+            var dtToday = new Date();
+
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            var maxDate = year + '-' + month + '-' + day;
+            $('#G_Date_Time').attr('max', maxDate);
+        });
+        $(UI_Fields.LIST_VIEW).show(100);
+        $(UI_Fields.ADD_GENERAL_WORK).hide(100);
+        LOAD_ALL_BU();
+        LOAD_ALL_ZONE_IS_COMMUNITY();
+        LoadMajorRisk()
+        $(UI_Fields.BTN_ADD_INC).click(function () {
+            debugger
+            $(UI_Fields.LIST_VIEW).hide(100);
+            $(UI_Fields.ADD_GENERAL_WORK).show(100);
+            //window.location.reload();
+        });
+        $(UI_Fields.BTN_BACK).click(function () {
+            debugger
+            $(UI_Fields.LIST_VIEW).show(100);
+            $(UI_Fields.ADD_GENERAL_WORK).hide(100);
+        });
+       
+    });
+
+    
+
+    function LOAD_ALL_BU() {
+        $.post("@Url.Action("LoadAllBusinessUnit", "CommonMaster")", function (data) {
+            $(UI_Fields.MODULE_ID).empty();
+            $(UI_Fields.BUSINESS_ID).append("<option selected value='0' disabled> --Select Business Unit-- </option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUSINESS_ID).append("<option value=" + e.Business_Unit_Id + ">" + e.Business_Unit_Name + "</option>");
+            });
+        });
+    }
+
+
+    function LOAD_ALL_ZONE_IS_COMMUNITY() {
+        $.post("@Url.Action("LoadAllZoneIsCommunity", "CommonMaster")", function (data) {
+            $(UI_Fields.ZONEID).empty();
+            $(UI_Fields.ZONEID).append("<option selected value='0' disabled>--Select Zone--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.ZONEID).append("<option value=" + e.Zone_Id + ">" + e.Zone_Name + "</option>");
+            });
+        });
+    }
+    function FnZone_Id(Zone_Id) {
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).empty();
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0' disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+    }
+   
+    function LoadMajorRisk() {
+        debugger;
+        $.post("@Url.Action("Load_Master_Major_HSE_Risk","CommonMaster")", function (data) {
+            if(data!=null){
+                var html="";
+                $(UI_Fields.MAJOR_HSE_WORK_LIST).empty();
+                $.each(data, function (key, value) {
+                   
+                        html += '<div class="col-md-4">';
+                        html += '<div class="form-check mb-3">';
+                        html += '<input class="form-check-input clsMajor_HSE_Work" type="checkbox" name="Risk_Major_List" value="' + value.Major_HSE_Work_Id + '" id="HST_' + value.Major_HSE_Work_Id + '">';
+                        html += '<label class="form-check-label" for="HST_' + value.Major_HSE_Work_Id + '">' + value.Major_HSE_Work_Name + '</label>';
+                        html += '</div>';
+                        html += '</div>';
+                });
+                html += '<div class="col-md-4">';
+                html += '<div class="form-check mb-3">';
+                html += '<input class="form-check-input clsMajor_HSE_Work clsMajor_HSE_Work_Other" type="checkbox" onclick="G_MAJOR_HSE_RISK_WORK_OTHER(this.value)" name="Risk_Major_List" value="0" id="HST_0">';
+                html += '<label class="form-check-label" for="HST_0">Others</label>';
+                html += '</div>';
+                html += '</div>';
+
+                html += '<div class="col-md-4" style="display:none" id="G_MAJOR_WORK_Other">';
+                html += '<div class="">';
+                html += '<input class="form-control"  type="text" id="txtMajor_HSE_Risk_Others" name="MajorHSEOther_Remarks">';
+                html+='<br>';
+                html += '</div>';
+                html += '</div>';
+                $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+            }
+            else{
+                var html="";
+                $(UI_Fields.MAJOR_HSE_WORK_LIST).append(html);
+            }
+           
+        });
+    }
+    function G_MAJOR_HSE_RISK_WORK_OTHER(val) {
+        if ($("input[type='checkbox'].clsMajor_HSE_Work_Other").is(':checked')) {
+            $("#G_MAJOR_WORK_Other").show()
+        } else {
+            $("#txtMajor_HSE_Risk_Others").val('');
+            $("#G_MAJOR_WORK_Other").hide()
+        }
+    }
+</script>

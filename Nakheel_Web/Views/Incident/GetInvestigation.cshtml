@@ -1,0 +1,31 @@
+﻿<tr>
+    <td>INC-0001</td>
+    <td>Zone 1</td>
+    <td>Community 1</td>
+    <td>Building 1</td>
+    <td>Business 1</td>
+    <td>Incident 1</td>
+    <td><span class="badge badge-soft-warning font-size-15">Investigation Pending</span></td>
+    <td>
+        <div class="d-flex gap-3">
+            <a href="javascript:void(0);" onclick="Edit()" title="Edit" class="text-success" data-bs-original-title="Edit" aria-label="View"> <i class="mdi mdi-pencil font-size-18"></i></a>
+        </div>
+    </td>
+</tr>
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $(UI_Fields.MAIN_TABLE).DataTable({
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $(UI_Fields.MAIN_TABLE).wrap("<div class='tableFixHead' ></div>");
+            },
+            dom: 'lBfrtip',
+            buttons: ['excel', 'pdf'],
+        });
+    });
+</script>

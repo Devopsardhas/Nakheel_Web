@@ -1,0 +1,384 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    Layout = null;
+}
+
+<style>
+    .select2-search__field {
+        text-align: center !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search .select2-search__field {
+        width: 100%;
+        height: 1.5rem;
+        margin-top: -24px;
+        margin-left: 0;
+        font-family: inherit;
+        line-height: 1.5;
+        background-color: transparent;
+    }
+
+    .form-check-input:checked {
+        background-color: #00263a;
+        border-color: #00263a;
+    }
+</style>
+<style>
+    .form-label, .form-control {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 13px;
+    }
+
+    label {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular' !important;
+        font-size: 13px;
+    }
+
+    table {
+        font-family: 'Nakheel-Textregular';
+    }
+
+    span {
+        font-weight: 500;
+        font-family: 'Nakheel-Textregular';
+        font-size: 15px;
+    }
+
+    .tdtxt {
+        color: #00617F;
+        text-align: justify;
+    }
+
+    .font-bold {
+        color: #00263a !important;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0.35rem 0.35rem !important;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>
+
+<style>
+    #map-canvas_view {
+        height: 300px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+
+@model Nakheel_Web.Models.IncidentReport.M_Incident_Report;
+@if (Model != null)
+{
+    @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "16" || LoginClass.Role_Id == "9" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "2")
+    {
+        @if (Model.L_Incident_Update_History != null && Model.L_Incident_Update_History.Count != 0)
+        {
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="mt-xl-0 mt-4">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 33px;">
+                                        History of Approval
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body">
+                                        <table id="tblIncidentHistory" class="table table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Date and Time</th>
+                                                    <th>Approve Date</th>
+                                                    <th>Status</th>
+                                                    <th>Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.L_Incident_Update_History)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Id</td>
+                                                        <td align="left" valign="middle">@item.Role_Id</td>
+                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                        <td align="left" valign="middle">@item.Updated_DateTime</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @if (Model.Status == "1" || Model.Status == "2")
+    {
+        @if (LoginClass.Role_Id == "5" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+        {
+            @if (Model.Is_Investigation_Req == null)
+            {
+                <div>
+                    <br>
+                    <form id="F_Incident_Investigation_Req" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                        <div class="col-md-12">
+                            @if (Model.Add_Description_3 == "Yes")
+                            {
+                                <label class="form-label">Further Investigation Required ? <span style="color:red">*</span></label>
+                                <br>
+                            }
+                            else
+                            {
+                                <label class="form-label">Investigation Required ? <span style="color:red">*</span></label>
+                                <br>
+                            }
+
+                            @if (Model.Inc_Type_Id!.Trim() == "Fire Major")
+                            {
+                                <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="Yes" checked disabled>
+                                <span>Yes</span>
+                                <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="No" disabled>
+                                <span>No</span>
+                            }
+                            else
+                            {
+                                @if (Model.Is_Injury_Illness!.Trim() == "Yes")
+                                {
+                                    <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="Yes" checked disabled>
+                                    <span>Yes</span>
+                                    <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="No" disabled>
+                                    <span>No</span>
+                                }
+                                else
+                                {
+                                    <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="Yes">
+                                    <span>Yes</span>
+                                    <input type="radio" name="InvestigationReq" class="form-check-input Investigationval" style="vertical-align:sub" value="No">
+                                    <span>No</span>
+                                    <br> <label id="txtvalidemail" style="color:red"> </label>
+                                }
+                            }
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit" style="float: right;cursor:pointer" onclick="Fn_Submit_Supervi()">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+        }
+
+        @if (LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+        {
+            @if (Model.Is_Investigation_Req == "Yes" || Model.Is_Investigation_Req == "No")
+            {
+                <div>
+                    <br>
+                    <form id="F_Incident_Investigation_Req" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @if (Model.Add_Description_3 == "Yes")
+                                {
+                                    <label class="form-label">Further Investigation Required ?<span style="color:red">*</span></label>
+
+                                    <br>
+                                }
+                                else
+                                {
+                                    <label class="form-label">Investigation Required ?<span style="color:red">*</span></label>
+                                    <br>
+                                }
+
+                                @if (Model.Inc_Type_Id!.Trim() == "Fire Major" && Model.Add_Description_3 != "Yes")
+                                {
+                                    <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="Yes" checked disabled>
+                                    <span>Yes</span>
+                                    <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="No" disabled>
+                                    <span>No</span>
+                                }
+                                else
+                                {
+                                    @if (Model.Is_Injury_Illness!.Trim() == "Yes" && Model.Add_Description_3 != "Yes")
+                                    {
+                                        <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="Yes" checked disabled>
+                                        <span>Yes</span>
+                                        <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="No" disabled>
+                                        <span>No</span>
+                                    }
+                                    else
+                                    {
+                                        <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="Yes">
+                                        <span>Yes</span>
+                                        <input type="radio" name="InvestigationhseReq" class="form-check-input InvestigationHseval" style="vertical-align:sub" value="No">
+                                        <span>No</span>
+                                        <br> <label id="txtvalidemailhse" style="color:red"> </label>
+                                    }
+                                }
+                            </div>
+                            <div class="col-md-4">
+                                <div class="col-md-12">
+                                    <label class="form-label">Investigation Reportable<span style="color:red">*</span></label><br>
+                                    <input type="radio" name="InvestigationhseReportable" class="form-check-input InvestigationReportable" style="vertical-align:sub" value="Recordable">&nbsp;<span>Recordable</span>
+                                    <input type="radio" name="InvestigationhseReportable" class="form-check-input InvestigationReportable" style="vertical-align:sub" value="Reportable">&nbsp;<span>Reportable</span>
+                                    <br> <label id="txtvalidemailReportable" style="color:red"> </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">Incident Classification<span style="color:red">*</span> </label><br>
+                                <select class="form-control IncRelateListName" name="IncRelate_List" id="IncRelate_List">
+                                </select>
+                                <label id="txtvalidClassification" style="color:red"> </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6" id="em_LeadInvestigator">
+                                <label class="form-label">Assign Lead Investigator<span style="color:red">*</span>  </label><br>
+                                <select class="form-control LeadInvestigator" name="LeadInvestigator" id="LeadInvestigator">
+                                </select>
+                                <label id="txtvalidInvestigator" style="color:red"> </label>
+                            </div>
+
+                            <div class="col-lg-6" id="Investigationrequired_no" style="display:none">
+                                <label class="form-label">Description</label><br>
+                                <textarea class="form-control" id="Investigationrequired_noDescription" name="Required_Actions" style="height: 92px;resize:none"></textarea>
+                                <label id="txtInvestigationrequired_no" style="color:red"> </label>
+                            </div>
+                        </div>
+                        <br /><br /><br /><br />
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-success waves-effect waves-light submit_hseteam" style="float: right;cursor:pointer" onclick="FN_submit_hseteam()">
+                                    <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+        }
+    }
+
+    @if (Model.Status == "4")
+    {
+        <br />
+        <div class="row col-lg-12">
+            <div class="col-lg-4">
+                <label class="form-label">Investigation Reportable</label><br>
+                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">
+                <span>@Model.Is_Investigation_Reportable</span>
+            </div><br>
+            <div class="col-lg-4">
+                <label class="form-label">Incident Classification</label><br>
+                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">
+                <span>@Model.Incident_Related_Id</span>
+            </div>
+            <div class="col-lg-4">
+                <label class="form-label">Lead Investigator Name</label><br>
+                <input type="radio" name="" class="form-check-input" checked style="vertical-align:sub">
+                <span>@Model.Remarks</span>
+            </div>
+        </div>
+
+        @if (Model.Lead_Investigator_Id == LoginClass.Employee_Identity_Id)
+        {
+            <br />
+            <br />
+            <div>
+                <form id="F_Incident_Investigation_Req" action="#" method="post" class="row NotValid" novalidate="novalidate">
+                    <div class="col-md-12">
+                        <label class="form-label">Assign Investigation to Supervisor or Service Provider?</label><br>
+                        <input type="radio" name="AssignInvestigationhseReq" class="form-check-input AssignInvestigation" style="vertical-align:sub" value="Service_Provider">&nbsp;<span>Service Provider</span>
+                        <input type="radio" name="AssignInvestigationhseReq" class="form-check-input AssignInvestigation" style="vertical-align:sub" value="Supervisor">&nbsp;<span>Zone Team</span>
+                        <br> <label id="txtvalidemailhseAss" style="color:red"> </label>
+                    </div>
+                    <div class="row" style="display:none" id="ListEmp">
+                        <div class="col-md-12">
+                            <select class="form-control EmpListName" name="Employee_List" id="Employee_ListRole" multiple>
+                            </select>
+                        </div>
+                    </div><br><br><br><br>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <button type="button" class="btn btn-success waves-effect waves-light submit_AssignInv" style="float: right;cursor:pointer" onclick="FN_submit_AssignInv()">
+                                <i class="bx bx-check-double font-size-16 align-middle me-2"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        }
+    }
+}
+
+<link href="~/assets/js/multiselect/select_2.css" rel="stylesheet" />
+<link href="~/assets/js/multiselect/select_2_b.css" rel="stylesheet" />
+<script src="~/assets/js/multiselect/select_2.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        ApplySelect2CC("#LeadInvestigator");
+
+        ApplySelect2CC("#IncRelate_List");
+
+        ApplySelect2CC("#Employee_ListRole");
+
+        function ApplySelect2CC(id) {
+            $(id).select2({
+                placeholder: "--Select--",
+                theme: 'bootstrap-5',
+            });
+        }
+        $('input[name=AssignInvestigationhseReq]').change(function () {
+            debugger;
+            var Role_Name = $('input[name=AssignInvestigationhseReq]:checked').val();
+            var Zone_Id = $("#Zone_Id").val();
+            var Community_Id = $(".Community_Ids").val();
+            if (Role_Name == "Service_Provider") {
+                $("#ListEmp").show();
+                Load_Emp_List_Ass(Role_Name, Zone_Id, Community_Id);
+                $('#txtvalidemailhseAss').text('');
+            }
+            else {
+                $("#ListEmp").show();
+                Load_Emp_List_Ass(Role_Name, Zone_Id, Community_Id);
+                $('#txtvalidemailhseAss').text('');
+            }
+        });
+    });
+</script>

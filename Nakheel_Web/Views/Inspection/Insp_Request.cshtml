@@ -1,0 +1,1525 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+
+@{
+    ViewData["Title"] = "Inspection Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Find_width {
+        width: 200px;
+    }
+
+    .error {
+        color: red !important;
+    }
+
+    /* .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+            width: 252px !important;
+        }
+
+        .select2-container--default .select2-results > .select2-results__options {
+            width: 252px !important;
+            background-color: white !important;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            width: 252px !important;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            width: 252px !important;
+        }*/
+    .tblround {
+        border-collapse: collapse;
+        border-radius: 1em;
+        overflow: hidden
+    }
+</style>
+<style>
+
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+        .controls:focus {
+            border-color: #4d90fe;
+        }
+
+    .title {
+        font-weight: bold;
+    }
+
+    #infowindow-!importantontent {
+        display: none;
+    }
+
+    #map #infowindow-content {
+        display: inline;
+    }
+</style>
+<style>
+    .pac-container {
+        z-index: 100000;
+    }
+
+    /*thead input {
+        width: 100%;
+    }*/
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+<div class="row" id="List_View_Div">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Inspection Request List</h4></div>
+                    @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11" || LoginClass.Role_Id == "12" || LoginClass.Role_Id == "13")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd_WalkInsp"><i class="mdi mdi-plus me-1"></i> Walk In Inspection </button>
+                        </div>
+                    }
+                    else if (LoginClass.Role_Id == "5")
+                    {
+                        <div class="col-lg-2">
+                            <button type="button" class="btn btn-success waves-effect waves-light" style="float: right;" id="btnadd"><i class="mdi mdi-plus me-1"></i> HSE Support Request </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-2" style="padding:13px"></div>
+                    }
+
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="MainTable" class="table tblround table-sm table-striped dt-responsive" style="width:100%;">
+                    <thead>
+                        <tr class="">
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Type</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody id="GetAllRequestList">
+                    </tbody>
+                   @* <tfoot>
+                        <tr class="">
+                            <th style="text-align:left;">Inspection ID</th>
+                            <th style="text-align:left;">Business Unit</th>
+                            <th style="text-align:left;">Zone</th>
+                            <th style="text-align:left;">Community</th>
+                            <th style="text-align:left;">Inspection Type</th>
+                            <th style="text-align:left;">Inspection Date</th>
+                            <th style="text-align:left;">Inspected By</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Action</th>
+                        </tr>
+                        </tfoot>*@
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="Add_Request_Div" style="display:none">
+    <div class="preloader_add" style="display:none">
+        <img style="width: 10%;text-align: center;margin-left: 39%;margin-top: 10%;" src="/assets/images/Loader_new.gif">
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 id="Card_Sub_Title" class="card-title">Add Request</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back" class="btn btn-success waves-effect waves-light btn_back" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div><!-- end card header -->
+            <form id="F_Add_Insp_Request" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                <div class="card-body Load_Add_Insp_Request">
+                </div><!-- End Card Boby -->
+
+
+                <input type="hidden" class="form-control Walk_In_Insp_Name" id="Walk_In_Insp_Name">
+                <div class="AddSubmit_Div" id="AddSubmit_Div">
+                    <div style="text-align:center;">
+                        <button type="submit" class="btn btn-success btn_Submit" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+                <br />
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="View_Request_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Inspection Request Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body Load_View_Request_Details">
+            </div>
+            <div class="Approve_Div row col-lg-12" id="Approve_Div">
+                <div class="col-lg-6" style="text-align: right;">
+                    <button onclick="FnApproval('Approve')" type="submit" style="background-color: green; border-color: green;" class="btn btn-success btn_Submit" id="btn-save-event">
+                        Approve
+                    </button>
+                </div>
+                <div class="col-lg-6" style="text-align: left;">
+                    <button data-bs-toggle="modal" data-bs-target=".add-new" type="submit" class="btn btn-danger btn_Submit" id="btn-save-event"> Reject</button>
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+
+<div class="row Add_Insp_Finding_Div" id="Add_Insp_Finding_Div" style="display:none">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10"> <h4 class="card-title">Inspection Request Details</h4></div>
+                    <div class="col-lg-2">
+                        <button type="reset" id="btn_back_View" class="btn btn-success waves-effect waves-light btn_back_View" data-bs-target=".add-new" style="float: right;"><i class="mdi mdi-arrow-left-thin-circle-outline me-1"></i>Back</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @*<div class="row Find_Load_View_Request_Details">
+                </div>*@
+                <form id="F_Add_Insp_Findings" action="#" method="post" class="row NotValid" novalidate="novalidate" enctype="multipart/form-data">
+                    <div class="row Find_Load_AddView_Find_Details">
+                    </div>
+                    @* <div id="GoogleMapApi" class="GoogleMapApi"></div>*@
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_Reject_Details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <textarea class="form-control" id="Reject_Details" required></textarea>
+                                <label id="Reject_Details-error" style="font-size: small;" class="error" for="Reject_Details"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="FnApproval('Reject')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade add-Find-Reject" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-12">
+                            <textarea class="form-control" id="Find_Reject_Details" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div style="text-align:center;">
+                        <button onclick="Fn_Spot_Find_Approval('Reject')" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade Add_CA_Rej" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Reason</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="Fm_CA_Reject" action="#">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input type="hidden" class="form-control hdn_Corrective_Action_Id" id="hdn_Corrective_Action_Id" />
+                                <textarea class="form-control CA_Reject_Remarks" id="CA_Reject_Remarks" required></textarea>
+                                <label id="CA_Reject_Remarks-error" style="font-size: small;" class="error" for="CA_Reject_Remarks"></label>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="text-align:center;">
+                            <button onclick="Fn_CA_Reject_Submit()" type="button" class="btn btn-success" id="btn-save-event"> Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade View_CA_Rej_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Reject Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Unique_Id" disabled class="form-control CA_View_Unique_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Reject_Reason" disabled class="form-control CA_View_Reject_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Rejected <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedDate" disabled class="form-control CA_View_CreatedDate" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Rejected By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_CreatedBy" disabled class="form-control CA_View_CreatedBy" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade View_CA_Re_Asign_Details" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Re-Assign Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Id <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Id" disabled class="form-control CA_View_Re_Assig_Id" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned By <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_By" disabled class="form-control CA_View_Re_Assig_By" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned To <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_To" disabled class="form-control CA_View_Re_Assig_To" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Date of Re-Assigned <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Date" disabled class="form-control CA_View_Re_Assig_Date" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-12">
+                            <label for="basicpill-lastname-input" class="form-label">
+                                Re-Assigned Reason <span class="requ">*</span>
+                            </label>
+                            <textarea id="CA_View_Re_Assig_Reason" disabled class="form-control CA_View_Re_Assig_Reason" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade bd-example-modal-lg Add-Loc-Map" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Pin Location in the Map</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="GoogleMapApi" class="GoogleMapApi"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-lg-12">
+                    <div class="col-lg-6" style="text-align: right;">
+                        <button onclick="btn_Add_Map_Loc()" type="button" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg View-Loc-Map" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myExtraLargeModalLabel">Pin Location in the Map</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div id="GoogleMapViewApi" class="GoogleMapViewApi"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/validation/inspection_validation/inspectionformvalidation.js"></script>
+<script src="~/assets/js/validation/inspection_validation/inspectionformseverside.js"></script>
+
+
+<script>
+    //var Loc_Add = "";
+    //var search_input_Id = "#search_input_edit";
+    "use strict";
+    const UI_Fields = Object.freeze({
+        Insp_Request_Id: "#Insp_Request_Id",
+        Add_Request_Div: "#Add_Request_Div",
+        View_Request_Div: "#View_Request_Div",
+        List_View_Div: "#List_View_Div",
+        TBODY_TABLE: "#GetAllRequestList",
+        MainTable: "#MainTable",
+        BTN_BACK: "#btn_back",
+        btn_back_View: ".btn_back_View",
+        M_BUSINESS_UNIT: "#Business_Unit_Id",
+        M_ZONE: "#Zone_Id",
+        COMMUNITY_ID: "#Community_Id",
+        BUILDING_ID: "#Building_Id",
+        Insp_Type_Id: "#Insp_Type_Id",
+        Business_Unit_Name: "#Business_Unit_Name",
+        Zone_Name: "#Zone_Name",
+        Community_Name: "#Community_Name",
+        Building_Name: "#Building_Name",
+        Insp_Type_Name: "#Insp_Type_Name",
+        Load_View_Request_Details: ".Load_View_Request_Details",
+        Load_Add_Insp_Request: ".Load_Add_Insp_Request",
+        Reject_Details: "#Reject_Details",
+        Approve_Div: ".Approve_Div",
+        AddSubmit_Div: ".AddSubmit_Div",
+        Add_Insp_Finding_Div: ".Add_Insp_Finding_Div",
+        Find_Load_View_Request_Details: ".Find_Load_View_Request_Details",
+        GOOGLE_MAP_API: "#GoogleMapApi",
+        tbl_Temp_Insp_Find: "#tbl_Temp_Insp_Find",
+        TBL_DELETE_BUTTON: ".TblDeleteButton",
+        Find_Load_AddView_Find_Details: ".Find_Load_AddView_Find_Details",
+        Walk_In_Insp_Name: "#Walk_In_Insp_Name",
+
+    });
+
+    $(document).ready(function () {
+        //Load_GoogleMaps();
+
+        let msg = '@TempData["msg"]';
+        if (msg != "") {
+            if (msg == "Added Successful" || msg == "Updated Successfully" || msg == "Approved Successfully" || msg == "Rejected Successfully" || msg == "Added Successfully") {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'success',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'Center',
+                    icon: 'warning',
+                    title: msg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        }
+        ApplySelect2CC(".Main_SubCategory");
+        ApplySelect2("#Business_Unit_Id");
+        ApplySelect2("#Zone_Id");
+        ApplySelect2("#Community_Id");
+        ApplySelect2("#Building_Id");
+        ServerSideTable_Request();
+
+        $(".Main_SubCategory").select2({
+            width: 'resolve' // need to override the changed default
+        });
+
+        $(UI_Fields.BTN_BACK).click(function () {
+            window.location.reload();
+        }); btn_back_View
+        $(UI_Fields.btn_back_View).click(function () {
+            window.location.reload();
+        });
+
+        $("#btnadd").click(function () {
+            $(UI_Fields.Add_Request_Div).show(100);
+            $(UI_Fields.View_Request_Div).hide(100);
+            $(UI_Fields.List_View_Div).hide(100);
+            $(UI_Fields.Insp_Request_Id).val("0");
+            $(UI_Fields.Walk_In_Insp_Name).val("");
+            $(UI_Fields.Walk_In_Insp_Name).val("Request_Insp");
+            let id = "0";
+            $.post("@Url.Action("P_Insp_Request_Add_View", "Inspection")", { ID: id, Walk_In_Insp: "Request_Insp" }, function (data) {
+                $(UI_Fields.Load_Add_Insp_Request).html('');
+                $(UI_Fields.Load_Add_Insp_Request).html(data);
+            });
+        });
+        
+        $("#btnadd_WalkInsp").click(function () {
+            $(UI_Fields.Walk_In_Insp_Name).val("Walk_In_Insp");
+            let id = "0";
+
+            $(".preloader").show();
+            $(UI_Fields.Add_Request_Div).hide(100);
+            $(UI_Fields.View_Request_Div).hide(100);
+            $(UI_Fields.List_View_Div).hide(100);
+            $.post("@Url.Action("P_Insp_Spot_Find_Walkin_AddView", "Inspection")", { ID: id }, function (data) {
+                $(UI_Fields.Find_Load_AddView_Find_Details).html('');
+                $(UI_Fields.Find_Load_AddView_Find_Details).html(data);
+                $(".Div_Zone_Rep").hide();
+                $(".Div_SP").hide();
+                Fn_WalkIn_Zone('@LoginClass.Zone_Id')
+            }).always(function () {
+                $(UI_Fields.Add_Insp_Finding_Div).show(100);
+                $(".preloader").hide(100);
+            });
+        });
+
+        $("#Doc_Table").on("click", ".btn_Action_Delete_Button", function () {
+            $(this).closest("tr").remove();
+        });
+
+    });
+    function FnMapLoad() {
+        var map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    function ApplySelect2(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Fn_Zone(Zone_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+
+        $.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+            });
+        });
+
+    }
+    function Fn_Community(Community_Id) {
+        var Zone_Id = $("#Zone_Id").val();
+        $.post("@Url.Action("LoadAllBuildingbyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $(UI_Fields.BUILDING_ID).empty();
+            $(UI_Fields.BUILDING_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Building--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.BUILDING_ID).append("<option value=" + e.Sub_Building_Id + ">" + e.Building_Name + "</option>");
+            });
+        });
+    }
+    function Edit(id, Name, Access) {
+        if (Name == "View") {
+            $(UI_Fields.Approve_Div).hide(100);
+            $(UI_Fields.Add_Request_Div).hide(100);
+            $(UI_Fields.View_Request_Div).show(100);
+            $(UI_Fields.List_View_Div).hide(100);
+            if (Access == "Access") {
+                $(UI_Fields.Approve_Div).show(100);
+            }
+            $.post("@Url.Action("P_Insp_Request_GetbyId", "Inspection")", { ID: id }, function (data) {
+                $(UI_Fields.Load_View_Request_Details).html('');
+                $(UI_Fields.Load_View_Request_Details).html(data);
+            });
+        } else {
+            $(UI_Fields.AddSubmit_Div).hide(100);
+            $(UI_Fields.Add_Request_Div).show(100);
+            $(UI_Fields.View_Request_Div).hide(100);
+            $(UI_Fields.List_View_Div).hide(100);
+            if (Access == "Access") {
+                $(UI_Fields.AddSubmit_Div).show(100);
+            }
+            $.post("@Url.Action("P_Insp_Request_Add_View", "Inspection")", { ID: id }, function (data) {
+                $(UI_Fields.Load_Add_Insp_Request).html('');
+                $(UI_Fields.Load_Add_Insp_Request).html(data);
+            });
+        }
+    }
+    function FnApproval(Name) {
+        if (Name == "Approve") {
+            let Insp_Request_Id = $(UI_Fields.Insp_Request_Id).val();
+            let Inspection_Date = $("#Inspection_Date").val();
+            $.post("@Url.Action("Insp_Request_ApprovalReject", "Inspection")", { Insp_Request_Id: Insp_Request_Id, Status: "3", Inspection_Date: Inspection_Date }, function (data) {
+                if (data == "200") {
+                    let msg = '@TempData["msg"]';
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        } else {
+            let Insp_Request_Id = $(UI_Fields.Insp_Request_Id).val();
+            let Reject_Details = $(UI_Fields.Reject_Details).val();
+            let Inspection_Date = $("#Inspection_Date").val();
+            let valid = $("#Fm_Reject_Details").valid();
+            if (!valid) {
+                return false;
+            }
+            $.post("@Url.Action("Insp_Request_ApprovalReject", "Inspection")", { Insp_Request_Id: Insp_Request_Id, Status: "2", Remarks: Reject_Details, Inspection_Date: Inspection_Date }, function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        }
+    }
+    function Finding(id) {
+        $(UI_Fields.Add_Request_Div).hide(100);
+        $(UI_Fields.View_Request_Div).hide(100);
+        $(UI_Fields.List_View_Div).hide(100);
+        $.post("@Url.Action("P_Insp_Spot_Find_AddView", "Inspection")", { ID: id }, function (data) {
+            $(UI_Fields.Find_Load_AddView_Find_Details).html('');
+            $(UI_Fields.Find_Load_AddView_Find_Details).html(data);
+        }).always(function () {
+            $(UI_Fields.Add_Insp_Finding_Div).show(100);
+        });
+    }
+    function uploadFiles(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("UploadImagePdf", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data)
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function Upload_Picture(inputId, UploadPhotoId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    debugger;
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function Fn_Temp_Final_Submit() {
+        debugger
+        let valid = $("#Form_Add_Insp_Findings").valid();
+        if (!valid) {
+            ApplySelect2("#Business_Unit_Id");
+            ApplySelect2("#Zone_Id");
+            ApplySelect2("#Community_Id");
+            ApplySelect2("#Building_Id");
+            ApplySelect2("#NCM_Supervisor");
+            ApplySelect2("#Zone_Rep_Id");
+            ApplySelect2("#Service_Provider_ID");
+            $("#Zone_Rep-error").addClass('m-11');
+            $("#Safety_Violation-error").addClass('m-11');
+            $("#Service_Provider-error").addClass('m-11');
+            return false;
+        }
+        $('.Fn_Temp_Final_Submit').prop('disabled', true);
+        var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+        if (rowCount < 0) {
+            toastr.error("please enter details", "Error");
+            $(".preloader").hide(100);
+            return false;
+        }
+        var IfSafe = $('input[name="Safety_Violation"]:checked').val();
+        if (IfSafe == undefined) {
+            toastr.error("please Select Safety Violation", "Error");
+            $(".preloader").hide(100);
+            return false;
+        }
+
+        var Main_List = [];
+        var SubCategory_List = [];
+        var Photo_List = [];
+
+
+        $('#tbl_Temp_Insp_Find tbody tr').each(function () {
+            SubCategory_List = [];
+            Photo_List = [];
+            var var_V_Main_Lat = "0.00";
+            var var_V_Main_Long = "0.00"
+            var var_V_Main_Observations = $(this).closest('tr').find('.Main_Observations').val();
+            var var_V_Main_Sub_Finding_Id = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+            var var_V_Main_UploadPhotos = $(this).closest('tr').find('.UploadPhotos').val();
+            var var_V_Main_HazardRisk = $(this).closest('tr').find('.Main_HazardRisk').val();
+            var var_V_Main_Requirements = $(this).closest('tr').find('.Main_Requirements').val();
+            var var_V_Main_ActionRequired = $(this).closest('tr').find('.Main_ActionRequired').val();
+            var var_V_Main_Category = $(this).closest('tr').find('.Main_Category').val();
+            var var_V_Main_SubCategory = $(this).closest('tr').find('.Main_SubCategory').val();
+            var var_V_Main_RiskLevel = $(this).closest('tr').find('.Main_RiskLevel').val();
+            var_V_Main_Lat = $(this).closest('tr').find('.Lat_Insp').val();
+            var_V_Main_Long = $(this).closest('tr').find('.Long_Insp').val();
+            var var_V_Location_Address = $(this).closest('tr').find('.Location_Address').val();
+            var var_V_Exact_Location_Address = $(this).closest('tr').find('.Exact_Location_Address').val();
+
+            if (var_V_Main_Lat == "") {
+                var_V_Main_Lat = "0.00";
+                var_V_Location_Address == "NA";
+            }
+            if (var_V_Main_Long == "") {
+                var_V_Main_Long = "0.00";
+                var_V_Location_Address == "NA";
+            }
+
+            if (var_V_Main_SubCategory != "" && var_V_Main_SubCategory != null) {
+                SubCategory_List = [];
+                var val_SubCategory = var_V_Main_SubCategory.split(',');
+                var i;
+                for (i = 0; i < val_SubCategory.length; i++) {
+                    var t = val_SubCategory[i];
+                    var S_Cdata = {};
+                    S_Cdata.Insp_Sub_Category_Id = t;
+                    S_Cdata.Insp_Sub_Finding_Sub_Cat_Id = "0";
+                    SubCategory_List.push(S_Cdata);
+                }
+            }
+            if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+                Photo_List = [];
+                var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        var Pdata = {};
+                        Pdata.File_Path = x;
+                        Pdata.Insp_Sub_Photo_Id = "0";
+                        Photo_List.push(Pdata);
+                    }
+                }
+            }
+
+            var data = {};
+            data.Observations = var_V_Main_Observations;
+            data.Insp_Sub_Finding_Id = var_V_Main_Sub_Finding_Id;
+            data.Latitude = var_V_Main_Lat;
+            data.Longitude = var_V_Main_Long;
+            data.Hazard_Risk = var_V_Main_HazardRisk;
+            data.Requirements = var_V_Main_Requirements;
+            data.Action_Required = var_V_Main_ActionRequired;
+            data.Category = var_V_Main_Category;
+            data.Risk_Level = var_V_Main_RiskLevel;
+            data.Location_Address = var_V_Location_Address;
+            data.Exact_Location_Address = var_V_Exact_Location_Address;
+            data.Insp_Spot_Find_Sub_Category_List = SubCategory_List;
+            data.Insp_Spot_Find_Sub_Photo_List = Photo_List;
+            Main_List.push(data);
+        });
+
+        var Obj = {
+            Insp_Finding_Id: $(".Insp_Finding_Id").val(),
+            Insp_Request_Id: $(".Insp_Request_Id").val(),
+            NCM_Supervisor: $("#NCM_Supervisor").val(),
+            NCM_Community_Manager: $("#NCM_CommunityManager").val(),
+            Zone_Rep_Attended: $('input[name="Zone_Rep"]:checked').val(),
+            Service_Provider_Attended: $('input[name="Service_Provider"]:checked').val(),
+            Safety_Violation: $('input[name="Safety_Violation"]:checked').val(),
+            Zone_Rep_Id: $("#Zone_Rep_Id").val(),
+            Service_Provider_ID: $("#Service_Provider_ID").val(),
+            S_P_Representative_Name: $("#S_P_Representative_Name").val(),
+            Insp_Spot_Sub_Finding_List: Main_List
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Spot_Finding_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+
+                        if (data.Return_2 == 0) {
+                            $('.Fn_Temp_Final_Submit').prop('disabled', false);
+                            window.location.reload();
+                        } else {
+                            $('.Fn_Temp_Final_Submit').prop('disabled', false);
+                            var url = "/Inspection/Insp_Safety_Violation_Temp?id=" + data.Return_2;
+                            window.location.href = url;
+                        }
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('.Fn_Temp_Final_Submit').prop('disabled', false);
+                }
+                $('.Fn_Temp_Final_Submit').prop('disabled', false);
+            },
+        });
+    }
+    function Fn_CA_Rej_Model(rowid) {
+        $("#hdn_Corrective_Action_Id").val("");
+        $("#hdn_Corrective_Action_Id").val(rowid);
+    }
+    function FnViewRejectDetails(Unique_Id, Reject_Reason, CreatedDate, CreatedBy) {
+        $("#CA_View_Unique_Id").val("");
+        $("#CA_View_Reject_Reason").val("");
+        $("#CA_View_CreatedDate").val("");
+        $("#CA_View_CreatedBy").val("");
+        $("#CA_View_Unique_Id").val(Unique_Id);
+        $("#CA_View_Reject_Reason").val(Reject_Reason);
+        $("#CA_View_CreatedDate").val(CreatedDate);
+        $("#CA_View_CreatedBy").val(CreatedBy);
+    }
+    function FnViewReAssignDetails(Unique_Id, Responsibility_To, Re_Assign_To, CreatedDate, Remarks) {
+        $("#CA_View_Re_Assig_Id").val("");
+        $("#CA_View_Re_Assig_By").val("");
+        $("#CA_View_Re_Assig_To").val("");
+        $("#CA_View_Re_Assig_Date").val("");
+        $("#CA_View_Re_Assig_Reason").val("");
+        $("#CA_View_Re_Assig_Id").val(Unique_Id);
+        $("#CA_View_Re_Assig_By").val(Responsibility_To);
+        $("#CA_View_Re_Assig_To").val(Re_Assign_To);
+        $("#CA_View_Re_Assig_Date").val(CreatedDate);
+        $("#CA_View_Re_Assig_Reason").val(Remarks);
+    }
+    function Fn_CA_Reject_Submit() {
+        var varInsp_Request_Id = "";
+        varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var Rowid = $("#hdn_Corrective_Action_Id").val();
+        var Class_Name = "Reject";
+        var Status = "2";
+        var Description = $("#CA_Reject_Remarks").val();
+        let valid = $("#Fm_CA_Reject").valid();
+        if (!valid) {
+            return false;
+        }
+        $.post("@Url.Action("Insp_Spot_CA_Approval_Add", "Inspection")", { Corrective_Action_Id: Rowid, Remarks: Class_Name, Status: Status, Description: Description }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Rejected Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $("#CA_Reject_Remarks").val("");
+                    $(".Add_CA_Rej").modal('toggle');
+                    Finding(varInsp_Request_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    }
+    function Fn_RequestType(val) {
+        if (val == "Inspection") {
+            $(".Req_Category_Doc_Div").hide();
+            $(".Req_Category_Div").show();
+            $("#Category_Id").val("");
+            $(".image-container").empty();
+        } else {
+            $(".Req_Category_Div").hide();
+            $(".Req_Category_Doc_Div").show();
+            $("#Category_Id").val("");
+            $(".image-container").empty();
+        }
+    }
+    var Html = 1;
+    function Fn_Add_More_Document() {
+        var Datamarkup = "";
+        var file = "file" + Html;
+        var UploadPhotos = "UploadPhotos" + Html;
+        Datamarkup = '<tr><td style="min-width:150px;"><input class="form-control Req_Document_Review_Id" value="0" type="hidden" id="Req_Document_Review_Id' + Html + '"><textarea id="Req_Document_Name' + Html + '" name="Req_Document_Name' + Html + '" required class="form-control Req_Document_Name" placeholder="Enter Document Name" rows="1"></textarea><label id="Req_Document_Name' + Html + '-error" style="font-size: small;" class="error" for="Req_Document_Name' + Html + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><textarea id="Req_Document_Description' + Html + '" name="Req_Document_Description' + Html + '" required class="form-control Req_Document_Description" placeholder="Enter Description" rows="1"></textarea><label id="Req_Document_Description' + Html + '-error" style="font-size: small;" class="error" for="Req_Document_Description' + Html + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><input id="file' + Html + '" class="form-control file" onchange="uploadFilesDoc(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg"><input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos' + Html + '"></td>',
+            Datamarkup += '<td style="min-width:100px;text-align: center;"><a><i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i></a></td>',
+            Datamarkup += '</tr>'
+        $('#Doc_Table').append(Datamarkup);
+        Html++;
+    }
+    function uploadFilesDoc(inputId, UploadPhotoId) {
+        var test = inputId.id;
+        var test1 = UploadPhotoId.id;
+        inputId = test;
+        UploadPhotoId = test1;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImage", "Inspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    $("#" + UploadPhotoId).val("");
+                    $("#" + UploadPhotoId).val(data);
+
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    function uploadFilesAddMore(inputId, UploadPhotoId) {
+        var test = inputId.id;
+        var test1 = UploadPhotoId.id;
+        inputId = test;
+        UploadPhotoId = test1;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("UploadImagePdf", "Inspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+
+    function uploadPictureAddMore(inputId, UploadPhotoId) {
+        var test = inputId.id;
+        var test1 = UploadPhotoId.id;
+        inputId = test;
+        UploadPhotoId = test1;
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        if (files.length <= 5) {
+            for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[i]);
+            }
+            var _url = '@Url.Action("Upload_Picture", "Inspection")';
+            $.ajax({
+                url: _url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    if (data != "" && data != null) {
+                        var Photo_List = [];
+                        var val_UploadPhotos = data.split(',');
+                        var i;
+                        for (i = 0; i < val_UploadPhotos.length; i++) {
+                            var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                            if (x != "/") {
+                                var Pdata = {};
+                                Pdata.File_Path = x;
+                                Photo_List.push(Pdata);
+                            }
+                        }
+
+                        $(Photo_List).each(function (i, e) {
+                            if (e.File_Path == "Invalid Format") {
+                                $("#" + inputId).val("");
+                                $("#" + UploadPhotoId).val("");
+                                toastr["error"]("Invalid Format");
+                                return false;
+                            } else {
+                                $("#" + UploadPhotoId).val("");
+                                $("#" + UploadPhotoId).val(data);
+                                toastr["success"]("Uploaded Successfully");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        else {
+            $("#" + inputId).val("");
+            $("#" + UploadPhotoId).val("");
+            toastr["info"]("Maximum Allowed 5 Files");
+        }
+    }
+    var Map_Id = "";
+    function FnMapLoad_Addmore(HtmlFind) {
+        Map_Id = HtmlFind;
+        var map_Hzurl = '/CommonMaster/_LoadGoogleMap';
+        $(UI_Fields.GOOGLE_MAP_API).load(map_Hzurl);
+    }
+    function btn_Add_Map_Loc() {
+        var lat = "0.00";
+        var long = "0.00";
+        var Address = "";
+        var ExactAddress = "";
+        if ($("#lat_dynamic").val() != "" || $("#Long_dynamic").val() != "") {
+            var row_lat = "#Lat_Insp" + Map_Id;
+            var row_long = "#Long_Insp" + Map_Id;
+            var row_Address = "#Location_Address" + Map_Id;
+            var row_ExactAddress = "#Exact_Location_Address" + Map_Id;
+            lat = $("#lat_dynamic").val();
+            long = $("#Long_dynamic").val();
+            Address = $("#search_input").val();
+            ExactAddress = $("#search_input_1").val();
+            $(row_lat).val(lat);
+            $(row_long).val(long);
+            $(row_Address).val(Address);
+            $(row_ExactAddress).val(ExactAddress);
+            $('.Add-Loc-Map').modal('toggle');
+            Map_Id = "";
+        }
+    }
+
+    function Fn_View_MapLoad(lat, longt, Exact) {
+        debugger
+        var Obj = {
+            STATUS_CODE: lat,
+            UNIQUE_ID: longt,
+            MESSAGE: Exact,
+        };
+        $.ajax({
+            url: "/CommonMaster/_Load_View_GoogleMap",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (data) {
+                if (data) {
+                    $("#GoogleMapViewApi").html('');
+                    $("#GoogleMapViewApi").html(data);
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+        });
+    }
+
+    function Fn_WalkIn_Zone(Zone_Id) {
+        $("#NCM_Supervisor").empty();
+        $("#Zone_Rep_Id").empty();
+        $("#Service_Provider_ID").empty();
+        $.post("@Url.Action("Load_Spot_Find_WalkinZone", "Inspection")", { Zone_Id: Zone_Id }, function (data) {
+            $("#NCM_Supervisor").append("<option selected value='' style='text-align:center'  disabled>--Select--</option>");
+            $(data.Zone_Super_Master_List).each(function (i, e) {
+                $("#NCM_Supervisor").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+
+            $("#Zone_Rep_Id").append("<option selected value='' style='text-align:center'  disabled>--Select--</option>");
+            $(data.Zone_Rep_Master_List).each(function (i, e) {
+                $("#Zone_Rep_Id").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+
+            $("#Service_Provider_ID").append("<option selected value='' style='text-align:center'  disabled>--Select--</option>");
+            $(data.Zone_Service_Provider_Master_List).each(function (i, e) {
+                $("#Service_Provider_ID").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+
+    function Fn_Zone_Walk_In(Zone_Id) {
+        $(UI_Fields.COMMUNITY_ID).empty();
+        $(UI_Fields.BUILDING_ID).empty();
+        $.post("@Url.Action("LoadAllCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id }, function (data) {
+            $(UI_Fields.COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.COMMUNITY_ID).append("<option value=" + e.Community_Master_Id + ">" + e.Community_Master_Name + "</option>");
+            });
+        });
+
+        $.post("@Url.Action("LoadAllMasterCommunitybyZone", "CommonMaster")", { Zone_Id: Zone_Id, Community_Id: "0" }, function (data) {
+            $(UI_Fields.MASTER_COMMUNITY_ID).empty();
+            $(UI_Fields.MASTER_COMMUNITY_ID).append("<option selected value='0'style='text-align:center'  disabled>--Select Master Community--</option>");
+            $(data).each(function (i, e) {
+                $(UI_Fields.MASTER_COMMUNITY_ID).append("<option value=" + e.Sub_MasterCommunity_Id + ">" + e.MasterCommunity_Name + "</option>");
+            });
+        });
+        Fn_WalkIn_Zone(Zone_Id)
+    }
+
+    function Fn_Temp_Final_Walk_In_Submit() {
+        debugger
+        let valid = $("#Form_Add_Insp_Findings_Walk").valid();
+        if (!valid) {
+            ApplySelect2("#Business_Unit_Id");
+            ApplySelect2("#Zone_Id");
+            ApplySelect2("#Community_Id");
+            ApplySelect2("#Building_Id");
+            ApplySelect2("#NCM_Supervisor");
+            ApplySelect2("#Zone_Rep_Id");
+            ApplySelect2("#Service_Provider_ID");
+            $("#Zone_Rep-error").addClass('m-11');
+            $("#Safety_Violation-error").addClass('m-11');
+            $("#Service_Provider-error").addClass('m-11');
+            return false;
+        }
+        $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', true);
+        var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+        if (rowCount < 0) {
+            toastr.error("please enter details", "Error");
+            $(".preloader").hide(100);
+            return false;
+        }
+        var IfSafe = $('input[name="Safety_Violation"]:checked').val();
+        if (IfSafe == undefined) {
+            toastr.error("please Select Safety Violation", "Error");
+            $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', false);
+            return false;
+        }
+
+        var Main_List = [];
+        var SubCategory_List = [];
+        var Photo_List = [];
+
+
+        $('#tbl_Temp_Insp_Find tbody tr').each(function () {
+            SubCategory_List = [];
+            Photo_List = [];
+            var var_V_Main_Lat = "0.00";
+            var var_V_Main_Long = "0.00"
+            var var_V_Main_Observations = $(this).closest('tr').find('.Main_Observations').val();
+            var var_V_Main_Sub_Finding_Id = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+            var var_V_Main_UploadPhotos = $(this).closest('tr').find('.UploadPhotos').val();
+            var var_V_Main_HazardRisk = $(this).closest('tr').find('.Main_HazardRisk').val();
+            var var_V_Main_Requirements = $(this).closest('tr').find('.Main_Requirements').val();
+            var var_V_Main_ActionRequired = $(this).closest('tr').find('.Main_ActionRequired').val();
+            var var_V_Main_Category = $(this).closest('tr').find('.Main_Category').val();
+            var var_V_Main_SubCategory = $(this).closest('tr').find('.Main_SubCategory').val();
+            var var_V_Main_RiskLevel = $(this).closest('tr').find('.Main_RiskLevel').val();
+            var_V_Main_Lat = $(this).closest('tr').find('.Lat_Insp').val();
+            var_V_Main_Long = $(this).closest('tr').find('.Long_Insp').val();
+            var var_V_Location_Address = $(this).closest('tr').find('.Location_Address').val();
+            var var_V_Exact_Location_Address = $(this).closest('tr').find('.Exact_Location_Address').val();
+
+            if (var_V_Main_Lat == "") {
+                var_V_Main_Lat = "0.00";
+                var_V_Location_Address == "NA";
+            }
+            if (var_V_Main_Long == "") {
+                var_V_Main_Long = "0.00";
+                var_V_Location_Address == "NA";
+            }
+
+            if (var_V_Main_SubCategory != "" && var_V_Main_SubCategory != null) {
+                SubCategory_List = [];
+                var val_SubCategory = var_V_Main_SubCategory.split(',');
+                var i;
+                for (i = 0; i < val_SubCategory.length; i++) {
+                    var t = val_SubCategory[i];
+                    var S_Cdata = {};
+                    S_Cdata.Insp_Sub_Category_Id = t;
+                    S_Cdata.Insp_Sub_Finding_Sub_Cat_Id = "0";
+                    SubCategory_List.push(S_Cdata);
+                }
+            }
+            if (var_V_Main_UploadPhotos != "" && var_V_Main_UploadPhotos != null) {
+                Photo_List = [];
+                var val_UploadPhotos = var_V_Main_UploadPhotos.split(',');
+                var i;
+                for (i = 0; i < val_UploadPhotos.length; i++) {
+                    var x = val_UploadPhotos[i].replace(/[\(\)\[\]{}'"]/g, "");
+                    if (x != "/") {
+                        var Pdata = {};
+                        Pdata.File_Path = x;
+                        Pdata.Insp_Sub_Photo_Id = "0";
+                        Photo_List.push(Pdata);
+                    }
+
+                }
+            }
+
+            var data = {};
+            data.Observations = var_V_Main_Observations;
+            data.Insp_Sub_Finding_Id = var_V_Main_Sub_Finding_Id;
+            data.Latitude = var_V_Main_Lat;
+            data.Longitude = var_V_Main_Long;
+            data.Hazard_Risk = var_V_Main_HazardRisk;
+            data.Requirements = var_V_Main_Requirements;
+            data.Action_Required = var_V_Main_ActionRequired;
+            data.Category = var_V_Main_Category;
+            data.Risk_Level = var_V_Main_RiskLevel;
+            data.Location_Address = var_V_Location_Address;
+            data.Exact_Location_Address = var_V_Exact_Location_Address;
+            data.Insp_Spot_Find_Sub_Category_List = SubCategory_List;
+            data.Insp_Spot_Find_Sub_Photo_List = Photo_List;
+            Main_List.push(data);
+        });
+
+        var data_Main = {};
+        data_Main.Insp_Finding_Id = $(".Insp_Finding_Id").val();
+        data_Main.Insp_Request_Id = $(".Insp_Request_Id").val();
+        data_Main.NCM_Supervisor = $("#NCM_Supervisor").val();
+        data_Main.NCM_Community_Manager = $("#NCM_CommunityManager").val();
+        data_Main.Zone_Rep_Attended = $('input[name="Zone_Rep"]:checked').val();
+        data_Main.Service_Provider_Attended = $('input[name="Service_Provider"]:checked').val();
+        data_Main.Safety_Violation = $('input[name="Safety_Violation"]:checked').val();
+        data_Main.Zone_Rep_Id = $("#Zone_Rep_Id").val();
+        data_Main.Service_Provider_ID = $("#Service_Provider_ID").val();
+        data_Main.S_P_Representative_Name = $("#S_P_Representative_Name").val();
+        data_Main.Insp_Spot_Sub_Finding_List = Main_List;
+
+        var Obj = {
+            Insp_Request_Id: $("#Insp_Request_Id").val(),
+            Business_Unit_Id: $("#Business_Unit_Id").val(),
+            Zone_Id: $("#Zone_Id").val(),
+            Community_Id: $("#Community_Id").val(),
+            Building_Id: $("#Building_Id").val(),
+            Inspection_Date: $("#Inspection_Date").val(),
+            Walk_In_Insp_Name: "Walk_In_Insp",
+            Req_Description: $("#Req_Description").val(),
+            Category_Id: $("#Category_Id").val(),
+            Insp_Spot_Finding_List: data_Main,
+        };
+        $.ajax({
+            url: "/Inspection/Insp_Spot_Finding_Walk_In_Add",
+            type: "POST",
+            cache: false,
+            data: JSON.stringify(Obj),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (data.STATUS_CODE == "200") {
+                    debugger
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Added Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', false);
+                        if (data.Return_2 == 0) {
+                            window.location.reload();
+                        } else {
+                            $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', false);
+                            var url = "/Inspection/Insp_Safety_Violation_Temp?id=" + data.Return_2;
+                            window.location.href = url;
+                        }
+
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', false);
+                }
+                $('.Fn_Temp_Final_Walk_In_Submit').prop('disabled', false);
+            },
+        });
+    }
+
+</script>

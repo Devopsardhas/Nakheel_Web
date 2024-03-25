@@ -1,0 +1,2255 @@
+﻿@{
+    Layout = null;
+}
+@using Microsoft.AspNetCore.Http;
+@using Nakheel_Web.Models.AccountsMaster;
+@using Newtonsoft.Json;
+@using static Nakheel_Web.Authentication.Common;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var str = HttpContextAccessor.HttpContext!.Session.GetString("Login");
+    string Des = Decrypt(str!);
+    Login_ LoginClass = JsonConvert.DeserializeObject<Login_>(Des!)!;
+}
+@model Nakheel_Web.Models.InspectionMaster.M_Insp_Spot_Finding
+<style>
+    .image-container {
+        position: relative;
+    }
+
+    .close-button {
+        position: absolute;
+        top: -12px;
+        right: 53px;
+        background-color: red;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    b {
+        font-family: 'Nakheel-Textregular' !important;
+    }
+
+    .select2-container--default.select2-container--open.select2-container--above .select2-selection--single, .select2-container--default.select2-container--open.select2-container--above .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-results > .select2-results__options {
+        width: 252px !important;
+        background-color: white !important;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        width: 252px !important;
+    }
+
+    .fontsize {
+        font-size: 14px !important;
+    }
+</style>
+
+
+@if (Model != null)
+{
+    if (Model.Main_Status == "Inspection Finding Rejected")
+    {
+        if (Model.Insp_Finding_Reject_List != null)
+        {
+            @if (Model.Insp_Finding_Reject_List!.Count > 0 && Model.Insp_Finding_Reject_List! != null)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo_1">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo_1" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                Reject List
+                            </button>
+                        </h2>
+                        <div id="collapseTwo_1" class="accordion-collapse collapse" aria-labelledby="headingTwo_1" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Reject ID</th>
+                                                <th>Reject Reason</th>
+                                                <th>Rejected By</th>
+                                                <th>Created Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_Finding_Reject_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Unique_Id</td>
+                                                    <td align="left" valign="middle">@item.Reject_Reason</td>
+                                                    <td align="left" valign="middle">@item.CreatedBy</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+            }
+        }
+    }
+
+    <div class="row"></div>
+    <input class="form-control Insp_Finding_Id" type="hidden" asp-for="Insp_Finding_Id">
+    <input class="form-control Insp_Request_Id" type="hidden" asp-for="Insp_Request_Id">
+
+    if (Model.Main_Status == "Inspection Finding Pending")
+    {
+        <form id="Form_Add_Insp_Findings" style="margin-top: -18px;">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <tbody id="">
+                        <tr>
+                            <td><b class="font-bold">Business Unit</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                            <td><b class="font-bold">Zone</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Zone_Name</td>
+
+                            <td><b class="font-bold">Community</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Community_Name</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Building</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Building_Name</td>
+
+                            <td><b class="font-bold">Category </b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Insp_Type_Name</td>
+
+                            <td><b class="font-bold">Inspection Date</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Inspection_Date</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">NCM Supervisor</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+
+                            <td><b class="font-bold">Name of the Service Provider</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                            <td><b class="font-bold">Name of the HSE Representative</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.HSE_Representative_Name</td>
+                        </tr>
+                        <tr>
+                            <td><b class="font-bold">Frequency</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">@Model!.Schedule_Type</td>
+
+                            <td><b class="font-bold">Description</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                @if (@Model!.Req_Description == "")
+                                {
+                                    <label>NA</label>
+                                }
+                                else
+                                {
+                                    @Model!.Req_Description
+                                }
+                            </td>
+
+                            <td><b class="font-bold">NCM Community Manager</b></td>
+                            <td>:</td>
+                            <td class="tdtxt">
+                                <input type="text" name="NCM_CommunityManager" asp-for="NCM_Community_Manager" class="form-control form-control-sm NCM_CommunityManager" placeholder="NCM Community Manager" id="NCM_CommunityManager" required />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-6">
+                            </div>
+                            <div class="mb-6">
+                                <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -34px;" class="btn" value="Add" onclick="Fn_Add_More_Finding()">+Add More</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tbl_Temp_Insp_Find" class="table tblround table-sm table-striped" style="width:200%">
+                            <thead>
+                                <tr>
+                                    <th class="fontsize">Observations<span class="requ">*</span></th>
+                                    <th class="fontsize">Hazard & Risk<span class="requ">*</span></th>
+                                    <th class="fontsize">Requirements<span class="requ">*</span></th>
+                                    <th class="fontsize">Description of Action Required<span class="requ">*</span></th>
+                                    <th class="fontsize">Category<span class="requ">*</span></th>
+                                    <th class="fontsize">Observation Type<span class="requ">*</span></th>
+                                    <th class="fontsize">Risk Level<span class="requ">*</span></th>
+                                    <th class="fontsize">Evidence</th>
+                                    <th class="fontsize">Pin Location in the Map</th>
+                                    <th class="fontsize">Location Address</th>
+                                    <th class="fontsize">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id">
+                                        <input class="form-control Lat_Joint" type="hidden" value="" id="Lat_Joint">
+                                        <input class="form-control Long_Joint" type="hidden" value="" id="Long_Joint">
+                                        <textarea id="Main_Observations" name="Main_Observations" required class="form-control Main_Observations" placeholder="Enter Observations" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_HazardRisk" name="Main_HazardRisk" required class="form-control Main_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_Requirements" name="Main_Requirements" required class="form-control Main_Requirements" placeholder="Enter Requirements" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <textarea id="Main_ActionRequired" name="Main_ActionRequired" required class="form-control Main_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea>
+                                    </td>
+                                    <td style="width: 150px;">
+                                        <select onchange="SuCat(this.value)" class="form-select Main_Category" id="Main_Category" required>
+                                            <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                        </select>
+                                    </td>
+                                    <td style="width: 250px;">
+                                        <select class="form-select Main_SubCategory" name="Main_SubCategory" id="Main_SubCategory" required>
+                                            <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select Main_RiskLevel" required name="Main_RiskLevel" id="Main_RiskLevel">
+                                            <option value="" disabled selected="selected">--Select--</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                        </select>
+                                    </td>
+                                    <td style="width: 180px;">
+                                        <input id="file0" class="form-control file" onchange="Upload_Picture('file0','UploadPhotos0')" type="file" accept=".png, .jpg, .jpeg">
+                                        <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos0" id="UploadPhotos0">
+                                    </td>
+                                    <td style="width: 150px;">
+                                        <img id="MapLoad" class="MapLoad" onclick="FnMapLoad()" data-bs-toggle="modal" data-bs-target=".Add-Loc-Map" style="height: 30px;width: 30px;margin-left: 42px;margin-top: -10px;" src="~/assets/images/location.png" />
+                                    </td>
+                                    <td style="width: 150px;">
+                                        <textarea disabled id="Location_Address" value="" name="Location_Address" class="form-control Location_Address" rows="1"></textarea>
+                                        <textarea style="display:none" disabled id="Exact_Location_Address" value="" name="Exact_Location_Address" class="form-control Exact_Location_Address" rows="1"></textarea>
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <i class="mdi mdi-delete-off TblDeleteButtonNot font-size-18" style="color:red;">
+                                            </i>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="mb-4 row">
+                            <label for="example-text-input" class="col-md-3 col-form-label">Raise the Safety Violation Notice ?<span class="requ">*</span></label>
+                            <div class="col-md-8" style="margin-top: 10px;">
+                                <label for="Safety_Violation_Yes"> <input required asp-for="Safety_Violation" id="Safety_Violation_Yes" class="Safety_Violation" name="Safety_Violation" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                                <label for="Safety_Violation_No"> <input required asp-for="Safety_Violation" id="Safety_Violation_No" class="Safety_Violation" name="Safety_Violation" type="radio" value="No">&nbsp;No</label>
+                            </div>
+                        </div>
+                        @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+                        {
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingTwo">
+                                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:103%;">
+                                            History of Approval
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Employee Name</th>
+                                                            <th>Role</th>
+                                                            <th>Assigned/ Created Date</th>
+                                                            <th>Action Taken Date</th>
+                                                            <th>Prev.Status</th>
+                                                            <th>Cur.Status</th>
+                                                            <th>Next Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="GettblIncidentHistory">
+                                                        @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                                        {
+                                                            <tr class="clstr">
+                                                                <td align="left" valign="middle">@item.Emp_Name</td>
+                                                                <td align="left" valign="middle">@item.Role_Name</td>
+                                                                <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                                                <td align="left" valign="middle">@item.Status</td>
+                                                                <td align="left" valign="middle">@item.Remarks</td>
+                                                                <td align="left" valign="middle">@item.Next_Action</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="col-lg-6" style="margin-top: 7px;">
+                            <button onclick="Fn_Temp_Final_Submit()" type="button" class="btn Fn_Temp_Final_Submit btn-success eva-plus-circle-outline icon nav-icon" style="float: right;width: 68px;">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+    else if (Model.Main_Status == "Inspection Finding Rejected")
+    {
+        <div class="row">
+            <form id="Form_Add_Insp_Findings">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <tbody id="">
+                            <tr>
+                                <td><b class="font-bold">Business Unit</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                                <td><b class="font-bold">Zone</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Zone_Name</td>
+
+                                <td><b class="font-bold">Community</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Community_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Building</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Building_Name</td>
+
+                                <td><b class="font-bold">Category </b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Insp_Type_Name</td>
+
+                                <td><b class="font-bold">Inspection Date</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Inspection_Date</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">NCM Supervisor</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+
+                                <td><b class="font-bold">Name of the Service Provider</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                                <td><b class="font-bold">Name of the HSE Representative</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.HSE_Representative_Name</td>
+                            </tr>
+                            <tr>
+                                <td><b class="font-bold">Frequency</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">@Model!.Schedule_Type</td>
+
+                                <td><b class="font-bold">Description</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    @if (@Model!.Req_Description == "")
+                                    {
+                                        <label>NA</label>
+                                    }
+                                    else
+                                    {
+                                        @Model!.Req_Description
+                                    }
+                                </td>
+
+                                <td><b class="font-bold">NCM Community Manager</b></td>
+                                <td>:</td>
+                                <td class="tdtxt">
+                                    <input type="text" name="NCM_CommunityManager" asp-for="NCM_Community_Manager" class="form-control form-control-sm NCM_CommunityManager" placeholder="NCM Community Manager" id="NCM_CommunityManager" required />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="mb-6">
+                                </div>
+                                <div class="mb-6">
+                                    <button type="button" style="background-color: #032639;color:white;float: right;height: 33px;margin-top: -34px;" class="btn" value="Add" onclick="Fn_Add_More_Finding()">+Add More</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="tbl_Temp_Insp_Find" class="table tblround table-sm table-striped" style="width:200%">
+                                <thead>
+                                    <tr>
+                                        <th class="fontsize">Observations<span class="requ">*</span></th>
+                                        <th class="fontsize">Hazard & Risk<span class="requ">*</span></th>
+                                        <th class="fontsize">Requirements<span class="requ">*</span></th>
+                                        <th class="fontsize">Description of Action Required<span class="requ">*</span></th>
+                                        <th class="fontsize">Category<span class="requ">*</span></th>
+                                        <th class="fontsize">Observation Type<span class="requ">*</span></th>
+                                        <th class="fontsize">Risk Level<span class="requ">*</span></th>
+                                        <th class="fontsize">Evidence</th>
+                                        <th class="fontsize">View Evidence</th>
+                                        <th class="fontsize">Pin Location in the Map</th>
+                                        <th class="fontsize">Location Address</th>
+                                        <th class="fontsize">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Insp_Spot_Sub_Finding_List != null)
+                                    {
+                                        var SubFind = 500;
+                                        var Location_Address = "";
+                                        var Exact_Location_Address = "";
+                                        var UploadPhotos = "";
+                                        var file = "";
+                                        var Lat = "";
+                                        var Long = "";
+                                        foreach (var item in Model.Insp_Spot_Sub_Finding_List)
+                                        {
+                                            Location_Address = "Location_Address" + SubFind;
+                                            Exact_Location_Address = "Exact_Location_Address" + SubFind;
+                                            UploadPhotos = "UploadPhotos" + SubFind;
+                                            file = "file" + SubFind;
+                                            Lat = "Lat_Joint" + SubFind;
+                                            Long = "Long_Joint" + SubFind;
+                                            <tr>
+                                                <td>
+                                                    <input class="form-control Insp_Sub_Finding_Id" type="hidden" value="@item.Insp_Sub_Finding_Id" id="Insp_Sub_Finding_Id_@SubFind">
+                                                    <input class="form-control Lat_Joint" type="hidden" value="@item.Latitude" id="@Lat">
+                                                    <input class="form-control Long_Joint" type="hidden" value="@item.Longitude" id="@Long">
+                                                    <textarea id="Main_Observations_@SubFind" value="@item.Observations" name="Main_Observations_@SubFind" required class="form-control Main_Observations" placeholder="Enter Observations" rows="1">@item.Observations</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea id="Main_HazardRisk_@SubFind" value="@item.Hazard_Risk" name="Main_HazardRisk_@SubFind" required class="form-control Main_HazardRisk" placeholder="Enter Hazard & Risk" rows="1">@item.Hazard_Risk</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea id="Main_Requirements_@SubFind" name="Main_Requirements_@SubFind" value="@item.Requirements" required class="form-control Main_Requirements" placeholder="Enter Requirements" rows="1">@item.Requirements</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea id="Main_ActionRequired_@SubFind" name="Main_ActionRequired_@SubFind" value="@item.Action_Required" required class="form-control Main_ActionRequired" placeholder="Enter Action Required" rows="1">@item.Action_Required</textarea>
+                                                </td>
+                                                <td style="width: 150px;">
+                                                    <select asp-for="@item.Category" asp-items="@(new SelectList(item.Insp_Spot_Category_Master_List,"Value","Text"))" onchange="SuCat_Dynamic(this.value,'@SubFind')" class="form-select Main_Category" name="Main_Category_@SubFind" id="Main_Category_@SubFind" required>
+                                                        <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                    </select>
+                                                </td>
+                                                <td style="width: 250px;">
+                                                    <select asp-for="@item.Insp_Spot_Find_Sub_Category_List![0].Insp_Sub_Category_Id" asp-items="@(new SelectList(item.Insp_Spot_Sub_Category_Master_List,"Value","Text"))" class="form-select Main_SubCategory" name="Main_SubCategory_@SubFind" id="Main_SubCategory_@SubFind" required>
+                                                        <option value="" style="text-align:center;" disabled selected="selected">--Select--</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select asp-for="@item.Risk_Level" class="form-select Main_RiskLevel" required name="Main_RiskLevel_@SubFind" id="Main_RiskLevel_@SubFind">
+                                                        <option value="" disabled selected="selected">--Select--</option>
+                                                        <option value="High">High</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="Low">Low</option>
+                                                    </select>
+                                                </td>
+                                                <td style="width: 180px;">
+                                                    <input id="@file" class="form-control file" onchange="Upload_Picture('@file','@UploadPhotos')" type="file" accept=".png, .jpg, .jpeg">
+                                                    <input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="@UploadPhotos">
+                                                </td>
+                                                <td>
+                                                    @if (@item.Insp_Spot_Find_Sub_Photo_List != null)
+                                                    {
+                                                        var dd = 1;
+                                                        <div>
+                                                            @foreach (var item_Ca_P in @item.Insp_Spot_Find_Sub_Photo_List)
+                                                            {
+                                                                var imagecontainer = "image-container" + @item_Ca_P.Insp_Sub_Photo_Id;
+                                                                <div class="image-container @imagecontainer">
+                                                                    <button onclick="Rej_Photo_Del(@item_Ca_P.Insp_Sub_Photo_Id,'@imagecontainer')" type="button" class="close-button" style="width: 17px;height: 17px;right: 64px;">&times;</button>
+                                                                    @if (@item_Ca_P.File_Path != "")
+                                                                    {
+                                                                        var extn = @item_Ca_P.File_Path!.Split(".").Last();
+                                                                        <a href="@item_Ca_P.File_Path" target="_blank">
+                                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                            {
+                                                                                <img target="_blank" src="@item_Ca_P.File_Path" width="30" height="30">
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                            }
+                                                                        </a>
+                                                                    }
+
+                                                                </div>
+                                                                dd++;
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>NA</label>
+                                                    }
+                                                </td>
+                                                <td style="width: 150px;">
+                                                    <img id="MapLoad_@SubFind" class="MapLoad" onclick="FnMapLoad_Addmore('@SubFind')" data-bs-toggle="modal" data-bs-target=".Add-Loc-Map" style="height: 25px;width: 25px;margin-left: 42px;margin-top: 0px;" src="~/assets/images/location.png" />
+                                                </td>
+                                                <td style="width: 150px;">
+                                                    <textarea disabled id="@Location_Address" value="@item.Location_Address" name="Location_Address" class="form-control Location_Address" rows="1">@item.Location_Address</textarea>
+                                                    <textarea style="display:none" disabled id="@Exact_Location_Address" value="@item.Exact_Location_Address" name="Exact_Location_Address" class="form-control Exact_Location_Address" rows="1">@item.Exact_Location_Address</textarea>
+                                                </td>
+                                                <td>
+                                                    @if (@SubFind == 500)
+                                                    {
+                                                        <label>
+                                                            <i class="mdi mdi-delete-off TblDeleteButtonNot font-size-18" style="color:red;">
+                                                            </i>
+                                                        </label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>
+                                                            <i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;">
+                                                            </i>
+                                                        </label>
+                                                    }
+
+                                                </td>
+                                            </tr>
+                                            SubFind++;
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="row">
+                                <div class="mb-4 row">
+                                    <label for="example-text-input" class="col-md-3 col-form-label">Raise the Safety Violation Notice ?<span class="requ">*</span></label>
+                                    @if (Model.Safety_Violation == "Yes")
+                                    {
+                                        <div class="col-md-8" style="margin-top: 10px;">
+                                            <label for="Safety_Violation_Yes"> <input disabled asp-for="Safety_Violation" id="Safety_Violation_Yes" class="Safety_Violation" name="Safety_Violation" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                                            <label for="Safety_Violation_No"> <input disabled asp-for="Safety_Violation" id="Safety_Violation_No" class="Safety_Violation" name="Safety_Violation" type="radio" value="No">&nbsp;No</label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-8" style="margin-top: 10px;">
+                                            <label for="Safety_Violation_Yes"> <input asp-for="Safety_Violation" id="Safety_Violation_Yes" class="Safety_Violation" name="Safety_Violation" type="radio" value="Yes">&nbsp;Yes</label>&nbsp;&nbsp;
+                                            <label for="Safety_Violation_No"> <input asp-for="Safety_Violation" id="Safety_Violation_No" class="Safety_Violation" name="Safety_Violation" type="radio" value="No">&nbsp;No</label>
+                                        </div>
+                                    }
+                                </div>
+                                @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+                                {
+                                    <div class="accordion" id="accordionExample" style="margin-top: -24px">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingTwo">
+                                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;width:103%">
+                                                    History of Approval
+                                                </button>
+                                            </h2>
+                                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <div class="table-responsive">
+                                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Employee Name</th>
+                                                                    <th>Role</th>
+                                                                    <th>Assigned/ Created Date</th>
+                                                                    <th>Action Taken Date</th>
+                                                                    <th>Prev.Status</th>
+                                                                    <th>Cur.Status</th>
+                                                                    <th>Next Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="GettblIncidentHistory">
+                                                                @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                                                {
+                                                                    <tr class="clstr">
+                                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                                        <td align="left" valign="middle">@item.Status</td>
+                                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="col-lg-6">
+                                    <br>
+                                    <button onclick="Fn_Temp_Final_Submit()" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="float: right;">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+    else if (Model.Main_Status == "Inspection Finding Approval Pending")
+    {
+        <input class="form-control Safety_Violation_View" type="hidden" asp-for="Safety_Violation">
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">Business Unit</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                        <td><b class="font-bold">Zone</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Zone_Name</td>
+
+                        <td><b class="font-bold">Community</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Community_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Building</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Building_Name</td>
+
+                        <td>
+                            <b class="font-bold">Category </b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Insp_Type_Name</td>
+
+                        <td>
+                            <b class="font-bold">Inspection Date</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Inspection_Date</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">NCM Supervisor</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+                        <td>
+                            <b class="font-bold">Name Of Service Provider</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                        <td><b class="font-bold">Name of HSE Representative</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.HSE_Representative_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Frequency</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Schedule_Type</td>
+
+                        <td>
+                            <b class="font-bold">Description</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model!.Req_Description == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                @Model!.Req_Description
+                            }
+                        </td>
+
+                        <td>
+                            <b class="font-bold">NCM Community Manager</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Community_Manager</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b class="font-bold">Raise the Safety Violation Notice ?</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Safety_Violation</td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    <table id="tbl_Temp_Insp_Find_View" class="table tblround table-sm table-striped no-footer dataTable" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th class="table-responsive fontsize">Observations</th>
+                                <th class="table-responsive fontsize">Hazard & Risk</th>
+                                <th class="table-responsive fontsize">Requirements</th>
+                                <th class="table-responsive fontsize">Description of Action Required</th>
+                                <th class="table-responsive fontsize">Risk Level</th>
+                                <th class="table-responsive fontsize">Category</th>
+                                <th class="table-responsive fontsize">Observation Type</th>
+                                <th class="table-responsive fontsize">Location</th>
+                                <th class="table-responsive fontsize">Evidence</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Insp_Spot_Sub_Finding_List != null)
+                            {
+                                var subSno = 1;
+                                foreach (var item_Sub in Model.Insp_Spot_Sub_Finding_List)
+                                {
+                                    <tr>
+                                        <td><label>@subSno</label></td>
+                                        <td><label>@item_Sub.Observations</label></td>
+                                        <td><label>@item_Sub.Hazard_Risk</label></td>
+                                        <td><label>@item_Sub.Requirements</label></td>
+                                        <td><label>@item_Sub.Action_Required</label></td>
+                                        <td><label>@item_Sub.Risk_Level</label></td>
+                                        <td><label>@item_Sub.Insp_Category_Name</label></td>
+                                        <td>
+                                            @if (@item_Sub.Insp_Spot_Find_Sub_Category_List != null)
+                                            {
+                                                <label>@item_Sub.Insp_Spot_Find_Sub_Category_List![0].Insp_Sub_Category_Name</label> <br />
+
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item_Sub.Location_Address == "")
+                                            {
+                                                @if (@item_Sub.Exact_Location_Address == "")
+                                                {
+                                                    <label>NA</label>
+                                                }
+                                                else
+                                                {
+                                                    <label>@item_Sub.Exact_Location_Address</label>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <label><img id="MapLoad_@subSno" class="MapLoad" onclick="Fn_View_MapLoad('@item_Sub.Latitude','@item_Sub.Longitude','@item_Sub.Exact_Location_Address')" data-bs-toggle="modal" data-bs-target=".View-Loc-Map" style="height: 25px;width: 25px;margin-left: 12px;margin-top: 0px;cursor:pointer;" src="~/assets/images/viewLoc.png" /></label>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (@item_Sub.Insp_Spot_Find_Sub_Photo_List != null)
+                                            {
+                                                @foreach (var item_P in @item_Sub.Insp_Spot_Find_Sub_Photo_List!)
+                                                {
+                                                    var extn = @item_P.File_Path!.Split(".").Last();
+                                                    <a href="@item_P.File_Path" target="_blank">
+                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                        {
+                                                            <img target="_blank" src="@item_P.File_Path" width="30" height="30">
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                        }
+                                                    </a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <label>NA</label>
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    subSno++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+        {
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                            History of Approval
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <th>Role</th>
+                                            <th>Assigned/ Created Date</th>
+                                            <th>Action Taken Date</th>
+                                            <th>Prev.Status</th>
+                                            <th>Cur.Status</th>
+                                            <th>Next Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="GettblIncidentHistory">
+                                        @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                        {
+                                            <tr class="clstr">
+                                                <td align="left" valign="middle">@item.Emp_Name</td>
+                                                <td align="left" valign="middle">@item.Role_Name</td>
+                                                <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                <td align="left" valign="middle">@item.CreatedDate</td>
+                                                <td align="left" valign="middle">@item.Status</td>
+                                                <td align="left" valign="middle">@item.Remarks</td>
+                                                <td align="left" valign="middle">@item.Next_Action</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        if (LoginClass.Role_Id == "10")
+        {
+            <div class="row col-lg-12">
+                <div class="col-lg-6" style="text-align: right;">
+                    <br>
+                    <button onclick="Fn_Spot_Find_Approval('Approve')" type="button" style="background-color: green; border-color: green;" class="btn btn-success Fn_Spot_Find_Approval">
+                        Approve
+                    </button>
+                </div>
+                <div class="col-lg-6" style="text-align: left;">
+                    <br>
+                    <button data-bs-toggle="modal" data-bs-target=".add-Find-Reject" type="button" class="btn btn-danger btn_Submit" id="btn-save-event"> Reject</button>
+                </div>
+            </div>
+        }
+
+    }
+    else if (Model.Main_Status == "Corrective Action Pending")
+    {
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">Business Unit</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                        <td><b class="font-bold">Zone</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Zone_Name</td>
+
+                        <td><b class="font-bold">Community</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Community_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Building</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Building_Name</td>
+
+                        <td>
+                            <b class="font-bold">Category </b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Insp_Type_Name</td>
+
+                        <td>
+                            <b class="font-bold">Inspection Date</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Inspection_Date</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">NCM Supervisor</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+                        <td>
+                            <b class="font-bold">Name of the Service Provider</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                        <td><b class="font-bold">Name of the HSE Representative</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.HSE_Representative_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Frequency</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Schedule_Type</td>
+
+                        <td>
+                            <b class="font-bold">Description</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model!.Req_Description == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                @Model!.Req_Description
+                            }
+                        </td>
+
+                        <td>
+                            <b class="font-bold">NCM Community Manager</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Community_Manager</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b class="font-bold">Raise the Safety Violation Notice ?</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Safety_Violation</td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <form id="F_Add_Corrective_Action">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table id="tbl_Temp_Insp_Find_CA" class="table tblround table-sm table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S.No</th>
+                                    <th scope="col" class="table-responsive fontsize">Observations</th>
+                                    <th scope="col" class="table-responsive fontsize">Hazard & Risk</th>
+                                    <th scope="col" class="table-responsive fontsize">Requirements</th>
+                                    <th scope="col" class="table-responsive fontsize">Description of Action Required</th>
+                                    <th scope="col" class="table-responsive fontsize">Risk Level</th>
+                                    <th scope="col" class="table-responsive fontsize">Category</th>
+                                    <th scope="col" class="table-responsive fontsize">Observation Type</th>
+                                    <th scope="col" class="table-responsive fontsize">Location</th>
+                                    <th scope="col" class="table-responsive fontsize">Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Insp_Spot_Sub_Finding_List != null)
+                                {
+                                    var subSno = 1;
+                                    foreach (var item_Sub in Model.Insp_Spot_Sub_Finding_List)
+                                    {
+                                        <tr class="MainTR" style="background-color:#eeeded">
+                                            <td>
+                                                <input class="form-control Zone_Id" value="@item_Sub.Zone_Id" type="hidden" id="Zone_Id_@subSno">
+                                                <input class="form-control Community_Id" value="@item_Sub.Community_Id" type="hidden" id="Community_Id_@subSno">
+                                                <input class="form-control Insp_Finding_Id" value="@item_Sub.Insp_Finding_Id" type="hidden" id="Insp_Finding_Id_@subSno">
+                                                <input class="form-control Insp_Request_Id" value="@item_Sub.Insp_Request_Id" type="hidden" id="Insp_Request_Id_@subSno">
+                                                <input class="form-control Insp_Sub_Finding_Id" value="@item_Sub.Insp_Sub_Finding_Id" type="hidden" id="Insp_Sub_Finding_Id_@subSno">
+                                                <label>@subSno</label>
+                                            </td>
+                                            <td><label>@item_Sub.Observations</label></td>
+                                            <td><label>@item_Sub.Hazard_Risk</label></td>
+                                            <td><label>@item_Sub.Requirements</label></td>
+                                            <td><label>@item_Sub.Action_Required</label></td>
+                                            <td><label>@item_Sub.Risk_Level</label></td>
+                                            <td><label>@item_Sub.Insp_Category_Name</label></td>
+                                            <td>
+                                                @if (@item_Sub.Insp_Spot_Find_Sub_Category_List != null)
+                                                {
+                                                    @foreach (var item_Su in @item_Sub.Insp_Spot_Find_Sub_Category_List!)
+                                                    {
+                                                        <label>@item_Su.Insp_Sub_Category_Name</label> <br />
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item_Sub.Location_Address == "")
+                                                {
+                                                    @if (@item_Sub.Exact_Location_Address == "")
+                                                    {
+                                                        <label>NA</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>@item_Sub.Exact_Location_Address</label>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label><img id="MapLoad_@subSno" class="MapLoad" onclick="Fn_View_MapLoad('@item_Sub.Latitude','@item_Sub.Longitude','@item_Sub.Exact_Location_Address')" data-bs-toggle="modal" data-bs-target=".View-Loc-Map" style="height: 25px;width: 25px;margin-left: 12px;margin-top: 0px;cursor:pointer;" src="~/assets/images/viewLoc.png" /></label>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item_Sub.Insp_Spot_Find_Sub_Photo_List != null)
+                                                {
+                                                    @foreach (var item_P in @item_Sub.Insp_Spot_Find_Sub_Photo_List!)
+                                                    {
+                                                        var extn = @item_P.File_Path!.Split(".").Last();
+                                                        <a href="@item_P.File_Path" target="_blank">
+                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                            {
+                                                                <img target="_blank" src="@item_P.File_Path" width="30" height="30">
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                            }
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label>NA</label>
+                                                }
+
+                                            </td>
+                                        </tr>
+                                        if (LoginClass.Role_Id == "5")
+                                        {
+                                            <tr>
+                                                <td colspan="10">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="mb-6">
+                                                                <label for="basicpill-lastname-input" class="form-label">
+                                                                    Corrective Action Details <span class="requ">*</span>
+                                                                </label> <br />
+                                                            </div>
+                                                            <div class="mb-6">
+                                                                <button type="button" style="background-color: #032639;color:white;float: right;height: 28px;margin-top: -28px;" class="btn btn_@subSno" value="Add" onclick="Fn_Add_More_Action(@subSno)">+Add More</button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        <table id="Sub_ActionTable_@subSno" class="Sub_ActionTable tblround table-sm table-bordered" style="width:100%;">
+                                                            <thead style="background-color:#0b5578">
+                                                                <tr>
+                                                                    <th scope="col" class="table-responsive">Assign Action To</th>
+                                                                    <th scope="col" class="table-responsive">Assignee</th>
+                                                                    <th scope="col" class="table-responsive">Target Date</th>
+                                                                    <th scope="col" class="table-responsive">Description</th>
+                                                                    <th scope="col" class="table-responsive">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="Sub_ActionTable_Tbody_@subSno" class="Sub_ActionTable_Tbody">
+                                                                <tr>
+                                                                    <td style="min-width:150px;">
+                                                                        <input class="form-control Corrective_Action_Id" value="0" type="hidden" id="Corrective_Action_Id">
+                                                                        <select onchange="FnAssignActionTo(@subSno)" class="form-control Assignee_Type" required name="Assignee_Type_@subSno" id="Assignee_Type_@subSno">
+                                                                            <option value="" disabled selected="selected">-- Select Action to --</option>
+                                                                            <option value="Zone_Team">Zone Team</option>
+                                                                            <option value="Service_Provider">Service Provider</option>
+                                                                        </select>
+                                                                        <label id="Assignee_Type_@subSno-error" style="font-size: small;" class="error" for="Assignee_Type_@subSno"></label>
+                                                                    </td>
+                                                                    <td style="min-width:200px;">
+                                                                        <select class="form-control Responsibility_To" required name="Responsibility_To_@subSno" id="Responsibility_To_@subSno">
+                                                                        </select>
+                                                                        <label id="Responsibility_To_@subSno-error" style="font-size: small;" class="error" for="Responsibility_To_@subSno"></label>
+                                                                    </td>
+                                                                    <td style="min-width:200px;">
+                                                                        <input id="Target_Date_@subSno" class="form-control Target_Date Target_Date_Validate" type="date" name="Target_Date_@subSno" required>
+                                                                        <label id="Target_Date_@subSno-error" style="font-size: small;" class="error" for="Target_Date_@subSno"></label>
+                                                                    </td>
+                                                                    <td style="min-width:200px;">
+                                                                        <textarea id="Action_Description_@subSno" class="form-control Action_Description" name="Action_Description_@subSno" rows="1" required></textarea>
+                                                                        <label id="Action_Description_@subSno-error" style="font-size: small;" class="error" for="Action_Description_@subSno"></label>
+                                                                    </td>
+                                                                    <td style="min-width:100px;text-align: center;">
+                                                                        <a><i class="mdi mdi-delete-off font-size-18" style="color:red;"></i></a>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        subSno++;
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @if (LoginClass.Role_Id == "5")
+            {
+                @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-lg-6">
+                        <br />
+                        <button onclick="Fn_Action_Assign_Submit()" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon Fn_Action_Assign_Submit" style="float: right;">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+                {
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                    History of Approval
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="table-responsive">
+                                        <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                            <thead>
+                                                <tr>
+                                                    <th>Employee Name</th>
+                                                    <th>Role</th>
+                                                    <th>Assigned/ Created Date</th>
+                                                    <th>Action Taken Date</th>
+                                                    <th>Prev.Status</th>
+                                                    <th>Cur.Status</th>
+                                                    <th>Next Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="GettblIncidentHistory">
+                                                @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                                {
+                                                    <tr class="clstr">
+                                                        <td align="left" valign="middle">@item.Emp_Name</td>
+                                                        <td align="left" valign="middle">@item.Role_Name</td>
+                                                        <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                        <td align="left" valign="middle">@item.CreatedDate</td>
+                                                        <td align="left" valign="middle">@item.Status</td>
+                                                        <td align="left" valign="middle">@item.Remarks</td>
+                                                        <td align="left" valign="middle">@item.Next_Action</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </form>
+    }
+    else if (Model.Main_Status == "Action Closure Pending" || Model.Main_Status == "Completed")
+    {
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <tbody id="">
+                    <tr>
+                        <td><b class="font-bold">Business Unit</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Business_Unit_Name</td>
+
+                        <td><b class="font-bold">Zone</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Zone_Name</td>
+
+                        <td><b class="font-bold">Community</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Community_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Building</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Building_Name</td>
+
+                        <td>
+                            <b class="font-bold">Category </b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Insp_Type_Name</td>
+
+                        <td>
+                            <b class="font-bold">Inspection Date</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Inspection_Date</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">NCM Supervisor</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Supervisor_Text</td>
+                        <td>
+                            <b class="font-bold">Name of the Service Provider</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Service_Provider_Name</td>
+
+                        <td><b class="font-bold">Name of the HSE Representative</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.HSE_Representative_Name</td>
+                    </tr>
+                    <tr>
+                        <td><b class="font-bold">Frequency</b></td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Schedule_Type</td>
+
+                        <td>
+                            <b class="font-bold">Description</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">
+                            @if (@Model!.Req_Description == "")
+                            {
+                                <label>NA</label>
+                            }
+                            else
+                            {
+                                @Model!.Req_Description
+                            }
+                        </td>
+
+                        <td>
+                            <b class="font-bold">NCM Community Manager</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.NCM_Community_Manager</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b class="font-bold">Raise the Safety Violation Notice ?</b>
+                        </td>
+                        <td>:</td>
+                        <td class="tdtxt">@Model!.Safety_Violation</td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <form id="F_Add_Corrective_Action">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table id="tbl_Temp_Insp_Find_CA" class="table tblround table-sm table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th scope="col">S.No</th>
+                                    <th scope="col" class="table-responsive fontsize">Observations</th>
+                                    <th scope="col" class="table-responsive fontsize">Hazard & Risk</th>
+                                    <th scope="col" class="table-responsive fontsize">Requirements</th>
+                                    <th scope="col" class="table-responsive fontsize">Description of Action Required</th>
+                                    <th scope="col" class="table-responsive fontsize">Risk Level</th>
+                                    <th scope="col" class="table-responsive fontsize">Category</th>
+                                    <th scope="col" class="table-responsive fontsize">Observation Type</th>
+                                    <th scope="col" class="table-responsive fontsize">Location</th>
+                                    <th scope="col" class="table-responsive fontsize">Evidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Insp_Spot_Sub_Finding_List != null)
+                                {
+                                    var subSno = 1;
+                                    var All_subSno = 1;
+
+
+
+
+
+
+                                    foreach (var item_Sub in Model.Insp_Spot_Sub_Finding_List)
+                                    {
+                                        <tr class="MainTR" style="background-color:#eeeded">
+                                            <td>
+                                                <input class="form-control Zone_Id" value="@item_Sub.Zone_Id" type="hidden" id="Zone_Id_@subSno">
+                                                <input class="form-control Community_Id" value="@item_Sub.Community_Id" type="hidden" id="Community_Id_@subSno">
+                                                <input class="form-control Insp_Finding_Id" value="@item_Sub.Insp_Finding_Id" type="hidden" id="Insp_Finding_Id_@subSno">
+                                                <input class="form-control Insp_Request_Id" value="@item_Sub.Insp_Request_Id" type="hidden" id="Insp_Request_Id_@subSno">
+                                                <input class="form-control Insp_Sub_Finding_Id" value="@item_Sub.Insp_Sub_Finding_Id" type="hidden" id="Insp_Sub_Finding_Id_@subSno">
+                                                <label>@subSno</label>
+                                            </td>
+                                            <td><label>@item_Sub.Observations</label></td>
+                                            <td><label>@item_Sub.Hazard_Risk</label></td>
+                                            <td><label>@item_Sub.Requirements</label></td>
+                                            <td><label>@item_Sub.Action_Required</label></td>
+                                            <td><label>@item_Sub.Risk_Level</label></td>
+                                            <td><label>@item_Sub.Insp_Category_Name</label></td>
+                                            <td>
+                                                @if (@item_Sub.Insp_Spot_Find_Sub_Category_List != null)
+                                                {
+                                                    @foreach (var item_Su in @item_Sub.Insp_Spot_Find_Sub_Category_List!)
+                                                    {
+                                                        <label>@item_Su.Insp_Sub_Category_Name</label> <br />
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item_Sub.Location_Address == "")
+                                                {
+                                                    @if (@item_Sub.Exact_Location_Address == "")
+                                                    {
+                                                        <label>NA</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label>@item_Sub.Exact_Location_Address</label>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label><img id="MapLoad_@subSno" class="MapLoad" onclick="Fn_View_MapLoad('@item_Sub.Latitude','@item_Sub.Longitude','@item_Sub.Exact_Location_Address')" data-bs-toggle="modal" data-bs-target=".View-Loc-Map" style="height: 25px;width: 25px;margin-left: 12px;margin-top: 0px;cursor:pointer;" src="~/assets/images/viewLoc.png" /></label>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (@item_Sub.Insp_Spot_Find_Sub_Photo_List != null)
+                                                {
+                                                    @foreach (var item_P in @item_Sub.Insp_Spot_Find_Sub_Photo_List!)
+                                                    {
+                                                        var extn = @item_P.File_Path!.Split(".").Last();
+                                                        <a href="@item_P.File_Path" target="_blank">
+                                                            @if (extn == "png" || extn == "jpeg" || extn == "jpg" || extn == "JPG")
+                                                            {
+                                                                <img target="_blank" src="@item_P.File_Path" width="30" height="30">
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                            }
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <label>NA</label>
+                                                }
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="10">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-6">
+                                                            <label for="basicpill-lastname-input" class="form-label">
+                                                                Corrective Action Details <span class="requ">*</span>
+                                                            </label> <br />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table id="Sub_ActionTable_@subSno" class="Sub_ActionTable tblround table-sm table table-bordered" style="width:100%;">
+                                                        <thead style="background-color:#0b5578">
+                                                            <tr>
+                                                                <th scope="col" class="table-responsive">S.No</th>
+                                                                <th scope="col" class="table-responsive">Assign Action To</th>
+                                                                <th scope="col" class="table-responsive">Assignee</th>
+                                                                <th scope="col" class="table-responsive">Target Date</th>
+                                                                <th scope="col" class="table-responsive">Action Description</th>
+                                                                <th scope="col" class="table-responsive">Closure Description</th>
+                                                                <th scope="col" class="table-responsive">Evidence</th>
+                                                                <th scope="col" class="table-responsive">Status</th>
+                                                                @if (Model.Main_Status != "Completed")
+                                                                {
+                                                                    <th scope="col" class="table-responsive">Action</th>
+                                                                }
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="Sub_ActionTable_Tbody_@subSno" class="Sub_ActionTable_Tbody">
+                                                            @if (@item_Sub.Insp_Spot_Find_Corrective_Action_List != null)
+                                                            {
+                                                                var Ac_subSno = 1;
+                                                                foreach (var item_Ca in @item_Sub.Insp_Spot_Find_Corrective_Action_List)
+                                                                {
+                                                                    <tr class="CA_Approval_tr_@All_subSno">
+                                                                        <td>
+                                                                            <input class="form-control Corrective_Action_Id" value="@item_Ca.Corrective_Action_Id" type="hidden" id="Corrective_Action_Id_@All_subSno">
+                                                                            <label>@Ac_subSno</label>
+                                                                        </td>
+                                                                        <td><label>@item_Ca.Assignee_Type</label></td>
+                                                                        <td><label>@item_Ca.Responsibility_To_Name</label></td>
+                                                                        <td><label>@item_Ca.Target_Date</label></td>
+                                                                        <td><label>@item_Ca.Action_Description</label></td>
+                                                                        <td><label>@item_Ca.Closure_Action_Description</label></td>
+                                                                        <td>
+                                                                            @if (@item_Ca.Insp_Spot_CA_Photo_List != null)
+                                                                            {
+                                                                                @foreach (var item_Ca_P in @item_Ca.Insp_Spot_CA_Photo_List!)
+                                                                                {
+                                                                                    var extn = @item_Ca_P.File_Path!.Split(".").Last();
+                                                                                    <a href="@item_Ca_P.File_Path" target="_blank">
+                                                                                        @if (extn == "png" || extn == "jpeg" || extn == "jpg")
+                                                                                        {
+                                                                                            <img target="_blank" src="@item_Ca_P.File_Path" width="30" height="30">
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <img src='~/assets/images/pdf.png' style="height: 25px;width: 25px;margin-left: 12px;margin-top: -8px;cursor: pointer;" />
+                                                                                        }
+                                                                                    </a>
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label>NA</label>
+                                                                            }
+
+                                                                        </td>
+                                                                        <td class="CA_Approval_td_@All_subSno">
+                                                                            @if (@item_Ca.Status == "Completed")
+                                                                            {
+                                                                                <label style="color:green;">@item_Ca.Status</label>
+                                                                            }
+                                                                            else if (@item_Ca.Status == "Rejected")
+                                                                            {
+                                                                                <label style="color:red;">@item_Ca.Status</label>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <label style="color:#17a2b8;">@item_Ca.Status</label>
+                                                                            }
+                                                                        </td>
+                                                                        @if (Model.Main_Status != "Completed")
+                                                                        {
+                                                                            <td style="width: 170px;text-align:center;">
+                                                                                @if (LoginClass.Role_Id == "9" || LoginClass.Role_Id == "10" || LoginClass.Role_Id == "11")
+                                                                                {
+                                                                                    @if (@item_Ca.Status == "Action Closure Pending" || @item_Ca.Status == "Supervisor Approval Pending" || @item_Ca.Status == "Rejected")
+                                                                                    {
+                                                                                        if (@item_Ca.Assignee_Type == "Zone Team")
+                                                                                        {
+                                                                                            if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                            {
+                                                                                                <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                                <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                            }
+                                                                                            else if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List == null)
+                                                                                            {
+                                                                                                <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                            }
+                                                                                            else if (@item_Ca.Insp_Spot_CA_Reject_List == null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                            {
+                                                                                                <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <label class="Dash_Show_Hide_@All_subSno">--</label>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <label class="Dash_Show_Hide_@All_subSno">--</label>
+                                                                                        }
+                                                                                    }
+                                                                                    else if (@item_Ca.Status == "Completed")
+                                                                                    {
+                                                                                        <i class="mdi mdi-sticker-check font-size-25 tick_Show_Hide_@All_subSno" style="color:green"></i>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <button type="button" onclick="Fn_CA_Approval_Submit(@item_Ca.Corrective_Action_Id,'Approve','5')" class="btn btn-success Fn_CA_Approval_Submit eva-plus-circle-outline icon nav-icon button_Show_Hide_@All_subSno" style="height: 29px;width: 75px;background-color: green;border: green;">Approve</button>
+                                                                                        <button onclick="Fn_CA_Rej_Model(@item_Ca.Corrective_Action_Id)" data-bs-toggle="modal" data-bs-target=".Add_CA_Rej" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon button_Show_Hide_@All_subSno" style="height: 29px;width: 63px;background-color: red;border: red;" id="btn-save-event">Reject</button>
+
+                                                                                        if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                        {
+                                                                                            <br />
+                                                                                            <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                            <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                        }
+                                                                                        else if (@item_Ca.Insp_Spot_CA_Reject_List != null && @item_Ca.Insp_Spot_CA_ReAssign_List == null)
+                                                                                        {
+                                                                                            <br />
+                                                                                            <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                        }
+                                                                                        else if (@item_Ca.Insp_Spot_CA_Reject_List == null && @item_Ca.Insp_Spot_CA_ReAssign_List != null)
+                                                                                        {
+                                                                                            <br />
+                                                                                            <i onclick="FnViewReAssignDetails('@item_Ca.Insp_Spot_CA_ReAssign_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Responsibility_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Re_Assign_To','@item_Ca.Insp_Spot_CA_ReAssign_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_ReAssign_List[0].Remarks')" data-bs-toggle="modal" data-bs-target=".View_CA_Re_Asign_Details" class="mdi mdi-calendar-text" title="Re-Assign Details" data-bs-original-title="Re-Assign Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                        }
+
+                                                                                    }
+
+                                                                                }
+                                                                                else if (LoginClass.Role_Id == "5")
+                                                                                {
+                                                                                    @*@if (@item_Ca.Status == "Supervisor Approval Pending" && LoginClass.Employee_Identity_Id == @item_Ca.CreatedBy)
+                                                    {*@
+                                                                                    @if (@item_Ca.Status == "Supervisor Approval Pending")
+                                                                                    {
+                                                                                        <button type="button" onclick="Fn_CA_Approval_Submit(@item_Ca.Corrective_Action_Id,'Approve','6')" class="btn btn-success Fn_CA_Approval_Submit eva-plus-circle-outline icon nav-icon" style="height: 29px;width: 75px;background-color: green;border: green;">Accept</button>
+                                                                                        <button onclick="Fn_CA_Rej_Model(@item_Ca.Corrective_Action_Id)" data-bs-toggle="modal" data-bs-target=".Add_CA_Rej" type="button" class="btn btn-success eva-plus-circle-outline icon nav-icon" style="height: 29px;width: 63px;background-color: red;border: red;" id="btn-save-event">Reject</button>
+                                                                                        if (@item_Ca.Assignee_Type == "Service Provider")
+                                                                                        {
+                                                                                            if (@item_Ca.Insp_Spot_CA_Reject_List != null)
+                                                                                            {
+                                                                                                <br />
+                                                                                                <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    else if (@item_Ca.Status == "Completed")
+                                                                                    {
+                                                                                        <i class="mdi mdi-sticker-check font-size-25" style="color:green"></i>
+                                                                                    }
+                                                                                    else if (@item_Ca.Status == "Rejected" && @item_Ca.Assignee_Type == "Service Provider")
+                                                                                    {
+                                                                                        <br />
+                                                                                        if (@item_Ca.Insp_Spot_CA_Reject_List != null)
+                                                                                        {
+                                                                                            <i onclick="FnViewRejectDetails('@item_Ca.Insp_Spot_CA_Reject_List[0].Unique_Id','@item_Ca.Insp_Spot_CA_Reject_List[0].Reject_Reason','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedDate','@item_Ca.Insp_Spot_CA_Reject_List[0].CreatedBy')" data-bs-toggle="modal" data-bs-target=".View_CA_Rej_Details" class="mdi mdi-note-text" title="Reject Details" data-bs-original-title="Reject Details" aria-label="View" style="cursor: pointer;font-size:25px;"></i>
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <label>--</label>
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <label>--</label>
+                                                                                }
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                    Ac_subSno++;
+                                                                    All_subSno++;
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        subSno++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @if (Model.Insp_Req_Approval_History_List != null && Model.Insp_Req_Approval_History_List.Count != 0)
+            {
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button fw-medium collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="background: #00263a;color: white;height: 30px;">
+                                History of Approval
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table id="tblIncidentHistory" class="table table-sm table-striped dt-responsive nowrap tblround" style="width:100%;font-size:13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee Name</th>
+                                                <th>Role</th>
+                                                <th>Assigned/ Created Date</th>
+                                                <th>Action Taken Date</th>
+                                                <th>Prev.Status</th>
+                                                <th>Cur.Status</th>
+                                                <th>Next Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="GettblIncidentHistory">
+                                            @foreach (var item in Model.Insp_Req_Approval_History_List)
+                                            {
+                                                <tr class="clstr">
+                                                    <td align="left" valign="middle">@item.Emp_Name</td>
+                                                    <td align="left" valign="middle">@item.Role_Name</td>
+                                                    <td align="left" valign="middle">@item.Last_DateTime</td>
+                                                    <td align="left" valign="middle">@item.CreatedDate</td>
+                                                    <td align="left" valign="middle">@item.Status</td>
+                                                    <td align="left" valign="middle">@item.Remarks</td>
+                                                    <td align="left" valign="middle">@item.Next_Action</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    }
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        //var dtToday = new Date();
+        //var month = dtToday.getMonth() + 1;
+        //var day = dtToday.getDate();
+        //var year = dtToday.getFullYear();
+        //if (month < 10)
+        //    month = '0' + month.toString();
+        //if (day < 10)
+        //    day = '0' + day.toString();
+        //var minDate = year + '-' + month + '-' + day;
+        //minDate_valid = minDate;
+        //$('.Target_Date').attr('min', minDate);
+
+        let minDate = '@TempData["J_msg_Insp_Date"]';
+        $('.Target_Date_Validate').attr('min', minDate);
+
+        var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+        if (rowCount > 0) {
+            $(".tbl_Temp_Insp_Find_Hide_Show").show();
+        } else {
+            $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+        }
+        Cat_Master();
+        $("input[name='Zone_Rep']").click(function () {
+            var test = $(this).val();
+            if (test == "Yes") {
+                $(".Zone_Representative_Emp_Div").show();
+            } else {
+                $(".Zone_Representative_Emp_Div").hide();
+            }
+        });
+        $("input[name='Safety_Violation']").click(function () {
+            var test = $(this).val();
+            if (test == "Yes") {
+                $(".Fn_Temp_Final_Submit").text("Next");
+            } else {
+                $(".Fn_Temp_Final_Submit").text("Submit");
+            }
+        });
+        $("input[name='Service_Provider']").click(function () {
+            var tests = $(this).val();
+            if (tests == "Yes") {
+                $(".Service_Provider_Emp_Div").show();
+            } else {
+                $(".Service_Provider_Emp_Div").hide();
+                $("#Service_Provider_ID").val("");
+            }
+        });
+        $("#tbl_Temp_Insp_Find").on("click", ".mdi-pencil", function () {
+            var test01 = $("#Main_Observations").val();
+            var test02 = $("#Main_HazardRisk").val();
+            var test03 = $("#Main_Requirements").val();
+            var test04 = $("#Main_ActionRequired").val();
+            if (test01 != "" || test02 != "" || test03 != "" || test04 != "") {
+                toastr.error("please complete the exiting from details", "Error");
+                return false;
+            } else {
+                $(this).closest("tr").remove();
+            }
+
+        });
+
+        $(".Sub_ActionTable").on("click", ".btn_Action_Delete_Button", function () {
+            var rowCount = $('.Sub_ActionTable tbody > tr').length;
+            if (rowCount > 1) {
+                $(this).closest("tr").remove();
+            }
+        });
+
+        $('input[name=AssignActionTo]').change(function () {
+            var Role_Name = $('input[name=AssignActionTo]:checked').val();
+            var Zone_Id = $("#Zone_Id").val();
+            var Community_Id = $("#ECommunity_Id").val();
+            if (Role_Name == "Service_Provider") {
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+            else {
+                EMP_DRP_DWN(Role_Name, "Action_Employee_Id_0", Zone_Id, Community_Id);
+                $('#txtvalidemail').text('');
+            }
+        });
+
+
+        $("#tbl_Temp_Insp_Find").on("click", ".TblDeleteButton", function () {
+            var removeRow = $(this).closest("tr");
+            var varInj = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+            if (varInj == "" || varInj == "0") {
+                Swal.fire(
+                    {
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning", showCancelButton: !0,
+                        confirmButtonColor: "#34c38f",
+                        cancelButtonColor: "#f46a6a",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then(function (t) {
+                        if (t.isConfirmed) {
+                            removeRow.remove();
+                            var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                            if (rowCount > 0) {
+                                $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                            } else {
+                                $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                            }
+                            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                        }
+                    });
+
+            } else {
+                Swal.fire(
+                    {
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning", showCancelButton: !0,
+                        confirmButtonColor: "#34c38f",
+                        cancelButtonColor: "#f46a6a",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then(function (t) {
+                        if (t.isConfirmed) {
+                            $.ajax({
+                                url: '@Html.Raw(@Url.Action("Insp_Joint_Sub_Finding_Delete", "Inspection"))',
+                                type: "POST",
+                                cache: false,
+                                async: false,
+                                data: { Insp_Sub_Finding_Id: varInj },
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data == "200") {
+                                        removeRow.remove();
+                                        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                                    }
+                                    else {
+                                        Swal.fire("Failed!", "Something went wrong", "error");
+                                    }
+                                },
+                            });
+                        }
+                    });
+            }
+
+            var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+            if (rowCount > 0) {
+                $(".tbl_Temp_Insp_Find_Hide_Show").show();
+            } else {
+                $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+            }
+        });
+    });
+
+</script>
+<script>
+    function ApplySelect2CC(id) {
+        $(id).select2({
+            placeholder: "--Select--",
+            theme: 'bootstrap-5',
+        });
+    }
+    function Cat_Master() {
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $("#Main_Category").empty();
+            $("#Main_Category").append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#Main_Category").append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function SuCat(Value) {
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $("#Main_SubCategory").empty();
+            $(data).each(function (i, e) {
+                $("#Main_SubCategory").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function SuCat_Dynamic(Value, id) {
+        var ids = "#Main_SubCategory_" + id;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(ids).empty();
+            $(data).each(function (i, e) {
+                $(ids).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+    function Fn_Spot_Find_Approval(Name) {
+        if (Name == "Approve") {
+            $('.Fn_Spot_Find_Approval').prop('disabled', true);
+            var Remarks = $("#Find_Reject_Details").val();
+            var Insp_Finding_Id = $("#Insp_Finding_Id").val();
+
+            var Status = "3";
+            $.post("@Url.Action("Insp_Joint_Find_ApprovalReject", "Inspection")", { Insp_Finding_Id: Insp_Finding_Id, Remarks: Remarks, Status: Status }, function (data) {
+                if (data == "200") {
+                    let msg = '@TempData["msg"]';
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Approved Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        $('.Fn_Spot_Find_Approval').prop('disabled', false);
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('.Fn_Spot_Find_Approval').prop('disabled', false);
+                }
+                $('.Fn_Spot_Find_Approval').prop('disabled', false);
+            });
+        } else {
+            var Remarks = $("#Find_Reject_Details").val();
+            var Insp_Finding_Id = $("#Insp_Finding_Id").val();
+            var Status = "2";
+            $.post("@Url.Action("Insp_Joint_Find_ApprovalReject", "Inspection")", { Insp_Finding_Id: Insp_Finding_Id, Remarks: Remarks, Status: Status }, function (data) {
+                if (data == "200") {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Rejected Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        }
+    }
+    function Reject_Datas(Insp_Sub_Finding_Id) {
+        var test1 = $("#Main_Observations").val();
+        var test2 = $("#Main_HazardRisk").val();
+        var test3 = $("#Main_Requirements").val();
+        var test4 = $("#Main_ActionRequired").val();
+        if (test1 != "" || test2 != "" || test3 != "" || test4 != "") {
+            return false;
+        } else {
+            $(this).closest("tr").remove();
+            $(".preloader").show(50);
+            $("#Main_Observations").val("");
+            $("#UploadPhotos").val("");
+            $("#Main_HazardRisk").val("");
+            $("#Main_Requirements").val("");
+            $("#Main_ActionRequired").val("");
+            $("#Main_Category").empty();
+            $('#file').val('');
+            $('#Main_SubCategory').empty();
+            $("#search_input").val("");
+            $("#Main_RiskLevel").val("");
+            $("#Lat").val("");
+            $("#Long").val("");
+            $("#Location_Address").val("");
+            $(".Image_Bind_Div_Show_Hide").hide();
+            $(".Fn_Temp_Final_Submit_Div").hide();
+            $.post("@Url.Action("P_Insp_Joint_Find_Rej_Edit", "Inspection")", { Insp_Sub_Finding_Id: Insp_Sub_Finding_Id }, function (data) {
+                if (data != null) {
+                    var Sub_Cat_Selected_List = [];
+                    var LatLong = "";
+                    $(data.Insp_Spot_Category_Master_List).each(function (i, e) {
+                        $("#Main_Category").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                    });
+                    $(data.Insp_Spot_Sub_Category_Master_List).each(function (i, e) {
+                        $("#Main_SubCategory").append("<option value=" + e.Value + ">" + e.Text + "</option>");
+                    });
+                    $("#Insp_Sub_Finding_Id").val(data.Insp_Sub_Finding_Id);
+                    $("#Main_Observations").val(data.Observations);
+                    $("#Main_HazardRisk").val(data.Hazard_Risk);
+                    $("#Main_Requirements").val(data.Requirements);
+                    $("#Main_ActionRequired").val(data.Action_Required);
+                    $("#Main_Category").val(data.Category);
+                    $("#Main_RiskLevel").val(data.Risk_Level);
+                    $("#Lat").val(data.Latitude);
+                    $("#Long").val(data.Longitude);
+                    $("#Location_Address").val(data.Location_Address);
+                    $(data.Insp_Spot_Find_Sub_Category_List).each(function (i, e) {
+                        Sub_Cat_Selected_List.push(e.Insp_Sub_Category_Id);
+                    });
+                    $("#Main_SubCategory").val(Sub_Cat_Selected_List);
+                    $(".Div_Bind_Images").empty();
+                    if (data.Insp_Spot_Find_Sub_Photo_List != null) {
+                        $(".Image_Bind_Div_Show_Hide").show();
+                        $(data.Insp_Spot_Find_Sub_Photo_List).each(function (i, e) {
+                            var class_Name = "Div_image-container" + i;
+                            var htmlActionmarkup = "";
+                            htmlActionmarkup = '<div class="Div_Bind_Images col-md-3"><div class="' + class_Name + '"><div class="image-container"><button type="button" onclick="Rej_Photo_Del(' + e.Insp_Sub_Photo_Id + ',' + "'" + class_Name + "'" + ')" class="close-button">&times;</button><a href="' + e.File_Path + '" target = "_blank" ><img width = "179" height = "179" src = "' + e.File_Path + '" / > </a></div></div></div>',
+                                $(".Image_Bind_Div").append(htmlActionmarkup);
+                        });
+                    }
+                    map_edit(data.Latitude, data.Longitude);
+                    var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                    if (rowCount > 0) {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                    } else {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                    }
+
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'Error',
+                        title: 'Error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    var rowCount = $('#tbl_Temp_Insp_Find tbody > tr').length;
+                    if (rowCount > 0) {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").show();
+                    } else {
+                        $(".tbl_Temp_Insp_Find_Hide_Show").hide();
+                    }
+                }
+            }).always(function () {
+                $('html, body').animate({ scrollTop: "150" })
+                $(".preloader").hide(50);
+            });
+        }
+    }
+    function Rej_Photo_Del(Insp_Sub_Photo_Id, Class_Name) {
+        Swal.fire(
+            {
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning", showCancelButton: !0,
+                confirmButtonColor: "#34c38f",
+                cancelButtonColor: "#f46a6a",
+                confirmButtonText: "Yes, delete it!"
+            }).then(function (t) {
+                if (t.isConfirmed) {
+                    $.ajax({
+                        url: '@Html.Raw(@Url.Action("Insp_Joint_Sub_Find_Photo_Delete", "Inspection"))',
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        data: { Insp_Sub_Photo_Id: Insp_Sub_Photo_Id },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "200") {
+                                var del_Class = "." + Class_Name;
+                                $(del_Class).remove();
+                                Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                            }
+                            else {
+                                Swal.fire("Failed!", "Something went wrong", "error");
+                                return false;
+                            }
+                        },
+                    });
+                }
+            });
+    }
+    var Html = 500;
+    function Fn_Add_More_Action(subSno) {
+        var MainID = subSno + '' + Html;
+        Datamarkup = '<tr><td style="min-width:150px;"><input class="form-control Corrective_Action_Id" value="0" type="hidden" id="Corrective_Action_Id' + MainID + '"><select onchange="FnAssignActionTo_More(' + "'" + subSno + "'" + ',' + "'" + MainID + "'" + ')" class="form-control Assignee_Type" required name="Assignee_Type_' + MainID + '" id="Assignee_Type_' + MainID + '"><option value="" disabled selected="selected">-- Select Action to --</option><option value="Zone_Team">Zone Team</option><option value="Service_Provider">Service Provider</option></select><label id="Assignee_Type_' + MainID + '-error" class="error" style="font-size: small;" for="Assignee_Type_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><select class="form-control Responsibility_To" required name="Responsibility_To_' + MainID + '" id="Responsibility_To_' + MainID + '"></select><label id="Responsibility_To_' + MainID + '-error" class="error" style="font-size: small;" for="Responsibility_To_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><input id="Target_Date_' + MainID + '" class="form-control Target_Date Target_Date_Validate" type="date" name="Target_Date_' + MainID + '" required><label id="Target_Date_' + MainID + '-error" class="error" style="font-size: small;" for="Target_Date_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:200px;"><textarea id="Action_Description_' + MainID + '" class="form-control Action_Description" name="Action_Description_' + MainID + '" rows="1" required></textarea><label id="Action_Description_' + MainID + '-error" class="error" style="font-size: small;" for="Action_Description_' + MainID + '"></label></td>',
+            Datamarkup += '<td style="min-width:100px;text-align: center;"><a><i class="mdi mdi-delete btn_Action_Delete_Button font-size-18" style="color:red;"></i></a></td>',
+            Datamarkup += '</tr>'
+
+        $('#Sub_ActionTable_' + subSno + '').append(Datamarkup);
+
+        var Target_Date_Valid = "#Target_Date_" + MainID;
+        //var dtToday = new Date();
+        //var month = dtToday.getMonth() + 1;
+        //var day = dtToday.getDate();
+        //var year = dtToday.getFullYear();
+        //if (month < 10)
+        //    month = '0' + month.toString();
+        //if (day < 10)
+        //    day = '0' + day.toString();
+        //var minDate = year + '-' + month + '-' + day;
+        //$(Target_Date_Valid).attr('min', minDate);
+        let minDate = '@TempData["J_msg_Insp_Date"]';
+        $(Target_Date_Valid).attr('min', minDate);
+        Html++;
+    }
+    function Fn_Action_Assign_Submit() {
+        let valid = $("#F_Add_Corrective_Action").valid();
+        if (!valid) {
+            return false;
+        }
+        $('.Fn_Action_Assign_Submit').prop('disabled', true);
+        var ActionArr = [];
+        var subSno = 1;
+        $('#tbl_Temp_Insp_Find_CA tbody > tr.MainTR').each(function (c) {
+            var var_V_Insp_Finding_Id = $(this).closest('tr').find('.Insp_Finding_Id').val();
+            var var_V_Insp_Request_Id = $(this).closest('tr').find('.Insp_Request_Id').val();
+            var var_V_Insp_Sub_Finding_Id = $(this).closest('tr').find('.Insp_Sub_Finding_Id').val();
+
+            var ActionTable = "#Sub_ActionTable_" + subSno;
+
+            $('' + ActionTable + ' tbody > tr').each(function () {
+                var varCorrective_Action_Id = $(this).closest('tr').find('.Corrective_Action_Id').val();
+                var varAssignee_Type = $(this).closest('tr').find('.Assignee_Type').val();
+                var varResponsibility_To = $(this).closest('tr').find('.Responsibility_To').val();
+                var varTarget_Date = $(this).closest('tr').find('.Target_Date').val();
+                var varAction_Description = $(this).closest('tr').find('.Action_Description').val();
+
+                var data = {};
+                data.Corrective_Action_Id = varCorrective_Action_Id;
+                data.Assignee_Type = varAssignee_Type;
+                data.Responsibility_To = varResponsibility_To;
+                data.Target_Date = varTarget_Date;
+                data.Action_Description = varAction_Description;
+                data.Insp_Finding_Id = var_V_Insp_Finding_Id;
+                data.Insp_Request_Id = var_V_Insp_Request_Id;
+                data.Insp_Sub_Finding_Id = var_V_Insp_Sub_Finding_Id;
+                ActionArr.push(data);
+            });
+            subSno++;
+        });
+
+        $.post("@Url.Action("Insp_Joint_Corrective_Action_Add", "Inspection")", { model: ActionArr }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Added Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.Fn_Action_Assign_Submit').prop('disabled', false);
+                    window.location.reload();
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.Fn_Action_Assign_Submit').prop('disabled', false);
+            }
+            $('.Fn_Action_Assign_Submit').prop('disabled', false);
+        });
+    }
+
+    function FnAssignActionTo(id) {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To_" + id;
+        Role_Name = $('#Assignee_Type_' + id + '').val();
+        var Zone_Id = $('#Zone_Id_' + id + '').val();
+        var Community_Id = $('#Community_Id_' + id + '').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+    function FnAssignActionTo_More(id, Main_Id) {
+        var Role_Name = "";
+        var Input_Id = "Responsibility_To_" + Main_Id;
+        Role_Name = $('#Assignee_Type_' + Main_Id + '').val();
+        var Zone_Id = $('#Zone_Id_' + id + '').val();
+        var Community_Id = $('#Community_Id_' + id + '').val();
+        if (Role_Name == "Service_Provider") {
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+        else {
+            Role_Name = "Supervisor";
+            EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id);
+        }
+    }
+    function EMP_DRP_DWN(Role_Name, Input_Id, Zone_Id, Community_Id) {
+        $.post("@Url.Action("LoadEmpbyRole", "CommonMaster")", { Role_Name: Role_Name, Zone_Id: Zone_Id, Community_Id: Community_Id }, function (data) {
+            $("#" + Input_Id).empty();
+            $("#" + Input_Id).append("<option value='' style='text-align:center'>--Select--</option>");
+            $(data).each(function (i, e) {
+                $("#" + Input_Id).append("<option value=" + e.Employee_Identity_Id + ">" + e.First_Name + "</option>");
+            });
+        });
+    }
+    function Fn_CA_Approval_Submit(Rowid, Class_Name, Status) {
+        $('.Fn_CA_Approval_Submit').prop('disabled', true);
+        var varInsp_Request_Id = "";
+        varInsp_Request_Id = $("#Insp_Request_Id").val();
+        var trRowid = ".CA_Approval_tr_" + Rowid;
+        $.post("@Url.Action("Insp_Joint_CA_Approval_Add", "Inspection")", { Corrective_Action_Id: Rowid, Remarks: Class_Name, Status: Status, Description: "NA" }, function (data) {
+            if (data == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Approved Successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function () {
+                    $('.Fn_CA_Approval_Submit').prop('disabled', false);
+                    Finding(varInsp_Request_Id);
+                });
+            }
+            else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'Error',
+                    title: 'Error',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('.Fn_CA_Approval_Submit').prop('disabled', false);
+            }
+            $('.Fn_CA_Approval_Submit').prop('disabled', false);
+        });
+    }
+
+    var HtmlFind = 1;
+    function Fn_Add_More_Finding() {
+        var Datamarkups = "";
+        var file = "file_" + HtmlFind;
+        var UploadPhotos = "UploadPhotos_" + HtmlFind;
+        Add_More_Cat_Master(HtmlFind);
+        Datamarkups = '<tr><td><input class="form-control Insp_Sub_Finding_Id" value="0" type="hidden" id="Insp_Sub_Finding_Id_' + HtmlFind + '"><input class="form-control Lat_Joint" value="0.00" type="hidden" value="" id="Lat_Joint' + HtmlFind + '"><input class="form-control Long_Joint" value="0.00" type="hidden" id="Long_Joint' + HtmlFind + '"><textarea id="Main_Observations_' + HtmlFind + '" name="Main_Observations_' + HtmlFind + '" required class="form-control Main_Observations" placeholder="Enter Observations" rows="1" required></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_HazardRisk_' + HtmlFind + '" name="Main_HazardRisk_' + HtmlFind + '" required class="form-control Main_HazardRisk" placeholder="Enter Hazard & Risk" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_Requirements_' + HtmlFind + '" name="Main_Requirements_' + HtmlFind + '" required class="form-control Main_Requirements" placeholder="Enter Requirements" rows="1"></textarea></td>',
+            Datamarkups += '<td><textarea id="Main_ActionRequired_' + HtmlFind + '" name="Main_ActionRequired_' + HtmlFind + '" required class="form-control Main_ActionRequired" placeholder="Enter Action Required" rows="1"></textarea></td>',
+            Datamarkups += '<td><select onchange="Add_More_SuCat(this.value,' + HtmlFind + ')" name="Main_Category_' + HtmlFind + '" class="form-select Main_Category" id="Main_Category_' + HtmlFind + '" required><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select Main_SubCategory" name="Main_SubCategory_' + HtmlFind + '" id="Main_SubCategory_' + HtmlFind + '" required><option value="" style="text-align:center;" disabled selected="selected">--Select--</option></select></td>',
+            Datamarkups += '<td><select class="form-select Main_RiskLevel" required name="Main_RiskLevel_' + HtmlFind + '" id="Main_RiskLevel_' + HtmlFind + '"><option value="" disabled selected="selected">--Select--</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select></td>',
+            Datamarkups += '<td><input id="file_' + HtmlFind + '" class="form-control file" onchange="uploadPictureAddMore(' + file + ',' + UploadPhotos + ')" type="file" accept=".png, .jpg, .jpeg"><input type="hidden" value="" class="UploadPhotos" name="UploadPhotos" id="UploadPhotos_' + HtmlFind + '"></td>',
+            Datamarkups += '<td><img id="MapLoad_' + HtmlFind + '" class="MapLoad" onclick="FnMapLoad_Addmore(' + HtmlFind + ')" data-bs-toggle="modal" data-bs-target=".Add-Loc-Map" style="height: 30px;width: 30px;margin-left: 42px;margin-top: -10px;" src="/assets/images/location.png" /></td>',
+            Datamarkups += '<td><textarea style="display:none" disabled id="Exact_Location_Address' + HtmlFind + '" value="" name="Exact_Location_Address' + HtmlFind + '" class="form-control Exact_Location_Address" rows="1"></textarea><textarea disabled id="Location_Address' + HtmlFind + '" value="" name="Location_Address" class="form-control Location_Address" rows="1"></textarea></td>',
+            Datamarkups += '<td><label><i class="mdi mdi-delete TblDeleteButton font-size-18" style="color:red;"></i></label></td>',
+            Datamarkups += '</tr>'
+        $('#tbl_Temp_Insp_Find').append(Datamarkups);
+        HtmlFind++;
+    }
+
+    function Add_More_Cat_Master(HtmlFind) {
+        var Main_Category = "#Main_Category_" + HtmlFind;
+        $.post("@Url.Action("Insp_Category_GetAll", "Inspection")", function (data) {
+            $(Main_Category).empty();
+            $(Main_Category).append("<option selected value='0'style='text-align:center'  disabled>--Select--</option>");
+            $(data).each(function (i, e) {
+                $(Main_Category).append("<option value=" + e.Insp_Category_Id + ">" + e.Insp_Category_Name + "</option>");
+            });
+        });
+    }
+    function Add_More_SuCat(Value, HtmlFind) {
+        var Main_SubCategory = "#Main_SubCategory_" + HtmlFind;
+        $.post("@Url.Action("Insp_Sub_Category_Master_GetbyId", "Inspection")", { Value: Value }, function (data) {
+            $(Main_SubCategory).empty();
+            $(data).each(function (i, e) {
+                $(Main_SubCategory).append("<option value=" + e.Value + ">" + e.Text + "</option>");
+            });
+        });
+    }
+
+</script>
+
